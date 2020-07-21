@@ -35,5 +35,18 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
       return $value;
     }
 
+    /**
+     * Get the Inputfield module that provides input for Field
+     *
+     * @param Page $page
+     * @param Field $field
+     * @return Inputfield
+     *
+     */
+    public function getInputfield(Page $page, Field $field) {
+      $inputfield = $this->modules->get('InputfieldRockMatrix');
+      return $inputfield;
+    }
+
   /** HELPER METHODS */
 }

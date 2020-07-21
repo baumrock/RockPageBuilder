@@ -1,0 +1,126 @@
+<?php namespace ProcessWire;
+/**
+ * @author Bernhard Baumrock, 18.07.2020
+ * @license Licensed under MIT
+ * @link https://www.baumrock.com
+ */
+class InputfieldRockPageEdit extends InputfieldMarkup {
+
+  public static function getModuleInfo() {
+    return [
+      'title' => 'InputfieldRockPageEdit',
+      'version' => '0.0.1',
+      'summary' => 'Page Edit field for RockMatrix',
+      'autoload' => false,
+      'singular' => false,
+      'icon' => 'edit',
+      'requires' => ['RockMatrix'],
+      'installs' => [],
+    ];
+  }
+
+  /**
+   * Get page that is being edited in this field
+   */
+  public function getPage() {
+    return $this->pages->get(1067);
+  }
+
+  /**
+   * Render this inputfield
+   */
+  public function ___render() {
+    return $this->getWrapper()->render();
+  }
+
+  public function getWrapper() {
+    /** @var InputfieldFieldset */
+    $page = $this->getPage();
+    $fs = $this->wire(new InputfieldFieldset());
+    $fs->import($page->getInputfields()->children());
+    foreach($fs->children() as $f) {
+      $suffix = "_repeater$page";
+      $f->name .= $suffix;
+
+      // changes for file inputfields
+      if(!$f instanceof InputfieldFile) continue;
+      $f->wrapAttr('data-fnsx', $suffix);
+      $f->wrapClass('InputfieldRepeaterItem');
+      $f->wrapAttr('data-page', $page->id);
+      $f->wrapAttr('data-type', 1);
+      $f->wrapAttr('data-typeName', '');
+      $f->wrapAttr('data-editUrl', $page->editUrl());
+    }
+
+    return $fs;
+  }
+
+  /**
+   * Process input
+   *
+   * @param WireInputData $input
+   * @return $this
+   *
+   */
+  public function ___processInput(WireInputData $input) {
+    $old = (string)$this->value;
+    $ids = $input->{$this->name};
+    $ids = [1067];
+    $items = $this->pages->getById($ids);
+
+    // loop all repeater items
+    foreach($items as $page) {
+      $page->trackChanges(true);
+
+      $form = $this->getWrapper();
+      bdb($input);
+      $form->processInput($input);
+      if(!$form->getErrors()) {
+        // recursively save all inputfields
+        $this->saveChildren($page, $form->children());
+
+        // save repeater page if changed
+        if(count($page->getChanges(true))) $page->save();
+      }
+    }
+
+    // save ids to database
+    $new = (string)$items;
+    if($old !== $new) {
+      $this->trackChange('value');
+      $this->value = $items;
+    }
+  }
+
+  /**
+   * Save all child inputfields
+   * @return void
+   */
+  public function saveChildren($page, $children) {
+    $suffix = "_repeater$page";
+    foreach($children as $field) {
+      if($field->children) {
+        $this->saveChildren($page, $field->children);
+      }
+      else {
+        $name = substr($field->name, 0, -strlen($suffix));
+        bd($name, 'name');
+        bd($field, 'field');
+        if($field->useLanguages) {
+          foreach($this->languages() as $lang) {
+            bd($lang, 'lang');
+          }
+        }
+        else $page->$name = $field->value;
+      }
+    }
+  }
+
+  /**
+  * Config inputfields
+  * @param InputfieldWrapper $inputfields
+  */
+  public function getModuleConfigInputfields($inputfields) {
+    return $inputfields;
+  }
+}

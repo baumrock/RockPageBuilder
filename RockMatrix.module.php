@@ -19,6 +19,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
         'FieldtypeRockMatrix',
         'InputfieldRockMatrix',
         'InputfieldRockPageEdit',
+        'ProcessRockMatrix',
       ],
     ];
   }

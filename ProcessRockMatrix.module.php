@@ -31,4 +31,13 @@ class ProcessRockMatrix extends Process {
   public function execute() {
     return "API Endpoints for RockMatrix";
   }
+
+
+  /**
+   * Create new page via Inputfield
+   * @return string
+   */
+  public function executeNew() {
+    die('<div>new page</div>');
+  }
 }

@@ -20,3 +20,8 @@ $wire->addHookAfter('InputfieldRockMatrix::getAllowedTemplates', function($event
   $event->return->remove('basic-page');
 });
 ```
+
+### Adding / setting up Blocks
+
+Blocks are actually PW Pages with a custom PW template. **Every Block MUST extend the \RockMatrix\Block base class**
+

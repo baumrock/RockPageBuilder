@@ -6,6 +6,14 @@
  */
 class RockMatrix extends WireData implements Module, ConfigurableModule {
 
+  const prefix = 'rockmatrix_';
+  const block = self::prefix.'block_';
+
+  // content blocks
+  const block_headline = self::block."headline";
+  const block_textarea = self::block."textarea";
+  const block_image = self::block."image";
+
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',

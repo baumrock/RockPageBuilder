@@ -56,7 +56,7 @@ class InputfieldRockMatrix extends InputfieldTextarea {
     $out = '';
     foreach($this->getAllowedTemplates($page) as $tpl) {
       $tpl = $this->wire->templates->get((string)$tpl);
-      $out .= $this->getTemplateButton($tpl);
+      $out .= $this->getTemplateButton($tpl, $page);
     }
     return $out;
   }
@@ -64,14 +64,33 @@ class InputfieldRockMatrix extends InputfieldTextarea {
   /**
    * Get button to add a new page having this template
    */
-  public function ___getTemplateButton($tpl) {
+  public function ___getTemplateButton($tpl, $page) {
+    $field = $this->hasField;
+
     /** @var InputfieldButton $b */
     $b = $this->wire('modules')->get('InputfieldButton');
-    $b->value = $tpl->get('label|name');
     $b->secondary = true;
     $b->small = true;
-    $b->icon = $tpl->icon;
+    if($tpl) {
+      $b->value = $tpl->get('label|name');
+      $b->icon = $tpl->icon;
+      $b->href = $this->getEndpoint("new/?page=$page&field=$field&tpl=$tpl");
+    }
+    else {
+      // no template found
+      if(!$this->config->debug) return;
+      $b->icon = "exclamation-triangle";
+      $b->value = "TPL not found";
+    }
     return $b->render();
+  }
+
+  /**
+   * Get api endpoint page
+   */
+  public function getEndpoint($action = null) {
+    $page = $this->pages->get("parent=22,name=".ProcessRockMatrix::pageName);
+    return $page->url.$action;
   }
 
   /**

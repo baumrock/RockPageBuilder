@@ -20,6 +20,16 @@ class InputfieldRockMatrix extends InputfieldTextarea {
   }
 
   /**
+   * Inputfield is ready to render
+   */
+  public function renderReady() {
+    $file = $this->className.".js";
+    $path = $this->config->paths($this).$file;
+    $m = "?m=".filemtime($path);
+    $this->config->scripts->add($this->config->urls($this).$file.$m);
+  }
+
+  /**
    * Render this inputfield
    */
   public function ___render() {
@@ -27,11 +37,7 @@ class InputfieldRockMatrix extends InputfieldTextarea {
       return "This field is only supported on page edit";
     }
     $page = $this->process->getPage();
-
-    $out = '';
-    foreach($page->children as $child) {
-      $out .= "<a href='{$child->editUrl}'>{$child->title}</a><br>";
-    }
+    $out = $this->renderItems($page);
 
     // render buttons to add a new page
     $buttons = $this->renderButtons($page);
@@ -42,13 +48,28 @@ class InputfieldRockMatrix extends InputfieldTextarea {
   }
 
   /**
-   * Inputfield is ready to render
+   * Render child items
    */
-  public function renderReady() {
-    $file = $this->className.".js";
-    $path = $this->config->paths($this).$file;
-    $m = "?m=".filemtime($path);
-    $this->config->scripts->add($this->config->urls($this).$file.$m);
+  public function ___renderItems($page) {
+    $out = '';
+    foreach($this->getItems($page) as $item) {
+      $out .= $this->renderItem($item);
+    }
+    return $out;
+  }
+
+  /**
+   * Render a single page edit field
+   */
+  public function ___renderItem($page) {
+    return "<div>edit $page</div>";
+  }
+
+  /**
+   * Get matrix items of this page
+   */
+  public function ___getItems($page) {
+    return $page->children; // TODO make dynamic
   }
 
   /**

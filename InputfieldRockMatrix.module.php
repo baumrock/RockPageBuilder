@@ -27,6 +27,12 @@ class InputfieldRockMatrix extends InputfieldTextarea {
     $path = $this->config->paths($this).$file;
     $m = "?m=".filemtime($path);
     $this->config->scripts->add($this->config->urls($this).$file.$m);
+
+    $url = $this->config->urls($this);
+    $file = $url.$this->className.".less";
+    $less = $this->modules->get('RockLESS'); /** @var RockLESS $less */
+    if($less) $less->addToConfig($file);
+    else $this->config->styles->add("$file.css");
   }
 
   /**
@@ -65,10 +71,57 @@ class InputfieldRockMatrix extends InputfieldTextarea {
    * Render a single page edit field
    */
   public function ___renderItem($page) {
+    return $this->getItemInputfield($page)->render();
+  }
+
+  /**
+   * Get inputfield of item
+   */
+  public function getItemInputfield($page) {
     /** @var InputfieldRockPageEdit $f */
     $f = $this->wire('modules')->get('InputfieldRockPageEdit');
     $f->editPage = $page;
-    return $f->render();
+    return $f;
+  }
+
+  /**
+   * Process input
+   *
+   * @param WireInputData $input
+   * @return $this
+   *
+   */
+  public function ___processInput(WireInputData $input) {
+    $iteminput = $this->getIteminput($input);
+
+    // process all items
+    $items = $this->getItems($this->process->getPage());
+    foreach($items as $item) {
+      $f = $this->getItemInputfield($item);
+      if(array_key_exists($item->id, $iteminput)) {
+        $f->processInput($iteminput[$item->id]);
+      }
+    }
+  }
+
+  /**
+   * Get array of item input data having page id keys
+   * @return array
+   */
+  public function getIteminput($input) {
+    $arr = [];
+    $suffix = "_repeater";
+    foreach($input as $prop=>$val) {
+      // skip all non-repeater input
+      $i = strpos($prop, $suffix);
+      if(!$i) continue;
+
+      $field = substr($prop, 0, $i);
+      $id = substr($prop, $i+strlen($suffix));
+      if(!array_key_exists($id, $arr)) $arr[$id] = new WireInputData();
+      $arr[$id]->$field = $val;
+    }
+    return $arr;
   }
 
   /**

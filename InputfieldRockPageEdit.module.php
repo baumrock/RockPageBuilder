@@ -83,6 +83,9 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
    *
    */
   public function ___processInput(WireInputData $input) {
+    bd($input, 'input');
+    return;
+
     $old = (string)$this->value;
     $ids = $input->{$this->name};
     $ids = [1067];

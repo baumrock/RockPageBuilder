@@ -1,0 +1,10 @@
+.InputfieldRockMatrix .InputfieldRockPageEdit {
+  margin-top: 10px;
+}
+.InputfieldRockMatrix .InputfieldRockPageEdit > .InputfieldHeader {
+  padding: 2px 5px;
+}
+.InputfieldRockMatrix .InputfieldRockPageEdit > .InputfieldContent {
+  padding: 4px;
+  padding-top: 0;
+}

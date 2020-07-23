@@ -98,9 +98,7 @@ class InputfieldRockMatrix extends InputfieldTextarea {
     $items = $this->getItems($this->process->getPage());
     foreach($items as $item) {
       $f = $this->getItemInputfield($item);
-      if(array_key_exists($item->id, $iteminput)) {
-        $f->processInput($iteminput[$item->id]);
-      }
+      $f->processInput($input);
     }
   }
 

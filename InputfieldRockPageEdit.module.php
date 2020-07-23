@@ -26,6 +26,10 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
    */
   public function ___render() {
     $page = $this->editPage;
+    return $this->getWrapper($page)->render();
+  }
+
+  public function getWrapper($page) {
     $w = $this->wire(new InputfieldWrapper());
     $fs = $this->wire(new InputfieldFieldset());
 
@@ -46,8 +50,7 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
       $f->wrapAttr('data-typeName', '');
       $f->wrapAttr('data-editUrl', $page->editUrl());
     }
-
-    return $w->render();
+    return $w;
   }
 
   /**
@@ -83,58 +86,48 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
    *
    */
   public function ___processInput(WireInputData $input) {
-    bd($input, 'input');
-    return;
+    $page = $this->editPage;
+    $page->trackChanges(true);
+    $form = $this->getWrapper($page);
+    $form->processInput($input);
 
-    $old = (string)$this->value;
-    $ids = $input->{$this->name};
-    $ids = [1067];
-    $items = $this->pages->getById($ids);
+    if(!$form->getErrors()) {
+      // recursively save all inputfields
+      $fields = $form->children();
+      $this->setFieldValues($page, $fields);
 
-    // loop all repeater items
-    foreach($items as $page) {
-      $page->trackChanges(true);
-
-      $form = $this->getWrapper();
-      bdb($input);
-      $form->processInput($input);
-      if(!$form->getErrors()) {
-        // recursively save all inputfields
-        $this->saveChildren($page, $form->children());
-
-        // save repeater page if changed
-        if(count($page->getChanges(true))) $page->save();
-      }
+      // save repeater page if changed
+      if(count($page->getChanges(true))) $page->save();
     }
 
-    // save ids to database
-    $new = (string)$items;
-    if($old !== $new) {
-      $this->trackChange('value');
-      $this->value = $items;
-    }
+    // $page = $this->editPage;
+    // $old = (string)$this->value;
+
+    // // save ids to database
+    // $new = (string)$items;
+    // if($old !== $new) {
+    //   $this->trackChange('value');
+    //   $this->value = $items;
+    // }
   }
 
   /**
    * Save all child inputfields
    * @return void
    */
-  public function saveChildren($page, $children) {
+  public function setFieldValues($page, $fields) {
     $suffix = "_repeater$page";
-    foreach($children as $field) {
-      if($field->children) {
-        $this->saveChildren($page, $field->children);
-      }
+    foreach($fields as $field) {
+      if($field->children) $this->setFieldValues($page, $field->children);
       else {
         $name = substr($field->name, 0, -strlen($suffix));
-        bd($name, 'name');
-        bd($field, 'field');
-        if($field->useLanguages) {
-          foreach($this->languages() as $lang) {
-            bd($lang, 'lang');
-          }
-        }
-        else $page->$name = $field->value;
+        // TODO support multilang
+        // if($field->useLanguages) {
+        //   foreach($this->languages() as $lang) {
+        //     bd($lang, 'lang');
+        //   }
+        // }
+        $page->$name = $field->value;
       }
     }
   }

@@ -48,5 +48,35 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
       return $inputfield;
     }
 
+  /** PUBLIC API METHODS */
+
+    /**
+     * Create new page for given field
+     * @return string
+     */
+    public function newPage($fieldPage, $tpl) {
+      $tpl = $this->templates->get((string)$tpl);
+
+      // TODO sanitization and access checks
+      if(!$tpl) throw new WireException("Invalid Template");
+
+
+      // get the template class
+      // this ensures that if the page is a special page (like a report)
+      // the correct constructor or saveReady hooks are fired
+      // eg the Report gets the correct page name and title on creation
+      $class = $tpl->pageClass ?: "Page";
+
+      // create new page
+      $page = $this->wire(new $class()); /** @var Page $page */
+      $page->template = $tpl;
+      $page->parent = $fieldPage;
+      $page->save();
+
+      // ajax: return markup
+      if($this->config->ajax) return "ajax! $page";
+      else $this->session->redirect($page->editUrl);
+    }
+
   /** HELPER METHODS */
 }

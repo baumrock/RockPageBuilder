@@ -42,6 +42,16 @@ class InputfieldRockMatrix extends InputfieldTextarea {
   }
 
   /**
+   * Inputfield is ready to render
+   */
+  public function renderReady() {
+    $file = $this->className.".js";
+    $path = $this->config->paths($this).$file;
+    $m = "?m=".filemtime($path);
+    $this->config->scripts->add($this->config->urls($this).$file.$m);
+  }
+
+  /**
    * Show info to setup the field correctly
    * @return string
    */
@@ -53,11 +63,12 @@ class InputfieldRockMatrix extends InputfieldTextarea {
    * Render all buttons for this inputfield
    */
   public function renderButtons($page) {
-    $out = '';
+    $out = '<div class="rm-buttons">';
     foreach($this->getAllowedTemplates($page) as $tpl) {
       $tpl = $this->wire->templates->get((string)$tpl);
       $out .= $this->getTemplateButton($tpl, $page);
     }
+    $out .= "</div>";
     return $out;
   }
 
@@ -74,7 +85,7 @@ class InputfieldRockMatrix extends InputfieldTextarea {
     if($tpl) {
       $b->value = $tpl->get('label|name');
       $b->icon = $tpl->icon;
-      $b->href = $this->getEndpoint("new/?page=$page&field=$field&tpl=$tpl");
+      $b->href = $this->getEndpoint("new/?page=$page&field={$field->id}&tpl={$tpl->id}");
     }
     else {
       // no template found

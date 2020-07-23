@@ -6,6 +6,10 @@
  */
 class ProcessRockMatrix extends Process {
   const pageName = 'rockmatrix';
+
+  /** @var RockMatrix */
+  public $master;
+
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix Process Module',
@@ -26,6 +30,7 @@ class ProcessRockMatrix extends Process {
 
   public function init() {
     parent::init(); // always remember to call the parent init
+    $this->master = $this->modules->get('RockMatrix');
   }
 
   public function execute() {
@@ -38,6 +43,18 @@ class ProcessRockMatrix extends Process {
    * @return string
    */
   public function executeNew() {
-    die('<div>new page</div>');
+    $fieldPage = $this->input->get('page', 'int');
+    $field = $this->input->get('field', 'int');
+    $tpl = $this->input->get('tpl', 'int');
+    if(!$field) throw new WireException("Invalid field");
+
+    // get pw field and check valid
+    $field = $this->fields->get($field);
+    if(!$field->type instanceof FieldtypeRockMatrix) throw new WireException("Invalid field");
+
+    // create the new page
+    // ajax: return the markup of the new page edit inputfield
+    // page edit: redirect to new page edit screen
+    return $field->type->newPage($fieldPage, $tpl);
   }
 }

@@ -6,6 +6,8 @@
  */
 class InputfieldRockPageEdit extends InputfieldMarkup {
 
+  public $editPage;
+
   public static function getModuleInfo() {
     return [
       'title' => 'InputfieldRockPageEdit',
@@ -20,24 +22,17 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
   }
 
   /**
-   * Get page that is being edited in this field
-   */
-  public function getPage() {
-    return $this->pages->get(1067);
-  }
-
-  /**
    * Render this inputfield
    */
   public function ___render() {
-    return $this->getWrapper()->render();
-  }
-
-  public function getWrapper() {
-    /** @var InputfieldFieldset */
-    $page = $this->getPage();
+    $page = $this->editPage;
+    $w = $this->wire(new InputfieldWrapper());
     $fs = $this->wire(new InputfieldFieldset());
-    $fs->import($page->getInputfields()->children());
+
+    $w->add($fs);
+    $fs->label = $this->getLabel($page);
+    $fs->addClass('InputfieldRockPageEdit');
+    $fs->import($this->getInputfields($page));
     foreach($fs->children() as $f) {
       $suffix = "_repeater$page";
       $f->name .= $suffix;
@@ -52,7 +47,32 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
       $f->wrapAttr('data-editUrl', $page->editUrl());
     }
 
-    return $fs;
+    return $w->render();
+  }
+
+  /**
+   * Get Inputfields Wrapper for given page (to be edited)
+   *
+   * @param Page $page
+   * @return InputfieldWrapper
+   */
+  public function ___getInputfields($page) {
+    $fields = $page->getInputfields()->children();
+    foreach($fields as $f) {
+      $type = $f->hasField->type;
+      // prevent recursion
+      if($type instanceof FieldtypeRockMatrix) $fields->remove($f);
+      // sharing of pages not possible inside matrix
+      if($type instanceof FieldtypeRockShare) $fields->remove($f);
+    }
+    return $fields;
+  }
+
+  /**
+   * Get label for item
+   */
+  public function ___getLabel($page) {
+    return $page->get('title|id');
   }
 
   /**

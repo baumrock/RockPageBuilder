@@ -41,7 +41,10 @@ class InputfieldRockMatrix extends InputfieldTextarea {
 
     // render buttons to add a new page
     $buttons = $this->renderButtons($page);
-    if($buttons) $out .= "<small>".__('Add content').":</small><br>$buttons";
+    if($buttons) {
+      $out .= "<div class='rm-buttons-container'>"
+        ."<small>".__('Add content').":</small><br>$buttons</div>";
+    }
     else $out .= $this->setupInfo('allowed-templates');
 
     return $out;
@@ -62,7 +65,10 @@ class InputfieldRockMatrix extends InputfieldTextarea {
    * Render a single page edit field
    */
   public function ___renderItem($page) {
-    return "<div>edit $page</div>";
+    /** @var InputfieldRockPageEdit $f */
+    $f = $this->wire('modules')->get('InputfieldRockPageEdit');
+    $f->editPage = $page;
+    return $f->render();
   }
 
   /**

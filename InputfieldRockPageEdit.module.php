@@ -26,27 +26,33 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
    */
   public function ___render() {
     $page = $this->editPage;
-    return $this->getWrapper($page)->render();
+    return $this->buildForm($page)->render();
   }
 
-  public function getWrapper($page) {
-    $w = $this->wire(new InputfieldWrapper());
+  /**
+   * Build the form that shows the page edit for this page
+   * @return InputfieldWrapper
+   */
+  public function ___buildForm($page) {
     $fs = $this->wire(new InputfieldFieldset());
+    $form = $this->wire(new InputfieldWrapper());
+
+    // add properties to form that are needed for buildForm hooks
+    $form->suffix = "_repeater$page";
 
     /** @var InputfieldRepeater $r */
     $r = $this->modules->get('InputfieldRepeater');
 
-    $w->add($fs);
+    $form->add($fs);
     $fs->label = $this->getLabel($page);
     $fs->addClass('InputfieldRockPageEdit');
     $fs->import($this->getInputfields($page));
     foreach($fs->children() as $f) {
-      $suffix = "_repeater$page";
-      $f->name .= $suffix;
+      $f->name .= $form->suffix;
 
       // changes for file inputfields
       if(!$f instanceof InputfieldFile) continue;
-      $f->wrapAttr('data-fnsx', $suffix);
+      $f->wrapAttr('data-fnsx', $form->suffix);
       $itemType = $r->getRepeaterItemType($page);
       $itemTypeName = $r->getRepeaterItemTypeName($itemType);
       $f->wrapClass('InputfieldRepeaterItem');
@@ -55,7 +61,7 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
       $f->wrapAttr('data-typeName', $itemTypeName);
       $f->wrapAttr('data-editUrl', $page->editUrl());
     }
-    return $w;
+    return $form;
   }
 
   /**
@@ -93,7 +99,7 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
   public function ___processInput(WireInputData $input) {
     $page = $this->editPage;
     $page->trackChanges(true);
-    $form = $this->getWrapper($page);
+    $form = $this->buildForm($page);
     $form->processInput($input);
 
     if(!$form->getErrors()) {

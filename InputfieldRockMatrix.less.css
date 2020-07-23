@@ -8,3 +8,6 @@
   padding: 4px;
   padding-top: 0;
 }
+.InputfieldRockMatrix .InputfieldRockPageEdit > .InputfieldContent > ul.Inputfields > li.Inputfield.InputfieldRepeaterItem {
+  outline: 1px solid #eeeeee;
+}

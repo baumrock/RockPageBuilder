@@ -7,6 +7,16 @@
     > .InputfieldContent {
       padding: 4px;
       padding-top: 0;
+
+      > ul.Inputfields {
+        > li.Inputfield {
+          &.InputfieldRepeaterItem {
+            // quick fix for showing inputfield outline
+            // color should not be hardcoded but will likely never change
+            outline: 1px solid #eeeeee;
+          }
+        }
+      }
     }
   }
 }

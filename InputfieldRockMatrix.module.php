@@ -6,6 +6,9 @@
  */
 class InputfieldRockMatrix extends InputfieldTextarea {
 
+  /** @var RockMatrix */
+  public $master;
+
   public static function getModuleInfo() {
     return [
       'title' => 'InputfieldRockMatrix',
@@ -17,6 +20,10 @@ class InputfieldRockMatrix extends InputfieldTextarea {
       'requires' => ['RockMatrix'],
       'installs' => [],
     ];
+  }
+
+  public function init() {
+    $this->master = $this->modules->get('RockMatrix');
   }
 
   /**
@@ -48,7 +55,7 @@ class InputfieldRockMatrix extends InputfieldTextarea {
     // render buttons to add a new page
     $buttons = $this->renderButtons($page);
     if($buttons) {
-      $out .= "<div class='rm-buttons-container'>"
+      $out .= "<div class='rm-buttons-container uk-margin-top'>"
         ."<small>".__('Add content').":</small><br>$buttons</div>";
     }
     else $out .= $this->setupInfo('allowed-templates');
@@ -142,9 +149,8 @@ class InputfieldRockMatrix extends InputfieldTextarea {
    */
   public function renderButtons($page) {
     $out = '<div class="rm-buttons">';
-    foreach($this->getAllowedTemplates($page) as $tpl) {
-      $tpl = $this->wire->templates->get((string)$tpl);
-      $out .= $this->getTemplateButton($tpl, $page);
+    foreach($this->getAllowedBlocks($page) as $blockname) {
+      $out .= $this->getBlockButton($blockname, $page);
     }
     $out .= "</div>";
     return $out;
@@ -153,23 +159,25 @@ class InputfieldRockMatrix extends InputfieldTextarea {
   /**
    * Get button to add a new page having this template
    */
-  public function ___getTemplateButton($tpl, $page) {
+  public function ___getBlockButton($blockname, $page) {
+    $block = $this->master->getBlock($blockname);
     $field = $this->hasField;
 
     /** @var InputfieldButton $b */
     $b = $this->wire('modules')->get('InputfieldButton');
     $b->secondary = true;
     $b->small = true;
-    if($tpl) {
-      $b->value = $tpl->get('label|name');
-      $b->icon = $tpl->icon;
-      $b->href = $this->getEndpoint("new/?page=$page&field={$field->id}&tpl={$tpl->id}");
+    if($block) {
+      $info = $block->getBlockInfo();
+      $b->value = $info->get('title|name');
+      $b->icon = $info->icon;
+      $b->href = $this->getEndpoint("new/?block={$info->name}&page=$page&field={$field->id}");
     }
     else {
       // no template found
       if(!$this->config->debug) return;
       $b->icon = "exclamation-triangle";
-      $b->value = "TPL not found";
+      $b->value = "$blockname not found";
     }
     return $b->render();
   }
@@ -183,10 +191,10 @@ class InputfieldRockMatrix extends InputfieldTextarea {
   }
 
   /**
-   * Get allowed templates for the edited page
+   * Get allowed blocks for edited page
    * @return array
    */
-  public function ___getAllowedTemplates($page) {
+  public function ___getAllowedBlocks($page) {
     return [];
   }
 

@@ -7,12 +7,8 @@
 class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   const prefix = 'rockmatrix_';
-  const block = self::prefix.'block_';
 
-  // content blocks
-  const block_headline = self::block."headline";
-  const block_textarea = self::block."textarea";
-  const block_image = self::block."image";
+  public $blocks = [];
 
   public static function getModuleInfo() {
     return [
@@ -33,6 +29,33 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   public function init() {
+    $this->addBlocks(__DIR__."/blocks");
+  }
+
+  public function ready() {
+    $this->loadBlocks();
+  }
+
+  /**
+   * Scan dir and add blocks
+   * @return void
+   */
+  public function addBlocks($dir) {
+    $opt = ['extensions' => ['php']];
+    $blocks = $this->blocks;
+    foreach($this->wire->files->find($dir, $opt) as $file) {
+      $blocks[pathinfo($file, PATHINFO_FILENAME)] = $file;
+    }
+    ksort($blocks);
+    $this->blocks = $blocks;
+  }
+
+  /**
+   * Load all blocks that are available on the system
+   * @return void
+   */
+  public function ___loadBlocks() {
+
   }
 
   /**
@@ -41,5 +64,11 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   */
   public function getModuleConfigInputfields($inputfields) {
     return $inputfields;
+  }
+
+  public function __debugInfo() {
+    return [
+      'blocks' => $this->blocks,
+    ];
   }
 }

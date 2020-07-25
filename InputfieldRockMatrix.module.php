@@ -149,7 +149,7 @@ class InputfieldRockMatrix extends InputfieldTextarea {
    */
   public function renderButtons($page) {
     $out = '<div class="rm-buttons">';
-    foreach($this->getAllowedBlocks($page) as $blockname) {
+    foreach($this->master->getAllowedBlocks($this, $page) as $blockname) {
       $out .= $this->getBlockButton($blockname, $page);
     }
     $out .= "</div>";
@@ -168,7 +168,7 @@ class InputfieldRockMatrix extends InputfieldTextarea {
     $b->secondary = true;
     $b->small = true;
     if($block) {
-      $info = $block->getBlockInfo();
+      $info = $block->info();
       $b->value = $info->get('title|name');
       $b->icon = $info->icon;
       $b->href = $this->getEndpoint("new/?block={$info->name}&page=$page&field={$field->id}");
@@ -188,14 +188,6 @@ class InputfieldRockMatrix extends InputfieldTextarea {
   public function getEndpoint($action = null) {
     $page = $this->pages->get("parent=22,name=".ProcessRockMatrix::pageName);
     return $page->url.$action;
-  }
-
-  /**
-   * Get allowed blocks for edited page
-   * @return array
-   */
-  public function ___getAllowedBlocks($page) {
-    return [];
   }
 
   /**

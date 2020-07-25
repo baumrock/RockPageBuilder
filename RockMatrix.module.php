@@ -30,6 +30,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   public function init() {
     $this->addBlocks(__DIR__."/blocks");
+    $this->addHookAfter("Modules::refresh", $this, "migrate");
   }
 
   public function ready() {
@@ -72,6 +73,28 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $class = "\RockMatrixBlock\\$name";
     $block = new $class();
     return $block;
+  }
+
+  /**
+   * Get allowed blocks for given field and page
+   * @return array
+   */
+  public function ___getAllowedBlocks($field, $page) {
+    return [];
+  }
+
+  /**
+   * Module Migrations
+   */
+  public function migrate() {
+    // migrate all blocks
+    foreach($this->blocks as $name=>$file) {
+      $block = $this->getBlock($name);
+      db($block, $name);
+      if(!$block) return;
+      db("migrate $block");
+      $block->migrate();
+    }
   }
 
   /**

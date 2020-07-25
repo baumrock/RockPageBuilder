@@ -45,16 +45,14 @@ class ProcessRockMatrix extends Process {
   public function executeNew() {
     $fieldPage = $this->input->get('page', 'int');
     $field = $this->input->get('field', 'int');
-    $tpl = $this->input->get('tpl', 'int');
-    if(!$field) throw new WireException("Invalid field");
+    $block = $this->input->get('block', 'string');
 
-    // get pw field and check valid
     $field = $this->fields->get($field);
-    if(!$field->type instanceof FieldtypeRockMatrix) throw new WireException("Invalid field");
+    if(!$field) throw new WireException("Invalid field");
 
     // create the new page
     // ajax: return the markup of the new page edit inputfield
     // page edit: redirect to new page edit screen
-    return $field->type->newPage($fieldPage, $tpl);
+    return $field->type->newPage($fieldPage, $field, $block);
   }
 }

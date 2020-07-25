@@ -6,6 +6,9 @@
  */
 class FieldtypeRockMatrix extends FieldtypeTextarea {
 
+  /** @var RockMatrix */
+  public $master;
+
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
@@ -19,6 +22,7 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
 
   public function init() {
     parent::init();
+    $this->master = $this->modules->get('RockMatrix');
   }
 
   /** FIELDTYPE METHODS */
@@ -54,28 +58,43 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
      * Create new page for given field
      * @return string
      */
-    public function newPage($fieldPage, $tpl) {
-      $tpl = $this->templates->get((string)$tpl);
+    public function newPage($fieldPage, $field, $block) {
+      if(!$fieldPage) throw new WireException("Invalid page");
+      if(!$field) throw new WireException("Invalid field");
+      if(!$block) throw new WireException("Invalid block");
 
-      // TODO sanitization and access checks
-      if(!$tpl) throw new WireException("Invalid Template");
+      // first we check the block
+      $block = $this->master->getBlock($block);
+      if(!$block) throw new WireException("Invalid block");
+      if(!$block->isAllowed($field, $fieldPage)) {
+        throw new WireException("Block not allowed");
+      }
+      $tpl = $block->info()->tpl;
+      bd($tpl);
 
 
-      // get the template class
-      // this ensures that if the page is a special page (like a report)
-      // the correct constructor or saveReady hooks are fired
-      // eg the Report gets the correct page name and title on creation
-      $class = $tpl->pageClass ?: "Page";
+      // // get template of this block
+      // // $tpl =
 
-      // create new page
-      $page = $this->wire(new $class()); /** @var Page $page */
-      $page->template = $tpl;
-      $page->parent = $fieldPage;
-      $page->save();
+      // // TODO sanitization and access checks
+      // if(!$tpl) throw new WireException("Invalid Template");
 
-      // ajax: return markup
-      if($this->config->ajax) return "ajax! $page";
-      else $this->session->redirect($page->editUrl);
+
+      // // get the template class
+      // // this ensures that if the page is a special page (like a report)
+      // // the correct constructor or saveReady hooks are fired
+      // // eg the Report gets the correct page name and title on creation
+      // $class = $tpl->pageClass ?: "Page";
+
+      // // create new page
+      // $page = $this->wire(new $class()); /** @var Page $page */
+      // $page->template = $tpl;
+      // $page->parent = $fieldPage;
+      // $page->save();
+
+      // // ajax: return markup
+      // if($this->config->ajax) return "ajax! $page";
+      // else $this->session->redirect($page->editUrl);
     }
 
   /** HELPER METHODS */

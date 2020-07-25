@@ -51,11 +51,27 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
-   * Load all blocks that are available on the system
+   * Hookable method for loading blocks
    * @return void
    */
-  public function ___loadBlocks() {
+  public function ___loadBlocks() {}
 
+  /**
+   * Get block by name
+   * @return false|Block
+   */
+  public function getBlock($name) {
+    if(!array_key_exists($name, $this->blocks)) return false;
+
+    // load the block baseclass
+    require_once("Block.php");
+
+    // load the block
+    $file = $this->blocks[$name];
+    require_once($file);
+    $class = "\RockMatrixBlock\\$name";
+    $block = new $class();
+    return $block;
   }
 
   /**

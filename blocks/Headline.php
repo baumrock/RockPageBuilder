@@ -21,6 +21,8 @@ class Headline extends \RockMatrix\Block {
           'icon' => $this->info()->icon,
           'pageClass' => get_class($this),
           'tags' => self::tags,
+          'noChildren' => 1,
+          'noSettings' => 1,
         ],
       ],
     ]);

@@ -48,6 +48,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $name = pathinfo($file, PATHINFO_FILENAME);
       $class = "\RockMatrixBlock\\$name";
       $block = new $class();
+      if(method_exists($block, "init")) $block->init();
       $blocks[pathinfo($file, PATHINFO_FILENAME)] = $block;
     }
     ksort($blocks);

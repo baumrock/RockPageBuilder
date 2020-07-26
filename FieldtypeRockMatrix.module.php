@@ -79,11 +79,11 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
       // this ensures that if the page is a special page (like a report)
       // the correct constructor or saveReady hooks are fired
       // eg the Report gets the correct page name and title on creation
-      $class = "\ProcessWire\Page";
+      $class = $tpl->pageClass ?: "Page";
 
       // create new page
       $page = $this->wire(new $class()); /** @var Page $page */
-      $page->template = 'rmblock_magsection';
+      $page->template = $tpl;
       $page->parent = $fieldPage; // TODO set correct parent
       $page->save();
 

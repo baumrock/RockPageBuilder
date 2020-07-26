@@ -71,8 +71,8 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
    * @return InputfieldWrapper
    */
   public function ___getInputfields($page) {
-    $fields = $page->getInputfields()->children();
-    foreach($fields as $f) {
+    $fields = $page->getInputfields();
+    foreach($fields->children() as $f) {
       $type = $f->hasField->type;
       // prevent recursion
       if($type instanceof FieldtypeRockMatrix) $fields->remove($f);

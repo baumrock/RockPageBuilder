@@ -33,10 +33,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHookAfter("Modules::refresh", $this, "migrate");
   }
 
-  public function ready() {
-    $this->loadBlocks();
-  }
-
   /**
    * Scan dir and add blocks
    * @return void
@@ -44,18 +40,19 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public function addBlocks($dir) {
     $opt = ['extensions' => ['php']];
     $blocks = $this->blocks;
+
+    // load the block baseclass
+    require_once("Block.php");
     foreach($this->wire->files->find($dir, $opt) as $file) {
-      $blocks[pathinfo($file, PATHINFO_FILENAME)] = $file;
+      require_once($file);
+      $name = pathinfo($file, PATHINFO_FILENAME);
+      $class = "\RockMatrixBlock\\$name";
+      $block = new $class();
+      $blocks[pathinfo($file, PATHINFO_FILENAME)] = $block;
     }
     ksort($blocks);
     $this->blocks = $blocks;
   }
-
-  /**
-   * Hookable method for loading blocks
-   * @return void
-   */
-  public function ___loadBlocks() {}
 
   /**
    * Get block by name
@@ -63,16 +60,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    */
   public function getBlock($name) {
     if(!array_key_exists($name, $this->blocks)) return false;
-
-    // load the block baseclass
-    require_once("Block.php");
-
-    // load the block
-    $file = $this->blocks[$name];
-    require_once($file);
-    $class = "\RockMatrixBlock\\$name";
-    $block = new $class();
-    return $block;
+    return $this->blocks[$name];
   }
 
   /**
@@ -90,9 +78,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     // migrate all blocks
     foreach($this->blocks as $name=>$file) {
       $block = $this->getBlock($name);
-      db($block, $name);
       if(!$block) return;
-      db("migrate $block");
       $block->migrate();
     }
   }

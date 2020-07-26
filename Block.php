@@ -5,14 +5,6 @@ abstract class Block extends \ProcessWire\Page {
   const prefix = "rmblock_";
   const tags = "RockMatrix";
 
-  /** @var RockMatrix */
-  public $master;
-
-  public function __construct() {
-    parent::__construct();
-    $this->master = $this->wire->modules->get('RockMatrix');
-  }
-
   public function info() {
     $info = $this->wire(new WireData()); /** @var WireData $info */
     return $info->setArray([
@@ -20,6 +12,15 @@ abstract class Block extends \ProcessWire\Page {
       'icon' => 'cube',
     ]);
   }
+
+  public function init() {
+    // bd('init');
+    // $this->addHookAfter("saveReady", $this, "saveReady");
+  }
+
+  // public function saveReady($event) {
+  //   bd($event, 'Block is ready to save!');
+  // }
 
   /**
    * Block Migrations
@@ -31,8 +32,9 @@ abstract class Block extends \ProcessWire\Page {
    * @return bool
    */
   public function isAllowed($field, $page) {
+    return true;
     // get allowed blocks for page+field
-    $allowed = $this->master->getAllowedBlocks($field, $page);
-    return in_array($this->className, $allowed);
+    // $allowed = $this->master->getAllowedBlocks($field, $page);
+    // return in_array($this->className, $allowed);
   }
 }

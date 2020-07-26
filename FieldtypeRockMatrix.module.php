@@ -58,43 +58,38 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
      * Create new page for given field
      * @return string
      */
-    public function newPage($fieldPage, $field, $block) {
+    public function newPage($fieldPage, $field, $blockname) {
       if(!$fieldPage) throw new WireException("Invalid page");
       if(!$field) throw new WireException("Invalid field");
-      if(!$block) throw new WireException("Invalid block");
+      if(!$blockname) throw new WireException("Invalid block");
 
       // first we check the block
-      $block = $this->master->getBlock($block);
+      $block = $this->master->getBlock($blockname);
       if(!$block) throw new WireException("Invalid block");
       if(!$block->isAllowed($field, $fieldPage)) {
         throw new WireException("Block not allowed");
       }
       $tpl = $block->info()->tpl;
-      bd($tpl);
+      $tpl = $this->wire->templates->get($tpl);
+      if(!$tpl OR !$tpl->id) {
+        throw new WireException("Invalid template for block $blockname");
+      }
 
+      // get the template class
+      // this ensures that if the page is a special page (like a report)
+      // the correct constructor or saveReady hooks are fired
+      // eg the Report gets the correct page name and title on creation
+      $class = "\ProcessWire\Page";
 
-      // // get template of this block
-      // // $tpl =
+      // create new page
+      $page = $this->wire(new $class()); /** @var Page $page */
+      $page->template = 'rmblock_magsection';
+      $page->parent = $fieldPage; // TODO set correct parent
+      $page->save();
 
-      // // TODO sanitization and access checks
-      // if(!$tpl) throw new WireException("Invalid Template");
-
-
-      // // get the template class
-      // // this ensures that if the page is a special page (like a report)
-      // // the correct constructor or saveReady hooks are fired
-      // // eg the Report gets the correct page name and title on creation
-      // $class = $tpl->pageClass ?: "Page";
-
-      // // create new page
-      // $page = $this->wire(new $class()); /** @var Page $page */
-      // $page->template = $tpl;
-      // $page->parent = $fieldPage;
-      // $page->save();
-
-      // // ajax: return markup
-      // if($this->config->ajax) return "ajax! $page";
-      // else $this->session->redirect($page->editUrl);
+      // ajax: return markup
+      if($this->config->ajax) return "ajax! $page";
+      else $this->session->redirect($page->editUrl);
     }
 
   /** HELPER METHODS */

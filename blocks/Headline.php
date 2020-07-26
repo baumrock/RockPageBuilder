@@ -19,6 +19,7 @@ class Headline extends \RockMatrix\Block {
       'templates' => [
         self::tpl => [
           'icon' => $this->info()->icon,
+          'pageClass' => get_class($this),
           'tags' => self::tags,
         ],
       ],

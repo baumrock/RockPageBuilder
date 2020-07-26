@@ -19,8 +19,10 @@ Blocks need to extend `\RockMatrix\Block` and have namespace `RockMatrixBlock`:
 ...
 ```
 
-RockMatrix will automatically load all blocks on `ready()`, but to make RockMatrix know about your blocks you need to tell it the directory before `ready()`, eg on `init()` of your module:
+Add blocks in init():
 
 ```
-// init()
-$wire->addHookAfter
+if($matrix = $this->modules->get('RockMatrix')) {
+  $matrix->addBlocks(__DIR__."/blocks");
+}
+```

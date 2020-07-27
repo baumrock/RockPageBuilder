@@ -46,6 +46,7 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
     $form->add($fs);
     $fs->label = $this->getLabel($page);
     $fs->icon = $page->info()->icon;
+    $fs->notes = $page->info()->description;
     $fs->addClass('InputfieldRockPageEdit');
     $fs->import($this->getInputfields($page));
 

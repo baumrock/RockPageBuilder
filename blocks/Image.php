@@ -25,8 +25,8 @@ class Image extends \RockMatrix\Block {
 
     if(!$page->id) {
       $page->name = $event->pages->names()->uniqueRandomPageName(5);
-      $page->title = $page->title ?: $this->_('Beschreibung / Alternativer Bildtext');
     }
+    $page->title = $page->title ?: $this->_('Geben Sie hier ihre Bildbeschreibung oder einen alternativen Bildtext ein');
   }
 
   /**

@@ -19,11 +19,12 @@ class ProcessRockMatrix extends Process {
       'requires' => ['RockMatrix'],
       'installs' => [],
 
-      // page that you want created to execute this module
+      'permission' => 'page-edit',
       'page' => [
         'name' => self::pageName,
-        'parent' => 'setup',
+        'parent' => 'admin',
         'title' => 'RockMatrix',
+        'status' => ['hidden', 'locked'],
       ],
     ];
   }

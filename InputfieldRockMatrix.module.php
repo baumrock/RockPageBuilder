@@ -88,6 +88,7 @@ class InputfieldRockMatrix extends InputfieldTextarea {
     /** @var InputfieldRockPageEdit $f */
     $f = $this->wire('modules')->get('InputfieldRockPageEdit');
     $f->editPage = $page;
+    $f->collapsed = Inputfield::collapsedYes;
     return $f;
   }
 
@@ -186,7 +187,7 @@ class InputfieldRockMatrix extends InputfieldTextarea {
    * Get api endpoint page
    */
   public function getEndpoint($action = null) {
-    $page = $this->pages->get("parent=22,name=".ProcessRockMatrix::pageName);
+    $page = $this->pages->get("parent=2,name=".ProcessRockMatrix::pageName);
     return $page->url.$action;
   }
 

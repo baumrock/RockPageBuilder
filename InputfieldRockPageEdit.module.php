@@ -50,8 +50,15 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
     $fs->addClass('InputfieldRockPageEdit');
     $fs->import($this->getInputfields($page));
 
+    // set collapsed state
+    // is set in InputfieldRockMatrix::getItemInputfield
+    $fs->collapsed = $this->getCollapsedState();
+
     foreach($fs->children() as $f) {
       $f->name .= $form->suffix;
+
+      // open wrapper if field has an error
+      if(count($f->getErrors())) $fs->collapsed = Inputfield::collapsedNo;
 
       // changes for file inputfields
       if(!$f instanceof InputfieldFile) continue;
@@ -65,6 +72,13 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
       $f->wrapAttr('data-editUrl', $page->editUrl());
     }
     return $form;
+  }
+
+  /**
+   * Get collapsed state of matrix item
+   */
+  public function getCollapsedState() {
+    return $this->collapsed;
   }
 
   /**

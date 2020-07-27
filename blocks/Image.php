@@ -15,7 +15,18 @@ class Image extends \RockMatrix\Block {
   }
 
   public function init() {
+    $this->addHookAfter("Pages::saveReady", $this, "saveReady");
     $this->addHookAfter("InputfieldRockPageEdit::getInputfields", $this, "buildFormMatrix");
+  }
+
+  public function saveReady(HookEvent $event) {
+    $page = $event->arguments(0);
+    if($page->template != self::tpl) return;
+
+    if(!$page->id) {
+      $page->name = $event->pages->names()->uniqueRandomPageName(5);
+      $page->title = $page->title ?: $this->_('Beschreibung / Alternativer Bildtext');
+    }
   }
 
   /**
@@ -26,6 +37,11 @@ class Image extends \RockMatrix\Block {
     $form = $event->return;
     $editPage = $event->object->editPage;
     if($editPage->template != self::tpl) return;
+
+    if($f = $form->get('title')) {
+      $f->label = $this->_('Beschreibung / Alternativer Bildtext');
+      $f->notes = $this->_('Important for SEO and accessibility (eg. screen readers).');
+    }
 
     if($f = $form->get(self::field)) {
       $f->label = $this->_('Image');
@@ -43,6 +59,7 @@ class Image extends \RockMatrix\Block {
           "noLang" => 1,
           "descriptionRows" => 0,
           'tags' => self::tags,
+          'required' => 1,
         ],
       ],
       'templates' => [
@@ -53,8 +70,8 @@ class Image extends \RockMatrix\Block {
           'noChildren' => 1,
           'noSettings' => 1,
           'fields' => [
-            'title',
             self::field,
+            'title',
           ],
         ],
       ],

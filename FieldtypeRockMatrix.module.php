@@ -87,6 +87,9 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
       $page->parent = $fieldPage; // TODO set correct parent
       $page->save();
 
+      // save reference to the fieldPage in metadata
+      $page->meta("RockMatrixPage", (int)(string)$fieldPage);
+
       // ajax: return markup
       if($this->config->ajax) return "ajax! $page";
       else $this->session->redirect($page->editUrl);

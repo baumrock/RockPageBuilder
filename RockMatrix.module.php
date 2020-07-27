@@ -30,6 +30,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   public function init() {
     $this->addBlocks(__DIR__."/blocks");
+    $this->addHook("Page::getRockMatrixPage", $this, "getRockMatrixPage");
   }
 
   /**
@@ -52,6 +53,14 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     }
     ksort($blocks);
     $this->blocks = $blocks;
+  }
+
+  /**
+   * Get matrix page of current rockmatrix item
+   */
+  public function getRockMatrixPage(HookEvent $event) {
+    $id = $event->object->meta('RockMatrixPage');
+    $event->return = $event->pages->get($id);
   }
 
   /**

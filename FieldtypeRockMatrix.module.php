@@ -4,7 +4,8 @@
  * @license Licensed under MIT
  * @link https://www.baumrock.com
  */
-class FieldtypeRockMatrix extends FieldtypeTextarea {
+require_once("RockMatrixPageArray.php");
+class FieldtypeRockMatrix extends Fieldtype {
 
   /** @var RockMatrix */
   public $master;
@@ -26,6 +27,21 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
   }
 
   /** FIELDTYPE METHODS */
+
+    public function getBlankValue(Page $page, Field $field) {
+      if($page && $field) {}
+      return new RockMatrixPageArray($page, $field);
+    }
+
+    public function ___wakeupValue(Page $page, Field $field, $value) {
+      $pages = $this->getBlankValue($page, $field);
+      $pages->wakeup($value);
+      return $pages;
+    }
+
+    public function ___sleepValue(Page $page, Field $field, $value) {
+      return $value->sleep();
+    }
 
     /**
     * Sanitize value for storage

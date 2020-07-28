@@ -4,7 +4,7 @@
  * @license Licensed under MIT
  * @link https://www.baumrock.com
  */
-class InputfieldRockMatrix extends InputfieldTextarea {
+class InputfieldRockMatrix extends Inputfield {
 
   /** @var RockMatrix */
   public $master;
@@ -60,6 +60,18 @@ class InputfieldRockMatrix extends InputfieldTextarea {
     }
     else $out .= $this->setupInfo('allowed-templates');
 
+    $out .= $this->renderInputfield();
+    return $out;
+  }
+
+  /**
+   * Render Inputfield holding data
+   * @return string
+   */
+  public function renderInputfield() {
+    $out = "<textarea class='uk-hidden' name='{$this->name}'>"
+      .$this->value->sleep()
+      ."</textarea>";
     return $out;
   }
 
@@ -68,7 +80,8 @@ class InputfieldRockMatrix extends InputfieldTextarea {
    */
   public function ___renderItems($page) {
     $out = '';
-    foreach($this->getItems($page) as $item) {
+    $items = $this->value;
+    foreach($items as $item) {
       $out .= $this->renderItem($item);
     }
     return $out;
@@ -100,41 +113,34 @@ class InputfieldRockMatrix extends InputfieldTextarea {
    *
    */
   public function ___processInput(WireInputData $input) {
-    $iteminput = $this->getIteminput($input);
+    $page = $this->process->getPage();
+    $old = $this->value;
+    $json = $input->{$this->name};
+    $new = new RockMatrixPageArray($page, $this->hasField);
+
+    // get data of hidden textarea and add pages to MatrixPageArray
+    // this ensures that only pages are added that have the reference to
+    // the current page in the meta data
+    $new->wakeup($json);
 
     // process all items
-    $items = $this->getItems($this->process->getPage());
-    foreach($items as $item) {
+    foreach($new as $item) {
+      if(!$item->editable()) {
+        $this->warning("Skipped item $item - not editable!");
+        $this->value->remove($item);
+        continue;
+      }
       $f = $this->getItemInputfield($item);
       $f->processInput($input);
     }
-  }
 
-  /**
-   * Get array of item input data having page id keys
-   * @return array
-   */
-  public function getIteminput($input) {
-    $arr = [];
-    $suffix = "_repeater";
-    foreach($input as $prop=>$val) {
-      // skip all non-repeater input
-      $i = strpos($prop, $suffix);
-      if(!$i) continue;
-
-      $field = substr($prop, 0, $i);
-      $id = substr($prop, $i+strlen($suffix));
-      if(!array_key_exists($id, $arr)) $arr[$id] = new WireInputData();
-      $arr[$id]->$field = $val;
+    // set new value
+    // changes will only be triggerd if the new json is different
+    // this means that changes to the matrix items do not trigger a change!
+    if(!$old->equals($new)) {
+      $this->trackChange('value');
+      $this->value = $new;
     }
-    return $arr;
-  }
-
-  /**
-   * Get matrix items of this page
-   */
-  public function ___getItems($page) {
-    return $page->children; // TODO make dynamic
   }
 
   /**

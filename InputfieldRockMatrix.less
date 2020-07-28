@@ -1,29 +1,42 @@
+// quick fix for showing inputfield outline
+// color should not be hardcoded but will likely never change
+@border-color: #eeeeee;
+
 .InputfieldRockMatrix {
-  .InputfieldRockPageEdit {
-    margin-top: 10px;
-    > .InputfieldHeader {
-      padding: 2px 5px;
-    }
-    > .InputfieldContent {
-      padding: 4px;
-      padding-top: 0;
 
-      > .notes {
-        margin-top: 0;
-        border-left: 0;
-        padding-left: 0;
-        padding-top: 3px;
+  ul.rm-draggable {
+    li.InputfieldRockPageEdit {
+      margin-top: 10px;
+
+      > .InputfieldHeader {
+        padding: 2px 5px;
       }
+      > .InputfieldContent {
+        padding: 4px;
+        padding-top: 0;
 
-      > ul.Inputfields {
-        > li.Inputfield {
-          &.InputfieldRepeaterItem {
-            // quick fix for showing inputfield outline
-            // color should not be hardcoded but will likely never change
-            outline: 1px solid #eeeeee;
+        > .notes {
+          margin-top: 0;
+          border-left: 0;
+          padding-left: 0;
+          padding-top: 3px;
+        }
+
+        > ul.Inputfields {
+          > li.Inputfield {
+            &.InputfieldRepeaterItem {
+              outline: 1px solid @border-color;
+            }
           }
         }
       }
     }
   }
+}
+
+// uikit sortable dragged item
+.rm-draggable.uk-sortable-drag {
+  outline: 1px dashed darken(@border-color, 20%) !important;
+  background: rgba(255,255,255,0.5);
+  > * { display: none; }
 }

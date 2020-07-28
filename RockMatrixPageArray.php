@@ -18,7 +18,7 @@ class RockMatrixPageArray extends PageArray {
   public function wakeup($value) {
     $val = json_decode($value);
     if(!$val) return;
-    foreach($val->items as $item) $this->addPage($item);
+    foreach($val->items as $item) $this->addPage($item->id);
   }
 
   /**
@@ -32,7 +32,9 @@ class RockMatrixPageArray extends PageArray {
     // loop all items of this pagearray
     foreach($this as $p) {
       // add the page id to the items array
-      $arr['items'][] = $p->id;
+      $arr['items'][] = (object)[
+        'id' => $p->id,
+      ];
     }
 
     return json_encode($arr);

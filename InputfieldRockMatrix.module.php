@@ -40,6 +40,9 @@ class InputfieldRockMatrix extends Inputfield {
     $less = $this->modules->get('RockLESS'); /** @var RockLESS $less */
     if($less) $less->addToConfig($file);
     else $this->config->styles->add("$file.css");
+
+    // load vex
+    $this->wire('modules')->get('JqueryUI')->use('vex');
   }
 
   /**
@@ -50,7 +53,9 @@ class InputfieldRockMatrix extends Inputfield {
       return "This field is only supported on page edit";
     }
     $page = $this->process->getPage();
-    $out = $this->renderItems($page);
+    $out = "<div class='rm-items'>"
+      .$this->renderItems($page)
+      ."</div>";
 
     // render buttons to add a new page
     $buttons = $this->renderButtons($page);
@@ -61,6 +66,7 @@ class InputfieldRockMatrix extends Inputfield {
     else $out .= $this->setupInfo('allowed-templates');
 
     $out .= $this->renderInputfield();
+    $out .= $this->renderInitTag();
     return $out;
   }
 
@@ -69,9 +75,18 @@ class InputfieldRockMatrix extends Inputfield {
    * @return string
    */
   public function renderInputfield() {
-    $out = "<textarea class='uk-hidden' name='{$this->name}'>"
+    $out = "<textarea class='uk-hidden2 rm-data' name='{$this->name}'>"
       .$this->value->sleep()
       ."</textarea>";
+    return $out;
+  }
+
+  /**
+   * Render init tag
+   * @return string
+   */
+  public function renderInitTag() {
+    $out = "<script>$('#wrap_Inputfield_{$this->name}').trigger('init');</script>";
     return $out;
   }
 
@@ -100,6 +115,7 @@ class InputfieldRockMatrix extends Inputfield {
   public function getItemInputfield($page) {
     /** @var InputfieldRockPageEdit $f */
     $f = $this->wire('modules')->get('InputfieldRockPageEdit');
+    $f->addClass('rm-item');
     $f->editPage = $page;
     $f->collapsed = Inputfield::collapsedYes;
     return $f;

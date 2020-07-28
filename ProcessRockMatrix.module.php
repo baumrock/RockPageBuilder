@@ -52,7 +52,7 @@ class ProcessRockMatrix extends Process {
     if(!$field) throw new WireException("Invalid field");
 
     // create the new page
-    // ajax: return the markup of the new page edit inputfield
+    // ajax: return JSON response
     // page edit: redirect to new page edit screen
     return $field->type->newPage($fieldPage, $field, $block);
   }

@@ -107,7 +107,11 @@ class FieldtypeRockMatrix extends Fieldtype {
       $page->meta("RockMatrixPage", (int)(string)$fieldPage);
 
       // ajax: return markup
-      if($this->config->ajax) return "ajax! $page";
+      if($this->config->ajax) {
+        return json_encode([
+          'page' => $page->id,
+        ]);
+      }
       else $this->session->redirect($page->editUrl);
     }
 

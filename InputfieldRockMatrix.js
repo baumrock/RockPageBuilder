@@ -1,18 +1,84 @@
-function RockMatrix() {
+function _RockMatrix() {
 }
 
 // DOM helpers
 
   // return the field's root element
-  RockMatrix.prototype.$root = function(e) {
-    let $el = $(e.target);
+  _RockMatrix.prototype.$root = function(e) {
+    // get the root inputfield element
+    let $el = $(e.target); // e is an action, so get target
     return $el.closest('.InputfieldRockMatrix');
+  }
+
+  // return all item's list elements
+  _RockMatrix.prototype.$items = function(e) {
+    return this.$root(e).find('.rm-items > ul > li.rm-item');
+  }
+
+  // return the items container
+  _RockMatrix.prototype.$itemsContainer = function(e) {
+    return this.$root(e).find('.rm-items');
+  }
+
+  // textarea holding field data
+  _RockMatrix.prototype.$textarea = function(e) {
+    return this.$root(e).find('textarea.rm-data');
+  }
+
+// item modifications
+
+  _RockMatrix.prototype.addItem = function(e, page) {
+    let $root = this.$root(e);
+    $root.trigger('changed');
+  }
+
+// helpers
+
+  _RockMatrix.prototype.getData = function(e) {
+    let data = {}
+    data.items = [];
+    $.each(RockMatrix.$items(e), function(i, el) {
+      let item = RockMatrix.getItemData(el);
+      data.items.push(item);
+    });
+    return data;
+  }
+
+  _RockMatrix.prototype.getItemData = function(el) {
+    return {
+      id: $(el).data('page'),
+      changed: !!$(el).find('.InputfieldStateChanged').length,
+    };
+  }
+
+  _RockMatrix.prototype.makeSortable = function(e) {
+    let container = this.$itemsContainer(e)[0];
+
+    // longer animation duration prevents flicker
+    UIkit.sortable(container, {animation: 500});
+
+    // add class to every sortable element
+    // to make it addressable via css
+    $.each(this.$items(e), function(i, el) {
+      $(el).parent().addClass('rm-draggable');
+    });
+  }
+
+  _RockMatrix.prototype.setTextarea = function(e) {
+    let $text = this.$textarea(e);
+    $text.val(JSON.stringify(this.getData(e))).change();
   }
 
 // event handlers
 
+  // change triggerd
+  _RockMatrix.prototype.changed = function(e) {
+    RockMatrix.makeSortable(e);
+    RockMatrix.setTextarea(e);
+  }
+
   // click on add new item button
-  RockMatrix.prototype.clickAdd = function(e) {
+  _RockMatrix.prototype.clickAdd = function(e) {
     e.preventDefault();
 
     // get link
@@ -20,12 +86,39 @@ function RockMatrix() {
     let href = $a.attr('href');
 
     // send ajax request
-    $.get(href, function(html) {
-      alert(html);
+    $.getJSON(href, function(json) {
+      if(json.error) ProcessWire.alert(json.message);
+      else RockMatrix.addItem(e, json.page);
+    }).fail(function(json) {
+      ProcessWire.alert('AJAX Error');
     });
   }
 
-var RockMatrix = new RockMatrix();
+  // init
+  _RockMatrix.prototype.init = function(e) {
+    this.$root(e).trigger('changed');
+  }
+
+var RockMatrix = new _RockMatrix();
 
 // listeners
-$(document).on('click', '.InputfieldRockMatrix .rm-buttons a', RockMatrix.clickAdd)
+
+  // init the matrix
+  $(document).on('init', '.InputfieldRockMatrix', function(e) {
+    RockMatrix.init(e);
+  });
+
+  // add a new matrix item
+  $(document).on('click', '.InputfieldRockMatrix .rm-buttons a', function(e) {
+    RockMatrix.clickAdd(e);
+  });
+
+  // change event triggered on root element
+  $(document).on('changed', '.InputfieldRockMatrix', function(e) {
+    RockMatrix.changed(e);
+  });
+
+  // items sort oder changed
+  $(document).on('stop', '.rm-items', function(e) {
+    RockMatrix.changed(e);
+  });

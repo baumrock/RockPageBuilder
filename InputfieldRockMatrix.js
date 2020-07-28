@@ -37,9 +37,13 @@ function _RockMatrix() {
   _RockMatrix.prototype.getData = function(e) {
     let data = {}
     data.items = [];
+    data.changedItems = [];
     $.each(RockMatrix.$items(e), function(i, el) {
       let item = RockMatrix.getItemData(el);
       data.items.push(item);
+
+      let changedItems = $(el).find('.InputfieldStateChanged').length;
+      if(changedItems) data.changedItems.push(item.id);
     });
     return data;
   }
@@ -47,7 +51,6 @@ function _RockMatrix() {
   _RockMatrix.prototype.getItemData = function(el) {
     return {
       id: $(el).data('page'),
-      changed: !!$(el).find('.InputfieldStateChanged').length,
     };
   }
 
@@ -121,4 +124,9 @@ var RockMatrix = new _RockMatrix();
   // items sort oder changed
   $(document).on('stop', '.rm-items', function(e) {
     RockMatrix.changed(e);
+  });
+
+  // monitor all inputfields in a rockmatrix field
+  $(document).on('change', '.rm-items input, .rm-items textarea', function(e) {
+    setTimeout(function() { RockMatrix.changed(e); });
   });

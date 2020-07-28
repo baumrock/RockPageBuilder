@@ -139,13 +139,21 @@ class InputfieldRockMatrix extends Inputfield {
     // the current page in the meta data
     $new->wakeup($json);
 
-    // process all items
+    // process all changed items
+    $itemChanged = false;
     foreach($new as $item) {
+      // only process changed items
+      if(!$new->itemChanged($item)) continue;
+
+      // check if item is editable by current user
       if(!$item->editable()) {
         $this->warning("Skipped item $item - not editable!");
         $this->value->remove($item);
         continue;
       }
+
+      // all fine, process input
+      $itemChanged = true;
       $f = $this->getItemInputfield($item);
       $f->processInput($input);
     }
@@ -153,8 +161,17 @@ class InputfieldRockMatrix extends Inputfield {
     // set new value
     // changes will only be triggerd if the new json is different
     // this means that changes to the matrix items do not trigger a change!
-    if(!$old->equals($new)) {
+    if(!$old->equals($new) OR $itemChanged) {
       $this->trackChange('value');
+      $new->changed = time(); // update timestamp of last change
+
+      // trigger a change on the pagearray
+      // this must be triggered manually because the pagearray does not
+      // know about changes that happen on it's pages
+      // a pagearray does only track added/removed events
+      $this->value->trackChange('rockmatrix-item-changed');
+
+      // set new value
       $this->value = $new;
     }
   }

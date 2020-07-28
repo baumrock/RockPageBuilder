@@ -1,20 +1,21 @@
-.InputfieldRockMatrix ul.rm-draggable li.InputfieldRockPageEdit {
+.InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item {
   margin-top: 10px;
 }
-.InputfieldRockMatrix ul.rm-draggable li.InputfieldRockPageEdit > .InputfieldHeader {
+.InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item > .InputfieldHeader {
   padding: 2px 5px;
+  cursor: move;
 }
-.InputfieldRockMatrix ul.rm-draggable li.InputfieldRockPageEdit > .InputfieldContent {
+.InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item > .InputfieldContent {
   padding: 4px;
   padding-top: 0;
 }
-.InputfieldRockMatrix ul.rm-draggable li.InputfieldRockPageEdit > .InputfieldContent > .notes {
+.InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item > .InputfieldContent > .notes {
   margin-top: 0;
   border-left: 0;
   padding-left: 0;
   padding-top: 3px;
 }
-.InputfieldRockMatrix ul.rm-draggable li.InputfieldRockPageEdit > .InputfieldContent > ul.Inputfields > li.Inputfield.InputfieldRepeaterItem {
+.InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item > .InputfieldContent > ul.Inputfields > li.Inputfield.InputfieldRepeaterItem {
   outline: 1px solid #eeeeee;
 }
 .rm-draggable.uk-sortable-drag {

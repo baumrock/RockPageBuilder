@@ -57,8 +57,15 @@ function _RockMatrix() {
   _RockMatrix.prototype.makeSortable = function(e) {
     let container = this.$itemsContainer(e)[0];
 
-    // longer animation duration prevents flicker
-    UIkit.sortable(container, {animation: 500});
+    // init uikit sortable on container
+    UIkit.sortable(container, {
+      // longer animation duration prevents flicker
+      animation: 500,
+
+      // set the handle to the header
+      // this ensures that other drag&drop features don't break (eg images)
+      handle: '.InputfieldHeader',
+    });
 
     // add class to every sortable element
     // to make it addressable via css

@@ -4,28 +4,31 @@
 
 .InputfieldRockMatrix {
 
-  ul.rm-draggable {
-    li.InputfieldRockPageEdit {
-      margin-top: 10px;
+  div.rm-items {
+    > ul.rm-draggable {
+      > li.rm-item {
+        margin-top: 10px;
 
-      > .InputfieldHeader {
-        padding: 2px 5px;
-      }
-      > .InputfieldContent {
-        padding: 4px;
-        padding-top: 0;
-
-        > .notes {
-          margin-top: 0;
-          border-left: 0;
-          padding-left: 0;
-          padding-top: 3px;
+        > .InputfieldHeader {
+          padding: 2px 5px;
+          cursor: move;
         }
+        > .InputfieldContent {
+          padding: 4px;
+          padding-top: 0;
 
-        > ul.Inputfields {
-          > li.Inputfield {
-            &.InputfieldRepeaterItem {
-              outline: 1px solid @border-color;
+          > .notes {
+            margin-top: 0;
+            border-left: 0;
+            padding-left: 0;
+            padding-top: 3px;
+          }
+
+          > ul.Inputfields {
+            > li.Inputfield {
+              &.InputfieldRepeaterItem {
+                outline: 1px solid @border-color;
+              }
             }
           }
         }

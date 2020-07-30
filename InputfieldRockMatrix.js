@@ -1,6 +1,7 @@
 "use strict";
 
 function RockMatrix() {
+  this.timer;
 }
 
 // DOM helpers
@@ -84,8 +85,14 @@ function RockMatrix() {
 
   // change triggerd
   RockMatrix.prototype.changed = function(e) {
-    this.makeSortable(e);
-    this.setTextarea(e);
+    let rm = this;
+    clearTimeout(this.timer);
+    // 10ms debounce for all changes
+    this.timer = setTimeout(function() {
+      rm.makeSortable(e);
+      rm.setTextarea(e);
+      console.log('changed');
+    }, 5);
   }
 
   // click on add new item button
@@ -107,6 +114,12 @@ function RockMatrix() {
 
   // init
   RockMatrix.prototype.init = function(e) {
+    this.$root(e).trigger('changed');
+    this.$root(e).trigger('changed');
+    this.$root(e).trigger('changed');
+    this.$root(e).trigger('changed');
+    this.$root(e).trigger('changed');
+    this.$root(e).trigger('changed');
     this.$root(e).trigger('changed');
   }
 
@@ -137,4 +150,9 @@ var RockMatrix = new RockMatrix();
   // monitor all inputfields in a rockmatrix field
   $(document).on('change', '.rm-items input, .rm-items textarea', function(e) {
     setTimeout(function() { RockMatrix.changed(e); });
+  });
+
+  // monitor inputfield toggles
+  $(document).on('opened closed', '.Inputfield.rm-item', function(e) {
+    RockMatrix.changed(e);
   });

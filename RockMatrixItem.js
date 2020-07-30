@@ -17,5 +17,6 @@ function RockMatrixItem(el) {
   RockMatrixItem.prototype.getJSON = function() {
     return {
       id: this.$.data('page'),
+      open: !this.$.hasClass('InputfieldStateCollapsed'),
     };
   }

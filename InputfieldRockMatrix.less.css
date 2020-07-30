@@ -1,9 +1,17 @@
 .InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item {
+  transition: outline ease-in-out 0.5s;
   margin-top: 10px;
 }
 .InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item > .InputfieldHeader {
   padding: 2px 5px;
   cursor: move;
+}
+.InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item > .InputfieldHeader .rm-actions {
+  float: right;
+  margin-right: 5px;
+}
+.InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item > .InputfieldHeader .rm-actions > .rm-action {
+  margin-right: 10px;
 }
 .InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item > .InputfieldContent {
   padding: 4px;
@@ -17,6 +25,23 @@
 }
 .InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item > .InputfieldContent > ul.Inputfields > li.Inputfield.InputfieldRepeaterItem {
   outline: 1px solid #eeeeee;
+}
+.InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item.rm-trash {
+  outline: 1px solid #ff7e7e;
+}
+.InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item.rm-trash > .InputfieldContent,
+.InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item.rm-trash > .InputfieldHeader {
+  background: #ffe4e4;
+}
+.InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item.rm-trash > .InputfieldContent > p.notes,
+.InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item.rm-trash > .InputfieldHeader > p.notes {
+  background-color: #ffe4e4;
+}
+.InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item.rm-trash > .InputfieldHeader .rm-action-trash {
+  display: none;
+}
+.InputfieldRockMatrix div.rm-items > ul.rm-draggable > li.rm-item:not(.rm-trash) > .InputfieldHeader .rm-action-untrash {
+  display: none;
 }
 .rm-draggable.uk-sortable-drag {
   outline: 1px dashed #bbbbbb !important;

@@ -77,6 +77,9 @@ class RockMatrixPageArray extends PageArray {
       return;
     }
 
+    // Dont add pages that are in the trash
+    if($page->isTrash()) return;
+
     $this->add($page);
     return $page;
   }

@@ -11,10 +11,7 @@ function RockMatrix() {
   RockMatrix.prototype.$root = function(e) {
     let el = e.target; // param = event
     if(!el) el = e; // param = dom element
-
-    // get the root inputfield element
-    let $el = $(e.target); // e is an action, so get target
-    return $el.closest('.InputfieldRockMatrix');
+    return $(el).closest('.InputfieldRockMatrix');
   }
 
   // return all item's list elements
@@ -47,16 +44,29 @@ function RockMatrix() {
     $root.trigger('changed');
   }
 
+  RockMatrix.prototype.fire = function($action) {
+    let action = $action.data('action');
+    let item = this.getItem($action[0]);
+
+    if(action === 'trash') item.trash();
+    if(action === 'untrash') item.untrash();
+  }
+
   RockMatrix.prototype.getData = function(e) {
     let data = {}
     data.items = RockMatrix.getItems(e, true);
     return data;
   }
 
+  RockMatrix.prototype.getItem = function(e) {
+    return new RockMatrixItem(e);
+  }
+
   RockMatrix.prototype.getItems = function(e, json) {
     let items = [];
+    let rm = this;
     $.each(RockMatrix.$items(e), function(i, el) {
-      let item = new RockMatrixItem(el);
+      let item = rm.getItem(el);
       if(json) items.push(item.getJSON());
       else items.push(item);
     });
@@ -194,4 +204,14 @@ var RockMatrix = new RockMatrix();
   // monitor inputfield toggles
   $(document).on('opened closed', '.Inputfield.rm-item', function(e) {
     RockMatrix.changed(e);
+  });
+
+  // monitor action clicks
+  $(document).on('click', '.rm-action', function(e) {
+    let $action = $(e.target).closest('.rm-action');
+    RockMatrix.fire($action);
+
+    // dont toggle field
+    e.preventDefault();
+    return false;
   });

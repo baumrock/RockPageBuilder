@@ -166,7 +166,14 @@ class InputfieldRockMatrix extends Inputfield {
     // get data of hidden textarea and add pages to MatrixPageArray
     // this ensures that only pages are added that have the reference to
     // the current page in the meta data
+    $raw = json_decode($json);
     $new->wakeup($json);
+
+    // get raw json data
+    $_items = [];
+    $raw = json_decode($json);
+    foreach($raw->items as $v) $_items[$v->id] = $v;
+    $raw->items = $_items;
 
     // process all changed items
     $itemChanged = false;
@@ -177,8 +184,15 @@ class InputfieldRockMatrix extends Inputfield {
       // check if item is editable by current user
       if(!$item->editable()) {
         $this->warning("Skipped item $item - not editable!");
-        $this->value->remove($item);
+        $new->remove($item);
         continue;
+      }
+
+      // remove trashed items
+      $_item = $_items[$item->id];
+      if($_item->trash) {
+        $item->trash();
+        $new->remove($item);
       }
 
       // set changed flag if item changed

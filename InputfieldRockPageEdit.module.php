@@ -44,6 +44,8 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
     $r = $this->modules->get('InputfieldRepeater');
 
     $form->add($fs);
+    $fs->rmitem = $page->id;
+    $fs->id = "rpe_".uniqid();
     $fs->label = $this->getLabel($page);
     $fs->icon = $page->info()->icon;
     $fs->notes = $page->info()->description;
@@ -55,6 +57,11 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
     // set collapsed state
     // is set in InputfieldRockMatrix::getItemInputfield
     $fs->collapsed = $this->getCollapsedState();
+
+    // set additional markup
+    $fs->setMarkup([
+      "id={$fs->id}" => $this->getMarkupArray($fs),
+    ]);
 
     foreach($fs->children() as $f) {
       $f->name .= $form->suffix;
@@ -74,6 +81,54 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
       $f->wrapAttr('data-editUrl', $page->editUrl());
     }
     return $form;
+  }
+
+  /**
+   * Get markup string for wrapper
+   * @return string
+   */
+  public function getMarkupArray($wrapper) {
+    $markup = $wrapper->getMarkup();
+
+    // actions
+    $markup['item_label'] = str_replace(
+      "{out}",
+      "{out}".$this->renderActions($wrapper),
+      $markup['item_label']
+    );
+
+    return $markup;
+  }
+
+  /**
+   * Render actions for this item
+   */
+  public function renderActions($wrapper) {
+    $page = $this->wire->pages->get($wrapper->rmitem);
+    $out = "<span class='rm-actions'>";
+    $out .= $this->renderAction('trash', [
+      'label' => __('Mark for deletion'),
+    ]);
+    $out .= $this->renderAction('untrash', [
+      'label' => __('Undo deletion'),
+      'icon' => 'undo',
+    ]);
+    $out .= "</span>";
+    return $out;
+  }
+
+
+  public function renderAction($action, $data) {
+    $opt = $this->wire(new WireData()); /** @var WireData $opt */
+    $opt->setArray($data);
+    $icon = $opt->icon ?: $action;
+    return
+      "<a href='#'
+        class='rm-action rm-action-$action'
+        data-action='$action'
+        title='{$opt->label}'>"
+      ."<i class='fa fa-$icon'></i>"
+      ."</a>";
   }
 
   /**

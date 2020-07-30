@@ -1,16 +1,27 @@
 // quick fix for showing inputfield outline
 // color should not be hardcoded but will likely never change
 @border-color: #eeeeee;
+@color-trash: #ffe4e4;
 
 .InputfieldRockMatrix {
   div.rm-items {
     > ul.rm-draggable {
       > li.rm-item {
+        transition: outline ease-in-out 0.5s;
         margin-top: 10px;
 
         > .InputfieldHeader {
           padding: 2px 5px;
           cursor: move;
+
+          // item action buttons
+          .rm-actions {
+            float: right;
+            margin-right: 5px;
+            > .rm-action {
+              margin-right: 10px;
+            }
+          }
         }
         > .InputfieldContent {
           padding: 4px;
@@ -30,6 +41,22 @@
               }
             }
           }
+        }
+
+        // trashed item
+        &.rm-trash {
+          outline: 1px solid darken(@color-trash, 20%);
+          > .InputfieldContent, > .InputfieldHeader {
+            background: @color-trash;
+            > p.notes { background-color: @color-trash; }
+          }
+
+          // dont show trash icon
+          > .InputfieldHeader .rm-action-trash { display: none; }
+        }
+        &:not(.rm-trash) {
+          // dont show restore icon
+          > .InputfieldHeader .rm-action-untrash { display: none; }
         }
       }
     }

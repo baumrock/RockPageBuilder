@@ -64,8 +64,8 @@ function RockMatrix() {
   }
 
   RockMatrix.prototype.initItem = function($item) {
-    InputfieldsInit($item);
-    $item.find('.InputfieldHasFileList').trigger('reloaded');
+    InputfieldsInit($item); // init inputfield
+    $item.find('.InputfieldHasFileList').trigger('reloaded'); // init file fields
   }
 
   RockMatrix.prototype.makeSortable = function(e) {

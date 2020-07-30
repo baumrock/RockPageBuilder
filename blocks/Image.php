@@ -1,5 +1,8 @@
 <?php namespace RockMatrixBlock;
 use ProcessWire\HookEvent;
+use ProcessWire\InputfieldFile;
+use ProcessWire\InputfieldImage;
+
 class Image extends \RockMatrix\Block {
 
   const tpl = self::prefix."image";
@@ -59,7 +62,15 @@ class Image extends \RockMatrix\Block {
           "noLang" => 1,
           "descriptionRows" => 0,
           'tags' => self::tags,
-          'required' => 1,
+          "maxFiles" => 1,
+
+          // single element or false
+          "outputFormat" => 2,
+
+          // do NOT set field required
+          // a required field makes it impossible to delete an image
+          // better not set required and check if image exists on frontend
+          'required' => 0,
         ],
       ],
       'templates' => [

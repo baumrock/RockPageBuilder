@@ -146,8 +146,8 @@ class InputfieldRockMatrix extends Inputfield {
     // process all changed items
     $itemChanged = false;
     foreach($new as $item) {
-      // only process changed items
-      if(!$new->itemChanged($item)) continue;
+      // we process all items to make sure that required state warnings
+      // show up after saving the page!
 
       // check if item is editable by current user
       if(!$item->editable()) {
@@ -156,8 +156,10 @@ class InputfieldRockMatrix extends Inputfield {
         continue;
       }
 
+      // set changed flag if item changed
+      if($new->itemChanged($item)) $itemChanged = true;
+
       // all fine, process input
-      $itemChanged = true;
       $f = $this->getItemInputfield($item);
       $f->processInput($input);
     }
@@ -167,7 +169,6 @@ class InputfieldRockMatrix extends Inputfield {
     // this means that changes to the matrix items do not trigger a change!
     if(!$old->equals($new) OR $itemChanged) {
       $this->trackChange('value');
-      $new->changed = time(); // update timestamp of last change
 
       // trigger a change on the pagearray
       // this must be triggered manually because the pagearray does not

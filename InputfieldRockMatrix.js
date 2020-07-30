@@ -7,6 +7,9 @@ function RockMatrix() {
 
   // return the field's root element
   RockMatrix.prototype.$root = function(e) {
+    let el = e.target; // param = event
+    if(!el) el = e; // param = dom element
+
     // get the root inputfield element
     let $el = $(e.target); // e is an action, so get target
     return $el.closest('.InputfieldRockMatrix');
@@ -38,22 +41,18 @@ function RockMatrix() {
 
   RockMatrix.prototype.getData = function(e) {
     let data = {}
-    data.items = [];
-    data.changedItems = [];
-    $.each(RockMatrix.$items(e), function(i, el) {
-      let item = RockMatrix.getItemData(el);
-      data.items.push(item);
-
-      let changedItems = $(el).find('.InputfieldStateChanged').length;
-      if(changedItems) data.changedItems.push(item.id);
-    });
+    data.items = RockMatrix.getItems(e, true);
     return data;
   }
 
-  RockMatrix.prototype.getItemData = function(el) {
-    return {
-      id: $(el).data('page'),
-    };
+  RockMatrix.prototype.getItems = function(e, json) {
+    let items = [];
+    $.each(RockMatrix.$items(e), function(i, el) {
+      let item = new RockMatrixItem(el);
+      if(json) items.push(item.getJSON());
+      else items.push(item);
+    });
+    return items;
   }
 
   RockMatrix.prototype.makeSortable = function(e) {

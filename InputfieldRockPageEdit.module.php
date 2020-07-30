@@ -125,9 +125,9 @@ class InputfieldRockPageEdit extends InputfieldMarkup {
     return
       "<a href='#'
         class='rm-action rm-action-$action'
-        data-action='$action'
-        title='{$opt->label}'>"
-      ."<i class='fa fa-$icon'></i>"
+        uk-tooltip='{$opt->label}'
+        data-action='$action'>
+        <i class='fa fa-$icon'></i>"
       ."</a>";
   }
 

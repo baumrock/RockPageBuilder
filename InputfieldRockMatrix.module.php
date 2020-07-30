@@ -255,7 +255,14 @@ class InputfieldRockMatrix extends Inputfield {
       $info = $block->info();
       $b->value = $info->get('title|name');
       $b->icon = $info->icon;
+      if($info->description) $b->attr('uk-tooltip', $info->description);
       $b->href = $this->getEndpoint("new/?block={$info->name}&page=$page&field={$field->id}");
+
+      // fix issue https://github.com/processwire/processwire-issues/issues/1220
+      $b->addHookAfter("render", function($event) {
+        $out = substr($event->return, 2);
+        $event->return = "<a tabindex='-1'".$out;
+      });
     }
     else {
       // no template found

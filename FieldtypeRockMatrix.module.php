@@ -75,7 +75,8 @@ class FieldtypeRockMatrix extends Fieldtype {
      * @return string
      */
     public function newPage($fieldPage, $field, $blockname) {
-      if(!$fieldPage) throw new WireException("Invalid page");
+      $fieldPage = $this->wire->pages->get((string)$fieldPage);
+      if(!$fieldPage->id) throw new WireException("Invalid page");
       if(!$field) throw new WireException("Invalid field");
       if(!$blockname) throw new WireException("Invalid block");
 
@@ -106,10 +107,14 @@ class FieldtypeRockMatrix extends Fieldtype {
       // save reference to the fieldPage in metadata
       $page->meta("RockMatrixPage", (int)(string)$fieldPage);
 
+      // get inputfield
+      $inputfield = $this->getInputfield($fieldPage, $field);
+
       // ajax: return markup
       if($this->config->ajax) {
         return json_encode([
           'page' => $page->id,
+          'markup' => $inputfield->renderItem($page),
         ]);
       }
       else $this->session->redirect($page->editUrl);

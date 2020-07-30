@@ -121,8 +121,18 @@ class InputfieldRockMatrix extends Inputfield {
     $f = $this->wire('modules')->get('InputfieldRockPageEdit');
     $f->addClass('rm-item');
     $f->editPage = $page;
-    $f->collapsed = Inputfield::collapsedYes;
+    $f->collapsed = $this->getItemCollapsedState($page);
     return $f;
+  }
+
+  /**
+   * Get collapsed state for given page edit inputfield
+   * @return bool
+   */
+  public function getItemCollapsedState($page) {
+    return $this->config->ajax
+      ? Inputfield::collapsedNo
+      : Inputfield::collapsedYes;
   }
 
   /**

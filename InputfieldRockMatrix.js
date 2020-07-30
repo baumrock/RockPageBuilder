@@ -1,7 +1,8 @@
 "use strict";
 
 function RockMatrix() {
-  this.timer;
+  this.init = false;
+  this.changeTimer;
 }
 
 // DOM helpers
@@ -31,14 +32,20 @@ function RockMatrix() {
     return this.$root(e).find('textarea.rm-data');
   }
 
-// item modifications
+// helpers
 
-  RockMatrix.prototype.addItem = function(e, page) {
+  RockMatrix.prototype.addItem = function(e, json) {
     let $root = this.$root(e);
+    let $container = this.$itemsContainer(e);
+
+    // add empty list element
+    let $item = $(json.markup);
+    $container.append($item);
+    this.initItem($item);
+
+    // trigger change
     $root.trigger('changed');
   }
-
-// helpers
 
   RockMatrix.prototype.getData = function(e) {
     let data = {}
@@ -54,6 +61,11 @@ function RockMatrix() {
       else items.push(item);
     });
     return items;
+  }
+
+  RockMatrix.prototype.initItem = function($item) {
+    InputfieldsInit($item);
+    $item.find('.InputfieldHasFileList').trigger('reloaded');
   }
 
   RockMatrix.prototype.makeSortable = function(e) {
@@ -81,17 +93,31 @@ function RockMatrix() {
     $text.val(JSON.stringify(this.getData(e))).change();
   }
 
+  RockMatrix.prototype.spin = function($el, _cls) {
+    let cls = _cls || '';
+    let $i = $el.find('i.fa').first();
+    $i.data('tmpcls', $i.attr('class'));
+    $i.attr('class', "fa fa-spinner fa-spin "+cls);
+  }
+
+  RockMatrix.prototype.unspin = function($el) {
+    let $i = $el.find('i.fa').first();
+    $i.attr('class', $i.data('tmpcls'));
+    $i.removeAttr('tmpcls');
+  }
+
 // event handlers
 
   // change triggerd
   RockMatrix.prototype.changed = function(e) {
     let rm = this;
-    clearTimeout(this.timer);
+    clearTimeout(rm.changeTimer);
     // 10ms debounce for all changes
-    this.timer = setTimeout(function() {
+    rm.changeTimer = setTimeout(function() {
       rm.makeSortable(e);
       rm.setTextarea(e);
-      console.log('RockMatrix changed');
+      console.log(rm.init ? 'RM changed' : 'RM init');
+      rm.init = true;
     }, 5);
   }
 
@@ -102,24 +128,30 @@ function RockMatrix() {
     // get link
     let $a = $(e.target).closest('a');
     let href = $a.attr('href');
+    let rm = this;
+
+    // prevent double-click
+    if($a.find("i.fa-spin").length) {
+      console.log('prevent double click');
+      return;
+    }
+
+    // show spinner
+    rm.spin($a);
 
     // send ajax request
     $.getJSON(href, function(json) {
       if(json.error) ProcessWire.alert(json.message);
-      else this.addItem(e, json.page);
+      else rm.addItem(e, json);
     }).fail(function(json) {
       ProcessWire.alert('AJAX Error');
+    }).always(function() {
+      rm.unspin($a);
     });
   }
 
   // init
-  RockMatrix.prototype.init = function(e) {
-    this.$root(e).trigger('changed');
-    this.$root(e).trigger('changed');
-    this.$root(e).trigger('changed');
-    this.$root(e).trigger('changed');
-    this.$root(e).trigger('changed');
-    this.$root(e).trigger('changed');
+  RockMatrix.prototype.initialize = function(e) {
     this.$root(e).trigger('changed');
   }
 
@@ -129,7 +161,7 @@ var RockMatrix = new RockMatrix();
 
   // init the matrix
   $(document).on('init', '.InputfieldRockMatrix', function(e) {
-    RockMatrix.init(e);
+    RockMatrix.initialize(e);
   });
 
   // add a new matrix item

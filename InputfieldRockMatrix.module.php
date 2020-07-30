@@ -47,6 +47,8 @@ class InputfieldRockMatrix extends Inputfield {
     // load JS
     $js = $this->wire->config->urls($this)."RockMatrixItem.js";
     $this->wire->config->scripts->add($js);
+
+    $this->preloadBlockAssets();
   }
 
   /**
@@ -57,14 +59,14 @@ class InputfieldRockMatrix extends Inputfield {
       return "This field is only supported on page edit";
     }
     $page = $this->process->getPage();
-    $out = "<div class='rm-items'>"
+    $out = "<div class='rm-items uk-margin-bottom'>"
       .$this->renderItems($page)
       ."</div>";
 
     // render buttons to add a new page
     $buttons = $this->renderButtons($page);
     if($buttons) {
-      $out .= "<div class='rm-buttons-container uk-margin-top'>"
+      $out .= "<div class='rm-buttons-container'>"
         ."<small>".__('Add content').":</small><br>$buttons</div>";
     }
     else $out .= $this->setupInfo('allowed-templates');
@@ -79,10 +81,23 @@ class InputfieldRockMatrix extends Inputfield {
    * @return string
    */
   public function renderInputfield() {
-    $out = "<textarea class='uk-hidden2 rm-data' name='{$this->name}'>"
+    $out = "<textarea class='uk-hidden rm-data' name='{$this->name}'>"
       .$this->value->sleep()
       ."</textarea>";
     return $out;
+  }
+
+  public function preloadBlockAssets() {
+    $page = $this->process->getPage();
+    $blocks = $this->master->getAllowedBlocks($this, $page);
+    $nullPage = new NullPage();
+    foreach($blocks as $block) {
+      $block = $this->master->getBlock($block);
+      if(!$tpl = $block->getTpl()) continue;
+      foreach($tpl->fields as $field) {
+        $field->getInputfield($nullPage)->renderReady();
+      }
+    }
   }
 
   /**

@@ -24,9 +24,14 @@ abstract class Block extends \ProcessWire\Page {
    * @return bool
    */
   public function isAllowed($field, $page) {
+    // TODO check if block is allowed
     return true;
     // get allowed blocks for page+field
     // $allowed = $this->master->getAllowedBlocks($field, $page);
     // return in_array($this->className, $allowed);
+  }
+
+  public function getTpl() {
+    return $this->wire->templates->get($this->info()->tpl);
   }
 }

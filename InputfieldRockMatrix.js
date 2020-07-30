@@ -69,10 +69,10 @@ function RockMatrix() {
   }
 
   RockMatrix.prototype.makeSortable = function(e) {
-    let container = this.$itemsContainer(e)[0];
+    let $container = this.$itemsContainer(e);
 
     // init uikit sortable on container
-    UIkit.sortable(container, {
+    UIkit.sortable($container[0], {
       // longer animation duration prevents flicker
       animation: 500,
 
@@ -83,9 +83,16 @@ function RockMatrix() {
 
     // add class to every sortable element
     // to make it addressable via css
-    $.each(this.$items(e), function(i, el) {
-      $(el).parent().addClass('rm-draggable');
-    });
+    let $items = this.$items(e);
+    if($items.length) {
+      $container.removeClass('uk-hidden');
+      $.each($items, function(i, el) {
+        $(el).parent().addClass('rm-draggable');
+      });
+    }
+    else {
+      $container.addClass('uk-hidden');
+    }
   }
 
   RockMatrix.prototype.setTextarea = function(e) {

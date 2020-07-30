@@ -43,6 +43,10 @@ class InputfieldRockMatrix extends Inputfield {
 
     // load vex
     $this->wire('modules')->get('JqueryUI')->use('vex');
+
+    // load JS
+    $js = $this->wire->config->urls($this)."RockMatrixItem.js";
+    $this->wire->config->scripts->add($js);
   }
 
   /**

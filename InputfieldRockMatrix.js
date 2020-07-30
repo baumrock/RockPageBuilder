@@ -1,40 +1,42 @@
-function _RockMatrix() {
+"use strict";
+
+function RockMatrix() {
 }
 
 // DOM helpers
 
   // return the field's root element
-  _RockMatrix.prototype.$root = function(e) {
+  RockMatrix.prototype.$root = function(e) {
     // get the root inputfield element
     let $el = $(e.target); // e is an action, so get target
     return $el.closest('.InputfieldRockMatrix');
   }
 
   // return all item's list elements
-  _RockMatrix.prototype.$items = function(e) {
+  RockMatrix.prototype.$items = function(e) {
     return this.$root(e).find('.rm-items > ul > li.rm-item');
   }
 
   // return the items container
-  _RockMatrix.prototype.$itemsContainer = function(e) {
+  RockMatrix.prototype.$itemsContainer = function(e) {
     return this.$root(e).find('.rm-items');
   }
 
   // textarea holding field data
-  _RockMatrix.prototype.$textarea = function(e) {
+  RockMatrix.prototype.$textarea = function(e) {
     return this.$root(e).find('textarea.rm-data');
   }
 
 // item modifications
 
-  _RockMatrix.prototype.addItem = function(e, page) {
+  RockMatrix.prototype.addItem = function(e, page) {
     let $root = this.$root(e);
     $root.trigger('changed');
   }
 
 // helpers
 
-  _RockMatrix.prototype.getData = function(e) {
+  RockMatrix.prototype.getData = function(e) {
     let data = {}
     data.items = [];
     data.changedItems = [];
@@ -48,13 +50,13 @@ function _RockMatrix() {
     return data;
   }
 
-  _RockMatrix.prototype.getItemData = function(el) {
+  RockMatrix.prototype.getItemData = function(el) {
     return {
       id: $(el).data('page'),
     };
   }
 
-  _RockMatrix.prototype.makeSortable = function(e) {
+  RockMatrix.prototype.makeSortable = function(e) {
     let container = this.$itemsContainer(e)[0];
 
     // init uikit sortable on container
@@ -74,7 +76,7 @@ function _RockMatrix() {
     });
   }
 
-  _RockMatrix.prototype.setTextarea = function(e) {
+  RockMatrix.prototype.setTextarea = function(e) {
     let $text = this.$textarea(e);
     $text.val(JSON.stringify(this.getData(e))).change();
   }
@@ -82,13 +84,13 @@ function _RockMatrix() {
 // event handlers
 
   // change triggerd
-  _RockMatrix.prototype.changed = function(e) {
-    RockMatrix.makeSortable(e);
-    RockMatrix.setTextarea(e);
+  RockMatrix.prototype.changed = function(e) {
+    this.makeSortable(e);
+    this.setTextarea(e);
   }
 
   // click on add new item button
-  _RockMatrix.prototype.clickAdd = function(e) {
+  RockMatrix.prototype.clickAdd = function(e) {
     e.preventDefault();
 
     // get link
@@ -98,18 +100,18 @@ function _RockMatrix() {
     // send ajax request
     $.getJSON(href, function(json) {
       if(json.error) ProcessWire.alert(json.message);
-      else RockMatrix.addItem(e, json.page);
+      else this.addItem(e, json.page);
     }).fail(function(json) {
       ProcessWire.alert('AJAX Error');
     });
   }
 
   // init
-  _RockMatrix.prototype.init = function(e) {
+  RockMatrix.prototype.init = function(e) {
     this.$root(e).trigger('changed');
   }
 
-var RockMatrix = new _RockMatrix();
+var RockMatrix = new RockMatrix();
 
 // listeners
 

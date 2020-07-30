@@ -91,7 +91,7 @@ function RockMatrix() {
     this.timer = setTimeout(function() {
       rm.makeSortable(e);
       rm.setTextarea(e);
-      console.log('changed');
+      console.log('RockMatrix changed');
     }, 5);
   }
 

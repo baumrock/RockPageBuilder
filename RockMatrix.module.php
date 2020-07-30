@@ -10,6 +10,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   public $blocks = [];
 
+  /** @var Page */
+  public $processPage;
+
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
@@ -29,6 +32,11 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   public function init() {
+    $this->processPage = $this->wire->pages->get([
+      'template' => 'admin',
+      'parent' => 2,
+      'name' => ProcessRockMatrix::pageName,
+    ]);
     $this->addBlocks(__DIR__."/blocks");
     $this->addHook("Page::getRockMatrixPage", $this, "getRockMatrixPage");
   }
@@ -91,6 +99,11 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       if(!$block) return;
       $block->migrate();
     }
+
+    // make process page hidden
+    $this->processPage->addStatus(Page::statusHidden);
+    $this->processPage->addStatus(Page::statusLocked);
+    $this->processPage->save();
   }
 
   /**

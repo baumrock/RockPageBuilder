@@ -3,8 +3,6 @@ class RockMatrixPageArray extends PageArray {
 
   public $page;
   public $field;
-  public $changed; // timestamp of last change
-  public $changedItems = []; // array of changed items
 
   public function __construct($page, $field) {
     parent::__construct();
@@ -20,10 +18,6 @@ class RockMatrixPageArray extends PageArray {
     $val = json_decode($value);
     if(!$val) return;
     foreach($val->items as $item) $this->addPage($item->id);
-
-    // set array of changed items
-    $changedItems = property_exists($val, "changedItems") ? $val->changedItems : [];
-    if(is_array($changedItems)) $this->changedItems = $changedItems;
   }
 
   /**
@@ -33,7 +27,6 @@ class RockMatrixPageArray extends PageArray {
   public function sleep() {
     $arr = [
       'items' => [],
-      'changed' => (int)$this->changed,
     ];
     // loop all items of this pagearray
     foreach($this as $p) {
@@ -54,13 +47,6 @@ class RockMatrixPageArray extends PageArray {
     $old = $this->sleep();
     $new = $other->sleep();
     return $old === $new;
-  }
-
-  /**
-   * Check if item is in changed items array
-   */
-  public function itemChanged($item) {
-    return in_array($item->id, $this->changedItems);
   }
 
   /**

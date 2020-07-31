@@ -37,5 +37,6 @@ function RockMatrixItem(e) {
       id: this.$.data('page'),
       open: this.$.hasClass('InputfieldStateCollapsed') ? 0 : 1,
       trash: this.$.hasClass('rm-trash') ? 1 : 0,
+      changed: this.$.find('.InputfieldStateChanged').length,
     };
   }

@@ -81,7 +81,7 @@ class InputfieldRockMatrix extends Inputfield {
    * @return string
    */
   public function renderInputfield() {
-    $out = "<textarea class='uk-hidden rm-data' name='{$this->name}'>"
+    $out = "<textarea class='uk-hidden2 rm-data' name='{$this->name}'>"
       .$this->value->sleep()
       ."</textarea>";
     return $out;
@@ -93,6 +93,7 @@ class InputfieldRockMatrix extends Inputfield {
     $nullPage = new NullPage();
     foreach($blocks as $block) {
       $block = $this->master->getBlock($block);
+      if(!$block) continue;
       if(!$tpl = $block->getTpl()) continue;
       foreach($tpl->fields as $field) {
         $field->getInputfield($nullPage)->renderReady();
@@ -170,14 +171,16 @@ class InputfieldRockMatrix extends Inputfield {
     $new->wakeup($json);
 
     // get raw json data
-    $_items = [];
+    $rawitems = [];
     $raw = json_decode($json);
-    foreach($raw->items as $v) $_items[$v->id] = $v;
-    $raw->items = $_items;
+    foreach($raw->items as $v) $rawitems[$v->id] = $v;
 
     // process all changed items
     $itemChanged = false;
     foreach($new as $item) {
+      // get raw item data
+      $rawitem = $rawitems[$item->id];
+
       // we process all items to make sure that required state warnings
       // show up after saving the page!
 
@@ -189,35 +192,45 @@ class InputfieldRockMatrix extends Inputfield {
       }
 
       // remove trashed items
-      $_item = $_items[$item->id];
-      if($_item->trash) {
+      if($rawitem->trash) {
         $item->trash();
         $new->remove($item);
       }
 
+      // bd($rawitem, 'rawitem');
+
       // set changed flag if item changed
-      if($new->itemChanged($item)) $itemChanged = true;
+      $itemChanged = true;
+      // if($new->itemChanged($item)) $itemChanged = true;
+      // else continue;
 
       // all fine, process input
+      // bd($item, 'process input');
       $f = $this->getItemInputfield($item);
       $f->processInput($input);
     }
 
-    // set new value
-    // changes will only be triggerd if the new json is different
-    // this means that changes to the matrix items do not trigger a change!
-    if(!$old->equals($new) OR $itemChanged) {
-      $this->trackChange('value');
+    bd($new->each('id'), 'new ids');
+    bd($new->sleep(), 'new sleep');
+    $this->trackChange('value');
+    $this->value->trackChange('foo');
+    $this->value = $new;
+
+    // // set new value
+    // // changes will only be triggerd if the new json is different
+    // // this means that changes to the matrix items do not trigger a change!
+    // if(!$old->equals($new) OR $itemChanged) {
+      // $this->trackChange('value');
 
       // trigger a change on the pagearray
       // this must be triggered manually because the pagearray does not
       // know about changes that happen on it's pages
       // a pagearray does only track added/removed events
-      $this->value->trackChange('rockmatrix-item-changed');
+      // $this->value->trackChange('rockmatrix-item-changed');
 
       // set new value
-      $this->value = $new;
-    }
+      // $this->value = $new;
+    // }
   }
 
   /**

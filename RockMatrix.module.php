@@ -37,8 +37,32 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       'parent' => 2,
       'name' => ProcessRockMatrix::pageName,
     ]);
+
+    // load the block baseclass
+    require_once("Block.php");
     $this->addBlocks(__DIR__."/blocks");
+
     $this->addHook("Page::getRockMatrixPage", $this, "getRockMatrixPage");
+  }
+
+  /**
+   * Add a single block file
+   * @return void
+   */
+  public function addBlock($file) {
+    $blocks = $this->blocks;
+    require_once($file);
+    $name = pathinfo($file, PATHINFO_FILENAME);
+    $class = "\RockMatrixBlock\\$name";
+    try {
+      $block = new $class();
+      if(method_exists($block, "init")) $block->init();
+      $blocks[pathinfo($file, PATHINFO_FILENAME)] = $block;
+      ksort($blocks);
+      $this->blocks = $blocks;
+    } catch (\Throwable $th) {
+      $this->warning($th->getMessage());
+    }
   }
 
   /**
@@ -47,24 +71,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    */
   public function addBlocks($dir) {
     $opt = ['extensions' => ['php']];
-    $blocks = $this->blocks;
-
-    // load the block baseclass
-    require_once("Block.php");
     foreach($this->wire->files->find($dir, $opt) as $file) {
-      require_once($file);
-      $name = pathinfo($file, PATHINFO_FILENAME);
-      $class = "\RockMatrixBlock\\$name";
-      try {
-        $block = new $class();
-        if(method_exists($block, "init")) $block->init();
-        $blocks[pathinfo($file, PATHINFO_FILENAME)] = $block;
-      } catch (\Throwable $th) {
-        $this->warning($th->getMessage());
-      }
+      $this->addBlock($file);
     }
-    ksort($blocks);
-    $this->blocks = $blocks;
   }
 
   /**

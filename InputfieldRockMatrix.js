@@ -201,11 +201,6 @@ var RockMatrix = new RockMatrix();
     setTimeout(function() { RockMatrix.changed(e); });
   });
 
-  // monitor inputfield toggles
-  $(document).on('opened closed', '.Inputfield.rm-item', function(e) {
-    RockMatrix.changed(e);
-  });
-
   // monitor action clicks
   $(document).on('click', '.rm-action', function(e) {
     let $action = $(e.target).closest('.rm-action');

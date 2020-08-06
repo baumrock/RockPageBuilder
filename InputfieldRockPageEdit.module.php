@@ -6,6 +6,10 @@
  */
 class InputfieldRockPageEdit extends InputfieldMarkup {
 
+  /**
+   * The page being edited in this inputfield
+   * This is NOT the parent page edited in ProcessPageEdit
+   */
   public $editPage;
 
   public static function getModuleInfo() {

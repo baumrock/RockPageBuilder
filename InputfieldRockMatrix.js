@@ -107,7 +107,9 @@ function RockMatrix() {
 
   RockMatrix.prototype.setTextarea = function(e) {
     let $text = this.$textarea(e);
-    $text.val(JSON.stringify(this.getData(e))).change();
+    let data = this.getData(e);
+    let json = JSON.stringify(data);
+    $text.val(json).text(json).change();
   }
 
   RockMatrix.prototype.spin = function($el, _cls) {

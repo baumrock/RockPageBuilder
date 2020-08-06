@@ -69,7 +69,7 @@ class InputfieldRockMatrix extends Inputfield {
       $out .= "<div class='rm-buttons-container'>"
         ."<small>".__('Add content').":</small><br>$buttons</div>";
     }
-    else $out .= $this->setupInfo('allowed-templates', $this->hasField->name);
+    else $out .= $this->setupInfo('setup-info.php', $this->hasField->name);
 
     $out .= $this->renderInputfield();
     $out .= $this->renderInitTag();

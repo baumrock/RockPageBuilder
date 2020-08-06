@@ -1,7 +1,7 @@
 <?php namespace ProcessWire;
 /**
  * @author Bernhard Baumrock, 18.07.2020
- * @license Licensed under MIT
+ * @license COMMERCIAL DO NOT DISTRIBUTE
  * @link https://www.baumrock.com
  */
 require_once("RockMatrixPageArray.php");

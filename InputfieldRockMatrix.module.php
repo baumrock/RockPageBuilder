@@ -1,7 +1,7 @@
 <?php namespace ProcessWire;
 /**
  * @author Bernhard Baumrock, 18.07.2020
- * @license Licensed under MIT
+ * @license COMMERCIAL DO NOT DISTRIBUTE
  * @link https://www.baumrock.com
  */
 class InputfieldRockMatrix extends Inputfield {
@@ -81,7 +81,7 @@ class InputfieldRockMatrix extends Inputfield {
    * @return string
    */
   public function renderInputfield() {
-    $out = "<textarea class='uk-hidden rm-data' name='{$this->name}'>"
+    $out = "<textarea class='uk-hidden2 rm-data' name='{$this->name}'>"
       .$this->value->sleep()
       ."</textarea>";
     return $out;

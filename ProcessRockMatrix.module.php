@@ -1,7 +1,7 @@
 <?php namespace ProcessWire;
 /**
  * @author Bernhard Baumrock, 22.07.2020
- * @license Licensed under MIT
+ * @license COMMERCIAL DO NOT DISTRIBUTE
  * @link https://www.baumrock.com
  */
 class ProcessRockMatrix extends Process {

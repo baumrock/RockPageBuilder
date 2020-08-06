@@ -64,12 +64,12 @@ class InputfieldRockMatrix extends Inputfield {
       ."</div>";
 
     // render buttons to add a new page
-    $buttons = $this->renderButtons($page);
-    if($buttons) {
+    if(count($this->master->getAllowedBlocks($this, $page))) {
+      $buttons = $this->renderButtons($page);
       $out .= "<div class='rm-buttons-container'>"
         ."<small>".__('Add content').":</small><br>$buttons</div>";
     }
-    else $out .= $this->setupInfo('allowed-templates');
+    else $out .= $this->setupInfo('allowed-templates', $this->hasField->name);
 
     $out .= $this->renderInputfield();
     $out .= $this->renderInitTag();
@@ -237,8 +237,10 @@ class InputfieldRockMatrix extends Inputfield {
    * Show info to setup the field correctly
    * @return string
    */
-  public function setupInfo($what) {
-    return $this->wire->files->render(__DIR__."/info/$what");
+  public function setupInfo($what, $name) {
+    return $this->wire->files->render(__DIR__."/info/$what", [
+      'name' => $name,
+    ]);
   }
 
   /**

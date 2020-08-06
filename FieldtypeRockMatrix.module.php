@@ -96,7 +96,7 @@ class FieldtypeRockMatrix extends Fieldtype {
       // this ensures that if the page is a special page (like a report)
       // the correct constructor or saveReady hooks are fired
       // eg the Report gets the correct page name and title on creation
-      $class = $tpl->pageClass ?: "Page";
+      $class = $tpl->pageClass ?: "\\ProcessWire\\Page";
 
       // create new page
       $page = $this->wire(new $class()); /** @var Page $page */

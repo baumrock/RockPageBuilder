@@ -15,6 +15,13 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Render this block
+   */
+  public function render() {
+    return $this->className;
+  }
+
+  /**
    * Block Migrations
    */
   public function migrate() {}

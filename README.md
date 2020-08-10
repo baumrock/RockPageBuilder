@@ -27,27 +27,14 @@ $wire->addHookBefore("RockMatrix::triggerMigrations", function($event) {
 });
 ```
 
-
-
-
-
-
-
-
-
-
 ### Setting up new Blocks
 
-Blocks need to extend `\RockMatrix\Block`. To avoid naming conflicts you can use custom namespaces. See the demo folder in this module for examples.
+Blocks need to extend `\RockMatrix\Block`. To avoid naming conflicts you can use custom namespaces. See the demo folder in this module for examples. The minimum viable block is this:
 
 ```php
 <?php namespace RMBlock;
-class Headline extends \RockMatrix\Block {
+class MinimumDemo extends \RockMatrix\Block {
 }
 ```
 
-Add blocks in init():
-
-```php
-
-```
+Make sure you save the file as `MinimumDemo.php` and tell RockMatrix about that file (if it is not in an already monitored folder). Use `$mx->addBlocks('/your/dir')` as shown above.

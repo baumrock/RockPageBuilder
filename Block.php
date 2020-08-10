@@ -67,7 +67,7 @@ abstract class Block extends \ProcessWire\Page {
   /**
    * Block Migrations
    */
-  public function migrate() {
+  public function ___migrate() {
     // we always create the related template
     $this->log('Migrate '.$this->info()->name);
     $tpl = $this->rm()->createTemplate($this->getTplName());
@@ -80,7 +80,7 @@ abstract class Block extends \ProcessWire\Page {
   /**
    * Uninstall this block
    */
-  public function uninstall() {
+  public function ___uninstall() {
     $this->log('Uninstall ' . $this->info()->name);
     $this->rm()->deleteTemplate($this->getTplName());
   }

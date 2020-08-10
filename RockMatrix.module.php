@@ -90,6 +90,17 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
+   * Get block by template
+   * @return Block
+   */
+  public function getBlockByTpl($tpl) {
+    foreach($this->blocks as $block) {
+      if($block->getTplName() === (string)$tpl) return $block;
+    }
+    return false;
+  }
+
+  /**
    * Get datapage
    * @return Page
    */
@@ -123,6 +134,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
           'noChildren' => 1, // create pages only via API
           'noParents' => -1, // only one allowed
           'icon' => 'cubes',
+          'sortfield' => '-created',
         ],
       ],
     ]);

@@ -25,6 +25,34 @@ class InputfieldRockMatrix extends InputfieldTextarea {
   }
 
   /**
+   * Create a new block
+   */
+  public function createBlock() {
+    if(!$tpl = $this->input->get('tpl', 'string')) return;
+    if($this->process != 'ProcessPageEdit') throw new WireException("Not allowed");
+
+    // check if field is set to current field
+    $field = $this->wire->fields->get($this->input->get('field', 'string'));
+    if($field->name !== $this->name) return;
+
+    // is the block allowed?
+    $page = $this->process->getPage();
+    $allowed = $this->master->getAllowedBlocks($this, $page);
+    $block = $this->master->getBlockByTpl($tpl);
+    if(!$block OR !$allowed->has($block)) throw new WireException("Not allowed");
+
+    // create new block
+    $p = $this->wire(new Page()); /** @var Page $p */
+    $p->template = $block->getTpl();
+    $p->parent = $block->getParent();
+    $p->title = 'test '.date('d.m.Y H:i:s');
+    $p->save();
+
+    // save a reference to this page in metadata
+    $p->meta('RockMatrix', $page->id);
+  }
+
+  /**
   * Process the Inputfield's input
   * @return $this
   */
@@ -38,6 +66,8 @@ class InputfieldRockMatrix extends InputfieldTextarea {
   * @return string
   */
   public function ___render() {
+    $this->createBlock();
+
     $page = $this->process->getPage();
     $out = '';
 
@@ -66,7 +96,8 @@ class InputfieldRockMatrix extends InputfieldTextarea {
       $b->value = $info->get('title') ?: $block->className;
       $b->icon = $info->icon;
       if($info->description) $b->attr('uk-tooltip', $info->description);
-      $b->href = "tbd"; //$this->getEndpoint("new/?block={$info->name}&page=$page&field={$field->id}");
+      $tpl = $block->getTplName();
+      $b->href = "./?id=$page&field=$field&tpl=$tpl";
 
       // fix issue https://github.com/processwire/processwire-issues/issues/1220
       $b->addHookAfter("render", function($event) {

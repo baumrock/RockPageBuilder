@@ -28,6 +28,14 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Get parent for this block
+   * @return Page
+   */
+  public function ___getParent($field = null, $page = null) {
+    return $this->master()->getDatapage();
+  }
+
+  /**
    * Get the related pw template
    */
   public function getTpl() {
@@ -53,6 +61,14 @@ abstract class Block extends \ProcessWire\Page {
     // get allowed blocks for page+field
     // $allowed = $this->master->getAllowedBlocks($field, $page);
     // return in_array($this->className, $allowed);
+  }
+
+  /**
+   * Return master module
+   * @return RockMatrix
+   */
+  public function master() {
+    return $this->wire->modules->get('RockMatrix');
   }
 
   /**

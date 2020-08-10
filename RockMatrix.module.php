@@ -10,6 +10,8 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   public $blocks = [];
 
+  public $mtime = 0;
+
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
@@ -22,13 +24,14 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
         'RockMigrations',
       ],
       'installs' => [
+        'FieldtypeRockMatrix',
+        'InputfieldRockMatrix',
       ],
     ];
   }
 
   public function init() {
     require_once("Block.php");
-    $this->triggerMigrations();
   }
 
   /**
@@ -37,11 +40,14 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    */
   public function addBlock($file, $namespace = "RMBlock") {
     $blocks = $this->blocks;
+    if(!is_file($file)) throw new WireException("File $file not found");
+
     require_once($file);
     $name = pathinfo($file, PATHINFO_FILENAME);
     $class = "\\$namespace\\$name";
     try {
       $block = new $class();
+      $block->setFile($file);
       $block->init();
       $blocks[$block->info()->name] = $block;
       ksort($blocks);
@@ -93,22 +99,18 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
-   * Trigger the migrations
-   */
-  public function ___triggerMigrations() {
-    $mx = $this;
-    if(!$this->user->isSuperuser()) return;
-    $this->addHookAfter("Modules::refresh", function(HookEvent $event) use($mx) {
-      if(!$event->modules->isInstalled('RockMatrix')) return;
-      $mx->migrate();
-    });
-  }
-
-  /**
   * Config inputfields
   * @param InputfieldWrapper $inputfields
   */
   public function getModuleConfigInputfields($inputfields) {
+
+    $inputfields->add([
+      'type' => 'checkbox',
+      'name' => 'TriggerMigrations',
+      'label' => 'Trigger Migrations',
+    ]);
+    if($this->input->post('TriggerMigrations')) $this->migrate();
+
     return $inputfields;
   }
 
@@ -117,6 +119,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     foreach($this->blocks as $name=>$file) {
       $block = $this->getBlock($name);
       if(!$block) return;
+      $this->log("Uninstall ".$block->info()->name);
       $block->uninstall();
     }
   }
@@ -124,6 +127,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public function __debugInfo() {
     return [
       'blocks' => $this->blocks,
+      'mtime' => $this->mtime,
     ];
   }
 }

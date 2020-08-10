@@ -1,11 +1,15 @@
 <?php namespace RockMatrix;
 
+use ProcessWire\Paths;
 use ProcessWire\Template;
 use \ProcessWire\WireData;
 abstract class Block extends \ProcessWire\Page {
 
   const prefix = "rmblock_";
   const tags = "RockMatrix";
+
+  /** @var string */
+  public $file;
 
   public function info() {
     $info = $this->wire(new WireData()); /** @var WireData $info */
@@ -19,7 +23,8 @@ abstract class Block extends \ProcessWire\Page {
    * This method is called when the block is loaded initially
    * It can be used to attach hooks but is completely optional
    */
-  public function init() {}
+  public function init() {
+  }
 
   /**
    * Get the related pw template
@@ -38,6 +43,18 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Is this block allowed on given page and field?
+   * @return bool
+   */
+  public function isAllowed($field, $page) {
+    // TODO check if block is allowed
+    return true;
+    // get allowed blocks for page+field
+    // $allowed = $this->master->getAllowedBlocks($field, $page);
+    // return in_array($this->className, $allowed);
+  }
+
+  /**
    * Render this block
    */
   public function render() {
@@ -53,15 +70,11 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
-   * Is this block allowed on given page and field?
-   * @return bool
+   * Set reference to file
+   * @return void
    */
-  public function isAllowed($field, $page) {
-    // TODO check if block is allowed
-    return true;
-    // get allowed blocks for page+field
-    // $allowed = $this->master->getAllowedBlocks($field, $page);
-    // return in_array($this->className, $allowed);
+  public function setFile($file) {
+    $this->file = Paths::normalizeSeparators($file);
   }
 
   /**
@@ -81,7 +94,7 @@ abstract class Block extends \ProcessWire\Page {
    * Uninstall this block
    */
   public function ___uninstall() {
-    $this->log('Uninstall ' . $this->info()->name);
+    $this->log('Uninstalling ' . $this->info()->name);
     $this->rm()->deleteTemplate($this->getTplName());
   }
 }

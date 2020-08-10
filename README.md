@@ -33,3 +33,17 @@ class MinimumDemo extends \RockMatrix\Block {
 ```
 
 Make sure you save the file as `MinimumDemo.php` and tell RockMatrix about that file (if it is not in an already monitored folder). Use `$mx->addBlocks('/your/dir')` as shown above.
+
+Now create a new field and add it to a template. Allowed blocks are defined via hook:
+
+```php
+$wire->addHookAfter('RockMatrix::getAllowedBlocks', function($event) {
+  $field = $event->arguments(0);
+  $page = $event->arguments(1);
+  if($field->name !== 'rmtest') return;
+  $event->return->add([
+    '\RMDemo\Headline',
+    '\RMDemo\Markup',
+  ]);
+});
+```

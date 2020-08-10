@@ -82,7 +82,8 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    * @return array
    */
   public function ___getAllowedBlocks($field, $page) {
-    return [];
+    require_once(__DIR__ . "/BlocksArray.php");
+    return new BlocksArray();
   }
 
   /**
@@ -96,6 +97,18 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       if(!$block) return;
       $block->migrate($uninstall);
     }
+
+    // test field
+    $this->rm()->createField("rmtest", "FieldtypeRockMatrix");
+    $this->rm()->addFieldToTemplate("rmtest", "basic-page");
+  }
+
+  /**
+   * Get instance of RockMigrations
+   * @return RockMigrations
+   */
+  public function rm() {
+    return $this->wire->modules->get('RockMigrations');
   }
 
   /**
@@ -115,6 +128,15 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   public function ___uninstall() {
+    // remove all existing mx fields
+    foreach($this->wire->fields as $f) {
+      if($f->type instanceof FieldtypeRockMatrix) $this->rm()->deleteField($f);
+    }
+
+    // uninstall the fieldtype
+    // this is a hack for preventing "module dependency failed" error
+    $this->rm()->uninstallModule("FieldtypeRockMatrix");
+
     $this->log("Uninstall Matrix Blocks");
     foreach($this->blocks as $name=>$file) {
       $block = $this->getBlock($name);

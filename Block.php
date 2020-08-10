@@ -5,7 +5,7 @@ abstract class Block extends \ProcessWire\Page {
   const prefix = "rmblock_";
   const tags = "RockMatrix";
 
-  /** @var RockMigrations */
+  /** @var \ProcessWire\RockMigrations */
   public $rm;
 
   public function info() {
@@ -16,13 +16,15 @@ abstract class Block extends \ProcessWire\Page {
     ]);
   }
 
+  public function __construct() {
+    $this->rm = $this->wire->modules->get('RockMigrations');
+  }
+
   /**
    * This method is called when the block is loaded initially
    * It can be used to attach hooks but is completely optional
    */
-  public function init() {
-    $this->rm = $this->wire->modules->get('RockMigrations');
-  }
+  public function init() {}
 
   /**
    * Get the related pw template
@@ -64,6 +66,10 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function migrate() {
     // we always create the related template
-
+    $this->log('Migrate '.$this->info()->name);
+    $tpl = $this->rm->createTemplate($this->getTplName());
+    $this->rm->setTemplateData($tpl, [
+      'icon' => $this->info()->icon,
+    ]);
   }
 }

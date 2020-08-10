@@ -28,6 +28,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   public function init() {
     require_once("Block.php");
+    $this->triggerMigrations();
   }
 
   /**
@@ -89,6 +90,17 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       if(!$block) return;
       $block->migrate();
     }
+  }
+
+  /**
+   * Trigger the migrations
+   */
+  public function ___triggerMigrations() {
+    $mx = $this;
+    $this->addHookAfter("Modules::refresh", function(HookEvent $event) use($mx) {
+      if(!$event->modules->isInstalled('RockMatrix')) return;
+      $mx->migrate();
+    });
   }
 
   /**

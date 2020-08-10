@@ -16,7 +16,16 @@ if($modules->isInstalled('RockMatrix')) {
 }
 ```
 
+## Migrations
 
+RockMatrix relies havily on RockMigrations. All migrations are triggerd on `Modules::refresh` for superusers. If you want to change this behaviour, use a hook:
+
+```php
+$wire->addHookBefore("RockMatrix::triggerMigrations", function($event) {
+  // your custom migrations trigger
+  $event->replace = true;
+});
+```
 
 
 

@@ -1,12 +1,11 @@
 <?php namespace RockMatrix;
+
+use ProcessWire\Template;
 use \ProcessWire\WireData;
 abstract class Block extends \ProcessWire\Page {
 
   const prefix = "rmblock_";
   const tags = "RockMatrix";
-
-  /** @var \ProcessWire\RockMigrations */
-  public $rm;
 
   public function info() {
     $info = $this->wire(new WireData()); /** @var WireData $info */
@@ -14,10 +13,6 @@ abstract class Block extends \ProcessWire\Page {
       'name' => get_class($this),
       'icon' => 'cube',
     ]);
-  }
-
-  public function __construct() {
-    $this->rm = $this->wire->modules->get('RockMigrations');
   }
 
   /**
@@ -38,7 +33,7 @@ abstract class Block extends \ProcessWire\Page {
    * @return string
    */
   public function getTplName() {
-    $class = get_class($this);
+    $class = $this->info()->name;
     return $this->wire->sanitizer->pagename($class);
   }
 
@@ -47,6 +42,14 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function render() {
     return $this->info()->name . "::render()";
+  }
+
+  /**
+   * Get RockMigrations instance
+   * @return RockMigrations
+   */
+  public function rm() {
+    return $this->wire->modules->get('RockMigrations');
   }
 
   /**
@@ -67,9 +70,10 @@ abstract class Block extends \ProcessWire\Page {
   public function migrate() {
     // we always create the related template
     $this->log('Migrate '.$this->info()->name);
-    $tpl = $this->rm->createTemplate($this->getTplName());
-    $this->rm->setTemplateData($tpl, [
+    $tpl = $this->rm()->createTemplate($this->getTplName());
+    $this->rm()->setTemplateData($tpl, [
       'icon' => $this->info()->icon,
+      'pageClass' => $this->info()->name,
     ]);
   }
 
@@ -78,6 +82,6 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function uninstall() {
     $this->log('Uninstall ' . $this->info()->name);
-    $this->rm->deleteTemplate($this->getTplName());
+    $this->rm()->deleteTemplate($this->getTplName());
   }
 }

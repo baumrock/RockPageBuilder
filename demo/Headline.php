@@ -8,6 +8,6 @@ class Headline extends \RockMatrix\Block {
   }
 
   public function init() {
-    $this->message($this->info()->name.' initialized');
+    $this->message("Demo message: ".$this->info()->name.' initialized');
   }
 }

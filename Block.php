@@ -72,4 +72,12 @@ abstract class Block extends \ProcessWire\Page {
       'icon' => $this->info()->icon,
     ]);
   }
+
+  /**
+   * Uninstall this block
+   */
+  public function uninstall() {
+    $this->log('Uninstall ' . $this->info()->name);
+    $this->rm->deleteTemplate($this->getTplName());
+  }
 }

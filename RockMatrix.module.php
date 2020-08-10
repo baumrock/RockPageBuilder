@@ -82,13 +82,13 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   /**
    * Module Migrations
    */
-  public function migrate() {
+  public function migrate($uninstall = false) {
     // migrate all blocks
     $this->log("Migrate Matrix Blocks");
     foreach($this->blocks as $name=>$file) {
       $block = $this->getBlock($name);
       if(!$block) return;
-      $block->migrate();
+      $block->migrate($uninstall);
     }
   }
 
@@ -97,6 +97,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    */
   public function ___triggerMigrations() {
     $mx = $this;
+    if(!$this->user->isSuperuser()) return;
     $this->addHookAfter("Modules::refresh", function(HookEvent $event) use($mx) {
       if(!$event->modules->isInstalled('RockMatrix')) return;
       $mx->migrate();
@@ -109,6 +110,15 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   */
   public function getModuleConfigInputfields($inputfields) {
     return $inputfields;
+  }
+
+  public function ___uninstall() {
+    $this->log("Uninstall Matrix Blocks");
+    foreach($this->blocks as $name=>$file) {
+      $block = $this->getBlock($name);
+      if(!$block) return;
+      $block->uninstall();
+    }
   }
 
   public function __debugInfo() {

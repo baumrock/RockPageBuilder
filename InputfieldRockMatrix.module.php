@@ -30,7 +30,7 @@ class InputfieldRockMatrix extends InputfieldTextarea {
   */
   public function ___processInput($input) {
     $this->message('process input!');
-    return false;
+    parent::___processInput($input);
   }
 
   /**
@@ -47,6 +47,7 @@ class InputfieldRockMatrix extends InputfieldTextarea {
         ."<small>".__('Add content').":</small><br>$buttons</div>";
     }
 
+    $out .= parent::___render();
     return $out;
   }
 

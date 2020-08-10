@@ -1,6 +1,7 @@
 <?php namespace RockMatrix;
 
 use ProcessWire\Paths;
+use ProcessWire\RockMatrix;
 use ProcessWire\Template;
 use \ProcessWire\WireData;
 abstract class Block extends \ProcessWire\Page {
@@ -87,6 +88,7 @@ abstract class Block extends \ProcessWire\Page {
     $this->rm()->setTemplateData($tpl, [
       'icon' => $this->info()->icon,
       'pageClass' => $this->info()->name,
+      'tags' => RockMatrix::tags,
     ]);
   }
 

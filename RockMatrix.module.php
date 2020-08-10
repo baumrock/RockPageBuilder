@@ -7,6 +7,9 @@
 class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   const prefix = 'rockmatrix_';
+  const tags = 'RockMatrix';
+
+  const tpl_datapage = self::prefix."datapage";
 
   public $blocks = [];
 
@@ -69,15 +72,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
-   * Get block by name
-   * @return false|Block
-   */
-  public function getBlock($name) {
-    if(!array_key_exists($name, $this->blocks)) return false;
-    return $this->blocks[$name];
-  }
-
-  /**
    * Get allowed blocks for given field and page
    * @return array
    */
@@ -87,20 +81,58 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
+   * Get block by name
+   * @return false|Block
+   */
+  public function getBlock($name) {
+    if(!array_key_exists($name, $this->blocks)) return false;
+    return $this->blocks[$name];
+  }
+
+  /**
+   * Get datapage
+   * @return Page
+   */
+  public function getDatapage() {
+    return $this->wire->pages->get([
+      'parent' => 1,
+      'template' => self::tpl_datapage,
+    ]);
+  }
+
+  /**
    * Module Migrations
    */
-  public function migrate($uninstall = false) {
+  public function migrate() {
+    $rm = $this->rm();
+
     // migrate all blocks
     $this->log("Migrate Matrix Blocks");
     foreach($this->blocks as $name=>$file) {
       $block = $this->getBlock($name);
       if(!$block) return;
-      $block->migrate($uninstall);
+      $block->migrate();
     }
 
+    // data-page
+    $rm->migrate([
+      'templates' => [
+        self::tpl_datapage => [
+          'fields' => ['title'],
+          'tags' => self::tags,
+          'noChildren' => 1, // create pages only via API
+          'noParents' => -1, // only one allowed
+        ],
+      ],
+    ]);
+    $rm->createPage("RockMatrixBlocks", null, self::tpl_datapage, 1, ['hidden', 'locked']);
+
     // test field
-    $this->rm()->createField("rmtest", "FieldtypeRockMatrix");
-    $this->rm()->addFieldToTemplate("rmtest", "basic-page");
+    $rm->createField("rmtest", "FieldtypeRockMatrix");
+    $rm->addFieldToTemplate("rmtest", "basic-page");
+
+    // test matrix item
+    $rm->createPage("test", null, $block->getTpl(), $this->getDatapage());
   }
 
   /**
@@ -128,14 +160,16 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   public function ___uninstall() {
+    $rm = $this->rm();
+
     // remove all existing mx fields
     foreach($this->wire->fields as $f) {
-      if($f->type instanceof FieldtypeRockMatrix) $this->rm()->deleteField($f);
+      if($f->type instanceof FieldtypeRockMatrix) $rm->deleteField($f);
     }
 
     // uninstall the fieldtype
     // this is a hack for preventing "module dependency failed" error
-    $this->rm()->uninstallModule("FieldtypeRockMatrix");
+    $rm->uninstallModule("FieldtypeRockMatrix");
 
     $this->log("Uninstall Matrix Blocks");
     foreach($this->blocks as $name=>$file) {
@@ -144,6 +178,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $this->log("Uninstall ".$block->info()->name);
       $block->uninstall();
     }
+
+    // remove datapage
+    $rm->deletePage($this->getDatapage());
   }
 
   public function __debugInfo() {

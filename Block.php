@@ -2,8 +2,8 @@
 
 use ProcessWire\Paths;
 use ProcessWire\RockMatrix;
-use ProcessWire\Template;
 use \ProcessWire\WireData;
+use \ProcessWire\RockMigrations;
 abstract class Block extends \ProcessWire\Page {
 
   const prefix = "rmblock_";
@@ -97,7 +97,7 @@ abstract class Block extends \ProcessWire\Page {
   /**
    * Block Migrations
    */
-  public function ___migrate() {
+  public function migrate() {
     // we always create the related template
     $this->log('Migrate '.$this->info()->name);
     $tpl = $this->rm()->createTemplate($this->getTplName());

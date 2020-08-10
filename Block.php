@@ -1,30 +1,51 @@
 <?php namespace RockMatrix;
 use \ProcessWire\WireData;
-use \ProcessWire\HookEvent;
 abstract class Block extends \ProcessWire\Page {
 
   const prefix = "rmblock_";
   const tags = "RockMatrix";
 
+  /** @var RockMigrations */
+  public $rm;
+
   public function info() {
     $info = $this->wire(new WireData()); /** @var WireData $info */
     return $info->setArray([
-      'name' => $this->className,
+      'name' => get_class($this),
       'icon' => 'cube',
     ]);
+  }
+
+  /**
+   * This method is called when the block is loaded initially
+   * It can be used to attach hooks but is completely optional
+   */
+  public function init() {
+    $this->rm = $this->wire->modules->get('RockMigrations');
+  }
+
+  /**
+   * Get the related pw template
+   */
+  public function getTpl() {
+    return $this->wire->templates->get($this->getTplName());
+  }
+
+  /**
+   * Convert the class name to a pw valid tpl name
+   * @return string
+   */
+  public function getTplName() {
+    $class = get_class($this);
+    return $this->wire->sanitizer->pagename($class);
   }
 
   /**
    * Render this block
    */
   public function render() {
-    return $this->className;
+    return $this->info()->name . "::render()";
   }
-
-  /**
-   * Block Migrations
-   */
-  public function migrate() {}
 
   /**
    * Is this block allowed on given page and field?
@@ -38,7 +59,11 @@ abstract class Block extends \ProcessWire\Page {
     // return in_array($this->className, $allowed);
   }
 
-  public function getTpl() {
-    return $this->wire->templates->get($this->info()->tpl);
+  /**
+   * Block Migrations
+   */
+  public function migrate() {
+    // we always create the related template
+
   }
 }

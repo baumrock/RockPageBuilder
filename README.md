@@ -18,14 +18,9 @@ if($modules->isInstalled('RockMatrix')) {
 
 ## Migrations
 
-RockMatrix relies havily on RockMigrations. All migrations are triggerd on `Modules::refresh` for superusers. If you want to change this behaviour, use a hook:
+RockMatrix relies havily on RockMigrations. Migrations are NOT triggered automatically. The reason is that this is potentially error prone when uninstalling the module, so that a modules refresh triggered by uninstalling a linked module (like fieldtype or inputfield) triggers the migrations and recreates fields + templates.
 
-```php
-$wire->addHookBefore("RockMatrix::triggerMigrations", function($event) {
-  // your custom migrations trigger
-  $event->replace = true;
-});
-```
+Migrations can easily be run via commandline (`$mx->migrate()`) or via checkbox in the modules' settings.
 
 ### Setting up new Blocks
 

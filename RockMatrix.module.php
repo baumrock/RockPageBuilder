@@ -122,6 +122,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
           'tags' => self::tags,
           'noChildren' => 1, // create pages only via API
           'noParents' => -1, // only one allowed
+          'icon' => 'cubes',
         ],
       ],
     ]);
@@ -172,15 +173,10 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $rm->uninstallModule("FieldtypeRockMatrix");
 
     $this->log("Uninstall Matrix Blocks");
-    foreach($this->blocks as $name=>$file) {
-      $block = $this->getBlock($name);
-      if(!$block) return;
-      $this->log("Uninstall ".$block->info()->name);
-      $block->uninstall();
-    }
+    foreach($this->blocks as $block) $block->uninstall();
 
-    // remove datapage
-    $rm->deletePage($this->getDatapage());
+    // remove datapage (template+page)
+    $rm->deleteTemplate(self::tpl_datapage);
   }
 
   public function __debugInfo() {

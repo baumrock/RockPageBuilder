@@ -31,6 +31,14 @@ abstract class Block extends \ProcessWire\Page {
    * Get label for matrix item
    * @return string
    */
+  public function ___getIcon() {
+    return $this->info()->icon;
+  }
+
+  /**
+   * Get label for matrix item
+   * @return string
+   */
   public function ___getLabel() {
     return $this->get('title|id');
   }

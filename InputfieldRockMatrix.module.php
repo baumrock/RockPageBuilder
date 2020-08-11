@@ -131,10 +131,12 @@ class InputfieldRockMatrix extends Inputfield {
    * @return string
    */
   public function ___renderItem($item) {
-    $fs = new InputfieldWrapper();
-    $fs->add([
+    /** @var InputfieldWrapper $wrap */
+    $wrap = $this->wire(new InputfieldWrapper());
+    $wrap->add([
       'type' => 'fieldset',
       'label' => $item->getLabel(),
+      'icon' => $item->getIcon(),
       'children' => [[
         'type' => 'markup',
         'label' => 'foo',
@@ -145,7 +147,7 @@ class InputfieldRockMatrix extends Inputfield {
         'value' => 'bar',
       ]],
     ]);
-    return $fs->render();
+    return $wrap->render();
   }
 
   /**

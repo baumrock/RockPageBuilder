@@ -39,6 +39,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   public function init() {
     require_once("Block.php");
+    $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
     $this->addHook("Page::getRmBlock", $this, "getRmBlock");
   }
 
@@ -74,6 +75,18 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     foreach($this->wire->files->find($dir, $opt) as $file) {
       $this->addBlock($file, $namespace);
     }
+  }
+
+  /**
+   * Hook the page edit form of blocks
+   * @return void
+   */
+  public function buildBlockForm(HookEvent $event) {
+    $page = $event->process->getPage();
+    if(!$page instanceof Block) return;
+    $fs = $event->return;
+    $block = $page->getRmBlock();
+    $block->buildForm($fs);
   }
 
   /**

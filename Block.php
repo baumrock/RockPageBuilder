@@ -1,5 +1,6 @@
 <?php namespace RockMatrix;
 
+use ProcessWire\FieldtypeRockMatrix;
 use ProcessWire\Paths;
 use ProcessWire\RockMatrix;
 use \ProcessWire\WireData;
@@ -25,6 +26,33 @@ abstract class Block extends \ProcessWire\Page {
    * It can be used to attach hooks but is completely optional
    */
   public function init() {
+  }
+
+  /**
+   * Build form to edit this block
+   * @return InputfieldWrapper
+   */
+  public function ___buildForm($fs) {
+    // the default is to add all fields of the page template
+    $fields = $this->getInputfields();
+    if(!$fields) return $fs;
+    foreach($fields->children() as $f) {
+      $type = $f->hasField->type;
+      // prevent recursion
+      if($type instanceof FieldtypeRockMatrix) $fields->remove($f);
+      // sharing of pages not possible inside matrix
+      if($type instanceof FieldtypeRockShare) $fields->remove($f);
+    }
+    $fs->import($fields);
+    return $fs;
+  }
+
+  /**
+   * Build the form when displayed in a matrix field
+   * @return InputfieldWrapper
+   */
+  public function ___buildFormMatrix($fs) {
+    return $this->buildForm($fs);
   }
 
   /**

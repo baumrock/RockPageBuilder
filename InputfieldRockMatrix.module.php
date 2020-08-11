@@ -48,8 +48,9 @@ class InputfieldRockMatrix extends InputfieldTextarea {
     $p->title = 'test '.date('d.m.Y H:i:s');
     $p->save();
 
-    // save a reference to this page in metadata
-    $p->meta('RockMatrix', $page->id);
+    // save a reference to the page and the field where this page lives
+    // this is necessary for deleting unused pages from time to time
+    $p->meta('RockMatrix', $page->id."-".$field->id);
   }
 
   /**

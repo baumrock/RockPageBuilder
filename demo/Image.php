@@ -16,6 +16,7 @@ class Image extends \RockMatrix\Block {
       'fields' => [
         self::field_img => [
           'type' => 'image',
+          'label' => 'Image Demo',
           'tags' => self::tags,
           'icon' => $this->info()->icon,
           'extensions' => 'jpg jpeg png',

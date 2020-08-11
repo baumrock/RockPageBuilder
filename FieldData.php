@@ -25,13 +25,38 @@ class FieldData extends PageArray {
     $mx = $this->wire->modules->get('RockMatrix');
 
     // make sure item is a page
-    $item = $this->wire->pages->get((string)$item);
+    $_item = $item;
+    $item = $mx->getBlockPage($item);
+    if(!$item) throw new WireException("Invalid item $_item");
 
     // check if item is allowed!
-    $allowed = $mx->getAllowedBlocks($this->field, $this->page);
-    if(!$allowed->has($item->getRmBlock())) throw new WireException("Not allowed");
+    if(!$item->isAllowed($this->field, $this->page)) {
+      throw new WireException("Not allowed");
+    }
 
     parent::add($item);
+  }
+
+  /**
+   * Get a blank copy
+   * @return FieldData
+   */
+  public function getNew($data = null) {
+    $new = $this->field->type->getBlankValue($this->page, $this->field);
+    if($data) $new->wakeup($data);
+    return $new;
+  }
+
+  /**
+   * Has this object changed compared to another one?
+   * This method is used for triggering the trackChange event when a page
+   * having a MX field is saved and input is processed.
+   * @return bool
+   */
+  public function hasChanged($other) {
+    $new = $this->sleepValue();
+    $old = $other->sleepValue();
+    return $new !== $old;
   }
 
   /**
@@ -57,6 +82,17 @@ class FieldData extends PageArray {
       ];
     }
     return json_encode($sleep);
+  }
+
+  /**
+   * Wakeup from given data
+   * @return FieldData
+   */
+  public function wakeup($data) {
+    $json = json_decode($data);
+    if(!$json) throw new WireException("Invalid json");
+    foreach($json as $item) $this->add($item->id);
+    return $this;
   }
 
   public function __debugInfo() {

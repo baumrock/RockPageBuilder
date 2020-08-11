@@ -105,6 +105,15 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
+   * Get Block page from given data
+   */
+  public function getBlockPage($data) {
+    $page = $this->wire->pages->get((string)$data);
+    if(!$page instanceof Block) return false;
+    return $page;
+  }
+
+  /**
    * Get datapage
    * @return Page
    */

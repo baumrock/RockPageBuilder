@@ -31,4 +31,9 @@ class Image extends \RockMatrix\Block {
       ],
     ]);
   }
+
+  public function uninstall() {
+    parent::uninstall();
+    $this->rm()->deleteField(self::field_img);
+  }
 }

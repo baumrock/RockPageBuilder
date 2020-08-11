@@ -70,10 +70,7 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
 
     public function ___wakeupValue(Page $page, Field $field, $value) {
       $data = $this->getBlankValue($page, $field);
-      foreach(json_decode($value) as $item) {
-        $data->add($item->id);
-      }
-      return $data;
+      return $data->wakeup($value);
     }
 
   /** HELPER METHODS */

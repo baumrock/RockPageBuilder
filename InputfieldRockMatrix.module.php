@@ -4,7 +4,7 @@
  * @license COMMERCIAL DO NOT DISTRIBUTE
  * @link https://www.baumrock.com
  */
-class InputfieldRockMatrix extends InputfieldTextarea {
+class InputfieldRockMatrix extends Inputfield {
 
   /** @var RockMatrix */
   public $master;
@@ -58,8 +58,14 @@ class InputfieldRockMatrix extends InputfieldTextarea {
   * @return $this
   */
   public function ___processInput($input) {
-    $this->message('process input!');
-    parent::___processInput($input);
+    // get raw value from textarea
+    $old = $this->value;
+    $new = $old->getNew($input->{$this->name});
+
+    if($new->hasChanged($old)) {
+      $this->value = $new;
+      $this->trackChange('value'); // trigger change
+    }
   }
 
   /**
@@ -69,16 +75,10 @@ class InputfieldRockMatrix extends InputfieldTextarea {
   public function ___render() {
     $this->createBlock();
 
-    $page = $this->process->getPage();
     $out = '';
-
-    if(count($this->master->getAllowedBlocks($this, $page))) {
-      $buttons = $this->renderButtons($page);
-      $out .= "<div class='rm-buttons-container'>"
-        ."<small>".__('Add content').":</small><br>$buttons</div>";
-    }
-
-    $out .= parent::___render();
+    $out .= $this->renderItems();
+    $out .= $this->renderButtons();
+    $out .= $this->renderTextarea();
     return $out;
   }
 
@@ -113,13 +113,64 @@ class InputfieldRockMatrix extends InputfieldTextarea {
    * Render buttons to add a block to the current field
    * @return string
    */
-  public function ___renderButtons($page) {
-    $out = '<div class="rm-buttons">';
+  public function ___renderButtons() {
+    $page = $this->process->getPage();
+
+    $buttons = '<div class="rm-buttons">';
     foreach($this->master->getAllowedBlocks($this, $page) as $block) {
-      $out .= $this->renderButton($block, $page);
+      $buttons .= $this->renderButton($block, $page);
     }
-    $out .= "</div>";
+    $buttons .= "</div>";
+
+    return "<div class='rm-buttons-container'>"
+      ."<small>".__('Add content').":</small><br>$buttons</div>";
+  }
+
+  /**
+   * Render a single item
+   * @return string
+   */
+  public function ___renderItem($item) {
+    $fs = new InputfieldWrapper();
+    $fs->add([
+      'type' => 'fieldset',
+      'label' => $item->getLabel(),
+      'children' => [[
+        'type' => 'markup',
+        'label' => 'foo',
+        'value' => 'foo',
+      ],[
+        'type' => 'markup',
+        'label' => 'bar',
+        'value' => 'bar',
+      ]],
+    ]);
+    return $fs->render();
+  }
+
+  /**
+   * Render items of this field
+   * @return string
+   */
+  public function ___renderItems() {
+    $out = '<div class="rm-items">';
+    foreach($this->value as $item) {
+      $out .= $this->renderItem($item);
+    }
+    $out .= '</div>';
     return $out;
+  }
+
+  /**
+   * Render textarea for this inputfield
+   * @return string
+   */
+  public function ___renderTextarea() {
+    /** @var InputfieldTextarea */
+    $tx = $this->wire->modules->get('InputfieldTextarea');
+    $tx->name = $this->name;
+    $tx->value = $this->value->sleepValue();
+    return $tx->render();
   }
 
 }

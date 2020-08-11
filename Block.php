@@ -28,6 +28,14 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Get label for matrix item
+   * @return string
+   */
+  public function ___getLabel() {
+    return $this->get('title|id');
+  }
+
+  /**
    * Get parent for this block
    * @return Page
    */
@@ -56,11 +64,8 @@ abstract class Block extends \ProcessWire\Page {
    * @return bool
    */
   public function isAllowed($field, $page) {
-    // TODO check if block is allowed
-    return true;
-    // get allowed blocks for page+field
-    // $allowed = $this->master->getAllowedBlocks($field, $page);
-    // return in_array($this->className, $allowed);
+    $allowed = $this->master()->getAllowedBlocks($field, $page);
+    return $allowed->has($this->getRmBlock());
   }
 
   /**
@@ -96,6 +101,7 @@ abstract class Block extends \ProcessWire\Page {
 
   /**
    * Block Migrations
+   * Not hookable --> call parent::migrate() in derived classes
    */
   public function migrate() {
     // we always create the related template
@@ -110,8 +116,9 @@ abstract class Block extends \ProcessWire\Page {
 
   /**
    * Uninstall this block
+   * Not hookable --> call parent::uninstall() in derived classes
    */
-  public function ___uninstall() {
+  public function uninstall() {
     $this->log('Uninstalling ' . $this->info()->name);
     $this->rm()->deleteTemplate($this->getTplName());
   }

@@ -52,3 +52,18 @@ $wire->addHookAfter('RockMatrix::getAllowedBlocks', function($event) {
 
 If you don't define a parent for blocks, the blocks will live under the default blocks datapage:
 
+
+
+## Working with field data
+
+The unformatted value of a RockMatrix field is a `RockMatrix\FieldData` object. This class is based on a `PageArray` and holds all blocks that are saved on that field.
+
+The formatValue of the field is the result of the `render()` method call on the `FieldData` object and concats the results of all blocks' `render()` methods.
+
+### Adding blocks to the field
+
+```php
+$data = $page->getUnformatted('rmtest');
+$data->add(1035); // add block id 1035 to this field
+$page->save('rmtest');
+```

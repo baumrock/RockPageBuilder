@@ -1,4 +1,6 @@
-<?php namespace ProcessWire;
+<?php namespace RockMatrix;
+use ProcessWire\WireArray;
+use ProcessWire\WireException;
 class BlocksArray extends WireArray {
 
   /**
@@ -16,6 +18,6 @@ class BlocksArray extends WireArray {
       if($block) return parent::add($block);
       else throw new WireException("Block $item not found");
     }
-    throw new WireException("Invalid item type");
+    parent::add($item);
   }
 }

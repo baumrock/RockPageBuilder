@@ -1,9 +1,13 @@
 <?php namespace ProcessWire;
+use RockMatrix\Block;
+use RockMatrix\BlocksArray;
+
 /**
  * @author Bernhard Baumrock, 18.07.2020
  * @license COMMERCIAL DO NOT DISTRIBUTE
  * @link https://www.baumrock.com
  */
+require_once(__DIR__ . "/BlocksArray.php");
 class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   const prefix = 'rockmatrix_';
@@ -35,6 +39,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   public function init() {
     require_once("Block.php");
+    $this->addHook("Page::getRmBlock", $this, "getRmBlock");
   }
 
   /**
@@ -76,7 +81,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    * @return array
    */
   public function ___getAllowedBlocks($field, $page) {
-    require_once(__DIR__ . "/BlocksArray.php");
     return new BlocksArray();
   }
 
@@ -109,6 +113,16 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       'parent' => 1,
       'template' => self::tpl_datapage,
     ]);
+  }
+
+  /**
+   * Get rm block from page object
+   * @return Block
+   */
+  public function getRmBlock($event) {
+    $page = $event->object;
+    if(!$page instanceof Block) throw new WireException("Page is not a RM Block");
+    $event->return = $this->getBlockByTpl($page->template);
   }
 
   /**

@@ -4,7 +4,7 @@
  * @license COMMERCIAL DO NOT DISTRIBUTE
  * @link https://www.baumrock.com
  */
-class InputfieldRockMatrix extends Inputfield {
+class InputfieldRockMatrix extends InputfieldRepeater {
 
   /** @var RockMatrix */
   public $master;
@@ -73,10 +73,51 @@ class InputfieldRockMatrix extends Inputfield {
     $old = $this->value;
     $new = $old->getNew($input->{$this->name});
 
-    if($new->hasChanged($old)) {
+    // process all repeater items
+    $changes = $this->processItems($new, $input);
+
+    if($new->hasChanged($old) OR $changes) {
       $this->value = $new;
       $this->trackChange('value'); // trigger change
     }
+
+    return $this;
+  }
+
+  /**
+   * Process all repeater items
+   * @return int
+   */
+  public function ___processItems($new, $input) {
+    $changes = 0;
+
+    // this is a stripped down version of InputfieldRepeater::processInput
+    // see the original version for all options and details
+    foreach($new as $item) {
+      /** @var Page $item */
+
+      // we only process items that are marked as changed in raw textarea data
+      if(!$item->_mxchanged) continue;
+
+      // TODO check if page is editable by current user
+      // atm pages will be shown and saved even if they are not editable!
+
+      // get the wrapper for this item and process input
+      $wrapper = $item->getWrapper();
+      $wrapper->resetTrackChanges(true);
+      $wrapper->getErrors(true); // clear out any errors
+      $wrapper->processInput($input);
+
+      // save all field values to the page
+      $numErrors = count($wrapper->getErrors());
+      $this->formToPage($wrapper, $item);
+      if(!$numErrors) {
+        $item->save();
+        $changes++;
+      }
+    }
+
+    return $changes;
   }
 
   /**
@@ -152,49 +193,8 @@ class InputfieldRockMatrix extends Inputfield {
    * @return string
    */
   public function ___renderItem($item) {
-    $r = $this->modules->get('InputfieldRepeater'); /** @var InputfieldRepeater $r */
-    $wrap = $this->wire(new InputfieldWrapper()); /** @var InputfieldWrapper $wrap */
-    $fs = $this->wire(new InputfieldFieldset()); /** @var InputfieldFieldset $fs */
-
-    $wrap->add($fs);
-    $wrap->suffix = "_repeater$item";
-
-    // prepare the fieldset (item root element)
-    $fs->id = "rmx_$item";
-    $fs->label = $item->getLabel();
-    $fs->icon = $item->getIcon();
-    $fs->notes = $item->getNotes();
-    $fs->addClass('rmx-item');
-    $fs->wrapAttr('data-page', $item->id);
-
-    // set collapsed state
-    // is set in InputfieldRockMatrix::getItemInputfield
-    $fs->collapsed = $this->getCollapsedState();
-
-    // call hookable buildFormMatrix to load fields
-    $item->buildFormMatrix($fs);
-
-    // add repeater suffix to all children
-    foreach($fs->children() as $f) {
-      $f->name .= $wrap->suffix;
-
-      // open wrapper if field has an error
-      if(count($f->getErrors())) $fs->collapsed = Inputfield::collapsedNo;
-
-      // changes for file inputfields
-      if(!$f instanceof InputfieldFile) continue;
-      $f->wrapAttr('data-fnsx', $wrap->suffix);
-      $itemType = $r->getRepeaterItemType($item);
-      $itemTypeName = $r->getRepeaterItemTypeName($itemType);
-      $f->wrapClass('InputfieldRepeaterItem');
-      $f->wrapAttr('data-page', $item->id);
-      $f->wrapAttr('data-type', $itemType);
-      $f->wrapAttr('data-typeName', $itemTypeName);
-      $f->wrapAttr('data-editUrl', $item->editUrl());
-    }
-
-    // return rendered wrapper
-    return $wrap->render();
+    $fs = $item->getWrapper();
+    return $fs->parent->render();
   }
 
   /**

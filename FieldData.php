@@ -89,9 +89,22 @@ class FieldData extends PageArray {
    * @return FieldData
    */
   public function wakeup($data) {
+    /** @var RockMatrix */
+    $mx = $this->wire->modules->get('RockMatrix');
+
     $json = json_decode($data);
     if(!$json) throw new WireException("Invalid json");
-    foreach($json as $item) $this->add($item->id);
+    foreach($json as $item) {
+      $block = $mx->getBlockPage($item->id);
+
+      // set the changed property of this block
+      // this value us used on processInput to trigger page save of the item
+      $block->_mxchanged = property_exists($item, 'changed')
+        ? $item->changed
+        : false;
+
+      $this->add($block);
+    }
     return $this;
   }
 

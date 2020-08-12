@@ -201,6 +201,11 @@ var RockMatrix = new RockMatrix();
     setTimeout(function() { RockMatrix.changed(e); });
   });
 
+  // trigger changed event after file uploads
+  $(document).on('AjaxUploadDone', function(e) {
+    RockMatrix.changed(e);
+  });
+
   // monitor action clicks
   $(document).on('click', '.rmx-action', function(e) {
     let $action = $(e.target).closest('.rmx-action');

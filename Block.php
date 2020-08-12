@@ -5,6 +5,10 @@ use ProcessWire\Paths;
 use ProcessWire\RockMatrix;
 use \ProcessWire\WireData;
 use \ProcessWire\RockMigrations;
+use \ProcessWire\Inputfield;
+use \ProcessWire\InputfieldFile;
+use \ProcessWire\InputfieldWrapper;
+use \ProcessWire\InputfieldFieldset;
 abstract class Block extends \ProcessWire\Page {
 
   const prefix = "rmblock_";
@@ -101,6 +105,51 @@ abstract class Block extends \ProcessWire\Page {
   public function getTplName() {
     $class = $this->info()->name;
     return $this->wire->sanitizer->pagename($class);
+  }
+
+  /**
+   * Get wrapper for editing this block
+   * @return InputfieldWrapper
+   */
+  public function getWrapper() {
+    $r = $this->wire->modules->get('InputfieldRepeater'); /** @var InputfieldRepeater $r */
+    $wrap = $this->wire(new InputfieldWrapper()); /** @var InputfieldWrapper $wrap */
+    $fs = $this->wire(new InputfieldFieldset()); /** @var InputfieldFieldset $fs */
+
+    $wrap->add($fs);
+    $wrap->suffix = "_repeater$this";
+
+    // prepare the fieldset (item root element)
+    $fs->id = "rmx_$this";
+    $fs->label = $this->getLabel();
+    $fs->icon = $this->getIcon();
+    $fs->notes = $this->getNotes();
+    $fs->addClass('rmx-item');
+    $fs->wrapAttr('data-page', $this->id);
+
+    // call hookable buildFormMatrix to load fields
+    $this->buildFormMatrix($fs);
+
+    // add repeater suffix to all children
+    foreach($fs->children() as $f) {
+      $f->name .= $wrap->suffix;
+
+      // open wrapper if field has an error
+      if(count($f->getErrors())) $fs->collapsed = Inputfield::collapsedNo;
+
+      // changes for file inputfields
+      if(!$f instanceof InputfieldFile) continue;
+      $f->wrapAttr('data-fnsx', $wrap->suffix);
+      $itemType = $r->getRepeaterItemType($this);
+      $itemTypeName = $r->getRepeaterItemTypeName($itemType);
+      $f->wrapClass('InputfieldRepeaterItem');
+      $f->wrapAttr('data-page', $this->id);
+      $f->wrapAttr('data-type', $itemType);
+      $f->wrapAttr('data-typeName', $itemTypeName);
+      $f->wrapAttr('data-editUrl', $this->editUrl());
+    }
+
+    return $fs;
   }
 
   /**

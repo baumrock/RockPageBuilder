@@ -4,6 +4,7 @@ class Headline extends \RockMatrix\Block {
   public function info() {
     return parent::info()->setArray([
       'icon' => 'header',
+      'description' => 'Demo description.',
     ]);
   }
 

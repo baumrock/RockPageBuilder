@@ -53,6 +53,13 @@ class InputfieldRockMatrix extends Inputfield {
     $p->meta('RockMatrix', $page->id."-".$field->id);
   }
 
+  /**
+   * Get collapsed state of item
+   */
+  public function getCollapsedState() {
+    return Inputfield::collapsedNo;
+  }
+
   public function preloadBlockAssets() {
     bd("tbd");
   }
@@ -145,14 +152,48 @@ class InputfieldRockMatrix extends Inputfield {
    * @return string
    */
   public function ___renderItem($item) {
+    $r = $this->modules->get('InputfieldRepeater'); /** @var InputfieldRepeater $r */
     $wrap = $this->wire(new InputfieldWrapper()); /** @var InputfieldWrapper $wrap */
     $fs = $this->wire(new InputfieldFieldset()); /** @var InputfieldFieldset $fs */
+
+    $wrap->add($fs);
+    $wrap->suffix = "_repeater$item";
+
+    // prepare the fieldset (item root element)
+    $fs->id = "rmx_$item";
     $fs->label = $item->getLabel();
     $fs->icon = $item->getIcon();
+    $fs->notes = $item->getNotes();
     $fs->addClass('rmx-item');
     $fs->wrapAttr('data-page', $item->id);
+
+    // set collapsed state
+    // is set in InputfieldRockMatrix::getItemInputfield
+    $fs->collapsed = $this->getCollapsedState();
+
+    // call hookable buildFormMatrix to load fields
     $item->buildFormMatrix($fs);
-    $wrap->add($fs);
+
+    // add repeater suffix to all children
+    foreach($fs->children() as $f) {
+      $f->name .= $wrap->suffix;
+
+      // open wrapper if field has an error
+      if(count($f->getErrors())) $fs->collapsed = Inputfield::collapsedNo;
+
+      // changes for file inputfields
+      if(!$f instanceof InputfieldFile) continue;
+      $f->wrapAttr('data-fnsx', $wrap->suffix);
+      $itemType = $r->getRepeaterItemType($item);
+      $itemTypeName = $r->getRepeaterItemTypeName($itemType);
+      $f->wrapClass('InputfieldRepeaterItem');
+      $f->wrapAttr('data-page', $item->id);
+      $f->wrapAttr('data-type', $itemType);
+      $f->wrapAttr('data-typeName', $itemTypeName);
+      $f->wrapAttr('data-editUrl', $item->editUrl());
+    }
+
+    // return rendered wrapper
     return $wrap->render();
   }
 
@@ -173,6 +214,9 @@ class InputfieldRockMatrix extends Inputfield {
    * Inputfield is ready to render
    */
   public function renderReady() {
+    // make sure that repeater is installed
+    $this->modules->get('InputfieldRepeater');
+
     $file = $this->className.".js";
     $path = $this->config->paths($this).$file;
     $m = "?m=".filemtime($path);

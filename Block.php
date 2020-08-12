@@ -72,6 +72,14 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Get notes for matrix item
+   * @return string
+   */
+  public function ___getNotes() {
+    return $this->info()->description;
+  }
+
+  /**
    * Get parent for this block
    * @return Page
    */

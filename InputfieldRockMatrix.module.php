@@ -53,6 +53,10 @@ class InputfieldRockMatrix extends Inputfield {
     $p->meta('RockMatrix', $page->id."-".$field->id);
   }
 
+  public function preloadBlockAssets() {
+    bd("tbd");
+  }
+
   /**
   * Process the Inputfield's input
   * @return $this
@@ -79,6 +83,7 @@ class InputfieldRockMatrix extends Inputfield {
     $out .= $this->renderItems();
     $out .= $this->renderButtons();
     $out .= $this->renderTextarea();
+    $out .= $this->renderInitTag();
     return $out;
   }
 
@@ -116,14 +121,23 @@ class InputfieldRockMatrix extends Inputfield {
   public function ___renderButtons() {
     $page = $this->process->getPage();
 
-    $buttons = '<div class="rm-buttons">';
+    $buttons = '<div class="rmx-buttons">';
     foreach($this->master->getAllowedBlocks($this, $page) as $block) {
       $buttons .= $this->renderButton($block, $page);
     }
     $buttons .= "</div>";
 
-    return "<div class='rm-buttons-container'>"
+    return "<div class='rmx-buttons-container'>"
       ."<small>".__('Add content').":</small><br>$buttons</div>";
+  }
+
+  /**
+   * Render init tag
+   * @return string
+   */
+  public function renderInitTag() {
+    $out = "<script>$('#wrap_Inputfield_{$this->name}').trigger('init');</script>";
+    return $out;
   }
 
   /**
@@ -135,6 +149,8 @@ class InputfieldRockMatrix extends Inputfield {
     $fs = $this->wire(new InputfieldFieldset()); /** @var InputfieldFieldset $fs */
     $fs->label = $item->getLabel();
     $fs->icon = $item->getIcon();
+    $fs->addClass('rmx-item');
+    $fs->wrapAttr('data-page', $item->id);
     $item->buildFormMatrix($fs);
     $wrap->add($fs);
     return $wrap->render();
@@ -145,12 +161,37 @@ class InputfieldRockMatrix extends Inputfield {
    * @return string
    */
   public function ___renderItems() {
-    $out = '<div class="rm-items">';
+    $out = '<div class="rmx-items">';
     foreach($this->value as $item) {
       $out .= $this->renderItem($item);
     }
     $out .= '</div>';
     return $out;
+  }
+
+  /**
+   * Inputfield is ready to render
+   */
+  public function renderReady() {
+    $file = $this->className.".js";
+    $path = $this->config->paths($this).$file;
+    $m = "?m=".filemtime($path);
+    $this->config->scripts->add($this->config->urls($this).$file.$m);
+
+    $url = $this->config->urls($this);
+    $file = $url.$this->className.".less";
+    $less = $this->modules->get('RockLESS'); /** @var RockLESS $less */
+    if($less) $less->addToConfig($file);
+    else $this->config->styles->add("$file.css");
+
+    // load vex
+    $this->wire('modules')->get('JqueryUI')->use('vex');
+
+    // load JS
+    $js = $this->wire->config->urls($this)."RockMatrixItem.js";
+    $this->wire->config->scripts->add($js);
+
+    $this->preloadBlockAssets();
   }
 
   /**
@@ -162,6 +203,7 @@ class InputfieldRockMatrix extends Inputfield {
     $tx = $this->wire->modules->get('InputfieldTextarea');
     $tx->name = $this->name;
     $tx->value = $this->value->sleepValue();
+    $tx->addClass('rmx-data');
     return $tx->render();
   }
 

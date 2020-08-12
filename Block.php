@@ -101,7 +101,7 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function isAllowed($field, $page) {
     $allowed = $this->master()->getAllowedBlocks($field, $page);
-    return $allowed->has($this->getRmBlock());
+    return $allowed->has($this->getRmxBlock());
   }
 
   /**

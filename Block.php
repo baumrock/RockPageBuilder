@@ -139,7 +139,7 @@ abstract class Block extends \ProcessWire\Page {
 
       // non-editable blocks are locked for edits
       if(!$this->editable()) {
-        $f->collapsed = $f->collapsed == Inputfield::collapsedNo
+        $f->collapsed = ($f->collapsed == Inputfield::collapsedNo)
           ? Inputfield::collapsedNoLocked
           : Inputfield::collapsedYesLocked;
       }

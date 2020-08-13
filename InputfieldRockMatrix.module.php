@@ -59,8 +59,22 @@ class InputfieldRockMatrix extends InputfieldRepeater {
     ]));
   }
 
+  /**
+   * Preload assets of all allowed blocks' inputfields
+   * This makes sure that all the assets for eg file fields are
+   * ready when a new block is added and initialized via JS
+   * @return void
+   */
   public function preloadBlockAssets() {
-    bd("tbd");
+    $page = $this->process->getPage();
+    $blocks = $this->master->getAllowedBlocks($this, $page);
+    $nullPage = new NullPage();
+    foreach($blocks as $block) {
+      if(!$tpl = $block->getTpl()) continue;
+      foreach($tpl->fields as $field) {
+        $field->getInputfield($nullPage)->renderReady();
+      }
+    }
   }
 
   /**
@@ -144,33 +158,6 @@ class InputfieldRockMatrix extends InputfieldRepeater {
   }
 
   /**
-   * Get button to add a new page having this template
-   */
-  public function ___renderButton($block, $page) {
-    $field = $this->hasField;
-
-    /** @var InputfieldButton $b */
-    $b = $this->wire('modules')->get('InputfieldButton');
-    $b->secondary = true;
-    $b->small = true;
-    if($block) {
-      $info = $block->info();
-      $b->value = $info->get('title') ?: $block->className;
-      $b->icon = $info->icon;
-      if($info->description) $b->attr('uk-tooltip', $info->description);
-      $tpl = $block->getTplName();
-      $b->href = "./?id=$page&field=$field&tpl=$tpl";
-
-      // fix issue https://github.com/processwire/processwire-issues/issues/1220
-      $b->addHookAfter("render", function($event) {
-        $out = substr($event->return, 2);
-        $event->return = "<a tabindex='-1'".$out;
-      });
-    }
-    return $b->render();
-  }
-
-  /**
    * Render buttons to add a block to the current field
    * @return string
    */
@@ -179,7 +166,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
 
     $buttons = '<div class="rmx-buttons">';
     foreach($this->master->getAllowedBlocks($this, $page) as $block) {
-      $buttons .= $this->renderButton($block, $page);
+      $buttons .= $block->renderButton($page, $this->hasField);
     }
     $buttons .= "</div>";
 

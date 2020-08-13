@@ -252,6 +252,30 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Get button to add a new page having this template
+   */
+  public function ___renderButton($page, $field) {
+    /** @var InputfieldButton $b */
+    $b = $this->wire('modules')->get('InputfieldButton');
+    $b->secondary = true;
+    $b->small = true;
+    $info = $this->info();
+    $b->value = $info->get('title') ?: $this->className;
+    $b->icon = $info->icon;
+    if($info->description) $b->attr('uk-tooltip', $info->description);
+    $tpl = $this->getTplName();
+    $b->href = "./?id=$page&field=$field&tpl=$tpl";
+
+    // fix issue https://github.com/processwire/processwire-issues/issues/1220
+    $b->addHookAfter("render", function($event) {
+      $out = substr($event->return, 2);
+      $event->return = "<a tabindex='-1'".$out;
+    });
+
+    return $b->render();
+  }
+
+  /**
    * Get RockMigrations instance
    * @return RockMigrations
    */

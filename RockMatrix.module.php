@@ -102,6 +102,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    * @return false|Block
    */
   public function getBlock($name) {
+    if($name instanceof Block) $name = $name->info()->name;
     if(!array_key_exists($name, $this->blocks)) return false;
     return $this->blocks[$name];
   }

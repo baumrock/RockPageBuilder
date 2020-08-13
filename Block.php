@@ -110,6 +110,17 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Return the page where this block lives on
+   * @return Page
+   */
+  public function getPage() {
+    // the page is stored in metadata of the block
+    // the metadata is pageid-fieldid
+    $meta = explode("-", $this->meta('RockMatrix'));
+    return $this->wire->pages->get($meta[0]);
+  }
+
+  /**
    * Get parent for this block
    * @return Page
    */

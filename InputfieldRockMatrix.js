@@ -76,7 +76,10 @@ function RockMatrix() {
 
   RockMatrix.prototype.initItem = function($item) {
     InputfieldsInit($item); // init inputfield
-    $item.find('.InputfieldHasFileList').trigger('reloaded'); // init file fields
+
+    // trigger the reloaded event
+    // this initializes file and ckeditor fields (and maybe more)
+    $item.find('.Inputfield').trigger('reloaded');
   }
 
   RockMatrix.prototype.makeSortable = function(e) {

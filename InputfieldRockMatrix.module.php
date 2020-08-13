@@ -102,6 +102,9 @@ class InputfieldRockMatrix extends InputfieldRepeater {
       // TODO check if page is editable by current user
       // atm pages will be shown and saved even if they are not editable!
 
+      // TODO this will not work for file uploads - they will be blocked if
+      // user has no access to edit the page.
+
       // get the wrapper for this item and process input
       $wrapper = $item->getWrapper();
       $wrapper->resetTrackChanges(true);
@@ -126,7 +129,6 @@ class InputfieldRockMatrix extends InputfieldRepeater {
   */
   public function ___render() {
     $this->createBlock();
-
     $out = '';
     $out .= $this->renderItems();
     $out .= $this->renderButtons();

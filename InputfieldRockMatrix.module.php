@@ -99,11 +99,11 @@ class InputfieldRockMatrix extends InputfieldRepeater {
       // we only process items that are marked as changed in raw textarea data
       if(!$item->_mxchanged) continue;
 
-      // TODO check if page is editable by current user
-      // atm pages will be shown and saved even if they are not editable!
-
-      // TODO this will not work for file uploads - they will be blocked if
-      // user has no access to edit the page.
+      // skip pages that are not editable
+      if(!$item->editable()) {
+        $this->warning("Skipped block $item - not editable!");
+        continue;
+      }
 
       // get the wrapper for this item and process input
       $wrapper = $item->getWrapper();

@@ -137,6 +137,13 @@ abstract class Block extends \ProcessWire\Page {
       // open wrapper if field has an error
       if(count($f->getErrors())) $fs->collapsed = Inputfield::collapsedNo;
 
+      // non-editable blocks are locked for edits
+      if(!$this->editable()) {
+        $f->collapsed = $f->collapsed == Inputfield::collapsedNo
+          ? Inputfield::collapsedNoLocked
+          : Inputfield::collapsedYesLocked;
+      }
+
       // changes for file inputfields
       if(!$f instanceof InputfieldFile) continue;
       $f->wrapAttr('data-fnsx', $wrap->suffix);

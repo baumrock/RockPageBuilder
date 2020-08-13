@@ -81,7 +81,7 @@ abstract class Block extends \ProcessWire\Page {
    * @return string
    */
   public function ___getLabel() {
-    return $this->get('title|id');
+    return $this->wire->sanitizer->truncate($this->get('title|id'), 50);
   }
 
   /**

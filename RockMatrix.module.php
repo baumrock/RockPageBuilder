@@ -176,13 +176,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       ],
     ]);
     $rm->createPage("RockMatrixBlocks", null, self::tpl_datapage, 1, ['hidden', 'locked']);
-
-    // test field
-    $rm->createField("rmtest", "FieldtypeRockMatrix");
-    $rm->addFieldToTemplate("rmtest", "basic-page");
-
-    // test matrix item
-    $rm->createPage("test", null, $block->getTpl(), $this->getDatapage());
   }
 
   /**

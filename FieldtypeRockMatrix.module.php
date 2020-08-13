@@ -64,7 +64,6 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
 
     public function ___sleepValue(Page $page, Field $field, $value) {
       $sleep = $value->sleepValue();
-      db($sleep, "sleep!");
       return $sleep;
     }
 

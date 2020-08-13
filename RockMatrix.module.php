@@ -34,15 +34,14 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       ],
       'installs' => [
         'FieldtypeRockMatrix',
-        'InputfieldRockMatrix',
       ],
     ];
   }
 
   public function init() {
     require_once("Block.php");
-    if(!$this->modules->isInstalled('InputfieldRepeater')) {
-      $this->modules->install('InputfieldRepeater');
+    if(!$this->modules->isInstalled('FieldtypeRepeater')) {
+      $this->modules->install('FieldtypeRepeater');
     }
     $this->setupDemoField();
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");

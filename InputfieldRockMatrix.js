@@ -1,6 +1,8 @@
 "use strict";
 (function() {
-  let delay = 5;
+  let editdelay = 5;
+  let submitdelay = editdelay + 20;
+
   function RockMatrix() {
     this.init = false;
     this.changeTimer;
@@ -136,7 +138,7 @@
         rm.setTextarea(e);
         console.log(rm.init ? 'RM changed' : 'RM init');
         rm.init = true;
-      }, 5);
+      }, editdelay);
     }
 
     // click on add new item button
@@ -221,7 +223,7 @@
       if($form.hasClass('rmxsubmit')) return true;
       setTimeout(() => {
         $form.addClass('rmxsubmit').submit();
-      }, delay+10);
+      }, submitdelay);
       return false;
     });
 

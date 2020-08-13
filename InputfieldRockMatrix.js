@@ -1,230 +1,227 @@
 "use strict";
-(function() {
-  let editdelay = 5;
-  let submitdelay = editdelay + 20;
 
-  function RockMatrix() {
-    this.init = false;
-    this.changeTimer;
+function RockMatrix() {
+  this.editdelay = 5;
+  this.submitdelay = this.editdelay+20;
+
+  this.init = false;
+  this.changeTimer;
+}
+
+// DOM helpers
+
+  // return the field's root element
+  RockMatrix.prototype.$root = function(e) {
+    let el = e.target; // param = event
+    if(!el) el = e; // param = dom element
+    return $(el).closest('.InputfieldRockMatrix');
   }
 
-  // DOM helpers
+  // return all item's list elements
+  RockMatrix.prototype.$items = function(e) {
+    return this.$root(e).find('.rmx-items > ul > li.rmx-item');
+  }
 
-    // return the field's root element
-    RockMatrix.prototype.$root = function(e) {
-      let el = e.target; // param = event
-      if(!el) el = e; // param = dom element
-      return $(el).closest('.InputfieldRockMatrix');
-    }
+  // return the items container
+  RockMatrix.prototype.$itemsContainer = function(e) {
+    return this.$root(e).find('.rmx-items');
+  }
 
-    // return all item's list elements
-    RockMatrix.prototype.$items = function(e) {
-      return this.$root(e).find('.rmx-items > ul > li.rmx-item');
-    }
+  // textarea holding field data
+  RockMatrix.prototype.$textarea = function(e) {
+    return this.$root(e).find('textarea.rmx-data');
+  }
 
-    // return the items container
-    RockMatrix.prototype.$itemsContainer = function(e) {
-      return this.$root(e).find('.rmx-items');
-    }
+// helpers
 
-    // textarea holding field data
-    RockMatrix.prototype.$textarea = function(e) {
-      return this.$root(e).find('textarea.rmx-data');
-    }
+  RockMatrix.prototype.addItem = function(e, json) {
+    let $root = this.$root(e);
+    let $container = this.$itemsContainer(e);
 
-  // helpers
+    // add empty list element
+    let $item = $(json.markup);
+    $container.append($item);
+    this.initItem($item);
 
-    RockMatrix.prototype.addItem = function(e, json) {
-      let $root = this.$root(e);
-      let $container = this.$itemsContainer(e);
+    // trigger change
+    $root.trigger('changed');
+  }
 
-      // add empty list element
-      let $item = $(json.markup);
-      $container.append($item);
-      this.initItem($item);
+  RockMatrix.prototype.fire = function($action) {
+    let action = $action.data('action');
+    let item = this.getItem($action[0]);
 
-      // trigger change
-      $root.trigger('changed');
-    }
+    if(action === 'trash') item.trash();
+    if(action === 'untrash') item.untrash();
+  }
 
-    RockMatrix.prototype.fire = function($action) {
-      let action = $action.data('action');
-      let item = this.getItem($action[0]);
+  RockMatrix.prototype.getData = function(e) {
+    return RockMatrix.getItems(e, true);
+  }
 
-      if(action === 'trash') item.trash();
-      if(action === 'untrash') item.untrash();
-    }
+  RockMatrix.prototype.getItem = function(e) {
+    return new RockMatrixItem(e);
+  }
 
-    RockMatrix.prototype.getData = function(e) {
-      return RockMatrix.getItems(e, true);
-    }
+  RockMatrix.prototype.getItems = function(e, json) {
+    let items = [];
+    let rm = this;
+    $.each(RockMatrix.$items(e), function(i, el) {
+      let item = rm.getItem(el);
+      if(json) items.push(item.getJSON());
+      else items.push(item);
+    });
+    return items;
+  }
 
-    RockMatrix.prototype.getItem = function(e) {
-      return new RockMatrixItem(e);
-    }
+  RockMatrix.prototype.initItem = function($item) {
+    InputfieldsInit($item); // init inputfield
+    $item.find('.InputfieldHasFileList').trigger('reloaded'); // init file fields
+  }
 
-    RockMatrix.prototype.getItems = function(e, json) {
-      let items = [];
-      let rm = this;
-      $.each(RockMatrix.$items(e), function(i, el) {
-        let item = rm.getItem(el);
-        if(json) items.push(item.getJSON());
-        else items.push(item);
-      });
-      return items;
-    }
+  RockMatrix.prototype.makeSortable = function(e) {
+    let $container = this.$itemsContainer(e);
 
-    RockMatrix.prototype.initItem = function($item) {
-      InputfieldsInit($item); // init inputfield
-      $item.find('.InputfieldHasFileList').trigger('reloaded'); // init file fields
-    }
+    let not_draggable = $container.find('> ul:not(.rmx-draggable)').length;
+    if(!not_draggable) return;
 
-    RockMatrix.prototype.makeSortable = function(e) {
-      let $container = this.$itemsContainer(e);
+    // init uikit sortable on container
+    UIkit.sortable($container[0], {
+      // longer animation duration prevents flicker
+      animation: 500,
 
-      // init uikit sortable on container
-      UIkit.sortable($container[0], {
-        // longer animation duration prevents flicker
-        animation: 500,
+      // set the handle to the header
+      // this ensures that other drag&drop features don't break (eg images)
+      handle: '.InputfieldHeader',
+    });
 
-        // set the handle to the header
-        // this ensures that other drag&drop features don't break (eg images)
-        handle: '.InputfieldHeader',
-      });
-
-      // add class to every sortable element
-      // to make it addressable via css
-      let $items = this.$items(e);
-      if($items.length) {
-        $container.removeClass('uk-hidden');
-        $.each($items, function(i, el) {
-          $(el).parent().addClass('rmx-draggable');
-        });
-      }
-      else {
-        $container.addClass('uk-hidden');
-      }
-    }
-
-    RockMatrix.prototype.setTextarea = function(e) {
-      let $text = this.$textarea(e);
-      let data = this.getData(e);
-      let json = JSON.stringify(data);
-      $text.val(json).text(json).change();
-    }
-
-    RockMatrix.prototype.spin = function($el, _cls) {
-      let cls = _cls || '';
-      let $i = $el.find('i.fa').first();
-      $i.data('tmpcls', $i.attr('class'));
-      $i.attr('class', "fa fa-spinner fa-spin "+cls);
-    }
-
-    RockMatrix.prototype.unspin = function($el) {
-      let $i = $el.find('i.fa').first();
-      $i.attr('class', $i.data('tmpcls'));
-      $i.removeAttr('tmpcls');
-    }
-
-  // event handlers
-
-    // change triggerd
-    RockMatrix.prototype.changed = function(e) {
-      let rm = this;
-      clearTimeout(rm.changeTimer);
-      // debounce for all changes
-      rm.changeTimer = setTimeout(function() {
-        rm.makeSortable(e);
-        rm.setTextarea(e);
-        console.log(rm.init ? 'RM changed' : 'RM init');
-        rm.init = true;
-      }, editdelay);
-    }
-
-    // click on add new item button
-    RockMatrix.prototype.clickAdd = function(e) {
-      e.preventDefault();
-
-      // get link
-      let $a = $(e.target).closest('a');
-      let href = $a.attr('href');
-      let rm = this;
-
-      // prevent double-click
-      if($a.find("i.fa-spin").length) return;
-
-      // show spinner
-      rm.spin($a);
-
-      // send ajax request
-      $.getJSON(href, function(json) {
-        if(json.error) ProcessWire.alert(json.message);
-        else rm.addItem(e, json);
-      }).fail(function(json) {
-        ProcessWire.alert('AJAX Error');
-      }).always(function() {
-        rm.unspin($a);
+    // add class to every sortable element
+    // to make it addressable via css
+    let $items = this.$items(e);
+    if($items.length) {
+      $container.removeClass('uk-hidden');
+      $.each($items, function(i, el) {
+        $(el).parent().addClass('rmx-draggable');
       });
     }
-
-    // init
-    RockMatrix.prototype.initialize = function(e) {
-      this.$root(e).trigger('changed');
+    else {
+      $container.addClass('uk-hidden');
     }
+  }
 
-  var RockMatrix = new RockMatrix();
+  RockMatrix.prototype.setTextarea = function(e) {
+    let $text = this.$textarea(e);
+    let data = this.getData(e);
+    let json = JSON.stringify(data);
+    $text.val(json).text(json).change();
+  }
 
-  // listeners
+  RockMatrix.prototype.spin = function($el, _cls) {
+    let cls = _cls || '';
+    let $i = $el.find('i.fa').first();
+    $i.data('tmpcls', $i.attr('class'));
+    $i.attr('class', "fa fa-spinner fa-spin "+cls);
+  }
 
-    // init the matrix
-    $(document).on('init', '.InputfieldRockMatrix', function(e) {
-      RockMatrix.initialize(e);
+  RockMatrix.prototype.unspin = function($el) {
+    let $i = $el.find('i.fa').first();
+    $i.attr('class', $i.data('tmpcls'));
+    $i.removeAttr('tmpcls');
+  }
+
+// event handlers
+
+  // change triggerd
+  RockMatrix.prototype.changed = function(e) {
+    let rm = this;
+    clearTimeout(rm.changeTimer);
+    // debounce for all changes
+    rm.changeTimer = setTimeout(function() {
+      rm.makeSortable(e);
+      rm.setTextarea(e);
+      console.log(rm.init ? 'RM changed' : 'RM init');
+      rm.init = true;
+    }, this.editdelay);
+  }
+
+  // click on add new item button
+  RockMatrix.prototype.clickAdd = function(e) {
+    e.preventDefault();
+
+    // get link
+    let $a = $(e.target).closest('a');
+    let href = $a.attr('href');
+    let rm = this;
+
+    // prevent double-click
+    if($a.find("i.fa-spin").length) return;
+
+    // show spinner
+    rm.spin($a);
+
+    // send ajax request
+    $.getJSON(href, function(json) {
+      if(json.error) ProcessWire.alert(json.message);
+      else rm.addItem(e, json);
+    }).fail(function(json) {
+      ProcessWire.alert('AJAX Error');
+    }).always(function() {
+      rm.unspin($a);
     });
+  }
 
-    // add a new matrix item
-    $(document).on('click', '.InputfieldRockMatrix .rmx-buttons a', function(e) {
-      RockMatrix.clickAdd(e);
-    });
+  // init
+  RockMatrix.prototype.initialize = function(e) {
+    this.$root(e).trigger('changed');
+  }
 
-    // change event triggered on root element
-    $(document).on('changed', '.InputfieldRockMatrix', function(e) {
-      RockMatrix.changed(e);
-    });
+var RockMatrix = new RockMatrix();
 
-    // items sort oder changed
-    $(document).on('stop', '.rmx-items', function(e) {
-      RockMatrix.changed(e);
-    });
+// listeners
 
-    // monitor all inputfields in a rockmatrix field
-    $(document).on('change', '.rmx-items input, .rmx-items textarea', function(e) {
-      setTimeout(function() { RockMatrix.changed(e); });
-    });
+  // init the matrix
+  $(document).on('init', '.InputfieldRockMatrix', function(e) {
+    RockMatrix.initialize(e);
+  });
 
-    // trigger changed event after file uploads
-    $(document).on('AjaxUploadDone', function(e) {
-      RockMatrix.changed(e);
-    });
+  // add a new matrix item
+  $(document).on('click', '.InputfieldRockMatrix .rmx-buttons a', function(e) {
+    RockMatrix.clickAdd(e);
+  });
 
-    // monitor action clicks
-    $(document).on('click', '.rmx-action', function(e) {
-      let $action = $(e.target).closest('.rmx-action');
-      RockMatrix.fire($action);
+  // change event triggered on root element
+  $(document).on('changed', '.InputfieldRockMatrix', function(e) {
+    RockMatrix.changed(e);
+  });
 
-      // dont toggle field
-      e.preventDefault();
-      return false;
-    });
+  // items sort oder changed
+  $(document).on('stop', '.rmx-items', function(e) {
+    RockMatrix.changed(e);
+  });
 
-    // wait for the textarea to update on submit of the form
-    // otherwise submitting the form via ENTER does not take changes
-    $(document).on('submit', '#ProcessPageEdit', function(e) {
-      let $form = $('#ProcessPageEdit');
-      if($form.hasClass('rmxsubmit')) return true;
-      setTimeout(() => {
-        $form.addClass('rmxsubmit').submit();
-      }, submitdelay);
-      return false;
-    });
+  // monitor all inputfields in a rockmatrix field
+  $(document).on('change', '.rmx-items input, .rmx-items textarea', function(e) {
+    setTimeout(function() { RockMatrix.changed(e); });
+  });
 
-})()
+  // trigger changed event after file uploads
+  $(document).on('AjaxUploadDone', function(e) {
+    RockMatrix.changed(e);
+  });
+
+  // monitor action clicks
+  $(document).on('click', '.rmx-action', function(e) {
+    let $action = $(e.target).closest('.rmx-action');
+    RockMatrix.fire($action);
+
+    // dont toggle field
+    e.preventDefault();
+    return false;
+  });
+
+  // make sure to add InputfieldStateChanged immediately after keydown
+  // we do not intercept form.submit() because that somehow brakes the save process
+  $(document).on('keydown', '.InputfieldRockMatrix input', function(e) {
+    $(e.target).closest('.Inputfield').addClass('InputfieldStateChanged');
+    RockMatrix.changed(e);
+  });

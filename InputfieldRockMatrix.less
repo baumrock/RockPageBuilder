@@ -1,1 +1,61 @@
-div { border: 1px solid red; }
+// quick fix for showing inputfield outline
+// color should not be hardcoded but will likely never change
+@border-color: #eeeeee;
+@color-trash: #ffe4e4;
+
+li.rmx-item {
+  transition: outline 0.5s ease-in-out;
+  margin-top: 10px;
+
+  > .InputfieldHeader {
+    padding: 2px 5px;
+    cursor: move;
+    transition: background-color 0.5s linear;
+
+    // item action buttons
+    .rmx-actions {
+      float: right;
+      margin-right: 5px;
+      > .rmx-action > i {
+        padding: 5px 10px;
+      }
+    }
+  }
+  > .InputfieldContent {
+    padding: 4px;
+    padding-top: 0;
+    transition: background-color 0.5s linear;
+
+    > .notes {
+      margin-top: 0;
+      border-left: 0;
+      padding-left: 0;
+      padding-top: 3px;
+      transition: background-color 0.5s linear;
+    }
+
+    > ul.Inputfields {
+      > li.Inputfield {
+        &.InputfieldRepeaterItem {
+          outline: 1px solid @border-color;
+        }
+      }
+    }
+  }
+
+  // trashed item
+  &.rmx-trash {
+    outline: 1px solid darken(@color-trash, 20%);
+    > .InputfieldContent, > .InputfieldHeader {
+      background: @color-trash;
+      > p.notes { background-color: @color-trash; }
+    }
+
+    // dont show trash icon
+    > .InputfieldHeader .rmx-action-trash { display: none; }
+  }
+  &:not(.rmx-trash) {
+    // dont show restore icon
+    > .InputfieldHeader .rmx-action-untrash { display: none; }
+  }
+}

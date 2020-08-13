@@ -1,0 +1,48 @@
+li.rmx-item {
+  transition: outline 0.5s ease-in-out;
+  margin-top: 10px;
+}
+li.rmx-item > .InputfieldHeader {
+  padding: 2px 5px;
+  cursor: move;
+  transition: background-color 0.5s linear;
+}
+li.rmx-item > .InputfieldHeader .rmx-actions {
+  float: right;
+  margin-right: 5px;
+}
+li.rmx-item > .InputfieldHeader .rmx-actions > .rmx-action > i {
+  padding: 5px 10px;
+}
+li.rmx-item > .InputfieldContent {
+  padding: 4px;
+  padding-top: 0;
+  transition: background-color 0.5s linear;
+}
+li.rmx-item > .InputfieldContent > .notes {
+  margin-top: 0;
+  border-left: 0;
+  padding-left: 0;
+  padding-top: 3px;
+  transition: background-color 0.5s linear;
+}
+li.rmx-item > .InputfieldContent > ul.Inputfields > li.Inputfield.InputfieldRepeaterItem {
+  outline: 1px solid #eeeeee;
+}
+li.rmx-item.rmx-trash {
+  outline: 1px solid #ff7e7e;
+}
+li.rmx-item.rmx-trash > .InputfieldContent,
+li.rmx-item.rmx-trash > .InputfieldHeader {
+  background: #ffe4e4;
+}
+li.rmx-item.rmx-trash > .InputfieldContent > p.notes,
+li.rmx-item.rmx-trash > .InputfieldHeader > p.notes {
+  background-color: #ffe4e4;
+}
+li.rmx-item.rmx-trash > .InputfieldHeader .rmx-action-trash {
+  display: none;
+}
+li.rmx-item:not(.rmx-trash) > .InputfieldHeader .rmx-action-untrash {
+  display: none;
+}

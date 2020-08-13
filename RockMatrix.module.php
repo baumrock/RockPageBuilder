@@ -13,6 +13,8 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   const prefix = 'rockmatrix_';
   const tags = 'RockMatrix';
 
+  const field_demo = self::prefix."rmxmoduledemo";
+
   const tpl_datapage = self::prefix."datapage";
 
   public $blocks = [];
@@ -39,6 +41,10 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   public function init() {
     require_once("Block.php");
+    if(!$this->modules->isInstalled('InputfieldRepeater')) {
+      $this->modules->install('InputfieldRepeater');
+    }
+    $this->setupDemoField();
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
     $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
   }
@@ -149,6 +155,28 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
+   * Install demo fields
+   * @return void
+   */
+  public function installDemo() {
+    $rm = $this->rm();
+    $rm->migrate([
+      'fields' => [
+        self::field_demo => [
+          'type' => 'FieldtypeRockMatrix',
+          'tags' => self::tags,
+          'icon' => 'bug',
+        ],
+      ],
+    ]);
+    $rm->addFieldToTemplate(self::field_demo, "home");
+
+    // now add all sample blocks and trigger the migration
+    $this->addBlocks(__DIR__."/demo/", "RMDemo");
+    $this->migrate();
+  }
+
+  /**
    * Module Migrations
    */
   public function migrate() {
@@ -179,11 +207,42 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
+   * Remove all demo fields and templates
+   * @return void
+   */
+  public function removeDemo() {
+    $rm = $this->rm();
+    $rm->deleteField(self::field_demo);
+    foreach($this->blocks as $block) {
+      if(strpos($block->info()->name, "RMDemo\\") !== 0) continue;
+      $block->uninstall();
+    }
+  }
+
+  /**
    * Get instance of RockMigrations
    * @return RockMigrations
    */
   public function rm() {
     return $this->wire->modules->get('RockMigrations');
+  }
+
+  /**
+   * This shows the settings of the demo field (if installed)
+   */
+  public function setupDemoField() {
+    $field = $this->fields->get(self::field_demo);
+    if(!$field) return;
+
+    $this->addBlocks(__DIR__."/demo/", "RMDemo");
+    $this->addHookAfter('getAllowedBlocks', function($event) {
+      $field = $event->arguments(0);
+      if($field->name !== self::field_demo) return;
+      $event->return->add('RMDemo\Textarea');
+      $event->return->add('RMDemo\Markup');
+      $event->return->add('RMDemo\Headline');
+      $event->return->add('RMDemo\Image');
+    });
   }
 
   /**
@@ -196,8 +255,27 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       'type' => 'checkbox',
       'name' => 'TriggerMigrations',
       'label' => 'Trigger Migrations',
+      'description' => 'After adding a new matrix block (via code) you need to run migrations. You can either do this here or via calling $modules->get("RockMatrix")->migrate();',
     ]);
     if($this->input->post('TriggerMigrations')) $this->migrate();
+
+    $inputfields->add([
+      'type' => 'checkbox',
+      'name' => 'InstallDemo',
+      'label' => 'Install Demo Data',
+      'description' => 'This will create a demo field and add it to the root page of your site to get you started quickly',
+      'columnWidth' => 50,
+    ]);
+    if($this->input->post('InstallDemo')) $this->installDemo();
+
+    $inputfields->add([
+      'type' => 'checkbox',
+      'name' => 'RemoveDemo',
+      'label' => 'Remove Demo Data',
+      'description' => 'This will remove all demo fields and templates without further asking!',
+      'columnWidth' => 50,
+    ]);
+    if($this->input->post('RemoveDemo')) $this->removeDemo();
 
     return $inputfields;
   }

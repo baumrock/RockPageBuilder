@@ -20,6 +20,7 @@ class Image extends \RockMatrix\Block {
           'tags' => self::tags,
           'icon' => $this->info()->icon,
           'extensions' => 'jpg jpeg png',
+          'maxFiles' => 1,
         ],
       ],
       'templates' => [

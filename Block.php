@@ -60,6 +60,15 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Get collapsed state of item
+   */
+  public function getCollapsedState() {
+    return $this->wire->config->ajax
+      ? Inputfield::collapsedNo
+      : Inputfield::collapsedYes;
+  }
+
+  /**
    * Get label for matrix item
    * @return string
    */
@@ -73,6 +82,23 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function ___getLabel() {
     return $this->get('title|id');
+  }
+
+  /**
+   * Get markup array for wrapper
+   * @return array
+   */
+  public function getMarkupArray($wrapper) {
+    $markup = $wrapper->getMarkup();
+
+    // actions
+    $markup['item_label'] = str_replace(
+      "{out}",
+      "{out}".$this->renderActions(),
+      $markup['item_label']
+    );
+
+    return $markup;
   }
 
   /**
@@ -126,6 +152,7 @@ abstract class Block extends \ProcessWire\Page {
     $fs->notes = $this->getNotes();
     $fs->addClass('rmx-item');
     $fs->wrapAttr('data-page', $this->id);
+    $fs->collapsed = $this->getCollapsedState();
 
     // call hookable buildFormMatrix to load fields
     $this->buildFormMatrix($fs);
@@ -156,6 +183,11 @@ abstract class Block extends \ProcessWire\Page {
       $f->wrapAttr('data-editUrl', $this->editUrl());
     }
 
+    // customize inputfield wrapper markup
+    $fs->setMarkup([
+      "id={$fs->id}" => $this->getMarkupArray($fs),
+    ]);
+
     return $fs;
   }
 
@@ -165,7 +197,10 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function isAllowed($field, $page) {
     $allowed = $this->master()->getAllowedBlocks($field, $page);
-    return $allowed->has($this->getRmxBlock());
+    foreach($allowed as $b) {
+      if($b->info()->name === $this->info()->name) return true;
+    }
+    return false;
   }
 
   /**
@@ -181,6 +216,39 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function render() {
     return $this->info()->name . "::render()";
+  }
+
+  /**
+   * Render a single block action
+   * @return string
+   */
+  public function renderAction($action, $data) {
+    $opt = $this->wire(new WireData()); /** @var WireData $opt */
+    $opt->setArray($data);
+    $icon = $opt->icon ?: $action;
+    return
+      "<a href='#'
+        class='rmx-action rmx-action-$action'
+        uk-tooltip='{$opt->label}'
+        data-action='$action'>
+        <i class='fa fa-$icon'></i>"
+      ."</a>";
+  }
+
+  /**
+   * Render actions for this item
+   */
+  public function renderActions() {
+    $out = "<span class='rmx-actions'>";
+    $out .= $this->renderAction('trash', [
+      'label' => $this->_('Mark for deletion'),
+    ]);
+    $out .= $this->renderAction('untrash', [
+      'label' => $this->_('Undo deletion'),
+      'icon' => 'undo',
+    ]);
+    $out .= "</span>";
+    return $out;
   }
 
   /**

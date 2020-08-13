@@ -1,5 +1,5 @@
 li.rmx-item {
-  transition: outline 0.5s ease-in-out;
+  transition: outline 0.3s ease-in-out;
   margin-top: 10px;
 }
 li.rmx-item > .InputfieldHeader {
@@ -45,4 +45,7 @@ li.rmx-item.rmx-trash > .InputfieldHeader .rmx-action-trash {
 }
 li.rmx-item:not(.rmx-trash) > .InputfieldHeader .rmx-action-untrash {
   display: none;
+}
+.rmx-items ul:last-child {
+  margin-bottom: 15px;
 }

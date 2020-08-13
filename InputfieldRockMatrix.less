@@ -3,8 +3,12 @@
 @border-color: #eeeeee;
 @color-trash: #ffe4e4;
 
+
+// matrix item
+// this is styled outside of .InputfieldRockMatrix context because dragging
+// items don't live inside the inputfield context!
 li.rmx-item {
-  transition: outline 0.5s ease-in-out;
+  transition: outline 0.3s ease-in-out;
   margin-top: 10px;
 
   > .InputfieldHeader {
@@ -57,5 +61,12 @@ li.rmx-item {
   &:not(.rmx-trash) {
     // dont show restore icon
     > .InputfieldHeader .rmx-action-untrash { display: none; }
+  }
+}
+
+// add spacing after last matrix item
+.rmx-items {
+  ul:last-child {
+    margin-bottom: 15px;
   }
 }

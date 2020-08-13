@@ -29,7 +29,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
    */
   public function createBlock() {
     if(!$tpl = $this->input->get('tpl', 'string')) return;
-    if($this->process != 'ProcessPageEdit') throw new WireException("Not allowed");
+    if($this->process != 'ProcessPageEdit') return;
 
     // check if field is set to current field
     $field = $this->wire->fields->get($this->input->get('field', 'string'));
@@ -37,27 +37,26 @@ class InputfieldRockMatrix extends InputfieldRepeater {
 
     // is the block allowed?
     $page = $this->process->getPage();
-    $allowed = $this->master->getAllowedBlocks($this, $page);
     $block = $this->master->getBlockByTpl($tpl);
-    if(!$block OR !$allowed->has($block)) throw new WireException("Not allowed");
+    if(!$block->isAllowed($field, $page)) throw new WireException("Not allowed");
 
     // create new block
-    $p = $this->wire(new Page()); /** @var Page $p */
-    $p->template = $block->getTpl();
-    $p->parent = $block->getParent();
-    $p->title = 'test '.date('d.m.Y H:i:s');
-    $p->save();
+    $class = $block->info()->name;
+    $b = $this->wire(new $class()); /** @var Block $b */
+    $b->template = $block->getTpl();
+    $b->parent = $block->getParent();
+    $b->title = "$class @ ".date('Y-m-d H:i:s');
+    $b->save();
 
     // save a reference to the page and the field where this page lives
     // this is necessary for deleting unused pages from time to time
-    $p->meta('RockMatrix', $page->id."-".$field->id);
-  }
+    $b->meta('RockMatrix', $page->id."-".$field->id);
 
-  /**
-   * Get collapsed state of item
-   */
-  public function getCollapsedState() {
-    return Inputfield::collapsedNo;
+    // render inputfield for this block
+    $wrap = $b->getWrapper();
+    die(json_encode([
+      'markup' => $wrap->parent->render(),
+    ]));
   }
 
   public function preloadBlockAssets() {
@@ -102,6 +101,13 @@ class InputfieldRockMatrix extends InputfieldRepeater {
       // skip pages that are not editable
       if(!$item->editable()) {
         $this->warning("Skipped block $item - not editable!");
+        continue;
+      }
+
+      // check item trashed
+      if($item->_mxtrash) {
+        $item->trash();
+        $new->remove($item);
         continue;
       }
 
@@ -235,7 +241,8 @@ class InputfieldRockMatrix extends InputfieldRepeater {
 
     // load JS
     $js = $this->wire->config->urls($this)."RockMatrixItem.js";
-    $this->wire->config->scripts->add($js);
+    $m = "?m=".filemtime($this->wire->config->paths($this)."RockMatrixItem.js");
+    $this->wire->config->scripts->add($js.$m);
 
     $this->preloadBlockAssets();
   }
@@ -249,7 +256,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
     $tx = $this->wire->modules->get('InputfieldTextarea');
     $tx->name = $this->name;
     $tx->value = $this->value->sleepValue();
-    $tx->addClass('rmx-data');
+    $tx->addClass('rmx-data uk-hidden');
     return $tx->render();
   }
 

@@ -33,10 +33,12 @@ function RockMatrixItem(e) {
 
   // get json ready for the textarea
   RockMatrixItem.prototype.getJSON = function() {
+    let trash = this.$.hasClass('rmx-trash') ? 1 : 0;
+    let changed = this.$.find('.InputfieldStateChanged').length;
+    changed += trash;
     return {
       id: this.$.data('page'),
-      // open: this.$.hasClass('InputfieldStateCollapsed') ? 0 : 1,
-      // trash: this.$.hasClass('rmx-trash') ? 1 : 0,
-      changed: this.$.find('.InputfieldStateChanged').length,
+      trash,
+      changed
     };
   }

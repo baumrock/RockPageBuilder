@@ -48,6 +48,14 @@ class FieldData extends PageArray {
   }
 
   /**
+   * Get property of object
+   * @return mixed
+   */
+  public function getProp($obj, $prop) {
+    return property_exists($obj, $prop) ? $obj->$prop : null;
+  }
+
+  /**
    * Has this object changed compared to another one?
    * This method is used for triggering the trackChange event when a page
    * having a MX field is saved and input is processed.
@@ -91,17 +99,17 @@ class FieldData extends PageArray {
   public function wakeup($data) {
     /** @var RockMatrix */
     $mx = $this->wire->modules->get('RockMatrix');
-
     $json = json_decode($data);
-    if(!$json) throw new WireException("Invalid json");
+    if($json === null) throw new WireException("Invalid json");
+
+    // loop items
     foreach($json as $item) {
       $block = $mx->getBlockPage($item->id);
 
       // set the changed property of this block
       // this value us used on processInput to trigger page save of the item
-      $block->_mxchanged = property_exists($item, 'changed')
-        ? $item->changed
-        : false;
+      $block->_mxchanged = $this->getProp($item, 'changed');
+      $block->_mxtrash = $this->getProp($item, 'trash');
 
       $this->add($block);
     }

@@ -1,4 +1,5 @@
 <?php namespace ProcessWire;
+use RockMatrix\Block;
 /**
  * @author Bernhard Baumrock, 10.08.2020
  * @license COMMERCIAL DO NOT DISTRIBUTE
@@ -70,6 +71,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
     $blocks = $this->master->getAllowedBlocks($this, $page);
     $nullPage = new NullPage();
     foreach($blocks as $block) {
+      if(!$block instanceof Block) continue;
       if(!$tpl = $block->getTpl()) continue;
       foreach($tpl->fields as $field) {
         $field->getInputfield($nullPage)->renderReady();
@@ -163,9 +165,16 @@ class InputfieldRockMatrix extends InputfieldRepeater {
    */
   public function ___renderButtons() {
     $page = $this->process->getPage();
+    $blocks = $this->master->getAllowedBlocks($this, $page);
+
+    if(!count($blocks)) {
+      return $this->files->render(__DIR__."/_setupinfo.php", [
+        'name'=>$this->name,
+      ]);
+    }
 
     $buttons = '<div class="rmx-buttons">';
-    foreach($this->master->getAllowedBlocks($this, $page) as $block) {
+    foreach($blocks as $block) {
       $buttons .= $block->renderButton($page, $this->hasField);
     }
     $buttons .= "</div>";

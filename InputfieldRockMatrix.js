@@ -38,9 +38,10 @@ function RockMatrix() {
     let $root = this.$root(e);
     let $container = this.$itemsContainer(e);
 
-    // add empty list element
+    // add item to container
     let $item = $(json.markup);
     $container.append($item);
+    $item.find('.rmx-item').addClass('rmx-added');
     this.initItem($item);
 
     // trigger change

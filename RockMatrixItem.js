@@ -35,10 +35,15 @@ function RockMatrixItem(e) {
   RockMatrixItem.prototype.getJSON = function() {
     let trash = this.$.hasClass('rmx-trash') ? 1 : 0;
     let changed = this.$.find('.InputfieldStateChanged').length;
-    changed += trash;
+
+    // check if the item was added on this request
+    // this ensures that added items are saved at least once which triggers
+    // a processInput and checks for field erros (eg empty required fields)
+    let added = this.$.hasClass('rmx-added') ? 1 : 0;
+
     return {
       id: this.$.data('page'),
       trash,
-      changed
+      changed: changed+trash+added,
     };
   }

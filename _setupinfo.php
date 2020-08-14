@@ -8,8 +8,8 @@ if($modules->isInstalled('RockMatrix')) {
     $page = $event->arguments(1);
     if($field->name !== '<?= $name ?>') return;
     $event->return->add([
-      '\RMDemo\Headline',
-      '\RMDemo\Markup',
+      'RMDemo\Headline',
+      'RMDemo\Markup',
     ]);
   });
 }

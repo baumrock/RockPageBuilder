@@ -47,6 +47,12 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->setupDemoField();
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
     $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
+
+    $this->include("init.php"); // load assets/RockMatrix/init.php
+  }
+
+  public function ready() {
+    $this->include("ready.php"); // load assets/RockMatrix/ready.php
   }
 
   /**
@@ -152,6 +158,17 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $page = $event->object;
     if(!$page instanceof Block) throw new WireException("Page is not a RM Block");
     $event->return = $this->getBlockByTpl($page->template);
+  }
+
+  /**
+   * Include file from assets folder
+   */
+  public function include($file) {
+    $dir = $this->wire->config->paths->assets."RockMatrix";
+    $file = "$dir/$file";
+    $vars = ['mx' => $this];
+    $opt = ['allowedPaths' => [$dir]];
+    if(is_file($file)) $this->wire->files->include($file, $vars, $opt);
   }
 
   /**

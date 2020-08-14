@@ -105,6 +105,7 @@ class FieldData extends PageArray {
     // loop items
     foreach($json as $item) {
       $block = $mx->getBlockPage($item->id);
+      if(!$block) continue;
 
       // set the changed property of this block
       // this value us used on processInput to trigger page save of the item

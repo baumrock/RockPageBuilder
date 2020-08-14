@@ -6,6 +6,8 @@ use RockMatrix\BlocksArray;
  * @author Bernhard Baumrock, 18.07.2020
  * @license COMMERCIAL DO NOT DISTRIBUTE
  * @link https://www.baumrock.com
+ *
+ * // BUG: ckeditor breaks after sorting
  */
 require_once(__DIR__ . "/BlocksArray.php");
 class RockMatrix extends WireData implements Module, ConfigurableModule {
@@ -134,9 +136,13 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    * Get Block page from given data
    */
   public function getBlockPage($data) {
-    $page = $this->wire->pages->get((string)$data);
-    if(!$page instanceof Block) return false;
-    return $page;
+    try {
+      $page = $this->wire->pages->get((string)$data);
+      if(!$page instanceof Block) return false;
+      return $page;
+    } catch (\Throwable $th) {
+      $this->error($th->getMessage());
+    }
   }
 
   /**

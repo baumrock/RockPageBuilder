@@ -124,7 +124,7 @@ abstract class Block extends \ProcessWire\Page {
    * Get parent for this block
    * @return Page
    */
-  public function ___getParent($field = null, $page = null) {
+  public function ___getParent($field, $page) {
     return $this->master()->getDatapage();
   }
 

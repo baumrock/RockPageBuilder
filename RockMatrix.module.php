@@ -8,6 +8,7 @@ use RockMatrix\BlocksArray;
  * @link https://www.baumrock.com
  *
  * // BUG: ckeditor breaks after sorting
+ * // TODO: Wenn ich auf "Gemeindezeitung" klicke... kommt immer eine Browserwarnung "Wollen Sie die Seite wirklich verlassen". Obwohl keine Änderungen mehr ungespeichert sind.
  */
 require_once(__DIR__ . "/BlocksArray.php");
 class RockMatrix extends WireData implements Module, ConfigurableModule {

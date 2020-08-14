@@ -45,7 +45,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
     $class = $block->info()->name;
     $b = $this->wire(new $class()); /** @var Block $b */
     $b->template = $block->getTpl();
-    $b->parent = $block->getParent();
+    $b->parent = $block->getParent($field, $page);
     $b->title = "$class @ ".date('Y-m-d H:i:s');
     $b->save();
 

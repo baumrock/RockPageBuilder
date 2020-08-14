@@ -1,6 +1,7 @@
 <?php namespace RockMatrix;
 
 use ProcessWire\FieldtypeRockMatrix;
+use ProcessWire\FieldtypeRockShare;
 use ProcessWire\Paths;
 use ProcessWire\RockMatrix;
 use \ProcessWire\WireData;
@@ -69,6 +70,15 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Return the field where this block lives on
+   * @return Field
+   */
+  public function getMatrixField() {
+    $meta = explode("-", $this->meta('RockMatrix'));
+    return $this->wire->fields->get($meta[1]);
+  }
+
+  /**
    * Get label for matrix item
    * @return string
    */
@@ -113,7 +123,7 @@ abstract class Block extends \ProcessWire\Page {
    * Return the page where this block lives on
    * @return Page
    */
-  public function getPage() {
+  public function getMatrixPage() {
     // the page is stored in metadata of the block
     // the metadata is pageid-fieldid
     $meta = explode("-", $this->meta('RockMatrix'));

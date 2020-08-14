@@ -16,7 +16,14 @@ class BlocksArray extends WireArray {
       $mx = $this->wire->modules->get('RockMatrix');
       $block = $mx->getBlock($item);
       if($block) return parent::add($block);
-      else throw new WireException("Block $item not found");
+      else {
+        // silent return
+        // This makes sure that fields stay usable even
+        // if blocks are in the DB that are not allowed any more.
+        // If we threw an exception the field would become unusable
+        // in such cases!
+        return false;
+      }
     }
     parent::add($item);
   }

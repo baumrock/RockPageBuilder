@@ -31,7 +31,7 @@ class FieldData extends PageArray {
 
     // check if item is allowed!
     if(!$item->isAllowed($this->field, $this->page)) {
-      throw new WireException("Not allowed");
+      return $this->error("$item not allowed for field {$this->field}");
     }
 
     parent::add($item);

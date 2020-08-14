@@ -2,6 +2,8 @@
 
 Repeater Matrix for ProcessWire, referenced as RM in this readme.
 
+![img](https://i.ibb.co/xM796yt/matrix.gif)
+
 ## Concept
 
 RockMatrix is a Fieldtype/Inputfield module that helps you creating modular content for your project. The most important part are so called `blocks` that are actually ProcessWire pages with a corresponding `template` and a custom `pageClass`.

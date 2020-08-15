@@ -60,7 +60,7 @@ abstract class Block extends \ProcessWire\Page {
    * Get label for matrix item
    * @return string
    */
-  public function ___getIcon() {
+  public function getIcon() {
     return $this->info()->icon;
   }
 
@@ -68,7 +68,7 @@ abstract class Block extends \ProcessWire\Page {
    * Get label for matrix item
    * @return string
    */
-  public function ___getLabel() {
+  public function getLabel() {
     return $this->wire->sanitizer->truncate($this->get('title|id'), 50);
   }
 
@@ -113,7 +113,7 @@ abstract class Block extends \ProcessWire\Page {
    * Get notes for matrix item
    * @return string
    */
-  public function ___getNotes() {
+  public function getNotes() {
     return $this->info()->description;
   }
 
@@ -289,7 +289,7 @@ abstract class Block extends \ProcessWire\Page {
   /**
    * Get button to add a new page having this template
    */
-  public function ___renderButton($page, $field) {
+  public function renderButton($page, $field) {
     /** @var InputfieldButton $b */
     $b = $this->wire('modules')->get('InputfieldButton');
     $b->secondary = true;

@@ -128,7 +128,11 @@ function RockMatrix() {
       let $div = $(el);
       let id = $div.attr('id'); // eg cke_Inputfield_123_text
       id = id.substr(4); // Inputfield_123_text
-      let config = $('#'+id).data('configdata');
+
+      // get config for restore
+      let $textarea = $div.parent().find('> textarea');
+      let config = ProcessWire.config[$textarea.attr('data-configName')];
+
       CKEDITOR.instances[id].destroy();
       CKEDITOR.replace(id, config);
     });

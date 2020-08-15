@@ -49,3 +49,6 @@ li.rmx-item:not(.rmx-trash) > .InputfieldHeader .rmx-action-untrash {
 .rmx-items > ul:last-child {
   margin-bottom: 15px;
 }
+.rmx-pd5 > .InputfieldContent {
+  padding: 5px;
+}

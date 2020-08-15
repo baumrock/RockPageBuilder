@@ -17,6 +17,13 @@ function RockMatrix() {
     return $(el).closest('.InputfieldRockMatrix');
   }
 
+  // get the item (block) element
+  RockMatrix.prototype.$item = function(e) {
+    let el = e.target; // param = event
+    if(!el) el = e; // param = dom element
+    return $(el).closest('.rmx-item');
+  }
+
   // return all item's list elements
   RockMatrix.prototype.$items = function(e) {
     return this.$root(e).find('.rmx-items > ul > li.rmx-item');
@@ -113,6 +120,20 @@ function RockMatrix() {
     }
   }
 
+  /**
+   * Reset CKE after dragging
+   */
+  RockMatrix.prototype.resetCKEs = function($item) {
+    $.each($item.find('div.cke'), function(i, el) {
+      let $div = $(el);
+      let id = $div.attr('id'); // eg cke_Inputfield_123_text
+      id = id.substr(4); // Inputfield_123_text
+      let config = $('#'+id).data('configdata');
+      CKEDITOR.instances[id].destroy();
+      CKEDITOR.replace(id, config);
+    });
+  }
+
   RockMatrix.prototype.setTextarea = function(e) {
     let $text = this.$textarea(e);
     let data = this.getData(e);
@@ -201,6 +222,12 @@ var RockMatrix = new RockMatrix();
   // items sort oder changed
   $(document).on('stop', '.rmx-items', function(e) {
     RockMatrix.changed(e);
+  });
+
+  // whenever a matrix item is moved we reset CKEditor fields
+  $(document).on('moved', ".rmx-items.uk-sortable", function(e) {
+    let $item = $(e.originalEvent.detail[1]);
+    RockMatrix.resetCKEs($item);
   });
 
   // monitor all inputfields in a rockmatrix field

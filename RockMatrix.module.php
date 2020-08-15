@@ -100,8 +100,8 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $page = $event->process->getPage();
     if(!$page instanceof Block) return;
     $fs = $event->return;
-    $block = $page->getRmxBlock();
-    $block->buildForm($fs);
+    $page->prepareForm($fs);
+    $page->buildForm($fs);
   }
 
   /**

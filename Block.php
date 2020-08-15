@@ -35,29 +35,16 @@ abstract class Block extends \ProcessWire\Page {
 
   /**
    * Build form to edit this block
-   * @return InputfieldWrapper
+   * @return void
    */
-  public function ___buildForm($fs) {
-    // the default is to add all fields of the page template
-    $fields = $this->getInputfields();
-    if(!$fields) return $fs;
-    foreach($fields->children() as $f) {
-      $type = $f->hasField->type;
-      // prevent recursion
-      if($type instanceof FieldtypeRockMatrix) $fields->remove($f);
-      // sharing of pages not possible inside matrix
-      if($type instanceof FieldtypeRockShare) $fields->remove($f);
-    }
-    $fs->import($fields);
-    return $fs;
-  }
+  public function ___buildForm($fs) {}
 
   /**
    * Build the form when displayed in a matrix field
-   * @return InputfieldWrapper
+   * @return void
    */
   public function ___buildFormMatrix($fs) {
-    return $this->buildForm($fs);
+    $this->buildForm($fs);
   }
 
   /**
@@ -67,15 +54,6 @@ abstract class Block extends \ProcessWire\Page {
     return $this->wire->config->ajax
       ? Inputfield::collapsedNo
       : Inputfield::collapsedYes;
-  }
-
-  /**
-   * Return the field where this block lives on
-   * @return Field
-   */
-  public function getMatrixField() {
-    $meta = explode("-", $this->meta('RockMatrix'));
-    return $this->wire->fields->get($meta[1]);
   }
 
   /**
@@ -112,11 +90,12 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
-   * Get notes for matrix item
-   * @return string
+   * Return the field where this block lives on
+   * @return Field
    */
-  public function ___getNotes() {
-    return $this->info()->description;
+  public function getMatrixField() {
+    $meta = explode("-", $this->meta('RockMatrix'));
+    return $this->wire->fields->get($meta[1]);
   }
 
   /**
@@ -128,6 +107,14 @@ abstract class Block extends \ProcessWire\Page {
     // the metadata is pageid-fieldid
     $meta = explode("-", $this->meta('RockMatrix'));
     return $this->wire->pages->get($meta[0]);
+  }
+
+  /**
+   * Get notes for matrix item
+   * @return string
+   */
+  public function ___getNotes() {
+    return $this->info()->description;
   }
 
   /**
@@ -176,6 +163,7 @@ abstract class Block extends \ProcessWire\Page {
     $fs->collapsed = $this->getCollapsedState();
 
     // call hookable buildFormMatrix to load fields
+    $this->prepareForm($fs);
     $this->buildFormMatrix($fs);
 
     // add repeater suffix to all children
@@ -230,6 +218,32 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function master() {
     return $this->wire->modules->get('RockMatrix');
+  }
+
+  /**
+   * Prepare form for being rendered as a matrix block
+   * This is a separate method that needs to be called before buildForm
+   * or buildFormMatrix. The reason for this method is that buildForm and
+   * buildFormMatrix do not need to call parent::buildForm, because that would
+   * be prone to errors.
+   * @return void
+   */
+  protected function prepareForm($fs) {
+    // the default is to add all fields of the page template
+    $fields = $this->getInputfields();
+    if(!$fields) return $fs;
+    foreach($fields->children() as $f) {
+      $type = $f->hasField->type;
+      // prevent recursion
+      if($type instanceof FieldtypeRockMatrix) $fields->remove($f);
+      // sharing of pages not possible inside matrix
+      if($type instanceof FieldtypeRockShare) $fields->remove($f);
+    }
+
+    foreach($fields as $field) {
+      if($fs->has($field->name)) continue;
+      $fs->add($field);
+    }
   }
 
   /**

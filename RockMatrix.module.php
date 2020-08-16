@@ -50,7 +50,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->setupDemoField();
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
     $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
-
+    $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
     $this->include("init.php"); // load assets/RockMatrix/init.php
   }
 
@@ -165,6 +165,18 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $page = $event->object;
     if(!$page instanceof Block) throw new WireException("Page is not a RM Block");
     $event->return = $this->getBlockByTpl($page->template);
+  }
+
+  /**
+   * Inherit editable state for blocks from matrix page
+   * @return void
+   */
+  public function hookBlockEditable(HookEvent $event) {
+    $page = $event->object;
+    if(!$page instanceof Block) return;
+    $matrixPage = $page->getMatrixPage();
+    if(!$matrixPage OR !$matrixPage->id) return;
+    $event->return = $matrixPage->editable();
   }
 
   /**

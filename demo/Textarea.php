@@ -1,5 +1,6 @@
 <?php namespace RMDemo;
 use ProcessWire\HookEvent;
+use ProcessWire\Inputfield;
 use ProcessWire\InputfieldWrapper;
 use ProcessWire\InputfieldCKEditor;
 class Textarea extends \RockMatrix\Block {
@@ -18,14 +19,16 @@ class Textarea extends \RockMatrix\Block {
     $this->addHookBefore("Field(name=$name)::getInputfield", function(HookEvent $event) {
       $field = $event->object; /** @var InputfieldCKEditor $field */
       $field->toolbar = 'Bold, Italic, -, NumberedList, BulletedList';
-      $field->rows = 10;
+      $field->rows = 5;
     });
   }
 
   public function buildForm(InputfieldWrapper $fs) {
-    $fs = parent::___buildForm($fs);
     $fs->remove('title');
-    return $fs;
+
+    $f = $fs->get(self::field_text);
+    $f->skipLabel = Inputfield::skipLabelMarkup;
+    $f->wrapClass('rmx-pd5');
   }
 
   public function getLabel() {

@@ -168,7 +168,12 @@ abstract class Block extends \ProcessWire\Page {
 
     // add repeater suffix to all children
     foreach($fs->children() as $f) {
-      $f->name .= $wrap->suffix;
+      // add the suffix to the inputfields name
+      // before we do that we make sure that it does not already
+      // have a repeater suffix to avoid adding the suffix twice
+      // this can happen on RockMeta fields (don't know why, quickfix)
+      $name = preg_replace('/_repeater\d+$/', '', $f->name);
+      $f->name = $name.$wrap->suffix;
 
       // open wrapper if field has an error
       if(count($f->getErrors())) $fs->collapsed = Inputfield::collapsedNo;

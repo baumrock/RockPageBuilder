@@ -174,6 +174,12 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public function hookBlockEditable(HookEvent $event) {
     $page = $event->object;
     if(!$page instanceof Block) return;
+    $editable = $event->return;
+
+    // if page is already editable we exit early
+    if($editable == true) return;
+
+    // otherwise we make the block editable if the matrix page is editable
     $matrixPage = $page->getMatrixPage();
     if(!$matrixPage OR !$matrixPage->id) return;
     $event->return = $matrixPage->editable();

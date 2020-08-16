@@ -168,7 +168,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
-   * Inherit editable state for blocks from matrix page
+   * Make sure that blocks are editable if the matrix page is editable
    * @return void
    */
   public function hookBlockEditable(HookEvent $event) {

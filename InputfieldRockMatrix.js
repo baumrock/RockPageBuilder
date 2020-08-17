@@ -235,7 +235,7 @@ var RockMatrix = new RockMatrix();
   });
 
   // monitor all inputfields in a rockmatrix field
-  $(document).on('change', '.rmx-items input, .rmx-items textarea', function(e) {
+  $(document).on('change', '.rmx-items input, .rmx-items textarea, .rmx-items select', function(e) {
     setTimeout(function() { RockMatrix.changed(e); });
   });
 

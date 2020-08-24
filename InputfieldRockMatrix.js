@@ -103,7 +103,7 @@ function RockMatrix() {
 
       // set the handle to the header
       // this ensures that other drag&drop features don't break (eg images)
-      handle: '.InputfieldHeader',
+      handle: '.rmx-item > .InputfieldHeader',
     });
 
     // add class to every sortable element

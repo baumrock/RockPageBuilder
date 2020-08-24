@@ -21,6 +21,7 @@ abstract class Block extends \ProcessWire\Page {
   public function info() {
     $info = $this->wire(new WireData()); /** @var WireData $info */
     return $info->setArray([
+      'title' => $this->className,
       'name' => get_class($this),
       'icon' => 'cube',
     ]);
@@ -300,7 +301,7 @@ abstract class Block extends \ProcessWire\Page {
     $b->secondary = true;
     $b->small = true;
     $info = $this->info();
-    $b->value = $info->get('title') ?: $this->className;
+    $b->value = $info->get('title');
     $b->icon = $info->icon;
     if($info->description) $b->attr('uk-tooltip', $info->description);
     $tpl = $this->getTplName();

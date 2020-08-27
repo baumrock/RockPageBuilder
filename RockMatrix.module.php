@@ -7,9 +7,9 @@ use RockMatrix\BlocksArray;
  * @license COMMERCIAL DO NOT DISTRIBUTE
  * @link https://www.baumrock.com
  *
- * // BUG: ckeditor breaks after sorting
  * // TODO: Wenn ich auf "Gemeindezeitung" klicke... kommt immer eine Browserwarnung "Wollen Sie die Seite wirklich verlassen". Obwohl keine Änderungen mehr ungespeichert sind.
  */
+require_once("Block.php");
 require_once(__DIR__ . "/BlocksArray.php");
 class RockMatrix extends WireData implements Module, ConfigurableModule {
 
@@ -43,7 +43,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   public function init() {
-    require_once("Block.php");
     if(!$this->modules->isInstalled('FieldtypeRepeater')) {
       $this->modules->install('FieldtypeRepeater');
     }

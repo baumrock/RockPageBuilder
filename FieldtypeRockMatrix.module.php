@@ -26,7 +26,10 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
   /** FIELDTYPE METHODS */
 
     public function ___formatValue(Page $page, Field $field, Object $value) {
-      return $value->render();
+      // return field data object
+      // we do not return the rendered value as this breaks kaumberg
+      // frontpage (shows item::render()item::render()item::render())
+      return $value;
     }
 
     /**

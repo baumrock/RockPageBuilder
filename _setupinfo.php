@@ -1,8 +1,10 @@
 <pre>
 // add this in site/init.php (or in module init()) to finish setup
+$modules = $this->wire->modules;
 if($modules->isInstalled('RockMatrix')) {
+  /** @var RockMatrix */
   $mx = $modules->get('RockMatrix');
-  $mx->addBlocks($config->paths->siteModules."RockMatrix/demo/", "RMDemo");
+  $mx->addBlocks($this->wire->config->paths->siteModules."RockMatrix/demo/", "RMDemo");
   $mx->addHookAfter('getAllowedBlocks', function($event) {
     $field = $event->arguments(0);
     $page = $event->arguments(1);

@@ -73,7 +73,28 @@ class FieldData extends PageArray {
    */
   public function render() {
     $out = '';
-    foreach($this as $block) $out .= $block->render();
+    $typeIndex = 0;
+    foreach($this as $i=>$block) {
+      /** @var Block $block */
+      /** @var Block $next */
+      /** @var Block $prev */
+      $next = $this->eq($i+1);
+      $prev = $this->eq($i-1);
+
+      // is this block last of same type?
+      $block->lastOfType = true;
+      if($next AND $next->getTpl() == $block->getTpl()) {
+        $block->lastOfType = false;
+      }
+
+      // set type index of this block
+      // this is helpful for switching left/right option based on index
+      // eg even = left, odd = right aligned block
+      if(!$prev OR $prev->getTpl() != $block->getTpl()) $typeIndex = 0;
+      $block->typeIndex = $typeIndex++;
+
+      $out .= $block->render();
+    }
     return $out;
   }
 

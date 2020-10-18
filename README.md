@@ -36,6 +36,20 @@ class MinimumDemo extends \RockMatrix\Block {
 
 Make sure you save the file as `MinimumDemo.php` and tell RockMatrix about that file (if it is not in an already monitored folder). Use `$mx->addBlocks('/your/dir')` as shown above.
 
+To make any changes take effect you need to run `migrate()` on the RockMatrix module:
+
+```php
+$modules->get('RockMatrix')->migrate();
+```
+
+## Render content
+
+The content of the field can be rendered via the `render()` method of the field data object. This calls the `render()` method of each block. If you just `echo` the field value it will show the ids of the pagearray (which is the string representation of the pagearray and is necessary for usage on selectors).
+
+### Render blocks
+
+The markup for rendering your block can either be defined as `render()` method of your block or you can create a view file for your block e.g. `/site/assets/blocks/Slider.view.php`.
+
 ## Field setup
 
 Now create a new field and add it to a template. Allowed blocks are defined via hook:

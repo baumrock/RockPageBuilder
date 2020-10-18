@@ -15,7 +15,10 @@ abstract class Block extends \ProcessWire\Page {
   const prefix = "rmblock_";
   const tags = "RockMatrix";
 
-  /** @var string */
+  /**
+   * References the current file
+   * @var string
+   **/
   public $file;
 
   public function info() {
@@ -91,6 +94,14 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Get the master block object that was used for initializing this block
+   * @return Block
+   */
+  public function getMasterBlock() {
+    return $this->master()->getBlockByTpl($this->getTpl());
+  }
+
+  /**
    * Return the field where this block lives on
    * @return Field
    */
@@ -140,6 +151,15 @@ abstract class Block extends \ProcessWire\Page {
   public function getTplName() {
     $class = $this->info()->name;
     return $this->wire->sanitizer->pagename($class);
+  }
+
+  /**
+   * Get view file for current block
+   * @return string|false
+   */
+  public function getViewFile() {
+    $file = $this->rm()->info($this->getMasterBlock()->file);
+    return $file->dirname.$file->filename.".view.php";
   }
 
   /**
@@ -256,7 +276,13 @@ abstract class Block extends \ProcessWire\Page {
    * Render this block
    */
   public function render() {
-    return $this->info()->name . "::render()";
+    $view = $this->getViewFile();
+    if(is_file($view)) return $this->wire->files->render($view, [
+      'page' => $this,
+    ], [
+      'allowedPaths' => [dirname($view)],
+    ]);
+    return "Create ".$this->info()->name . "::render() or file $view";
   }
 
   /**

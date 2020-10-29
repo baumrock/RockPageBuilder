@@ -217,7 +217,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
   /**
    * Inputfield is ready to render
    */
-  public function renderReady() {
+  public function renderReady(Inputfield $parent = null, $renderValueMode = false) {
     // make sure that repeater is installed
     $this->modules->get('InputfieldRepeater');
 

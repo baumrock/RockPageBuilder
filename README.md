@@ -78,8 +78,28 @@ The formatValue of the field is the result of the `render()` method call on the 
 
 ### Adding blocks to the field
 
+Adding existing pages to the field is easy:
+
 ```php
 $data = $page->getUnformatted('rmtest');
 $data->add(1035); // add block id 1035 to this field
 $page->save('rmtest');
+```
+
+But what if the blockpage does not exist yet? Also easy via the API:
+
+```php
+$page->rmtest->create([
+  'type' => '\RMDemo\Headline',
+  'add' => true, // default
+  'data' => [
+    'text' => 'This is a demo headline',
+  ],
+]);
+```
+
+Sometimes it's helpful to reset the field before adding new blocks:
+
+```php
+$page->rmtest->reset()->create(...)->create(...)->save();
 ```

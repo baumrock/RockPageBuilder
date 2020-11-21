@@ -35,28 +35,14 @@ class InputfieldRockMatrix extends InputfieldRepeater {
     // check if field is set to current field
     $field = $this->wire->fields->get($this->input->get('field', 'string'));
     if($field->name !== $this->name) return;
-
-    // is the block allowed?
     $page = $this->process->getPage();
-    $block = $this->master->getBlockByTpl($tpl);
-    if(!$block->isAllowed($field, $page)) throw new WireException("Not allowed");
 
-    // create new block
-    $class = $block->info()->name;
-    $b = $this->wire(new $class()); /** @var Block $b */
-    $b->template = $block->getTpl();
-    $b->parent = $block->getParent($field, $page);
-    $b->title = "$class @ ".date('Y-m-d H:i:s');
-    $b->save();
-
-    // save a reference to the page and the field where this page lives
-    // this is necessary for deleting unused pages from time to time
-    $b->meta('RockMatrix', $page->id."-".$field->id);
+    // create block via FieldData api
+    $b = $page->get($field)->create(['tpl' => $tpl])->last();
 
     // render inputfield for this block
-    $wrap = $b->getWrapper();
     die(json_encode([
-      'markup' => $wrap->parent->render(),
+      'markup' => $b->getWrapper()->parent->render(),
     ]));
   }
 

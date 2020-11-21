@@ -1,6 +1,8 @@
 <?php namespace RockMatrix;
 use ProcessWire\PageArray;
 use ProcessWire\WireException;
+use ProcessWire\WireData;
+use ProcessWire\RockMatrix;
 class FieldData extends PageArray {
 
   public $page;
@@ -12,30 +14,96 @@ class FieldData extends PageArray {
     parent::__construct();
   }
 
-  /**
-   * Add item to this field data array
-   * @return void
-   */
-  public function add($item) {
-    if($item instanceof PageArray) {
-      foreach($item as $i) $this->add($i);
-      return;
+  /** Field data manipulation API */
+
+    /**
+     * Add item to this field data array
+     * @return self
+     */
+    public function add($item) {
+      if($item instanceof PageArray) {
+        foreach($item as $i) $this->add($i);
+        return;
+      }
+
+      /** @var RockMatrix */
+      $mx = $this->wire->modules->get('RockMatrix');
+
+      // make sure item is a page
+      $_item = $item;
+      $item = $mx->getBlockPage($item);
+      if(!$item) throw new WireException("Invalid item $_item");
+
+      // check if item is allowed!
+      if(!$item->isAllowed($this->field, $this->page)) {
+        return $this->error("$item not allowed for field {$this->field}");
+      }
+
+      parent::add($item);
+      return $this;
     }
-    /** @var RockMatrix */
-    $mx = $this->wire->modules->get('RockMatrix');
 
-    // make sure item is a page
-    $_item = $item;
-    $item = $mx->getBlockPage($item);
-    if(!$item) throw new WireException("Invalid item $_item");
+    /**
+     * Create a new block and add it to the field
+     * @return self
+     */
+    public function create($options = []) {
+      $opt = $this->wire(new WireData()); /** @var WireData $opt */
+      $opt->setArray([
+        'tpl' => null, // block template
+        'set' => [], // block page content
+        'add' => true, // add block to field by default
+      ]);
+      $opt->setArray($options);
 
-    // check if item is allowed!
-    if(!$item->isAllowed($this->field, $this->page)) {
-      return $this->error("$item not allowed for field {$this->field}");
+      if(!$opt->tpl) throw new WireException("You must set a block template");
+
+      // create page
+      // is the block allowed?
+      $block = $this->master()->getBlockByTpl($opt->tpl);
+      if(!$block) throw new WireException("Invalid tpl ".$opt->tpl);
+      if(!$block->isAllowed($this->field, $this->page)) throw new WireException($opt->tpl. " not allowed");
+
+      // create new block
+      $class = $block->info()->name;
+      $b = $this->wire(new $class()); /** @var Block $b */
+      $b->template = $block->getTpl();
+      $b->parent = $block->getParent($this->field, $this->page);
+      $b->title = "$class @ ".date('Y-m-d H:i:s');
+      $b->save();
+
+      // set page data
+      foreach($opt->set as $k=>$v) $b->setAndSave($k, $v);
+
+      // save a reference to the page and the field where this page lives
+      // this is necessary for deleting unused pages from time to time
+      $b->meta('RockMatrix', $this->page->id."-".$this->field->id);
+
+      // add block to field
+      if($opt->add) $this->add($b);
+
+      return $this;
     }
 
-    parent::add($item);
-  }
+    /**
+     * Reset this field and delete all blocks
+     * @return self
+     */
+    public function reset() {
+      foreach($this as $block) $block->delete();
+      return $this;
+    }
+
+    /**
+     * Save this field on current page
+     * @return self
+     */
+    public function save() {
+      $this->page->setAndSave($this->field->name, $this);
+      return $this;
+    }
+
+  /** END Field data manipulation API */
 
   /**
    * Get a blank copy
@@ -65,6 +133,14 @@ class FieldData extends PageArray {
     $new = $this->sleepValue();
     $old = $other->sleepValue();
     return $new !== $old;
+  }
+
+  /**
+   * Get master module instance
+   * @return RockMatrix
+   */
+  public function master() {
+    return $this->wire->modules->get('RockMatrix');
   }
 
   /**

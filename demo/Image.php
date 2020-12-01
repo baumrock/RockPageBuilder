@@ -16,6 +16,7 @@ class Image extends \RockMatrix\Block {
       'fields' => [
         self::field_img => [
           'type' => 'image',
+          'maxSize' => 3, // max 3MP resolution
           'label' => 'Image Demo',
           'tags' => self::tags,
           'icon' => $this->info()->icon,

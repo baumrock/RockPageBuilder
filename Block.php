@@ -117,6 +117,7 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function getMatrixField() {
     $meta = explode("-", $this->meta('RockMatrix'));
+    if(!is_array($meta)) return false;
     return $this->wire->fields->get($meta[1]);
   }
 

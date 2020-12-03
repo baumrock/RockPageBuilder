@@ -140,7 +140,9 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function getMatrixIndex($startAtOne = false) {
     $i = $startAtOne ? 1 : 0;
-    foreach($this->getMatrixData() as $item) {
+    $items = $this->getMatrixData();
+    if(!$items) return false;
+    foreach($items as $item) {
       if($item === $this) return $i;
       $i++;
     }

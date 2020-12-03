@@ -108,6 +108,7 @@ abstract class Block extends \ProcessWire\Page {
   public function getMatrixData() {
     $page = $this->getMatrixPage();
     $field = $this->getMatrixField();
+    if(!$page OR !$field) return false;
     return $page->get($field->name);
   }
 

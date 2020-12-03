@@ -336,10 +336,13 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function renderAction($action, $data) {
     $opt = $this->wire(new WireData()); /** @var WireData $opt */
+    $opt->setArray([
+      'href' => '#',
+    ]);
     $opt->setArray($data);
     $icon = $opt->icon ?: $action;
     return
-      "<a href='#'
+      "<a href='{$opt->href}'
         class='rmx-action rmx-action-$action'
         uk-tooltip='{$opt->label}'
         data-action='$action'>
@@ -359,6 +362,14 @@ abstract class Block extends \ProcessWire\Page {
       'label' => $this->_('Undo deletion'),
       'icon' => 'undo',
     ]);
+    if($this->wire->user->isSuperuser()) {
+      $href = $this->wire->pages->get(2)->url."page/edit/?id=$this";
+      $out .= $this->renderAction('edit', [
+        'label' => $this->_('edit'),
+        'icon' => 'edit',
+        'href' => $href,
+      ]);
+    }
     $out .= "</span>";
     return $out;
   }

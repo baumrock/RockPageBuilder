@@ -14,6 +14,9 @@ li.rmx-item > .InputfieldHeader .rmx-actions {
 li.rmx-item > .InputfieldHeader .rmx-actions > .rmx-action > i {
   padding: 5px 10px;
 }
+li.rmx-item > .InputfieldHeader .rmx-actions a {
+  text-decoration: none;
+}
 li.rmx-item > .InputfieldContent {
   padding: 4px;
   padding-top: 0;

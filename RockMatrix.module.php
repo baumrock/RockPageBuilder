@@ -159,6 +159,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   /**
    * Get rm block from page object
+   * This returns an empty block object, not the populated block!
    * @return Block
    */
   public function getRmxBlock($event) {

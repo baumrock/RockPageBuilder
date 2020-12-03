@@ -102,6 +102,16 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Get the matrix data object of the field where this block lives on
+   * @return BlocksArray
+   */
+  public function getMatrixData() {
+    $page = $this->getMatrixPage();
+    $field = $this->getMatrixField();
+    return $page->get($field->name);
+  }
+
+  /**
    * Return the field where this block lives on
    * @return Field
    */
@@ -112,6 +122,7 @@ abstract class Block extends \ProcessWire\Page {
 
   /**
    * Return the page where this block lives on
+   * Every block can only live on ONE single page!!
    * @return Page
    */
   public function getMatrixPage() {
@@ -119,6 +130,20 @@ abstract class Block extends \ProcessWire\Page {
     // the metadata is pageid-fieldid
     $meta = explode("-", $this->meta('RockMatrix'));
     return $this->wire->pages->get($meta[0]);
+  }
+
+  /**
+   * Get the index (sort order) of this matrix item
+   * @param bool $startAtOne
+   * @return int|false
+   */
+  public function getMatrixIndex($startAtOne = false) {
+    $i = $startAtOne ? 1 : 0;
+    foreach($this->getMatrixData() as $item) {
+      if($item === $this) return $i;
+      $i++;
+    }
+    return false;
   }
 
   /**
@@ -224,6 +249,22 @@ abstract class Block extends \ProcessWire\Page {
     ]);
 
     return $fs;
+  }
+
+  /**
+   * Does this block have an even index?
+   * @return bool
+   */
+  public function indexEven() {
+    return $this->getMatrixIndex()%2===0;
+  }
+
+  /**
+   * Does this block have an even index?
+   * @return bool
+   */
+  public function indexOdd() {
+    return $this->getMatrixIndex()%2!==0;
   }
 
   /**

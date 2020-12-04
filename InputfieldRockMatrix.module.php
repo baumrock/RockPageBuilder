@@ -38,7 +38,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
     $page = $this->process->getPage();
 
     // create block via FieldData api
-    $b = $page->get($field)->create(['tpl' => $tpl])->last();
+    $b = $page->get($field->name)->create(['tpl' => $tpl])->last();
 
     // render inputfield for this block
     die(json_encode([

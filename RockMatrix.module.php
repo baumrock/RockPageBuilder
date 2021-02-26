@@ -102,11 +102,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $fs = $event->return;
     $page->prepareForm($fs);
     $page->buildForm($fs);
-
-    // dump matrix page to tracy
-    if($event->modules->isInstalled("TracyDebugger")) {
-      bd($page->getMatrixPage());
-    }
   }
 
   /**

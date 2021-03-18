@@ -201,6 +201,7 @@ function RockMatrix() {
 
   // init
   RockMatrix.prototype.initialize = function(e) {
+    this.makeSortable(e.target);
     this.$root(e).trigger('changed');
   }
 

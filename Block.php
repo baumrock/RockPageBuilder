@@ -144,7 +144,7 @@ abstract class Block extends \ProcessWire\Page {
     $items = $this->getMatrixData();
     if(!$items) return false;
     foreach($items as $item) {
-      if($item === $this) return $i;
+      if($item->id === $this->id) return $i;
       $i++;
     }
     return false;

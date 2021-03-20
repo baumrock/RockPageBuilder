@@ -272,6 +272,24 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Is this item the first item?
+   * @return bool
+   */
+  public function isFirstMatrixItem() {
+    return $this->getMatrixIndex() === 0;
+  }
+
+  /**
+   * Is this item the last item?
+   * @return bool
+   */
+  public function isLastMatrixItem() {
+    $data = $this->getMatrixData();
+    if(!$data) return true;
+    return $this->getMatrixIndex(true) === $data->count();
+  }
+
+  /**
    * Is this block allowed on given page and field?
    * @return bool
    */

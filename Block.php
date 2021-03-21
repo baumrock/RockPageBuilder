@@ -310,6 +310,19 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Get next matrix item
+   * @return Page|false
+   */
+  public function nextMatrixItem() {
+    $match = false;
+    foreach($this->getMatrixData() as $item) {
+      if($match) return $item;
+      if($item->id === $this->id) $match = true;
+    }
+    return false;
+  }
+
+  /**
    * Prepare form for being rendered as a matrix block
    * This is a separate method that needs to be called before buildForm
    * or buildFormMatrix. The reason for this method is that buildForm and
@@ -333,6 +346,19 @@ abstract class Block extends \ProcessWire\Page {
       if($fs->has($field->name)) continue;
       $fs->add($field);
     }
+  }
+
+  /**
+   * Get previous matrix item
+   * @return Page|false
+   */
+  public function prevMatrixItem() {
+    $prev = false;
+    foreach($this->getMatrixData() as $item) {
+      if($item->id === $this->id) return $prev;
+      $prev = $item;
+    }
+    return false;
   }
 
   /**

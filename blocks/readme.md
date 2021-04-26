@@ -1,0 +1,1 @@
+Blocks in this folder are automatically available to any rockmatrix field

@@ -31,11 +31,15 @@ class CKEditor extends \RockMatrix\Block {
         Link, Unlink, Image, Table, HorizontalRule, SpecialChar
         FontSize,
         Sourcedialog";
-      $field->rows = 10;
+      $field->rows = 7;
     });
   }
 
   public function buildForm(InputfieldWrapper $fs) {
+    $fs->remove('title');
+  }
+
+  public function buildFormMatrix(InputfieldWrapper $fs) {
     $fs->remove('title');
     $f = $fs->get(self::field_text);
     $f->skipLabel = Inputfield::skipLabelMarkup;
@@ -74,7 +78,7 @@ class CKEditor extends \RockMatrix\Block {
   public function render() {
     $edit = $this->wire->uk->edit($this);
     return "<div class='rmblock-ckeditor' $edit>"
-      .$this->edit(self::field_text)
+      .$this->get(self::field_text)
       ."</div>";
   }
 

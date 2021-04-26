@@ -72,7 +72,10 @@ class CKEditor extends \RockMatrix\Block {
   }
 
   public function render() {
-    return $this->get(self::field_text);
+    $edit = $this->wire->uk->edit($this);
+    return "<div class='rmblock-ckeditor' $edit>"
+      .$this->edit(self::field_text)
+      ."</div>";
   }
 
   public function uninstall() {

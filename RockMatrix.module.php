@@ -46,11 +46,13 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     if(!$this->modules->isInstalled('FieldtypeRepeater')) {
       $this->modules->install('FieldtypeRepeater');
     }
+    $this->path = $this->wire->config->paths($this);
     $this->setupDemoField();
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
     $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
     $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
     $this->include("init.php"); // load assets/RockMatrix/init.php
+    $this->rm()->fireOnRefresh($this, "migrate");
   }
 
   public function ready() {

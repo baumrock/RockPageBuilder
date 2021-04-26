@@ -71,6 +71,10 @@ class CKEditor extends \RockMatrix\Block {
     ]);
   }
 
+  public function render() {
+    return $this->get(self::field_text);
+  }
+
   public function uninstall() {
     parent::uninstall();
     $this->rm()->deleteField(self::field_text);

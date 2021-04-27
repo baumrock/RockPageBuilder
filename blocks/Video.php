@@ -40,7 +40,11 @@ class Video extends \RockMatrix\Block {
   }
 
   public function render() {
-    return "<h2 class='rmblock-headline'>{$this->title}</h2>";
+    $video = $this->wire->modules->get('TextformatterVideoEmbed');
+    if(!$video) return "Install TextformatterVideoEmbed";
+    $url = $this->title;
+    $video->format($url);
+    return $url;
   }
 
 }

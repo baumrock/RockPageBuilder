@@ -1,5 +1,6 @@
 <?php namespace RMBlock;
 
+use ProcessWire\FieldtypeTextarea;
 use ProcessWire\HookEvent;
 use ProcessWire\Inputfield;
 use ProcessWire\InputfieldWrapper;
@@ -7,7 +8,7 @@ use ProcessWire\RockMatrix;
 
 class CKEditor extends \RockMatrix\Block {
 
-  const prefix = RockMatrix::prefix;
+  const prefix = RockMatrix::prefix."ckeditor_";
   const tags = RockMatrix::tags;
 
   const field_text = self::prefix."text";
@@ -62,7 +63,7 @@ class CKEditor extends \RockMatrix\Block {
           'tags' => self::tags,
           'icon' => $this->info()->icon,
           "inputfieldClass" => "InputfieldCKEditor",
-          "contentType" => 1,
+          "contentType" => FieldtypeTextarea::contentTypeHTML,
         ],
       ],
       'templates' => [

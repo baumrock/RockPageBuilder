@@ -50,7 +50,10 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
     // load autoload blocks now
     $this->addBlocks($this->path."blocks");
-    $this->addBlocks($this->wire->config->paths->assets.$this->className);
+    $this->addBlocks(
+      $this->wire->config->paths->assets.$this->className,
+      $this->wire->config->matrixBlocksNamespace
+    );
 
     $this->setupDemoField();
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");

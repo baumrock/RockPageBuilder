@@ -42,9 +42,10 @@ class CKEditor extends \RockMatrix\Block {
 
   public function buildFormMatrix(InputfieldWrapper $fs) {
     $fs->remove('title');
-    $f = $fs->get(self::field_text);
-    $f->skipLabel = Inputfield::skipLabelMarkup;
-    $f->wrapClass('rmx-pd5');
+    if($f = $fs->get(self::field_text)) {
+      $f->skipLabel = Inputfield::skipLabelMarkup;
+      $f->wrapClass('rmx-pd5');
+    }
   }
 
   public function getLabel() {

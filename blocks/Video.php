@@ -41,7 +41,9 @@ class Video extends \RockMatrix\Block {
 
   public function render() {
     $video = $this->wire->modules->get('TextformatterVideoEmbed');
-    if(!$video) return "Install TextformatterVideoEmbed";
+    if(!$video) return "Install TextformatterVideoEmbed
+      <a href='{$this->wire->pages->get(2)->url}module/#tab_new_modules'>modules</a>
+      <a href='https://github.com/ryancramerdesign/TextformatterVideoEmbed/archive/refs/heads/master.zip'>ZIP</a>";
     $url = $this->title;
     $video->format($url);
     return $url;

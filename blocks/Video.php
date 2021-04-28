@@ -8,7 +8,7 @@ class Video extends \RockMatrix\Block {
   public function info() {
     return parent::info()->setArray([
       'icon' => 'video-camera',
-      'description' => 'Embed a video',
+      'description' => 'Youtube / Vimeo',
     ]);
   }
 

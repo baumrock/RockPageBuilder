@@ -94,7 +94,8 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    * Scan dir and add blocks
    * @return void
    */
-  public function addBlocks($dir, $namespace = "RMBlock") {
+  public function addBlocks($dir, $namespace = null) {
+    if(!$namespace) $namespace = "RMBlock";
     $opt = ['extensions' => ['php']];
     foreach($this->wire->files->find($dir, $opt) as $file) {
       if(substr($file, -9) === ".view.php") continue;

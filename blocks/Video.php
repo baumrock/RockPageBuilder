@@ -44,9 +44,10 @@ class Video extends \RockMatrix\Block {
     if(!$video) return "Install TextformatterVideoEmbed
       <a href='{$this->wire->pages->get(2)->url}module/#tab_new_modules'>modules</a>
       <a href='https://github.com/ryancramerdesign/TextformatterVideoEmbed/archive/refs/heads/master.zip'>ZIP</a>";
-    $url = $this->title;
-    $video->format($url);
-    return $url;
+    $markup = $this->title;
+    $video->format($markup);
+    $alfred = $this->wire->uk->alfred($this);
+    return "<div $alfred>$markup</div>";
   }
 
 }

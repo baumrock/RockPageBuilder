@@ -50,10 +50,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
     // load autoload blocks now
     $this->addBlocks($this->path."blocks");
-    $this->addBlocks(
-      $this->wire->config->paths->assets.$this->className,
-      $this->wire->config->matrixBlocksNamespace
-    );
 
     $this->setupDemoField();
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
@@ -94,10 +90,11 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    * Scan dir and add blocks
    * @return void
    */
-  public function addBlocks($dir, $namespace = null) {
-    if(!$namespace) $namespace = "RMBlock";
+  public function addBlocks($dir, $namespace = "RMBlock") {
     $opt = ['extensions' => ['php']];
     foreach($this->wire->files->find($dir, $opt) as $file) {
+      $name = pathinfo($file, PATHINFO_BASENAME);
+      if($name === "init.php") continue;
       if(substr($file, -9) === ".view.php") continue;
       $this->addBlock($file, $namespace);
     }

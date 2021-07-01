@@ -123,6 +123,14 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Index starting from 1
+   * @return integer
+   */
+  public function getMatrixNum() {
+    return $this->getMatrixIndex()+1;
+  }
+
+  /**
    * Return the page where this block lives on
    * Every block can only live on ONE single page!!
    * @return Page
@@ -272,6 +280,14 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Is this block-index even (2, 4, 6)?
+   * @return bool
+   */
+  public function isEven() {
+    return $this->getMatrixNum() % 2 === 0;
+  }
+
+  /**
    * Is this item the first item?
    * @return bool
    */
@@ -287,6 +303,14 @@ abstract class Block extends \ProcessWire\Page {
     $data = $this->getMatrixData();
     if(!$data) return true;
     return $this->getMatrixIndex(true) === $data->count();
+  }
+
+  /**
+   * Is this block-index even (2, 4, 6)?
+   * @return bool
+   */
+  public function isOdd() {
+    return $this->getMatrixNum() % 2 !== 0;
   }
 
   /**

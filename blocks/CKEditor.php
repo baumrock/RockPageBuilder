@@ -45,7 +45,7 @@ class CKEditor extends \RockMatrix\Block {
     $field->toolbar = "JustifyLeft, JustifyCenter, JustifyRight, JustifyBlock,
       Bold, Italic,
       NumberedList, BulletedList,
-      Link, Unlink, HorizontalRule, SpecialChar,
+      PWImage, Link, Unlink, HorizontalRule, SpecialChar,
       RemoveFormat,";
     if($this->wire->user->isSuperuser()) {
       $field->toolbar .= "Source,";
@@ -55,7 +55,6 @@ class CKEditor extends \RockMatrix\Block {
 
   public function getLabel() {
     $txt = $this->get(self::field_text);
-    if(!$txt) return "Text";
     return $this->wire->sanitizer->truncate($txt, 50);
   }
 

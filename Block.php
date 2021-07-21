@@ -213,7 +213,7 @@ abstract class Block extends \ProcessWire\Page {
 
     // prepare the fieldset (item root element)
     $fs->id = "rmx_$this";
-    $fs->label = $this->getLabel();
+    $fs->label = $this->getLabel() ?: $this->info()->title;
     $fs->icon = $this->getIcon();
     $fs->notes = $this->getNotes();
     $fs->addClass('rmx-item');

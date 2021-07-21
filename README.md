@@ -20,9 +20,7 @@ if($modules->isInstalled('RockMatrix')) {
 
 ## Migrations
 
-RockMatrix relies havily on RockMigrations. Migrations are NOT triggered automatically. The reason is that this is potentially error prone when uninstalling the module, so that a modules refresh triggered by uninstalling a linked module (like fieldtype or inputfield) triggers the migrations and recreates fields + templates.
-
-Migrations can easily be run via commandline (`$mx->migrate()`) or via checkbox in the modules' settings.
+RockMatrix relies havily on RockMigrations. Migrations are triggered automatically via rockMatrix.module.php on modules::refresh.
 
 ## Setting up new Blocks
 
@@ -35,12 +33,6 @@ class MinimumDemo extends \RockMatrix\Block {
 ```
 
 Make sure you save the file as `MinimumDemo.php` and tell RockMatrix about that file (if it is not in an already monitored folder). Use `$mx->addBlocks('/your/dir')` as shown above.
-
-To make any changes take effect you need to run `migrate()` on the RockMatrix module:
-
-```php
-$modules->get('RockMatrix')->migrate();
-```
 
 ## Render content
 

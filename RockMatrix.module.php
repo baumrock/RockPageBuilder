@@ -56,6 +56,10 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
     $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
     $this->include("init.php"); // load assets/RockMatrix/init.php
+
+    // TODO: check if that causes errors on uninstalling other modules
+    // the readme had a note that migrate is not triggered automatically due to
+    // that reason.
     $this->rm()->fireOnRefresh($this, "migrate");
   }
 
@@ -234,7 +238,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $rm = $this->rm();
 
     // migrate all blocks
-    $this->log("Migrate Matrix Blocks");
+    $this->log("Triggered RockMatrix::migrate() from RockMatrix.module.php");
     foreach($this->blocks as $name=>$file) {
       $block = $this->getBlock($name);
       if(!$block) return;

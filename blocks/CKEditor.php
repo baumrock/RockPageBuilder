@@ -22,18 +22,7 @@ class CKEditor extends \RockMatrix\Block {
 
   public function init() {
     $name = self::field_text;
-    // full list of available toolbar options: https://bit.ly/3vjPy9B
-    $this->addHookBefore("Field(name=$name)::getInputfield", function(HookEvent $event) {
-      $field = $event->object; /** @var InputfieldCKEditor $field */
-      $field->toolbar = "Format,
-        JustifyLeft, JustifyCenter, JustifyRight, JustifyBlock
-        Bold, Italic, TextColor, RemoveFormat
-        NumberedList, BulletedList,
-        Link, Unlink, Image, Table, HorizontalRule, SpecialChar
-        FontSize,
-        Sourcedialog";
-      $field->rows = 7;
-    });
+    $this->addHookBefore("Field(name=$name)::getInputfield", $this, "ckeSettings");
   }
 
   public function buildForm(InputfieldWrapper $fs) {
@@ -46,6 +35,22 @@ class CKEditor extends \RockMatrix\Block {
       $f->skipLabel = Inputfield::skipLabelMarkup;
       $f->wrapClass('rmx-pd5');
     }
+  }
+
+  public function ckeSettings(HookEvent $event) {
+    $field = $event->object; /** @var InputfieldCKEditor $field */
+    // full list of available toolbar options: https://bit.ly/3vjPy9B
+    // Lots of formatting options are disabled! The more options are disabled
+    // the better are the results when copy/pasting from MS Word!
+    $field->toolbar = "JustifyLeft, JustifyCenter, JustifyRight, JustifyBlock,
+      Bold, Italic,
+      NumberedList, BulletedList,
+      Link, Unlink, HorizontalRule, SpecialChar,
+      RemoveFormat,";
+    if($this->wire->user->isSuperuser()) {
+      $field->toolbar .= "Source,";
+    }
+    $field->rows = 7;
   }
 
   public function getLabel() {

@@ -45,7 +45,7 @@ class CKEditor extends \RockMatrix\Block {
     $field->toolbar = "JustifyLeft, JustifyCenter, JustifyRight, JustifyBlock,
       Bold, Italic,
       NumberedList, BulletedList,
-      PWImage, Link, Unlink, HorizontalRule, SpecialChar,
+      PWImage, PWLink, Unlink, HorizontalRule, SpecialChar,
       RemoveFormat,";
     if($this->wire->user->isSuperuser()) {
       $field->toolbar .= "Source,";

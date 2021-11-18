@@ -67,7 +67,7 @@ class Image extends \RockMatrix\Block {
     $image = $this->get(self::field_image);
     if(!$image) return;
     $label = $image->description;
-    $img = "<img data-src='{$image->maxSize(200,200)->url}' uk-img>";
+    $img = "<img data-src='{$image->maxSize(200,200)->url}' alt='$label' uk-img>";
     $img = "<a href='{$image->maxSize(1600,1600)->url}'>$img</a>";
     return "<div class='rmblock-image' uk-lightbox>
       $img

@@ -39,7 +39,6 @@ class Image extends \RockMatrix\Block {
         $text = new InputfieldText();
         $text->name = $name."_text";
         $text->value = $values->text;
-        $text->placeholder = 'Beschriftung/Copyright';
 
         $sizes = new InputfieldRadios();
         $sizes->name = $name."_size";

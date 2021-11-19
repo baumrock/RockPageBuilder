@@ -1,6 +1,10 @@
 <?php namespace RMBlock;
 
 use ProcessWire\HookEvent;
+use ProcessWire\InputfieldCheckbox;
+use ProcessWire\InputfieldRadios;
+use ProcessWire\InputfieldText;
+use ProcessWire\RockFieldInput;
 use ProcessWire\RockMatrix;
 
 class Image extends \RockMatrix\Block {
@@ -9,6 +13,7 @@ class Image extends \RockMatrix\Block {
   const tags = RockMatrix::tags;
 
   const field_image = self::prefix."images";
+  const field_options = self::prefix."options";
 
   public function info() {
     return parent::info()->setArray([
@@ -21,10 +26,82 @@ class Image extends \RockMatrix\Block {
   public function init() {
     $tpl = "template=".$this->getTpl();
     $this->addHookAfter("Pages::saveReady($tpl,id=0)", $this, "onCreate");
+    $this->addRockFields();
+  }
+
+  public function addRockFields() {
+    // options field
+    $this->wire->rockfields->add([
+      'name' => self::field_options,
+      'input' => function($field, $values) {
+        $name = $field->name();
+
+        $text = new InputfieldText();
+        $text->name = $name."_text";
+        $text->value = $values->text;
+        $text->placeholder = 'Beschriftung/Copyright';
+
+        $sizes = new InputfieldRadios();
+        $sizes->name = $name."_size";
+        $sizes->addOptions([
+          'small' => 'Klein',
+          'medium' => 'Mittel',
+          'large' => 'Groß',
+        ]);
+        $sizes->value = $values->size ?: 'small';
+        $sizes->optionColumns = 1;
+
+        $align = new InputfieldRadios();
+        $align->name = $name."_align";
+        $align->addOptions([
+          'left' => 'Links',
+          'center' => 'Zentriert',
+          'right' => 'Rechts',
+        ]);
+        $align->value = $values->align ?: 'left';
+        $align->optionColumns = 1;
+
+        $float = new InputfieldCheckbox();
+        $float->name = $name."_float";
+        $float->attr('checked', $values->float ? 'checked' : '');
+        $float->label = ' ';
+
+        $link = new InputfieldCheckbox();
+        $link->name = $name."_link";
+        $link->attr('checked', $values->link OR $values->link===null ? 'checked' : '');
+        $link->label = ' ';
+
+        return [
+          'label' => false,
+          'icon' => 'bolt',
+          'value' => $field->table([
+            'Beschriftung / Copyright' => $text->render(),
+            'Bildgröße' => "<div class='InputfieldRadios'>".$sizes->render()."</div>",
+            'Ausrichtung' => "<div class='InputfieldRadios'>".$align->render()."</div>",
+            'Text umfließt Bild' => $float->render() . "<small class='uk-margin-left'>Anmerkung: Diese Option hat bei Ausrichtung 'Zentriert' keine Auswirkung!</small>",
+            'Großes Bild verlinken' => $link->render(),
+          ]),
+        ];
+      },
+      'sleep' => function($field, RockFieldInput $input) {
+        $name = $field->name();
+        return [
+          'text' => $input->get($name."_text"),
+          'size' => $input->get($name."_size"),
+          'align' => $input->get($name."_align"),
+          'float' => $input->get($name."_float", 'bool'),
+          'link' => $input->get($name."_link", 'bool'),
+        ];
+      },
+    ]);
   }
 
   public function buildForm($fs) {
+    $f = new InputfieldRadios();
+    $f->renderReady();
+
     $fs->remove('title');
+    $fs->add($this->wire->rockfields->getInputfield($this, self::field_options));
   }
 
   public function getLabel() {
@@ -33,13 +110,14 @@ class Image extends \RockMatrix\Block {
 
   public function migrate() {
     parent::migrate();
+    $this->rm()->deleteField('rockmatrix_image_label');
     $this->rm()->migrate([
       'fields' => [
         self::field_image => [
           'type' => 'image',
           'maxSize' => 3, // max 3MP resolution
           'maxFiles' => 1,
-          'descriptionRows' => 1, // for copyright
+          'descriptionRows' => 0,
           'tags' => self::tags,
           'extensions' => "JPG JPEG PNG GIF",
           'label' => 'Bild',
@@ -64,14 +142,32 @@ class Image extends \RockMatrix\Block {
   }
 
   public function render() {
-    $image = $this->get(self::field_image);
+    $page = $this;
+    $image = $page->get(self::field_image);
     if(!$image) return;
-    $label = $image->description;
-    $alt = $label ?: $image->basename;
-    $img = "<img data-src='{$image->maxSize(200,200)->url}' alt='$alt' uk-img>";
-    $img = "<a href='{$image->maxSize(1600,1600)->url}'>$img</a>";
-    return "<div class='rmblock-image' uk-lightbox>$img
-      <div class='label uk-text-small'>$label</div>
+    $sanitizer = $this->wire->sanitizer;
+
+    $opt = $page->rockfieldValue(self::field_options);
+    $size = 200;
+    if($opt->size == 'medium') $size = 400;
+    elseif($opt->size == 'large') $size = 600;
+
+    $align = "align-".$opt->align;
+
+    $label = $opt->text;
+    $alt = $sanitizer->entities($label ?: $image->basename);
+    if($label) $label = "<div class='label uk-text-small'>$label</div>";
+
+    $img = "<img data-src='{$image->maxSize($size,$size)->url}' alt='$alt' uk-img>";
+    if($opt->link) $img = "<a href='{$image->maxSize(1600,1600)->url}'>$img</a>";
+
+    $float = '';
+    if($opt->float) {
+      if($opt->align != 'center') $float = 'float-'.$opt->align;
+    }
+
+    return "<div class='rmblock-image $align size-{$opt->size} $float'>
+      <div class='container' uk-lightbox>$img $label</div>
       </div>";
   }
 

@@ -78,7 +78,7 @@ class Image extends \RockMatrix\Block {
             'Beschriftung / Copyright' => $text->render(),
             'Bildgröße' => "<div class='InputfieldRadios'>".$sizes->render()."</div>",
             'Ausrichtung' => "<div class='InputfieldRadios'>".$align->render()."</div>",
-            'Text umfließt Bild' => $float->render() . "<small class='uk-margin-left'>Anmerkung: Diese Option hat bei Ausrichtung 'Zentriert' keine Auswirkung!</small>",
+            'Text umfließt Bild' => $float->render(),
             'Großes Bild verlinken' => $link->render(),
           ]),
         ];

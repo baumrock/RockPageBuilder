@@ -156,7 +156,11 @@ class Image extends \RockMatrix\Block {
     if($label) $label = "<div class='label uk-text-small'>$label</div>";
 
     $img = "<img data-src='{$image->maxSize($size,$size)->url}' alt='$alt' uk-img>";
-    if($opt->link) $img = "<a href='{$image->maxSize(1600,1600)->url}'>$img</a>";
+    if($opt->link) {
+      $cap = $sanitizer->entities($opt->text);
+      if($cap) $cap = " data-caption='$cap'";
+      $img = "<a href='{$image->maxSize(1600,1600)->url}'$cap>$img</a>";
+    }
 
     $float = '';
     if($opt->float) {

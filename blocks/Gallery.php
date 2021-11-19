@@ -64,7 +64,7 @@ class Gallery extends \RockMatrix\Block {
 
   public function onCreate(HookEvent $event) {
     $page = $event->arguments(0);
-    $page->title = "Gallery";
+    $page->title = "";
   }
 
   public function render() {

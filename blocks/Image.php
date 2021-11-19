@@ -33,7 +33,7 @@ class Image extends \RockMatrix\Block {
     // options field
     $this->wire->rockfields->add([
       'name' => self::field_options,
-      'input' => function($field, $values) {
+      'inputfield' => function($field, $values) {
         $name = $field->name();
 
         $text = new InputfieldText();

@@ -47,6 +47,10 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $this->modules->install('FieldtypeRepeater');
     }
     $this->path = $this->wire->config->paths($this);
+    if(!$this->wire->rockfields) {
+      $m = $this->wire->modules->get('RockFields');
+      if(!$m) $this->warning('Please install RockFields!');
+    }
 
     // load autoload blocks now
     $this->addBlocks($this->path."blocks");

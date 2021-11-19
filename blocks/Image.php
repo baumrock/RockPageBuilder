@@ -97,9 +97,6 @@ class Image extends \RockMatrix\Block {
   }
 
   public function buildForm($fs) {
-    $f = new InputfieldRadios();
-    $f->renderReady();
-
     $fs->remove('title');
     $fs->add($this->wire->rockfields->getInputfield($this, self::field_options));
   }

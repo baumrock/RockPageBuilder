@@ -24,6 +24,8 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   public $mtime = 0;
 
+  private $preload = false;
+
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
@@ -113,6 +115,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    * @return void
    */
   public function buildBlockForm(HookEvent $event) {
+    $this->preloadAssets();
     $page = $event->process->getPage();
     if(!$page instanceof Block) return;
     $fs = $event->return;
@@ -263,6 +266,18 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       ],
     ]);
     $rm->createPage("RockMatrixBlocks", null, self::tpl_datapage, 1, ['hidden', 'locked']);
+  }
+
+  /**
+   * We preload some styles when a rockmatrix field is present on the page
+   * for example the styles for the radio button need to be available when
+   * it is used in a RockFields field. Otherwise the first loaded block will
+   * have a messed markup: https://i.imgur.com/6rr2ZIX.png
+   */
+  public function preloadAssets() {
+    if($this->preload) return;
+    (new InputfieldRadios())->renderReady();
+    $this->preload = true;
   }
 
   /**

@@ -74,7 +74,8 @@ class Gallery extends \RockMatrix\Block {
     $out = '';
     if($this->title) $out = "<h3>{$this->title}</h3>";
 
-    $out .= "<div class='uk-margin uk-child-width-1-2 uk-child-width-1-3@s uk-child-width-1-4@m uk-child-width-1-6@l uk-grid-small' uk-grid uk-lightbox>";
+    $out .= "<div class='uk-margin uk-child-width-1-2 uk-child-width-1-3@s uk-child-width-1-4@m uk-child-width-1-6@l uk-grid-small'
+      uk-grid uk-lightbox data-barba-prevent='all'>";
     foreach($images as $img) {
       $tag = "<img src='{$img->size(300,300)->url}' class='uk-transition-scale-up uk-transition-opaque'>";
       $caption = '';

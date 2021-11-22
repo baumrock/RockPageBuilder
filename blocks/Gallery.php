@@ -89,7 +89,7 @@ class Gallery extends \RockMatrix\Block {
       $link = "<a href='{$img->maxSize(1920,1920)->url}'$caption>$tag</a>";
       $out .= "<div class='uk-transition-toggle'>$link</div>";
     }
-    $out .= "</div><div class='uk-clearfix'></div>";
+    $out .= "</div>";
     return $out;
   }
 

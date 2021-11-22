@@ -74,20 +74,22 @@ class Gallery extends \RockMatrix\Block {
     $out = '';
     if($this->title) $out = "<h3>{$this->title}</h3>";
 
-    $out .= "<div class='uk-margin uk-child-width-1-2 uk-child-width-1-3@s uk-child-width-1-4@m uk-child-width-1-6@l uk-grid-small'
-      uk-grid uk-lightbox data-barba-prevent='all'>";
+    // we make the images float so that we can use very small images for best performance
+    $out .= "<div class='uk-margin uk-child-width-auto uk-grid-small' uk-lightbox data-barba-prevent='all' uk-grid>";
     foreach($images as $img) {
-      $tag = "<img src='{$img->size(300,300)->url}' class='uk-transition-scale-up uk-transition-opaque'>";
       $caption = '';
+      $tooltip = '';
       if($cap = $img->description) {
         $cap = $this->wire->sanitizer->entities($cap);
         $caption = " data-caption='$cap'";
-        $cap = "<div class='uk-text-small'>$cap</div>";
+        $tooltip = " title='$cap' uk-tooltip";
       }
+      $tag = "<img src='{$img->size(100,100)->url}' $tooltip
+        class='uk-transition-scale-up uk-transition-opaque'>";
       $link = "<a href='{$img->maxSize(1920,1920)->url}'$caption>$tag</a>";
-      $out .= "<div class='uk-transition-toggle'>$link{$cap}</div>";
+      $out .= "<div class='uk-transition-toggle'>$link</div>";
     }
-    $out .= "</div>";
+    $out .= "</div><div class='uk-clearfix'></div>";
     return $out;
   }
 

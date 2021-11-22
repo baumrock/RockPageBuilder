@@ -84,8 +84,8 @@ class Gallery extends \RockMatrix\Block {
         $caption = " data-caption='$cap'";
         $tooltip = " title='$cap' uk-tooltip";
       }
-      $tag = "<img src='{$img->size(100,100)->url}' $tooltip
-        class='uk-transition-scale-up uk-transition-opaque'>";
+      $tag = "<img data-src='{$img->size(100,100)->url}' $tooltip
+        class='uk-transition-scale-up uk-transition-opaque' uk-img>";
       $link = "<a href='{$img->maxSize(1920,1920)->url}'$caption>$tag</a>";
       $out .= "<div class='uk-transition-toggle'>$link</div>";
     }

@@ -41,6 +41,7 @@ class Children extends \RockMatrix\Block {
       'fields' => [
         self::field_levels => [
           'type' => 'integer',
+          'tags' => self::tags,
           'label' => $this->_('Levels'),
           'notes' => $this->_('Maximum Number of levels to show (0 = unlimited)'),
           'columnWidth' => 30,

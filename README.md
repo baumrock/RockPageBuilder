@@ -24,6 +24,12 @@ RockMatrix relies havily on RockMigrations. Migrations are triggered automatical
 
 ## Setting up new Blocks
 
+**Update**: It is now easier to define blocks for one field:
+
+```php
+$mx->loadBlocks("fieldname", $path, "FooNamespace");
+```
+
 Blocks need to extend `\RockMatrix\Block`. To avoid naming conflicts you can use custom namespaces. See the demo folder in this module for examples. The minimum viable block is this:
 
 ```php
@@ -94,4 +100,17 @@ Sometimes it's helpful to reset the field before adding new blocks:
 
 ```php
 $page->rmtest->reset()->create(...)->create(...)->save();
+```
+
+## Example migration
+
+```php
+$rm->migrate([
+  'fields' => [
+    'your_field' => [
+      'type' => 'FieldtypeRockMatrix',
+      'tags' => self::tags,
+    ],
+  ],
+])
 ```

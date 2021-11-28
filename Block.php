@@ -10,6 +10,7 @@ use \ProcessWire\Inputfield;
 use \ProcessWire\InputfieldFile;
 use \ProcessWire\InputfieldWrapper;
 use \ProcessWire\InputfieldFieldset;
+
 abstract class Block extends \ProcessWire\Page {
 
   const prefix = "rmblock_";
@@ -498,6 +499,7 @@ abstract class Block extends \ProcessWire\Page {
       'icon' => $this->info()->icon,
       'pageClass' => $this->info()->name,
       'tags' => RockMatrix::tags,
+      'noParents' => 1, // may not be used for new pages
     ]);
   }
 

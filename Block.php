@@ -282,11 +282,19 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
-   * Is this block-index even (2, 4, 6)?
+   * Is this block-NUMBER even (2, 4, 6)?
    * @return bool
    */
   public function isEven() {
     return $this->getMatrixNum() % 2 === 0;
+  }
+
+  /**
+   * Is this block-type-NUMBER even (2, 4, 6)?
+   * @return bool
+   */
+  public function isEvenType() {
+    return ($this->typeIndex()+1) % 2 === 0;
   }
 
   /**
@@ -308,11 +316,19 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
-   * Is this block-index even (2, 4, 6)?
+   * Is this block-NUMBER odd (1, 3, 5)?
    * @return bool
    */
   public function isOdd() {
     return $this->getMatrixNum() % 2 !== 0;
+  }
+
+  /**
+   * Is this block-type-NUMBER odd (1, 3, 5)?
+   * @return bool
+   */
+  public function isOddType() {
+    return ($this->typeIndex()+1) % 2 !== 0;
   }
 
   /**
@@ -486,6 +502,22 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function setFile($file) {
     $this->file = Paths::normalizeSeparators($file);
+  }
+
+  /**
+   * Get index of this block type:
+   * A(0) / B(0) / B(1) / B(2) / A(0) / A(1) / B(0)
+   * @return int
+   */
+  public function typeIndex() {
+    $i = 0;
+    $current = $this;
+    while($prev = $current->prevMatrixItem()) {
+      if($prev->template->name !== $current->template->name) return $i;
+      $i++;
+      $current = $prev;
+    }
+    return $i;
   }
 
   /**

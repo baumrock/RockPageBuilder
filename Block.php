@@ -219,6 +219,7 @@ abstract class Block extends \ProcessWire\Page {
     $fs->notes = $this->getNotes();
     $fs->addClass('rmx-item');
     $fs->wrapAttr('data-page', $this->id);
+    $fs->wrapAttr('data-tpl', $this->template->name);
     $fs->collapsed = $this->getCollapsedState();
 
     // call hookable buildFormMatrix to load fields

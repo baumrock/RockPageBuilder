@@ -242,7 +242,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    * Load all files in directory as blocks for given field
    * @return void
    */
-  public function loadBlocks($fieldname, $path, $namespace = 'RMBlock') {
+  public function loadBlocks($fieldname, $path, $namespace = 'RMBlock', $add=[]) {
     // add blocks to rockmatrix
     $this->addBlocks($path, $namespace);
 
@@ -253,6 +253,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $name = pathinfo($file, PATHINFO_FILENAME);
       $blocks[] = "$namespace\\$name";
     }
+    $blocks = array_merge($blocks, $add);
 
     // add blocks via hook
     $this->addHookAfter('getAllowedBlocks', function($event)

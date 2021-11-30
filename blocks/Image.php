@@ -158,7 +158,8 @@ class Image extends \RockMatrix\Block {
     if($opt->link) {
       $cap = $sanitizer->entities($opt->text);
       if($cap) $cap = " data-caption='$cap'";
-      $img = "<a href='{$image->maxSize(1600,1600)->url}'$cap>$img</a>";
+      $img = "<a href='{$image->maxSize(1600,1600)->url}'$cap
+        data-barba-prevent>$img</a>";
     }
 
     $float = '';

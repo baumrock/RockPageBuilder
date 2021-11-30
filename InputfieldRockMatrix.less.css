@@ -2,6 +2,9 @@ li.rmx-item {
   transition: outline 0.3s ease-in-out;
   margin-top: 10px;
 }
+li.rmx-item.InputfieldStateCollapsed > .InputfieldHeader:after {
+  content: none !important;
+}
 li.rmx-item > .InputfieldHeader {
   padding: 2px 5px;
   cursor: move;

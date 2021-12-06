@@ -49,10 +49,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $this->modules->install('FieldtypeRepeater');
     }
     $this->path = $this->wire->config->paths($this);
-    if(!$this->wire->rockfields) {
-      $m = $this->wire->modules->get('RockFields');
-      if(!$m) $this->warning('Please install RockFields!');
-    }
 
     // load autoload blocks now
     $this->addBlocks($this->path."blocks");
@@ -61,6 +57,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
     $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
     $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
+    $this->addHookAfter("User::hasPagePermission", $this, "hookImageEdit");
     $this->include("init.php"); // load assets/RockMatrix/init.php
 
     // TODO: check if that causes errors on uninstalling other modules
@@ -203,6 +200,19 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $matrixPage = $page->getMatrixPage();
     if(!$matrixPage OR !$matrixPage->id) return;
     $event->return = $matrixPage->editable();
+  }
+
+  /**
+   * Make sure that images are editable and image actions are shown
+   * @return void
+   */
+  public function hookImageEdit(HookEvent $event) {
+    $permission = $event->arguments(0);
+    if($permission !== 'page-edit-images') return;
+    $page = $event->arguments(1);
+    if(!$page instanceof Block) return;
+    if(!$page->editable()) return;
+    $event->return = true; // grant page-edit-images permission!
   }
 
   /**

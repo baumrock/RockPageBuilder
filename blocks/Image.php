@@ -31,6 +31,7 @@ class Image extends \RockMatrix\Block {
 
   public function addRockFields() {
     // options field
+    if(!$this->wire->rockfields) return;
     $this->wire->rockfields->add([
       'name' => self::field_options,
       'inputfield' => function($field, $values) {
@@ -97,7 +98,11 @@ class Image extends \RockMatrix\Block {
 
   public function buildForm($fs) {
     $fs->remove('title');
-    $fs->add($this->wire->rockfields->getInputfield($this, self::field_options));
+
+    if($this->wire->rockfields) {
+      $fs->add($this->wire->rockfields
+        ->getInputfield($this, self::field_options));
+    }
   }
 
   public function getLabel() {

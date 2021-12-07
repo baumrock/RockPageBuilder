@@ -138,11 +138,13 @@ function RockMatrix() {
     });
   }
 
-  RockMatrix.prototype.setTextarea = function(e) {
+  RockMatrix.prototype.setTextarea = function(e, preventTrigger) {
+    preventTrigger = preventTrigger || false;
     let $text = this.$textarea(e);
     let data = this.getData(e);
     let json = JSON.stringify(data);
-    $text.val(json).text(json).change();
+    $text.val(json).text(json);
+    if(!preventTrigger) $text.change();
   }
 
   RockMatrix.prototype.spin = function($el, _cls) {
@@ -167,8 +169,8 @@ function RockMatrix() {
     // debounce for all changes
     rm.changeTimer = setTimeout(function() {
       rm.makeSortable(e);
-      rm.setTextarea(e);
-      console.log(rm.init ? 'RM changed' : 'RM init');
+      rm.setTextarea(e, true);
+      console.log(rm.init ? 'RockMatrix changed' : 'RockMatrix init');
       rm.init = true;
     }, this.editdelay);
   }

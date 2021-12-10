@@ -16,9 +16,39 @@ if($modules->isInstalled('RockMatrix')) {
 }
 ```
 
+## RockMatrix vs. RepeaterMatrix
+
+Like RepeaterMatrix RockMatrix extends the core Repeater Fieldtype, but the concept is very different. As mentioned above every block of a RockMatrix is a custom Page (that's the same with RepeaterMatrix) having a custom template (that's not the case with RepeaterMatrix) and also having a custom PageClass (that's also not the case with RepeaterMatrix). RepeaterMatrix on the other hand creates ONE template for all your matrix blocks and then hides or shows the fields that you have defined via the admin interface. That means RepeaterMatrix creates less templates but on the code side you'll end up with ONE page type for MANY block types.
+
+That means that you need to use hooks to customize your pages which has many disadvantages in my opinion. RockMatrix on the other hand creates a custom page type for every block type which makes it super convenient to code:
+
+```php
+class BlockFoo extends \RockMatrix\Block {
+  public function foo() {
+    return 'foo';
+  }
+}
+class BlockBar extends \RockMatrix\Block {
+  public function bar() {
+    return 'bar';
+  }
+}
+// vs
+$wire->addHookMethod('RepeaterMatrixPage::foo', function($event) {
+  $page = $event->object;
+  if($page->type !== 'matrixTypeFoo') return;
+  $event->return = 'foo';
+});
+$wire->addHookMethod('RepeaterMatrixPage::bar', function($event) {
+  $page = $event->object;
+  if($page->type !== 'matrixTypeBar') return;
+  $event->return = 'bar';
+});
+```
+
 ## Migrations
 
-RockMatrix relies havily on RockMigrations. Migrations are triggered automatically via rockMatrix.module.php on modules::refresh.
+RockMatrix relies havily on RockMigrations. Migrations are triggered automatically via RockMatrix.module.php on modules::refresh.
 
 ## Setting up new Blocks
 

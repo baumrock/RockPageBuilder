@@ -26,6 +26,8 @@ abstract class Block extends \ProcessWire\Page {
     $info = $this->wire(new WireData()); /** @var WireData $info */
     return $info->setArray([
       'title' => $this->className,
+      // this is the full classname eg Foo\Bar\Baz
+      // use $block->className for the classname without namespace (pw-feature)
       'name' => get_class($this),
       'icon' => 'cube',
     ]);

@@ -85,6 +85,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $block = new $class();
       $block->setFile($file);
       $block->init();
+      $block->addSettingsField();
       $blocks[$block->info()->name] = $block;
       ksort($blocks);
       $this->blocks = $blocks;

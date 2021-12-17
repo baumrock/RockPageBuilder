@@ -10,6 +10,8 @@ use \ProcessWire\Inputfield;
 use \ProcessWire\InputfieldFile;
 use \ProcessWire\InputfieldWrapper;
 use \ProcessWire\InputfieldFieldset;
+use ProcessWire\RockFields;
+use ProcessWire\RockFieldsField;
 
 abstract class Block extends \ProcessWire\Page {
 
@@ -38,6 +40,29 @@ abstract class Block extends \ProcessWire\Page {
    * It can be used to attach hooks but is completely optional
    */
   public function init() {
+    // leave empty to avoid breaking changes!
+  }
+
+  /**
+   * Add rockfields settings field for this block
+   */
+  public function addSettingsField() {
+    if(!$rf = $this->wire->rockfields) return;
+    if(!$this->hasSettingsField()) return;
+
+    // add field to rockfields
+    $rf->add([
+      'name' => $this->settingsName(),
+      'inputfield' => [$this, 'settingsInput'],
+      'sleep' => [$this, 'settingsSleep'],
+    ]);
+  }
+
+  public function addSettingsFieldToForm(InputfieldFieldset $fs) {
+    /** @var RockFields $rf */
+    if(!$rf = $this->wire->rockfields) return;
+    if(!$f = $rf->getInputfield($this, $this->settingsName(), true)) return;
+    $fs->add($f);
   }
 
   /**
@@ -224,9 +249,10 @@ abstract class Block extends \ProcessWire\Page {
     $fs->wrapAttr('data-tpl', $this->template->name);
     $fs->collapsed = $this->getCollapsedState();
 
-    // call hookable buildFormMatrix to load fields
+    // prepare form, build GUI and add settings field
     $this->prepareForm($fs);
     $this->buildFormMatrix($fs);
+    $this->addSettingsFieldToForm($fs);
 
     // add repeater suffix to all children
     foreach($fs->children() as $f) {
@@ -268,6 +294,15 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * @return bool
+   */
+  public function hasSettingsField() {
+    if(!$this->isDefined("settingsInput")) return false;
+    if(!$this->isDefined("settingsSleep")) return false;
+    return true;
+  }
+
+  /**
    * Does this block have an even index?
    * @return bool
    */
@@ -281,6 +316,17 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function indexOdd() {
     return $this->getMatrixIndex()%2!==0;
+  }
+
+  /**
+   * Check if method is defined in current class
+   * Returns FALSE if the method is inherited
+   * See https://bit.ly/3IWuayR
+   */
+  protected function isDefined($method) {
+    $class = get_class($this);
+    return (method_exists($class, $method)) &&
+      ($class === (new \ReflectionMethod($class, $method))->getDeclaringClass()->name);
   }
 
   /**
@@ -505,6 +551,13 @@ abstract class Block extends \ProcessWire\Page {
   public function setFile($file) {
     $this->file = Paths::normalizeSeparators($file);
   }
+
+
+  public function settingsName() {
+    return $this->getTplName()."-settingsfield";
+  }
+  public function settingsInput(RockFieldsField $field) {}
+  public function settingsSleep(RockFieldsField $field) {}
 
   /**
    * Get index of this block type:

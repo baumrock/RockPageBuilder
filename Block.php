@@ -17,7 +17,6 @@ abstract class Block extends \ProcessWire\Page {
 
   const prefix = "rmblock_";
   const tags = "RockMatrix";
-  const settingsCollapsed = Inputfield::collapsedYes;
 
   /**
    * References the current file
@@ -63,7 +62,7 @@ abstract class Block extends \ProcessWire\Page {
     /** @var RockFields $rf */
     if(!$rf = $this->wire->rockfields) return;
     if(!$f = $rf->getInputfield($this, $this->settingsName(), true)) return;
-    $f->collapsed(self::settingsCollapsed);
+    $f->addClass('rmx-settings');
     $fs->add($f);
   }
 
@@ -91,7 +90,7 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
-   * Get label for matrix item
+   * Get icon for matrix item
    * @return string
    */
   public function getIcon() {

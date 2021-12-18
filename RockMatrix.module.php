@@ -31,7 +31,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       'title' => 'RockMatrix',
       'version' => '0.0.1',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
-      'autoload' => 90, // RockFields has 100
+      'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
       'icon' => 'cubes',
       'requires' => [

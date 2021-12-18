@@ -554,7 +554,13 @@ abstract class Block extends \ProcessWire\Page {
     $this->file = Paths::normalizeSeparators($file);
   }
 
-
+  /**
+   * Return values of settings field
+   * @return WireData
+   */
+  public function settings() {
+    return $this->rockfieldValue($this->settingsName());
+  }
   public function settingsName() {
     return $this->getTplName()."-settingsfield";
   }

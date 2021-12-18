@@ -34,7 +34,8 @@ class Image extends \RockMatrix\Block {
     if(!$this->wire->rockfields) return;
     $this->wire->rockfields->add([
       'name' => self::field_options,
-      'inputfield' => function($field, $values) {
+      'inputfield' => function($field) {
+        $values = $field->values;
         $name = $field->name();
 
         $text = new InputfieldText();
@@ -83,7 +84,8 @@ class Image extends \RockMatrix\Block {
           ]),
         ];
       },
-      'sleep' => function($field, RockFieldInput $input) {
+      'sleep' => function($field) {
+        $input = $field->input;
         $name = $field->name();
         return [
           'text' => $input->get($name."_text"),

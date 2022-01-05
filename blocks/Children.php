@@ -2,6 +2,7 @@
 use ProcessWire\HookEvent;
 use ProcessWire\InputfieldWrapper;
 use ProcessWire\RockMatrix;
+use ProcessWire\Template;
 
 class Children extends \RockMatrix\Block {
 
@@ -49,6 +50,7 @@ class Children extends \RockMatrix\Block {
           'size' => 1,
           'min' => 0,
           'max' => 9,
+          'icon' => 'sitemap',
         ],
       ],
       'templates' => [
@@ -59,6 +61,7 @@ class Children extends \RockMatrix\Block {
           ],
           'noSettings' => 0,
           'noChildren' => 1,
+          'flags' => Template::flagSystem,
         ],
       ],
     ]);

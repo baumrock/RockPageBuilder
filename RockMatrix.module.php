@@ -6,8 +6,6 @@ use RockMatrix\BlocksArray;
  * @author Bernhard Baumrock, 18.07.2020
  * @license COMMERCIAL DO NOT DISTRIBUTE
  * @link https://www.baumrock.com
- *
- * // TODO: Wenn ich auf "Gemeindezeitung" klicke... kommt immer eine Browserwarnung "Wollen Sie die Seite wirklich verlassen". Obwohl keine Änderungen mehr ungespeichert sind.
  */
 require_once("Block.php");
 require_once(__DIR__ . "/BlocksArray.php");
@@ -29,7 +27,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '0.0.1',
+      'version' => '0.0.2',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -299,6 +297,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
           'noParents' => -1, // only one allowed
           'icon' => 'cubes',
           'sortfield' => '-created',
+          'flags' => Template::flagSystem,
         ],
       ],
     ]);

@@ -5,6 +5,7 @@ use ProcessWire\HookEvent;
 use ProcessWire\Inputfield;
 use ProcessWire\InputfieldWrapper;
 use ProcessWire\RockMatrix;
+use ProcessWire\Template;
 
 class CKEditor extends \RockMatrix\Block {
 
@@ -76,6 +77,7 @@ class CKEditor extends \RockMatrix\Block {
           'fields' => [
             self::field_text,
           ],
+          'flags' => Template::flagSystem,
         ],
       ],
     ]);

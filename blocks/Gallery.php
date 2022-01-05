@@ -3,6 +3,7 @@
 use ProcessWire\FieldtypeFile;
 use ProcessWire\HookEvent;
 use ProcessWire\RockMatrix;
+use ProcessWire\Template;
 
 class Gallery extends \RockMatrix\Block {
 
@@ -56,6 +57,7 @@ class Gallery extends \RockMatrix\Block {
             'title',
             self::field_images,
           ],
+          'flags' => Template::flagSystem,
         ],
       ],
     ]);

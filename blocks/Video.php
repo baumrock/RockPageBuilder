@@ -2,6 +2,7 @@
 
 use ProcessWire\HookEvent;
 use ProcessWire\Inputfield;
+use ProcessWire\Template;
 
 class Video extends \RockMatrix\Block {
 
@@ -31,6 +32,13 @@ class Video extends \RockMatrix\Block {
 
   public function migrate() {
     parent::migrate();
+    $this->rm()->migrate([
+      'templates' => [
+        $this->getTplName() => [
+          'flags' => Template::flagSystem,
+        ],
+      ],
+    ]);
     $this->rm()->setFieldData("title", ['required' => 0], $this->getTpl());
   }
 

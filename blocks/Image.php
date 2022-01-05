@@ -6,6 +6,7 @@ use ProcessWire\InputfieldRadios;
 use ProcessWire\InputfieldText;
 use ProcessWire\RockFieldInput;
 use ProcessWire\RockMatrix;
+use ProcessWire\Template;
 
 class Image extends \RockMatrix\Block {
 
@@ -133,6 +134,7 @@ class Image extends \RockMatrix\Block {
             'title',
             self::field_image,
           ],
+          'flags' => Template::flagSystem,
         ],
       ],
     ]);

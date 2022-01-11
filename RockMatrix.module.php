@@ -27,7 +27,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '0.0.3',
+      'version' => '0.0.4',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -57,6 +57,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
     $this->addHookAfter("User::hasPagePermission", $this, "hookImageEdit");
     $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
+    $this->addHookBefore('ProcessPageListRender::getNumChildren', $this, "hookNumChildren");
 
     $this->include("init.php"); // load assets/RockMatrix/init.php
 
@@ -223,6 +224,15 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     if(!$page instanceof Block) return;
     if(!$page->editable()) return;
     $event->return = true; // grant page-edit-images permission!
+  }
+
+  /**
+   * Hook num children when datapage was removed
+   */
+  public function hookNumChildren(HookEvent $event) {
+    if($this->wire->user->isSuperuser()) return;
+    $page = $event->arguments(0);
+    if($page->id === 1) $page->numChildren = $page->numChildren-1;
   }
 
   /**

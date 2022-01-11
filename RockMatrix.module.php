@@ -27,7 +27,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '0.0.4',
+      'version' => '0.0.5',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -190,7 +190,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    * Hide data page from page tree for non-superusers
    */
   public function hideDataPage(HookEvent $event) {
-    if($this->wire->user->isSuperuser()) return;
+    if($this->showDataPage AND $this->wire->user->isSuperuser()) return;
     $dataPage = $event->pages->get("template=".self::tpl_datapage);
     $event->return = $event->return->remove($dataPage);
   }
@@ -230,7 +230,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    * Hook num children when datapage was removed
    */
   public function hookNumChildren(HookEvent $event) {
-    if($this->wire->user->isSuperuser()) return;
+    if($this->showDataPage AND $this->wire->user->isSuperuser()) return;
     $page = $event->arguments(0);
     if($page->id === 1) $page->numChildren = $page->numChildren-1;
   }
@@ -384,6 +384,13 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
     $inputfields->add([
       'type' => 'checkbox',
+      'name' => 'showDataPage',
+      'label' => 'Show datapage in tree for superusers',
+      'checked' => $this->showDataPage ? 'checked' : '',
+    ]);
+
+    $inputfields->add([
+      'type' => 'checkbox',
       'name' => 'TriggerMigrations',
       'label' => 'Trigger Migrations',
       'description' => 'After adding a new matrix block (via code) you need to run migrations. You can either do this here or via calling $modules->get("RockMatrix")->migrate();',
@@ -409,6 +416,11 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     if($this->input->post('RemoveDemo')) $this->removeDemo();
 
     return $inputfields;
+  }
+
+  public function ___install() {
+    $this->init();
+    $this->migrate();
   }
 
   public function ___uninstall() {

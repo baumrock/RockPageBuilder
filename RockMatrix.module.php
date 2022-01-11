@@ -27,7 +27,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '0.0.2',
+      'version' => '0.0.3',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -56,6 +56,8 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
     $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
     $this->addHookAfter("User::hasPagePermission", $this, "hookImageEdit");
+    $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
+
     $this->include("init.php"); // load assets/RockMatrix/init.php
 
     // TODO: check if that causes errors on uninstalling other modules
@@ -181,6 +183,15 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $page = $event->object;
     if(!$page instanceof Block) throw new WireException("Page is not a RM Block");
     $event->return = $this->getBlockByTpl($page->template);
+  }
+
+  /**
+   * Hide data page from page tree for non-superusers
+   */
+  public function hideDataPage(HookEvent $event) {
+    if($this->wire->user->isSuperuser()) return;
+    $dataPage = $event->pages->get("template=".self::tpl_datapage);
+    $event->return = $event->return->remove($dataPage);
   }
 
   /**

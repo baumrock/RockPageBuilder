@@ -1,3 +1,9 @@
+Add all files of a given folder as blocks to this field:
+<pre>
+/** @var RockMatrix $matrix */
+$matrix = $this->wire->modules->get('RockMatrix');
+$matrix->loadBlocks("<?= $name ?>", "/path/to/your/blocks", "YourNamespace");
+</pre>
 Add this in site/init.php or in module init() to finish setup of your field:
 <pre>
 $this->addHookAfter('RockMatrix::getAllowedBlocks(name=<?= $name ?>)', function($event) {

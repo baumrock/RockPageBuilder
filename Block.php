@@ -12,6 +12,7 @@ use \ProcessWire\InputfieldWrapper;
 use \ProcessWire\InputfieldFieldset;
 use ProcessWire\RockFields;
 use ProcessWire\RockFieldsField;
+use ProcessWire\Template;
 
 abstract class Block extends \ProcessWire\Page {
 
@@ -595,6 +596,7 @@ abstract class Block extends \ProcessWire\Page {
       'pageClass' => $this->info()->name,
       'tags' => RockMatrix::tags,
       'noParents' => 1, // may not be used for new pages
+      'flags' => Template::flagSystem,
     ]);
   }
 

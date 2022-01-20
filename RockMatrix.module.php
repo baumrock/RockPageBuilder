@@ -27,7 +27,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '0.0.6',
+      'version' => '0.0.7',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -78,6 +78,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public function addBlock($file, $namespace = "RMBlock") {
     $blocks = $this->blocks;
     if(!is_file($file)) throw new WireException("File $file not found");
+
+    // add block to rockmigrations watchlist
+    $this->rm()->watch($file, false);
 
     require_once($file);
     $name = pathinfo($file, PATHINFO_FILENAME);

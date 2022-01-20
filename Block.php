@@ -568,6 +568,14 @@ abstract class Block extends \ProcessWire\Page {
   public function settingsSleep(RockFieldsField $field) {}
 
   /**
+   * Truncate text to given length
+   * @return string
+   */
+  public function truncate($str, $maxLength = 300, $options = []) {
+    return $this->wire->sanitizer->truncate($str, $maxLength, $options);
+  }
+
+  /**
    * Get index of this block type:
    * A(0) / B(0) / B(1) / B(2) / A(0) / A(1) / B(0)
    * @return int

@@ -2,6 +2,7 @@
 
 use ProcessWire\FieldtypeRockMatrix;
 use ProcessWire\FieldtypeRockShare;
+use ProcessWire\HookEvent;
 use ProcessWire\Paths;
 use ProcessWire\RockMatrix;
 use \ProcessWire\WireData;
@@ -39,9 +40,12 @@ abstract class Block extends \ProcessWire\Page {
   /**
    * This method is called when the block is loaded initially
    * It can be used to attach hooks but is completely optional
+   *
+   * If you implement init() in your block make sure to call parent::init()
    */
   public function init() {
-    // leave empty to avoid breaking changes!
+    $tpl = "template=".$this->getTplName();
+    $this->addHookAfter("Pages::saveReady($tpl,id=0)", $this, "setDefaults");
   }
 
   /**
@@ -79,6 +83,14 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function ___buildFormMatrix($fs) {
     $this->buildForm($fs);
+  }
+
+  /**
+   * Define default field values that are set when the block is created
+   * @return array
+   */
+  public function defaults() {
+    return [];
   }
 
   /**
@@ -544,6 +556,16 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function rm() {
     return $this->wire->modules->get('RockMigrations');
+  }
+
+  /**
+   * Set defaults from defaults() method
+   * @return void
+   */
+  public function setDefaults(HookEvent $event) {
+    $block = $event->arguments(0);
+    if(!method_exists($block, "defaults")) return;
+    foreach($block->defaults() as $k=>$v) $block->$k = $v;
   }
 
   /**

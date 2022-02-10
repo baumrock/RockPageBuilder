@@ -578,10 +578,22 @@ abstract class Block extends \ProcessWire\Page {
 
   /**
    * Return values of settings field
+   *
+   * Usage:
+   * $settings = $block->settings();
+   *
+   * $side = $block->settings("side", "right");
+   *
    * @return WireData
    */
-  public function settings() {
-    return $this->rockfieldValue($this->settingsName());
+  public function settings($prop = null, $default = null) {
+    $settings = $this->rockfieldValue($this->settingsName());
+    if($prop) {
+      // try to get settings property
+      $val = $settings->get($prop);
+      return $val ?: $default;
+    }
+    return $settings;
   }
   public function settingsName() {
     return $this->getTplName()."-settingsfield";

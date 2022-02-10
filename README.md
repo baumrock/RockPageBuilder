@@ -101,6 +101,12 @@ public function settingsInput(RockFieldsField $field) {
 }
 ```
 
+You can access those settings on the frontend like this:
+
+```php
+$mySetting = $block->settings('mysettingname', 'default value');
+```
+
 ## Render content
 
 The content of the field can be rendered via the `render()` method of the field data object. This calls the `render()` method of each block. If you just `echo` the field value it will show the ids of the pagearray (which is the string representation of the pagearray and is necessary for usage on selectors).

@@ -53,7 +53,6 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function addSettingsField() {
     if(!$rf = $this->wire->rockfields) return;
-    if(!$this->hasSettingsField()) return;
 
     // add field to rockfields
     $rf->add([
@@ -305,15 +304,6 @@ abstract class Block extends \ProcessWire\Page {
     ]);
 
     return $fs;
-  }
-
-  /**
-   * @return bool
-   */
-  public function hasSettingsField() {
-    if(!$this->isDefined("settingsInput")) return false;
-    if(!$this->isDefined("settingsSleep")) return false;
-    return true;
   }
 
   /**

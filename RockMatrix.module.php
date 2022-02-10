@@ -27,7 +27,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '0.0.9',
+      'version' => '0.0.10',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -64,7 +64,10 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     // TODO: check if that causes errors on uninstalling other modules
     // the readme had a note that migrate is not triggered automatically due to
     // that reason.
-    $this->rm()->fireOnRefresh($this, "migrate");
+    if($rm = $this->rm()) {
+      $rm->watch($this);
+      $rm->fireOnRefresh($this, "migrate");
+    }
   }
 
   public function ready() {

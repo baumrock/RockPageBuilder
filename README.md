@@ -68,6 +68,39 @@ class MinimumDemo extends \RockMatrix\Block {
 
 Make sure you save the file as `MinimumDemo.php` and tell RockMatrix about that file (if it is not in an already monitored folder). Use `$mx->addBlocks('/your/dir')` as shown above.
 
+### Block settings
+
+```php
+public function settingsInput(RockFieldsField $field) {
+  return $field->table([
+    'Headline' => $field->input("headline"),
+    'Whatever' => $field->input("whatever"),
+  ]);
+}
+public function settingsSleep(RockFieldsField $field) {
+  return [
+    $field->getInputArray("headline"),
+    $field->getInputArray("whatever"),
+  ];
+}
+```
+
+If settingsInput returns a string it will be used as value of a markup field. If you provide an array, it will be used as inputfield where you can define label, icon, collapsed state etc:
+
+```php
+public function settingsInput(RockFieldsField $field) {
+  return [
+    'label' => 'My Settings field',
+    'icon' => 'check',
+    'value' => $field->table([
+      'Headline' => $field->input("headline"),
+      'Whatever' => $field->input("whatever"),
+    ]),
+    'collapsed' => Inputfield::collapsedNo,
+  ];
+}
+```
+
 ## Render content
 
 The content of the field can be rendered via the `render()` method of the field data object. This calls the `render()` method of each block. If you just `echo` the field value it will show the ids of the pagearray (which is the string representation of the pagearray and is necessary for usage on selectors).

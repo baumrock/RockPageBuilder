@@ -27,7 +27,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '0.0.10',
+      'version' => '0.0.11',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -64,10 +64,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     // TODO: check if that causes errors on uninstalling other modules
     // the readme had a note that migrate is not triggered automatically due to
     // that reason.
-    if($rm = $this->rm()) {
-      $rm->watch($this);
-      $rm->fireOnRefresh($this, "migrate");
-    }
+    if($rm = $this->rm()) $rm->watch($this);
   }
 
   public function ready() {
@@ -82,20 +79,26 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $blocks = $this->blocks;
     if(!is_file($file)) throw new WireException("File $file not found");
 
-    // add block to rockmigrations watchlist
-    $this->rm()->watch($file, false);
-
-    require_once($file);
+    // if block was already added we do not add it again
     $name = pathinfo($file, PATHINFO_FILENAME);
     $class = "\\$namespace\\$name";
+    require_once($file);
     try {
       $block = new $class();
       $block->setFile($file);
+      $name = $block->info()->name;
+
+      // if block already exists dont add and init it again
+      if(array_key_exists($name, $this->blocks)) return;
+
       $block->init();
       $block->addSettingsField();
-      $blocks[$block->info()->name] = $block;
+      $blocks[$name] = $block;
       ksort($blocks);
       $this->blocks = $blocks;
+
+      // add block to rockmigrations watchlist
+      $this->rm()->watch($file, false);
     } catch (\Throwable $th) {
       $this->warning($class.": ".$th->getMessage());
     }

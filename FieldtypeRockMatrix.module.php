@@ -10,7 +10,7 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '0.0.1',
+      'version' => '0.0.2',
       'summary' => 'Your module description',
       'icon' => 'cubes',
       'requires' => ['RockMatrix'],
@@ -25,7 +25,7 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
 
   /** FIELDTYPE METHODS */
 
-    public function ___formatValue(Page $page, Field $field, Object $value) {
+    public function ___formatValue(Page $page, Field $field, $value) {
       // return field data object
       // we do not return the rendered value as this breaks kaumberg
       // frontpage (shows item::render()item::render()item::render())

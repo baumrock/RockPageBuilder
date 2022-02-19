@@ -6,6 +6,7 @@ use ProcessWire\InputfieldRadios;
 use ProcessWire\InputfieldText;
 use ProcessWire\RockFieldInput;
 use ProcessWire\RockMatrix;
+use ProcessWire\RockMigrations;
 use ProcessWire\Template;
 
 class Image extends \RockMatrix\Block {
@@ -114,7 +115,8 @@ class Image extends \RockMatrix\Block {
 
   public function migrate() {
     parent::migrate();
-    $this->rm()->deleteField('rockmatrix_image_label');
+    $rm = $this->rm();
+    $rm->deleteField('rockmatrix_image_label', true);
     $this->rm()->migrate([
       'fields' => [
         self::field_image => [

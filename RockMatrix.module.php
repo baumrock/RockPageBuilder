@@ -27,13 +27,13 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '0.0.11',
+      'version' => '0.0.12',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
       'icon' => 'cubes',
       'requires' => [
-        'RockMigrations',
+        'RockMigrations>=0.3.7',
       ],
       'installs' => [
         'FieldtypeRockMatrix',
@@ -308,9 +308,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    */
   public function migrate() {
     $rm = $this->rm();
-
-    // migrate all blocks
-    $this->log("Triggered RockMatrix::migrate() from RockMatrix.module.php");
     foreach($this->blocks as $name=>$file) {
       $block = $this->getBlock($name);
       if(!$block) return;

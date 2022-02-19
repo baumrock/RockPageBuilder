@@ -621,7 +621,7 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function migrate() {
     // we always create the related template
-    $this->log('Migrate '.$this->info()->name);
+    $this->rm()->log('Migrate '.$this->info()->name);
     $tpl = $this->rm()->createTemplate($this->getTplName());
     $this->rm()->setTemplateData($tpl, [
       'icon' => $this->info()->icon,

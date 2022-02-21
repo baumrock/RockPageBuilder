@@ -549,13 +549,13 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
-   * Set defaults from defaults() method
+   * If the block has a defaults() method executed it on block creation
    * @return void
    */
   public function setDefaults(HookEvent $event) {
     $block = $event->arguments(0);
     if(!method_exists($block, "defaults")) return;
-    foreach($block->defaults() as $k=>$v) $block->$k = $v;
+    $block->defaults();
   }
 
   /**

@@ -7,8 +7,8 @@ use RockMatrix\BlocksArray;
  * @license COMMERCIAL DO NOT DISTRIBUTE
  * @link https://www.baumrock.com
  */
-require_once("Block.php");
-require_once(__DIR__ . "/BlocksArray.php");
+require_once(__DIR__."/Block.php");
+require_once(__DIR__."/BlocksArray.php");
 class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   const prefix = 'rockmatrix_';
@@ -27,7 +27,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '0.0.13',
+      'version' => '0.0.14',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,

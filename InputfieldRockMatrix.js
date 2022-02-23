@@ -172,11 +172,6 @@ function RockMatrix() {
       rm.setTextarea(e, true);
       console.log(rm.init ? 'RockMatrix changed' : 'RockMatrix init');
       rm.init = true;
-
-      // trigger pw-panels to fix issue
-      // https://github.com/processwire/processwire-requests/issues/176
-      pwPanels.init();
-
     }, this.editdelay);
   }
 
@@ -267,4 +262,34 @@ var RockMatrix = new RockMatrix();
   $(document).on('keydown', '.InputfieldRockMatrix input', function(e) {
     $(e.target).closest('.Inputfield').addClass('InputfieldStateChanged');
     RockMatrix.changed(e);
+  });
+
+  // fix pw-panel issue
+  // https://github.com/processwire/processwire-requests/issues/176
+  $(document).on('click', '.pw-panel:not(pw-panel-init)', function(e) {
+    e.preventDefault();
+    let $el = $(e.target).closest('.pw-panel');
+    $el.addClass('pw-panel-init');
+
+    // setup link element
+    let $a = $el.closest('a[href]');
+
+    // add panel and trigger click
+    $.when(pwPanels.addPanel($a)).then(function() { $a.click(); });
+    return false;
+  });
+
+  // fix pw-panel issue
+  // https://github.com/processwire/processwire-requests/issues/176
+  $(document).on('click', '.pw-panel:not(pw-panel-init)', function(e) {
+    e.preventDefault();
+    let $el = $(e.target).closest('.pw-panel');
+    $el.addClass('pw-panel-init');
+
+    // setup link element
+    let $a = $el.closest('a[href]');
+
+    // add panel and trigger click
+    $.when(pwPanels.addPanel($a)).then(function() { $a.click(); });
+    return false;
   });

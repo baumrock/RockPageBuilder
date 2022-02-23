@@ -172,6 +172,11 @@ function RockMatrix() {
       rm.setTextarea(e, true);
       console.log(rm.init ? 'RockMatrix changed' : 'RockMatrix init');
       rm.init = true;
+
+      // trigger pw-panels to fix issue
+      // https://github.com/processwire/processwire-requests/issues/176
+      pwPanels.init();
+
     }, this.editdelay);
   }
 

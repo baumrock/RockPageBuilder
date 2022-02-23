@@ -323,6 +323,18 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Is this block allowed on given page and field?
+   * @return bool
+   */
+  public function isAllowed($field, $page) {
+    $allowed = $this->master()->getAllowedBlocks($field, $page);
+    foreach($allowed as $b) {
+      if($b->info()->name === $this->info()->name) return true;
+    }
+    return false;
+  }
+
+  /**
    * Check if method is defined in current class
    * Returns FALSE if the method is inherited
    * See https://bit.ly/3IWuayR
@@ -384,15 +396,11 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
-   * Is this block allowed on given page and field?
+   * Is the parent page saved?
    * @return bool
    */
-  public function isAllowed($field, $page) {
-    $allowed = $this->master()->getAllowedBlocks($field, $page);
-    foreach($allowed as $b) {
-      if($b->info()->name === $this->info()->name) return true;
-    }
-    return false;
+  public function isSaved() {
+    return !!$this->getMatrixIndex(true);
   }
 
   /**

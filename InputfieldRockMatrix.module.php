@@ -13,7 +13,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '0.0.1',
+      'version' => '0.0.2',
       'summary' => 'Your module description',
       'icon' => 'cubes',
       'requires' => ['RockMatrix'],
@@ -205,25 +205,28 @@ class InputfieldRockMatrix extends InputfieldRepeater {
    */
   public function renderReady(Inputfield $parent = null, $renderValueMode = false) {
     // make sure that repeater is installed
-    $this->modules->get('InputfieldRepeater');
+    $this->wire->modules->get('InputfieldRepeater');
+    $url = $this->wire->config->urls($this);
+    $path = $this->wire->config->paths($this);
 
     $file = $this->className.".js";
-    $path = $this->config->paths($this).$file;
-    $m = "?m=".filemtime($path);
-    $this->config->scripts->add($this->config->urls($this).$file.$m);
+    $m = "?m=".filemtime($path.$file);
+    $this->wire->config->scripts->add($url.$file.$m);
 
-    $url = $this->config->urls($this);
-    $file = $url.$this->className.".less";
-    $less = $this->modules->get('RockLESS'); /** @var RockLESS $less */
-    if($less) $less->addToConfig($file);
-    else $this->config->styles->add("$file.css");
+    $file = $this->className.".less";
+    $less = $this->wire->modules->get('RockLESS'); /** @var RockLESS $less */
+    if($less) $less->addToConfig($path.$file);
+    else {
+      $m = "?m=".filemtime($path.$file.".css");
+      $this->wire->config->styles->add($url.$file.".css".$m);
+    }
 
     // load vex
     $this->wire('modules')->get('JqueryUI')->use('vex');
 
     // load JS
-    $js = $this->wire->config->urls($this)."RockMatrixItem.js";
-    $m = "?m=".filemtime($this->wire->config->paths($this)."RockMatrixItem.js");
+    $js = $url."RockMatrixItem.js";
+    $m = "?m=".filemtime($path."RockMatrixItem.js");
     $this->wire->config->scripts->add($js.$m);
 
     $this->preloadBlockAssets();

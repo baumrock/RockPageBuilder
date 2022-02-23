@@ -430,8 +430,24 @@ abstract class Block extends \ProcessWire\Page {
     if(!$fields) return $fs;
     foreach($fields->children() as $f) {
       $type = $f->hasField->type;
+
       // prevent recursion
-      if($type instanceof FieldtypeRockMatrix) $fields->remove($f);
+      if($type instanceof FieldtypeRockMatrix) {
+        $id = $f->value->page->id;
+        $url = $this->wire->pages->get(2)->url."page/edit/?id=$id&field=".$f->name;
+        $label = $f->label;
+        $fields->add([
+          'name' => $f->name."_markup",
+          'type' => 'markup',
+          'value' => "<a href='$url' class='pw-panel pw-panel-reload
+            uk-button uk-button-default'>$label</a>",
+        ]);
+        $markup = $fields->children()->last();
+        $fields->remove($markup);
+        $fields->insertAfter($markup, $f);
+        $fields->remove($f);
+      }
+
       // sharing of pages not possible inside matrix
       if($type instanceof FieldtypeRockShare) $fields->remove($f);
     }

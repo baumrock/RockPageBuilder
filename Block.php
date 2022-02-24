@@ -90,11 +90,9 @@ abstract class Block extends \ProcessWire\Page {
 
   /**
    * Define default field values that are set when the block is created
-   * @return array
+   * @return void
    */
-  public function defaults() {
-    return [];
-  }
+  public function defaults() {}
 
   /**
    * Get collapsed state of item
@@ -446,7 +444,12 @@ abstract class Block extends \ProcessWire\Page {
 
       // prevent recursion
       if($type instanceof FieldtypeRockMatrix) {
-        if($f->value->page->isSaved()) {
+        if($this->wire->process->getPage()->id == $f->value->page->id) {
+          // we are editing the block in the page editor
+          // we set the value to empty string to hide the item-edit-button
+          $value = '';
+        }
+        elseif($f->value->page->isSaved()) {
           $id = $f->value->page->id;
           $url = $this->wire->pages->get(2)->url."page/edit/?id=$id&field=".$f->name;
           $label = $f->label;

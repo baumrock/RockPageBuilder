@@ -32,7 +32,7 @@ class FieldData extends PageArray {
       // make sure item is a page
       $_item = $item;
       $item = $mx->getBlockPage($item);
-      if(!$item) throw new WireException("Invalid item $_item");
+      if(!$item) throw new WireException("Invalid item $_item - did you call parent::migrate() in your block?");
 
       // check if item is allowed!
       if(!$item->isAllowed($this->field, $this->page)) {

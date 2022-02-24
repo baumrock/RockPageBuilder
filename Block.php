@@ -54,6 +54,10 @@ abstract class Block extends \ProcessWire\Page {
   public function addSettingsField() {
     if(!$rf = $this->wire->rockfields) return;
 
+    // you can prevent showing the settings field
+    // by defining "settings => false" in the info() of your block
+    if($this->info()->settings === false) return;
+
     // add field to rockfields
     $rf->add([
       'name' => $this->settingsName(),
@@ -114,7 +118,8 @@ abstract class Block extends \ProcessWire\Page {
    * @return string
    */
   public function getLabel() {
-    return $this->wire->sanitizer->truncate($this->get('title|id'), 50);
+    $label = $this->title ?: $this->info()->title;
+    return $this->wire->sanitizer->truncate($label, 50);
   }
 
   /**
@@ -441,14 +446,20 @@ abstract class Block extends \ProcessWire\Page {
 
       // prevent recursion
       if($type instanceof FieldtypeRockMatrix) {
-        $id = $f->value->page->id;
-        $url = $this->wire->pages->get(2)->url."page/edit/?id=$id&field=".$f->name;
-        $label = $f->label;
+        if($f->value->page->isSaved()) {
+          $id = $f->value->page->id;
+          $url = $this->wire->pages->get(2)->url."page/edit/?id=$id&field=".$f->name;
+          $label = $f->label;
+          $value = "<a href='$url' class='pw-panel pw-panel-reload
+            uk-button uk-button-default'>$label</a>";
+        }
+        else {
+          $value = $this->_("Please save the page, then you can come back here and edit block items.");
+        }
         $fields->add([
           'name' => $f->name."_markup",
           'type' => 'markup',
-          'value' => "<a href='$url' class='pw-panel pw-panel-reload
-            uk-button uk-button-default'>$label</a>",
+          'value' => $value,
         ]);
         $markup = $fields->children()->last();
         $fields->remove($markup);

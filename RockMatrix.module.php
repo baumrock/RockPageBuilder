@@ -27,7 +27,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '0.0.17',
+      'version' => '0.0.19',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -112,6 +112,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $opt = ['extensions' => ['php']];
     foreach($this->wire->files->find($dir, $opt) as $file) {
       $name = pathinfo($file, PATHINFO_BASENAME);
+      if(strpos($name, ".")===0) continue; // no dot-files
       if($name === "init.php") continue;
       if(substr($file, -9) === ".view.php") continue;
       $this->addBlock($file, $namespace);
@@ -290,6 +291,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $options = ['extensions' => ['php']];
     foreach($this->wire->files->find($path, $options) as $file) {
       $name = pathinfo($file, PATHINFO_FILENAME);
+      if(strpos($name, ".")===0) continue; // no dot-files
       $blocks[] = "$namespace\\$name";
     }
     $blocks = array_merge($blocks, $add);

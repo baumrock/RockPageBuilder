@@ -165,8 +165,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
     }
     $buttons .= "</div>";
 
-    return "<div class='rmx-buttons-container'>"
-      ."<small>".__('Add content').":</small><br>$buttons</div>";
+    return "<div class='rmx-buttons-container'>$buttons</div>";
   }
 
   /**

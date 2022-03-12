@@ -29,7 +29,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.0.0',
+      'version' => '1.0.1',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -335,6 +335,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    */
   public function loadBlocksFromAssetsFolder() {
     $folder = $this->wire->config->paths->assets."RockMatrix";
+    if(!is_dir($folder)) $this->wire->files->mkdir($folder);
     foreach(new DirectoryIterator($folder) as $fileInfo) {
       if($fileInfo->isDot()) continue;
       if(!$fileInfo->isDir()) continue;

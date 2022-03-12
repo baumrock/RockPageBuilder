@@ -45,8 +45,8 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
-   * Prevents an endless loop
-   * // TODO: fix this
+   * This ensures that we have an init() method on every block
+   * so that if extending blocks call parent::init() we'll not run into trouble
    */
   public function init() {}
 

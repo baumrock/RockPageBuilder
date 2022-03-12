@@ -45,6 +45,12 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Prevents an endless loop
+   * // TODO: fix this
+   */
+  public function init() {}
+
+  /**
    * Add rockfields settings field for this block
    */
   public function addSettingsField() {

@@ -29,7 +29,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.0.2',
+      'version' => '1.0.3',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -354,6 +354,48 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       if($field->name !== $fieldname) return;
       $event->return->add($blocks);
     });
+  }
+
+  /**
+   * Same as loadBlocks but you can provide multiple folders and files to load
+   *
+   * Usage:
+   * $rm->loadBlocksArray('your_field', [
+   *   ['/path/to/folder' => 'Your\Namespace'],
+   *   ['/path/to/file.php' => 'Your\Namespace'],
+   * ])
+   */
+  public function loadBlocksArray($fieldname, $arr) {
+    $blocks = [];
+    foreach($arr as $dir=>$namespace) {
+      $blocks = [];
+      if(is_file($dir)) {
+        $file = $dir;
+        $this->addBlock($file, $namespace);
+        $name = pathinfo($file, PATHINFO_FILENAME);
+        if(strpos($name, ".")===0) continue; // no dot-files
+        $blocks[] = "$namespace\\$name";
+      }
+      elseif(is_dir($dir)) {
+        $this->addBlocks($dir, $namespace);
+        $options = ['extensions' => ['php']];
+        foreach($this->wire->files->find($dir, $options) as $file) {
+          $name = pathinfo($file, PATHINFO_FILENAME);
+          if(strpos($name, ".")===0) continue; // no dot-files
+          $blocks[] = "$namespace\\$name";
+        }
+      }
+      else throw new WireException("Invalid array key - must be file or directory");
+
+      // add blocks via hook
+      $this->addHookAfter('getAllowedBlocks', function($event)
+        use($fieldname, $blocks) {
+        $field = $event->arguments(0);
+        if($field->name !== $fieldname) return;
+        $event->return->add($blocks);
+      });
+
+    }
   }
 
   /**

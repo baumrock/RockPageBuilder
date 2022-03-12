@@ -10,6 +10,8 @@ class InputfieldRockMatrix extends InputfieldRepeater {
   /** @var RockMatrix */
   public $master;
 
+  public $path;
+
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
@@ -23,6 +25,32 @@ class InputfieldRockMatrix extends InputfieldRepeater {
 
   public function init() {
     $this->master = $this->wire->modules->get('RockMatrix');
+    $this->path = $this->master->path;
+  }
+
+  /**
+   * Add stylesheet to pw admin
+   */
+  public function addStyle() {
+    $path = $this->path;
+    $url = $this->wire->config->urls($this);
+    $lessFile = $this->className.".less";
+    $cssFile = "$lessFile.css";
+    $mCSS = filemtime($path.$cssFile);
+    $mLESS = filemtime($path.$lessFile);
+
+    if($mLESS > $mCSS AND $this->wire->user->isSuperuser()) {
+      if($less = $this->wire->modules->get('Less')) {
+        // recreate css file
+        /** @var Less $less */
+        $less->addFile($path.$lessFile);
+        $less->saveCss($path.$cssFile);
+        $mCSS = time();
+        $this->log('Created new CSS file for '.$this->className);
+      }
+    }
+
+    $this->wire->config->styles->add($url.$cssFile."?m=".$mCSS);
   }
 
   /**
@@ -152,20 +180,30 @@ class InputfieldRockMatrix extends InputfieldRepeater {
   public function ___renderButtons() {
     $page = $this->process->getPage();
     $blocks = $this->master->getAllowedBlocks($this, $page);
-
-    if(!count($blocks)) {
-      return $this->files->render(__DIR__."/_setupinfo.php", [
-        'name'=>$this->name,
-      ]);
-    }
-
     $buttons = '<div class="rmx-buttons">';
     foreach($blocks as $block) {
       $buttons .= $block->renderButton($page, $this->hasField);
     }
-    $buttons .= "</div>";
 
+    // create toggle for creating new block
+    $buttons .= $this->renderCreateBlock();
+
+    $buttons .= "</div>";
     return "<div class='rmx-buttons-container'>$buttons</div>";
+  }
+
+  /**
+   * Render inputfield to create a new block
+   * @return string
+   */
+  public function renderCreateBlock() {
+    if(!$this->wire->user->isSuperuser()) return;
+    return "<a uk-icon=plus class=noclick title='Create new block element' uk-tooltip></a>
+      <div class='rmx-create' uk-dropdown='mode:click;pos:bottom-center;'>
+      <input name=rmx-createblock class='uk-input uk-form-small'>"
+      ."<button name='rmx-fieldname' value='{$this->name}'
+        class='uk-button uk-button-default uk-button-small'>Create</button>
+      </div>";
   }
 
   /**
@@ -212,13 +250,8 @@ class InputfieldRockMatrix extends InputfieldRepeater {
     $m = "?m=".filemtime($path.$file);
     $this->wire->config->scripts->add($url.$file.$m);
 
-    $file = $this->className.".less";
-    $less = $this->wire->modules->get('RockLESS'); /** @var RockLESS $less */
-    if($less) $less->addToConfig($path.$file);
-    else {
-      $m = "?m=".filemtime($path.$file.".css");
-      $this->wire->config->styles->add($url.$file.".css".$m);
-    }
+    // add stylesheet
+    $this->addStyle();
 
     // load vex
     $this->wire('modules')->get('JqueryUI')->use('vex');

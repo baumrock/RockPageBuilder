@@ -217,7 +217,7 @@ var RockMatrix = new RockMatrix();
   });
 
   // add a new matrix item
-  $(document).on('click', '.InputfieldRockMatrix .rmx-buttons a', function(e) {
+  $(document).on('click', '.InputfieldRockMatrix .rmx-buttons a:not(.noclick)', function(e) {
     RockMatrix.clickAdd(e);
   });
 

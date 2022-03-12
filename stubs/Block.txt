@@ -1,0 +1,15 @@
+<?php namespace RMBlock;
+
+use RockMatrix\Block;
+
+class {name} extends Block {
+
+  public function info() {
+    return parent::info()->setArray([
+      'icon' => 'picture-o',
+      'title' => '{name}',
+      'description' => 'RockMatrix Block Setup Demo',
+    ]);
+  }
+
+}

@@ -64,3 +64,9 @@ li.rmx-item .rmx-settings table td {
 .rmx-pd5 > .InputfieldContent {
   padding: 5px;
 }
+.rmx-create {
+  margin: 10px 0;
+}
+.rmx-create input {
+  width: 200px;
+}

@@ -1,4 +1,6 @@
 <?php namespace ProcessWire;
+
+use DirectoryIterator;
 use RockMatrix\Block;
 use RockMatrix\BlocksArray;
 
@@ -27,7 +29,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '0.0.20',
+      'version' => '1.0.0',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -48,9 +50,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     }
     $this->path = $this->wire->config->paths($this);
 
-    // load autoload blocks now
-    $this->addBlocks($this->path."blocks");
-
     $this->setupDemoField();
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
     $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
@@ -59,7 +58,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
     $this->addHookBefore('ProcessPageListRender::getNumChildren', $this, "hookNumChildren");
 
+    $this->createBlock();
     $this->include("init.php"); // load assets/RockMatrix/init.php
+    $this->loadBlocksFromAssetsFolder();
 
     // TODO: check if that causes errors on uninstalling other modules
     // the readme had a note that migrate is not triggered automatically due to
@@ -78,6 +79,11 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public function addBlock($file, $namespace = "RMBlock") {
     $blocks = $this->blocks;
     if(!is_file($file)) throw new WireException("File $file not found");
+
+    // check if the file is empty
+    // empty files can be used to add existing blocks to fields
+    // this means you can reuse blocks across several fields
+    if(!filesize($file)) return;
 
     // if block was already added we do not add it again
     $name = pathinfo($file, PATHINFO_FILENAME);
@@ -130,6 +136,24 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $fs = $event->return;
     $page->prepareForm($fs);
     $page->buildForm($fs);
+  }
+
+  /**
+   * Create new block for field
+   * @return void
+   */
+  public function createBlock() {
+    if(!$this->wire->user->isSuperuser()) return;
+    if(!$name = $this->wire->input->post('rmx-createblock')) return;
+    if(!$fieldname = $this->wire->input->post('rmx-fieldname')) return;
+    $folder = $this->wire->config->paths->assets."RockMatrix/$fieldname";
+    if(!is_dir($folder)) mkdir($folder);
+    $name = ucfirst($name);
+    $stub = file_get_contents($this->path."stubs/Block.txt");
+    $stub = str_replace("{name}", $name, $stub);
+    $file = "$folder/$name.php";
+    if(!is_file($file)) $this->wire->files->filePutContents($file, $stub);
+    else $this->error("File $file does already exist");
   }
 
   /**
@@ -303,6 +327,20 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       if($field->name !== $fieldname) return;
       $event->return->add($blocks);
     });
+  }
+
+  /**
+   * Load all blocks from assets folder
+   * @return void
+   */
+  public function loadBlocksFromAssetsFolder() {
+    $folder = $this->wire->config->paths->assets."RockMatrix";
+    foreach(new DirectoryIterator($folder) as $fileInfo) {
+      if($fileInfo->isDot()) continue;
+      if(!$fileInfo->isDir()) continue;
+      $fieldname = basename($fileInfo->getPathname());
+      $this->loadBlocks($fieldname, $fileInfo->getPathname());
+    }
   }
 
   /**

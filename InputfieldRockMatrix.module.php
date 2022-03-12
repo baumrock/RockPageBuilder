@@ -15,7 +15,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '0.0.2',
+      'version' => '1.0.0',
       'summary' => 'Your module description',
       'icon' => 'cubes',
       'requires' => ['RockMatrix'],

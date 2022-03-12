@@ -35,7 +35,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       'singular' => true,
       'icon' => 'cubes',
       'requires' => [
-        'RockMigrations>=0.3.7',
+        'RockMigrations>=0.4.0',
       ],
       'installs' => [
         'FieldtypeRockMatrix',
@@ -100,15 +100,17 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       // check if we didnt forget to call parent::migrate in migrate() of block
       if($this->wire->user->isSuperuser()) {
         $content = $this->wire->files->fileGetContents($file);
-        $mig = strpos($content, "public function migrate(");
-        $migParent = strpos($content, "parent::migrate(");
-        if($mig AND $migParent<$mig) {
-          $this->error("Block $name has a migrate() method but does not call"
-            ." parent::migrate()");
-        }
+        $this->checkParent("migrate", $content, $name);
+        $this->checkParent("__construct", $content, $name);
       }
 
-      $block->init();
+      // trigger init() of block
+      if(method_exists($block, "init")) $block->init();
+
+      // add magic methods to this block
+      // this adds defaults() and onCreate() etc
+      $this->rm()->addMagicMethods($block);
+
       $block->addSettingsField();
       $blocks[$name] = $block;
       ksort($blocks);
@@ -147,6 +149,20 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $fs = $event->return;
     $page->prepareForm($fs);
     $page->buildForm($fs);
+  }
+
+  /**
+   * Check if we forgot to call parent::xxx
+   * @return void
+   */
+  public function checkParent($method, $content, $name) {
+    $fu = strpos($content, "function $method(");
+    $fuParent = strpos($content, "parent::$method(")
+      OR strpos($content, "parent::___$method(");
+    if($fu AND $fuParent<$fu) {
+      $this->error("Block $name has a $method() method but does not call"
+        ." parent::$method()");
+    }
   }
 
   /**

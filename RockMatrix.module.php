@@ -29,7 +29,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.0.1',
+      'version' => '1.0.2',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -96,6 +96,17 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
       // if block already exists dont add and init it again
       if(array_key_exists($name, $this->blocks)) return;
+
+      // check if we didnt forget to call parent::migrate in migrate() of block
+      if($this->wire->user->isSuperuser()) {
+        $content = $this->wire->files->fileGetContents($file);
+        $mig = strpos($content, "public function migrate(");
+        $migParent = strpos($content, "parent::migrate(");
+        if($mig AND $migParent<$mig) {
+          $this->error("Block $name has a migrate() method but does not call"
+            ." parent::migrate()");
+        }
+      }
 
       $block->init();
       $block->addSettingsField();

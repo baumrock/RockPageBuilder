@@ -15,7 +15,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.0.0',
+      'version' => '1.0.1',
       'summary' => 'Your module description',
       'icon' => 'cubes',
       'requires' => ['RockMatrix'],
@@ -198,12 +198,8 @@ class InputfieldRockMatrix extends InputfieldRepeater {
    */
   public function renderCreateBlock() {
     if(!$this->wire->user->isSuperuser()) return;
-    return "<a uk-icon=plus class=noclick title='Create new block element' uk-tooltip></a>
-      <div class='rmx-create' uk-dropdown='mode:click;pos:bottom-center;'>
-      <input name=rmx-createblock class='uk-input uk-form-small'>"
-      ."<button name='rmx-fieldname' value='{$this->name}'
-        class='uk-button uk-button-default uk-button-small'>Create</button>
-      </div>";
+    return "<a uk-icon=plus class='noclick createBlockType'
+      title='Create new block type' uk-tooltip></a>";
   }
 
   /**

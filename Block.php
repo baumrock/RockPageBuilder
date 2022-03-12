@@ -235,8 +235,8 @@ abstract class Block extends \ProcessWire\Page {
    * @return string|false
    */
   public function getViewFile() {
-    $file = $this->rm()->info($this->getMasterBlock()->file);
-    return $file->dirname.$file->filename.".view.php";
+    $file = $this->getMasterBlock()->file;
+    return substr($file, 0, -4).".view.php";
   }
 
   /**
@@ -564,6 +564,7 @@ abstract class Block extends \ProcessWire\Page {
     if($info->description) $b->attr('uk-tooltip', $info->description);
     $tpl = $this->getTplName();
     $b->href = "./?id=$page&field=$field&tpl=$tpl";
+    $b->addClass('rmx-button');
 
     // fix issue https://github.com/processwire/processwire-issues/issues/1220
     $b->addHookAfter("render", function($event) {

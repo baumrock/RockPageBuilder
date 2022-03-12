@@ -29,7 +29,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.0.4',
+      'version' => '1.0.5',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -171,16 +171,19 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    */
   public function createBlock() {
     if(!$this->wire->user->isSuperuser()) return;
-    if(!$name = $this->wire->input->post('rmx-createblock')) return;
-    if(!$fieldname = $this->wire->input->post('rmx-fieldname')) return;
-    $folder = $this->wire->config->paths->assets."RockMatrix/$fieldname";
-    if(!is_dir($folder)) mkdir($folder);
-    $name = ucfirst($name);
-    $stub = file_get_contents($this->path."stubs/Block.txt");
-    $stub = str_replace("{name}", $name, $stub);
-    $file = "$folder/$name.php";
-    if(!is_file($file)) $this->wire->files->filePutContents($file, $stub);
-    else $this->error("File $file does already exist");
+    $this->wire->addHookAfter("/rmx-create-block/", function($event) {
+      if(!$name = $this->wire->input->get('name','string')) return "invalid name";
+      if(!$field = $this->wire->input->get('field', 'string')) return "invalid field";
+      $folder = $this->wire->config->paths->assets."RockMatrix/$field";
+      if(!is_dir($folder)) mkdir($folder);
+      $name = ucfirst($name);
+      $stub = file_get_contents($this->path."stubs/Block.txt");
+      $stub = str_replace("{name}", $name, $stub);
+      $file = "$folder/$name.php";
+      if(!is_file($file)) $this->wire->files->filePutContents($file, $stub);
+      else die("File $file does already exist");
+      die('success');
+    });
   }
 
   /**

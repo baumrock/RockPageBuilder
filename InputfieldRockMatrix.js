@@ -82,6 +82,12 @@ function RockMatrix() {
     return items;
   }
 
+  RockMatrix.prototype.getName = function(e) {
+    let $root = this.$root(e);
+    // remove wrap_Inputfield_ from string
+    return $root.attr('id').replace('wrap_Inputfield_', '');
+  }
+
   RockMatrix.prototype.initItem = function($item) {
     InputfieldsInit($item); // init inputfield
 
@@ -119,6 +125,7 @@ function RockMatrix() {
       $container.addClass('uk-hidden');
     }
   }
+
 
   /**
    * Reset CKE after dragging
@@ -292,4 +299,25 @@ var RockMatrix = new RockMatrix();
     // add panel and trigger click
     $.when(pwPanels.addPanel($a)).then(function() { $a.click(); });
     return false;
+  });
+
+  // click on create new block type
+  $(document).on('click', '.createBlockType', function(e) {
+    let $li = RockMatrix.$root(e.target);
+    if(!$li.length) return;
+    let field = RockMatrix.getName(e);
+    UIkit.modal.prompt('Name of new block type:', null, function() {
+      console.log('foo');
+    })
+    .then(function (name) {
+      if(!name) return;
+      $('.uk-modal-body').text('loading...');
+      $.get("/rmx-create-block/?field="+field+"&name="+name)
+      .then(function() {
+        $('#submit_save').click();
+      })
+      .fail(function() {
+        UIkit.modal.alert('Request failed');
+      });
+    });
   });

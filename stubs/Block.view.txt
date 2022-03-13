@@ -1,0 +1,4 @@
+<?php namespace ProcessWire;
+use RMBlock\{name};
+/** @var Page $page */
+/** @var {name} $block */

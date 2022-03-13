@@ -25,15 +25,12 @@ abstract class Block extends \ProcessWire\Page {
    **/
   public $file;
 
+  private $info;
+
   public function info() {
-    $info = $this->wire(new WireData()); /** @var WireData $info */
-    return $info->setArray([
-      'title' => $this->className,
-      // this is the full classname eg Foo\Bar\Baz
-      // use $block->className for the classname without namespace (pw-feature)
-      'name' => get_class($this),
-      'icon' => 'cube',
-    ]);
+    // this is for backwards compatibility
+    // for blocks that use the old syntax for info() method
+    return new WireData();
   }
 
   public function __construct() {
@@ -58,7 +55,7 @@ abstract class Block extends \ProcessWire\Page {
 
     // you can prevent showing the settings field
     // by defining "settings => false" in the info() of your block
-    if($this->info()->settings === false) return;
+    if($this->getInfo()->settings === false) return;
 
     // add field to rockfields
     $rf->add([
@@ -104,7 +101,27 @@ abstract class Block extends \ProcessWire\Page {
    * @return string
    */
   public function getIcon() {
-    return $this->info()->icon;
+    return $this->getInfo()->icon;
+  }
+
+  /**
+   * Get info WireData
+   * @return WireData
+   */
+  public function getInfo() {
+    if($this->info) return $this->info;
+    $info = $this->wire(new WireData()); /** @var WireData $info */
+    $info->setArray([
+      'title' => $this->className,
+      // this is the full classname eg Foo\Bar\Baz
+      // use $block->className for the classname without namespace (pw-feature)
+      'name' => get_class($this),
+      'icon' => 'cube',
+    ]);
+    $blockInfo = $this->info();
+    if($blockInfo instanceof WireData) $blockInfo = $blockInfo->getArray();
+    $info->setArray($blockInfo);
+    return $info;
   }
 
   /**
@@ -112,7 +129,7 @@ abstract class Block extends \ProcessWire\Page {
    * @return string
    */
   public function getLabel() {
-    $label = $this->title ?: $this->info()->title;
+    $label = $this->title ?: $this->getInfo()->title;
     return $this->wire->sanitizer->truncate($label, 50);
   }
 
@@ -203,7 +220,7 @@ abstract class Block extends \ProcessWire\Page {
    * @return string
    */
   public function getNotes() {
-    return $this->info()->description;
+    return $this->getInfo()->description;
   }
 
   /**
@@ -226,7 +243,7 @@ abstract class Block extends \ProcessWire\Page {
    * @return string
    */
   public function getTplName() {
-    $class = $this->info()->name;
+    $class = $this->getInfo()->name;
     return $this->wire->sanitizer->pagename($class);
   }
 
@@ -253,7 +270,7 @@ abstract class Block extends \ProcessWire\Page {
 
     // prepare the fieldset (item root element)
     $fs->id = "rmx_$this";
-    $fs->label = $this->getLabel() ?: $this->info()->title;
+    $fs->label = $this->getLabel() ?: $this->getInfo()->title;
     $fs->icon = $this->getIcon();
     $fs->notes = $this->getNotes();
     $fs->addClass('rmx-item');
@@ -328,7 +345,7 @@ abstract class Block extends \ProcessWire\Page {
   public function isAllowed($field, $page) {
     $allowed = $this->master()->getAllowedBlocks($field, $page);
     foreach($allowed as $b) {
-      if($b->info()->name === $this->info()->name) return true;
+      if($b->getInfo()->name === $this->getInfo()->name) return true;
     }
     return false;
   }
@@ -495,11 +512,11 @@ abstract class Block extends \ProcessWire\Page {
   public function render() {
     $view = $this->getViewFile();
     if(is_file($view)) return $this->wire->files->render($view, [
-      'page' => $this,
+      'block' => $this,
     ], [
       'allowedPaths' => [dirname($view)],
     ]);
-    return "Create ".$this->info()->name . "::render() or file $view";
+    return "Create ".$this->getInfo()->name . "::render() or file $view";
   }
 
   /**
@@ -516,7 +533,7 @@ abstract class Block extends \ProcessWire\Page {
     return
       "<a href='{$opt->href}'
         class='rmx-action rmx-action-$action'
-        uk-tooltip='{$opt->label}'
+        uk-tooltip='title:{$opt->label};pos:left;'
         data-action='$action'>
         <i class='fa fa-$icon'></i>"
       ."</a>";
@@ -541,9 +558,13 @@ abstract class Block extends \ProcessWire\Page {
         'icon' => 'edit',
         'href' => $href,
       ]);
-      $out .= $this->renderAction('clone', [
-        'label' => $this->_('clone'),
-        'icon' => 'clone',
+
+      $path = $this->rm()->filePath($this, true);
+      $path = $this->wire->sanitizer->pageName($path);
+      $out .= $this->renderAction('code', [
+        'label' => $path,
+        'icon' => 'code',
+        'href' => $this->rm()->fileEditLink($this),
       ]);
     }
     $out .= "</span>";
@@ -558,8 +579,8 @@ abstract class Block extends \ProcessWire\Page {
     $b = $this->wire('modules')->get('InputfieldButton');
     $b->secondary = true;
     $b->small = true;
-    $info = $this->info();
-    $b->value = $info->get('title');
+    $info = $this->getInfo();
+    $b->value = $info->title;
     $b->icon = $info->icon;
     if($info->description) $b->attr('uk-tooltip', $info->description);
     $tpl = $this->getTplName();
@@ -647,11 +668,11 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function migrate() {
     // we always create the related template
-    $this->rm()->log('Migrate '.$this->info()->name);
+    $this->rm()->log('Migrate '.$this->getInfo()->name);
     $tpl = $this->rm()->createTemplate($this->getTplName());
     $this->rm()->setTemplateData($tpl, [
-      'icon' => $this->info()->icon,
-      'pageClass' => $this->info()->name,
+      'icon' => $this->getInfo()->icon,
+      'pageClass' => $this->getInfo()->name,
       'tags' => RockMatrix::tags,
       'noParents' => 1, // may not be used for new pages
       'flags' => Template::flagSystem,
@@ -663,7 +684,7 @@ abstract class Block extends \ProcessWire\Page {
    * Not hookable --> call parent::uninstall() in derived classes
    */
   public function uninstall() {
-    $this->log('Uninstalling ' . $this->info()->name);
+    $this->log('Uninstalling ' . $this->getInfo()->name);
     $this->rm()->deleteTemplate($this->getTplName());
   }
 }

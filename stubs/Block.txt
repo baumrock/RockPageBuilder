@@ -5,10 +5,36 @@ use RockMatrix\Block;
 class {name} extends Block {
 
   public function info() {
-    return parent::info()->setArray([
+    return [
       'icon' => 'picture-o',
       'title' => '{name}',
       'description' => 'RockMatrix Block Setup Demo',
+    ];
+  }
+
+  public function onCreate() {
+    $this->title = '';
+  }
+
+  /** ##### frontend ##### */
+
+  /** ##### backend ##### */
+
+  public function migrate() {
+    parent::migrate();
+    $rm = $this->rm();
+    $rm->migrate([
+      'fields' => [
+      ],
+      'templates' => [
+        $this->getTplName() => [
+          'fields' => [
+            'title' => [
+              'required' => false,
+            ],
+          ],
+        ],
+      ],
     ]);
   }
 

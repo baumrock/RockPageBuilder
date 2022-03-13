@@ -65,7 +65,7 @@ class FieldData extends PageArray {
       if(!$block->isAllowed($this->field, $this->page)) throw new WireException($opt->tpl. " not allowed");
 
       // create new block
-      $class = $block->info()->name;
+      $class = $block->getInfo()->name;
       $b = $this->wire(new $class()); /** @var Block $b */
       $b->template = $block->getTpl();
       $b->parent = $block->getParent($this->field, $this->page);

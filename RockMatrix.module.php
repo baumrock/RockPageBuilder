@@ -29,7 +29,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.0.5',
+      'version' => '1.1.0',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -92,7 +92,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     try {
       $block = new $class();
       $block->setFile($file);
-      $name = $block->info()->name;
+      $name = $block->getInfo()->name;
 
       // if block already exists dont add and init it again
       if(array_key_exists($name, $this->blocks)) return;
@@ -177,11 +177,20 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $folder = $this->wire->config->paths->assets."RockMatrix/$field";
       if(!is_dir($folder)) mkdir($folder);
       $name = ucfirst($name);
+
+      // block file
       $stub = file_get_contents($this->path."stubs/Block.txt");
       $stub = str_replace("{name}", $name, $stub);
       $file = "$folder/$name.php";
       if(!is_file($file)) $this->wire->files->filePutContents($file, $stub);
       else die("File $file does already exist");
+
+      // view file
+      $stub = file_get_contents($this->path."stubs/Block.view.txt");
+      $stub = str_replace("{name}", $name, $stub);
+      if(!is_file("$folder/$name.view.php")) {
+        $this->wire->files->filePutContents("$folder/$name.view.php", $stub);
+      }
       die('success');
     });
   }
@@ -199,7 +208,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    * @return false|Block
    */
   public function getBlock($name) {
-    if($name instanceof Block) $name = $name->info()->name;
+    if($name instanceof Block) $name = $name->getInfo()->name;
     if(!array_key_exists($name, $this->blocks)) return false;
     return $this->blocks[$name];
   }
@@ -464,7 +473,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $rm = $this->rm();
     $rm->deleteField(self::field_demo);
     foreach($this->blocks as $block) {
-      if(strpos($block->info()->name, "RMDemo\\") !== 0) continue;
+      if(strpos($block->getInfo()->name, "RMDemo\\") !== 0) continue;
       $block->uninstall();
     }
   }

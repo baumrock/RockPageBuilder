@@ -257,10 +257,16 @@ var RockMatrix = new RockMatrix();
   // monitor action clicks
   $(document).on('click', '.rmx-action', function(e) {
     let $action = $(e.target).closest('.rmx-action');
-    RockMatrix.fire($action);
-
-    // dont toggle field
+    let href = $action.attr('href');
+    // prevent field toggle
     e.preventDefault();
+    // console.log(href);
+    if(href && href!='#') {
+      location.href = href;
+    }
+    else {
+      RockMatrix.fire($action);
+    }
     return false;
   });
 

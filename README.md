@@ -181,3 +181,16 @@ $rm->migrate([
   ],
 ])
 ```
+
+## Content-Only fields
+
+Quite often matrix blocks do only have one single field which has the same label as the block. As this would be redundant information and eat up quite some space on the screen RockMatrix has a shortcut to easily hide the label of such fields and reduce the field's padding:
+
+```php
+$rm->migrate([
+  'fields' => [
+    self::field_body => [
+      'type' => 'textarea',
+      'rmx-nolabel' => true,
+      ...
+```

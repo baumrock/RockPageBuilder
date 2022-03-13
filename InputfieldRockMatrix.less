@@ -83,7 +83,11 @@ li.rmx-item {
 }
 
 // content-only inputfields without header
-.rmx-pd5 > .InputfieldContent { padding: 5px; }
+.rmx-pd5 > .InputfieldContent {
+  padding: 5px;
+  // fix image fields having only 1px top padding
+  padding-top: 5px !important;
+}
 
 // buttons
 .rmx-buttons-container {

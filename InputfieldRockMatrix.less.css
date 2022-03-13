@@ -63,6 +63,7 @@ li.rmx-item .rmx-settings table td {
 }
 .rmx-pd5 > .InputfieldContent {
   padding: 5px;
+  padding-top: 5px !important;
 }
 .rmx-buttons-container .rmx-buttons button.rmx-button {
   margin: 0 5px 5px 0;

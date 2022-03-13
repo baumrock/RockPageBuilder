@@ -29,7 +29,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.1.1',
+      'version' => '1.1.2',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -45,6 +45,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   public function init() {
+    $this->wire('rockmatrix', $this);
     if(!$this->modules->isInstalled('FieldtypeRepeater')) {
       $this->modules->install('FieldtypeRepeater');
     }
@@ -502,6 +503,35 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $event->return->add('RMDemo\Headline');
       $event->return->add('RMDemo\Image');
     });
+  }
+
+  /**
+   * Render styles tag with all less files from assets folder
+   * This is for simple setups that do not use RockFrontend
+   * @return string
+   */
+  public function styles() {
+    /** @var Less $less */
+    $less = $this->wire('modules')->get('Less');
+    $css = $this->wire->config->paths->templates."blocks.css";
+    $cssUrl = $this->wire->config->urls->templates."blocks.css";
+    $mCSS = is_file($css) ? filemtime($css) : 0;
+    if(!$less) return "<link rel=stylesheet href='$cssUrl?m=$mCSS'>";
+
+    $lessFiles = $this->wire->files->find(
+      $this->wire->config->paths->assets."RockMatrix",
+      ['extensions' => ['less']]
+    );
+    $compile = false;
+    foreach($lessFiles as $lessFile) {
+      $less->addFile($lessFile);
+      if(filemtime($lessFile) > $mCSS) $compile = true;
+    }
+    if($compile) {
+      $less->saveCss($css);
+      $mCSS = time();
+    }
+    return "<link rel=stylesheet href='$cssUrl?m=$mCSS'>";
   }
 
   /**

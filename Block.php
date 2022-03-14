@@ -269,7 +269,7 @@ abstract class Block extends \ProcessWire\Page {
     $wrap->suffix = "_repeater$this";
 
     // prepare label
-    $label = $this->getLabel() ?: $this->getInfo()->title;
+    $label = (string)$this->getLabel() ?: $this->getInfo()->title;
     $label = $this->wire->sanitizer->truncate(strip_tags($label), 70);
 
     // prepare the fieldset (item root element)

@@ -268,9 +268,13 @@ abstract class Block extends \ProcessWire\Page {
     $wrap->add($fs);
     $wrap->suffix = "_repeater$this";
 
+    // prepare label
+    $label = $this->getLabel() ?: $this->getInfo()->title;
+    $label = $this->wire->sanitizer->truncate(strip_tags($label), 70);
+
     // prepare the fieldset (item root element)
     $fs->id = "rmx_$this";
-    $fs->label = $this->getLabel() ?: $this->getInfo()->title;
+    $fs->label = $label;
     $fs->icon = $this->getIcon();
     $fs->notes = $this->getNotes();
     $fs->addClass('rmx-item');

@@ -51,7 +51,7 @@ abstract class Block extends \ProcessWire\Page {
    * Add rockfields settings field for this block
    */
   public function addSettingsField() {
-    if(!$rf = $this->wire->rockfields) return;
+    if(!$rf = $this->wire->modules->get('RockFields')) return;
 
     // you can prevent showing the settings field
     // by defining "settings => false" in the info() of your block

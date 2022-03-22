@@ -539,14 +539,21 @@ abstract class Block extends \ProcessWire\Page {
     $opt = $this->wire(new WireData()); /** @var WireData $opt */
     $opt->setArray([
       'href' => '#',
+      'attrs' => [],
     ]);
     $opt->setArray($data);
     $icon = $opt->icon ?: $action;
+
+    // prepare custom attributes
+    $attrs = '';
+    foreach($opt->attrs as $k=>$v) $attrs .= " data-$k='$v'";
+
     return
       "<a href='{$opt->href}'
         class='rmx-action rmx-action-$action'
         uk-tooltip='title:{$opt->label};pos:left;'
-        data-action='$action'>
+        data-action='$action'
+        $attrs>
         <i class='fa fa-$icon'></i>"
       ."</a>";
   }
@@ -556,6 +563,13 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function renderActions() {
     $out = "<span class='rmx-actions'>";
+    $out .= $this->renderAction('edit', [
+      'label' => $this->_('edit'),
+      'icon' => 'edit',
+      'attrs' => [
+        'toggle' => 1,
+      ],
+    ]);
     $out .= $this->renderAction('trash', [
       'label' => $this->_('Mark for deletion'),
     ]);
@@ -564,13 +578,6 @@ abstract class Block extends \ProcessWire\Page {
       'icon' => 'undo',
     ]);
     if($this->wire->user->isSuperuser()) {
-      $href = $this->wire->pages->get(2)->url."page/edit/?id=$this";
-      $out .= $this->renderAction('edit', [
-        'label' => $this->_('edit'),
-        'icon' => 'edit',
-        'href' => $href,
-      ]);
-
       $path = $this->rm()->filePath($this, true);
       $path = $this->wire->sanitizer->pageName($path);
       $out .= $this->renderAction('code', [

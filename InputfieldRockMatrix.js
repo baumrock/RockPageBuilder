@@ -6,6 +6,8 @@ function RockMatrix() {
 
   this.init = false;
   this.changeTimer;
+
+  this.actions = {};
 }
 
 // DOM helpers
@@ -41,6 +43,10 @@ function RockMatrix() {
 
 // helpers
 
+  RockMatrix.prototype.addAction = function(name, callback) {
+    this.actions[name] = callback;
+  }
+
   RockMatrix.prototype.addItem = function(e, json) {
     let $root = this.$root(e);
     let $container = this.$itemsContainer(e);
@@ -58,9 +64,9 @@ function RockMatrix() {
   RockMatrix.prototype.fire = function($action) {
     let action = $action.data('action');
     let item = this.getItem($action[0]);
-
-    if(action === 'trash') item.trash();
-    if(action === 'untrash') item.untrash();
+    let callback = this.actions[action];
+    if(typeof callback == 'undefined') return;
+    callback(item);
   }
 
   RockMatrix.prototype.getData = function(e) {
@@ -254,22 +260,6 @@ var RockMatrix = new RockMatrix();
     RockMatrix.changed(e);
   });
 
-  // monitor action clicks
-  $(document).on('click', '.rmx-action', function(e) {
-    let $action = $(e.target).closest('.rmx-action');
-    let href = $action.attr('href');
-    // prevent field toggle
-    e.preventDefault();
-    // console.log(href);
-    if(href && href!='#') {
-      location.href = href;
-    }
-    else {
-      RockMatrix.fire($action);
-    }
-    return false;
-  });
-
   // make sure to add InputfieldStateChanged immediately after keydown
   // we do not intercept form.submit() because that somehow brakes the save process
   $(document).on('keydown', '.InputfieldRockMatrix input', function(e) {
@@ -326,4 +316,28 @@ var RockMatrix = new RockMatrix();
         UIkit.modal.alert('Request failed');
       });
     });
+  });
+
+  /** Block Actions */
+
+  // monitor action clicks
+  $(document).on('click', '.rmx-action', function(e) {
+    let $action = $(e.target).closest('.rmx-action');
+    let href = $action.attr('href');
+
+    // prevent field toggle if data-toggle is not set (default)
+    if(!$action.data('toggle')) e.preventDefault();
+
+    // console.log(href);
+    if(href && href!='#') location.href = href;
+    else RockMatrix.fire($action);
+
+    if(!$action.data('toggle')) return false;
+  });
+
+  RockMatrix.addAction('trash', function(item) {
+    item.trash();
+  });
+  RockMatrix.addAction('untrash', function(item) {
+    item.untrash();
   });

@@ -46,6 +46,35 @@ $wire->addHookMethod('RepeaterMatrixPage::bar', function($event) {
 });
 ```
 
+Another difference is that every Block in RockMatrix comes with several helper methods that are handy for customizing the output on your frontend. For example you can add classes on every first matrix item or you can style even blocks differently than odd items (for example to swap images from left to right).
+
+```php
+if($block->isEven()) echo "<h1 class='uk-text-right'><?= $block->title ?></h1>";
+else echo "<h1><?= $block->title ?></h1>";
+```
+
+Some available methods are:
+
+* $block->isEven()
+* $block->isOdd()
+* $block->isFirstMatrixItem()
+* $block->isLastMatrixItem()
+* $block->isLastMatrixItem()
+* $block->isEvenType()
+
+Note that isEvenType checks if the item has an odd index but only counts blocks of the same type that are in a row and not interrupted by a block of another type, eg:
+
+```
+A
+B
+C
+C -> true
+C
+A
+B
+B -> true
+```
+
 ## Migrations
 
 RockMatrix relies havily on RockMigrations. Migrations are triggered automatically via RockMatrix.module.php on modules::refresh.

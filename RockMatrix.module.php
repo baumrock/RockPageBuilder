@@ -29,7 +29,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.1.6',
+      'version' => '1.1.7',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -179,9 +179,18 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       if(!is_dir($folder)) mkdir($folder);
       $name = ucfirst($name);
 
+      // alfred installed?
+      $alfred = '';
+      if($this->wire->modules->isInstalled('RockFrontend')) {
+        $alfred = ' <?= $rockfrontend->alfred($page) ?>';
+      }
+
       // block file
       $stub = file_get_contents($this->path."stubs/Block.txt");
       $stub = str_replace("{name}", $name, $stub);
+      $stub = str_replace("{namelower}", strtolower($name), $stub);
+      $stub = str_replace("{cls}", "rmx-".strtolower($name), $stub);
+      $stub = str_replace("{alfred}", $alfred, $stub);
       $file = "$folder/$name.php";
       if(!is_file($file)) $this->wire->files->filePutContents($file, $stub);
       else die("File $file does already exist");

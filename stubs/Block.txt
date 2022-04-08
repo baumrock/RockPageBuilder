@@ -4,6 +4,8 @@ use RockMatrix\Block;
 
 class {name} extends Block {
 
+  const prefix = "rmblock_{namelower}_";
+
   public function info() {
     return [
       'icon' => 'picture-o',

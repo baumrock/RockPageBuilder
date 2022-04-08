@@ -2,3 +2,7 @@
 use RMBlock\{name};
 /** @var Page $page */
 /** @var {name} $block */
+?>
+<section class="{cls}"{alfred}>
+  <?= $block->path ?>
+</section>

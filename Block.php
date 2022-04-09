@@ -13,8 +13,8 @@ use \ProcessWire\InputfieldWrapper;
 use \ProcessWire\InputfieldFieldset;
 use ProcessWire\RockFields;
 use ProcessWire\RockFieldsField;
-use ProcessWire\RockFrontend;
 use ProcessWire\Template;
+use ReflectionClass;
 
 abstract class Block extends \ProcessWire\Page {
 
@@ -90,6 +90,15 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function ___buildFormMatrix($fs) {
     $this->buildForm($fs);
+  }
+
+  /**
+   * Get path of block file
+   * @return string
+   */
+  public function filePath() {
+    $reflector = new ReflectionClass($this);
+    return Paths::normalizeSeparators($reflector->getFileName());
   }
 
   /**
@@ -515,6 +524,19 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Get relative path where this block lives
+   * This is handy for getting the path of the customstyles js on CKE fields
+   * @return string
+   */
+  public function relativePath() {
+    return str_replace(
+      $this->wire->config->paths->root,
+      $this->wire->config->urls->root,
+      dirname($this->filePath())
+    )."/";
+  }
+
+  /**
    * Render this block
    * @return string
    */
@@ -522,15 +544,29 @@ abstract class Block extends \ProcessWire\Page {
     foreach($this->viewFiles() as $file => $type) {
       if(is_file($file)) return $this->renderFile($file, $type);
     }
-    return "<div> -- No render method or view file for this block -- </div>";
+    return "<div style='padding: 40px; border: 2px solid #afafaf;'>
+      ## No render method or view file for block {$this->name} ##</div>";
   }
 
   /**
    * Render file
+   *
+   * Usage:
+   * $block->renderFile('/path/to/file.view.php');
+   *
+   * This will look for the file myblock.latte in the same folder
+   * where the block is defined (php file)
+   * $block->renderFile('myblock.latte');
+   *
    * @return string
    */
-  public function renderFile($file, $type) {
-    $vars = ['block' => $this];
+  public function renderFile($file, $type = null) {
+    $vars = [
+      'block' => $this,
+      'settings' => $this->settings(),
+    ];
+    if(!$type) $type = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    if(!is_file($file)) $file = dirname($this->filePath())."/$file";
     if($type == 'php') {
       $opt = ['allowedPaths' => [dirname($file)]];
       return $this->wire->files->render($file, $vars, $opt);
@@ -595,7 +631,6 @@ abstract class Block extends \ProcessWire\Page {
     ]);
     if($this->wire->user->isSuperuser()) {
       $path = $this->rm()->filePath($this, true);
-      $path = $this->wire->sanitizer->pageName($path);
       $out .= $this->renderAction('code', [
         'label' => $path,
         'icon' => 'code',

@@ -130,10 +130,17 @@ public function settingsInput(RockFieldsField $field) {
 }
 ```
 
-You can access those settings on the frontend like this:
+You have several options to access these settins on the frontend:
 
 ```php
-$mySetting = $block->settings('mysettingname', 'default value');
+// in your block's view file you can access settings via the $settings variable:
+if($settins->mySetting == 'foo') echo 'Foo setting is set!';
+
+// get a single setting and set a default value
+$mySetting = $block->settings('mySetting', 'default value');
+
+// same as above but different syntax
+$mySetting = $settings->mySetting ?: 'default value';
 ```
 
 ## Render content
@@ -143,6 +150,23 @@ The content of the field can be rendered via the `render()` method of the field 
 ### Render blocks
 
 The markup for rendering your block can either be defined as `render()` method of your block or you can create a view file for your block e.g. `/site/assets/blocks/Slider.view.php`.
+
+You can also use the `latte` templating engine by Nette, see https://latte.nette.org/en/syntax
+
+This is an example `Image.latte` file:
+
+```html
+{if $settings->float}
+<img data-src="{$block->src()}" alt="{$block->alt()}" uk-img
+  class="uk-float-{$settings->align}">
+{else}
+<section class="rmx-image uk-padding uk-text-{$settings->align}" uk-lightbox>
+  <a href="{$block->src(1600,1600)}" data-caption="{$block->alt()}" n:tag-if="$settings->lightbox">
+    <img data-src="{$block->src()}" alt="{$block->alt()}" uk-img>
+  </a>
+</section>
+{/if}
+```
 
 ## Field setup
 

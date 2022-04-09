@@ -65,7 +65,12 @@ abstract class Block extends \ProcessWire\Page {
     // add field to rockfields
     $rf->add([
       'name' => $this->settingsName(),
-      'inputfield' => [$this, 'settingsInput'],
+
+      // the inputfield is either defined by the settingsInput method
+      // or - eg when using rockmatrix - by the settingsTable method
+      'inputfield' => method_exists($this, 'settingsTable')
+        ? [$this, 'settingsTable']
+        : [$this, 'settingsInput'],
       'sleep' => [$this, 'settingsSleep'],
     ]);
   }
@@ -706,7 +711,23 @@ abstract class Block extends \ProcessWire\Page {
     return $this->getTplName()."-settingsfield";
   }
   public function settingsInput(RockFieldsField $field) {}
-  public function settingsSleep(RockFieldsField $field) {}
+
+  /**
+   * The sleep method defines which values will be stored in the DB
+   */
+  public function settingsSleep(RockFieldsField $field) {
+    // In RockMatrix we often use the "settingsTable" method as shortcut.
+    // This makes it possible to define settings with one single method
+    // instead of a pair of settingsInput and settingsSleep
+    if(method_exists($this, 'settingsTable')) {
+      $arr = [];
+      $settings = $this->settingsTable($field);
+      foreach($settings as $label => $f) {
+        $arr[] = $field->getInputArray($f->sleepName);
+      }
+      return $arr;
+    }
+  }
 
   /**
    * Truncate text to given length

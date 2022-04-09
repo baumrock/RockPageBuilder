@@ -1,5 +1,6 @@
 <?php namespace RockMatrix;
 
+use Latte\Engine;
 use ProcessWire\FieldtypeRockMatrix;
 use ProcessWire\FieldtypeRockShare;
 use ProcessWire\Paths;
@@ -12,6 +13,7 @@ use \ProcessWire\InputfieldWrapper;
 use \ProcessWire\InputfieldFieldset;
 use ProcessWire\RockFields;
 use ProcessWire\RockFieldsField;
+use ProcessWire\RockFrontend;
 use ProcessWire\Template;
 
 abstract class Block extends \ProcessWire\Page {
@@ -26,6 +28,9 @@ abstract class Block extends \ProcessWire\Page {
   public $file;
 
   private $info;
+
+  /** @var Engine */
+  private $latte;
 
   public function info() {
     // this is for backwards compatibility
@@ -245,15 +250,6 @@ abstract class Block extends \ProcessWire\Page {
   public function getTplName() {
     $class = $this->getInfo()->name;
     return $this->wire->sanitizer->pagename($class);
-  }
-
-  /**
-   * Get view file for current block
-   * @return string|false
-   */
-  public function getViewFile() {
-    $file = $this->getMasterBlock()->file;
-    return substr($file, 0, -4).".view.php";
   }
 
   /**
@@ -520,15 +516,35 @@ abstract class Block extends \ProcessWire\Page {
 
   /**
    * Render this block
+   * @return string
    */
   public function render() {
-    $view = $this->getViewFile();
-    if(is_file($view)) return $this->wire->files->render($view, [
-      'block' => $this,
-    ], [
-      'allowedPaths' => [dirname($view)],
-    ]);
-    return "Create ".$this->getInfo()->name . "::render() or file $view";
+    foreach($this->viewFiles() as $file => $type) {
+      if(is_file($file)) return $this->renderFile($file, $type);
+    }
+    return "<div> -- No render method or view file for this block -- </div>";
+  }
+
+  /**
+   * Render file
+   * @return string
+   */
+  public function renderFile($file, $type) {
+    $vars = ['block' => $this];
+    if($type == 'php') {
+      $opt = ['allowedPaths' => [dirname($file)]];
+      return $this->wire->files->render($file, $vars, $opt);
+    }
+    elseif($type == 'latte') {
+      $latte = $this->latte;
+      if(!$latte) {
+        require_once $this->wire->config->paths->root."vendor/autoload.php";
+        $latte = new Engine();
+        $latte->setTempDirectory($this->wire->config->paths->cache."Latte");
+        $this->latte = $latte;
+      }
+      return $latte->renderToString($file, $vars);
+    }
   }
 
   /**
@@ -679,6 +695,19 @@ abstract class Block extends \ProcessWire\Page {
       $current = $prev;
     }
     return $i;
+  }
+
+  /**
+   * Get all possible view files for current block
+   * @return array
+   */
+  public function viewFiles() {
+    $file = $this->getMasterBlock()->file;
+    $base = substr($file, 0, -4); // without .php ending
+    return [
+      "$base.latte" => "latte",
+      "$base.view.php" => "php",
+    ];
   }
 
   /**

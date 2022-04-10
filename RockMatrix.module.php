@@ -29,7 +29,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.3.2',
+      'version' => '1.3.3',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -193,7 +193,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       if(!is_file($file)) $this->wire->files->filePutContents($file, $stub);
       else die("File $file does already exist");
 
-      // view file
+      // view files
+
+      // php
       $stub = file_get_contents($this->path."stubs/Block.view.txt");
       $stub = str_replace("{name}", $name, $stub);
       $stub = str_replace("{cls}", "rmx-".strtolower($name), $stub);
@@ -201,6 +203,14 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       if(!is_file("$folder/$name.view.php")) {
         $this->wire->files->filePutContents("$folder/$name.view.php", $stub);
       }
+      // latte
+      $stub = file_get_contents($this->path."stubs/Block.latte");
+      $stub = str_replace("{name}", $name, $stub);
+      $stub = str_replace("{cls}", "rmx-".strtolower($name), $stub);
+      if(!is_file("$folder/$name.latte")) {
+        $this->wire->files->filePutContents("$folder/$name.latte", $stub);
+      }
+
       die('success');
     });
   }

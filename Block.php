@@ -569,10 +569,14 @@ abstract class Block extends \ProcessWire\Page {
    * @return string
    */
   public function renderFile($file, $type = null) {
-    $vars = [
-      'block' => $this,
-      'settings' => $this->settings(),
-    ];
+    // make all api variables available in the template file
+    $vars = array_merge(
+      $this->wire('all')->getArray(),
+      [
+        'block' => $this,
+        'settings' => $this->settings(),
+      ]
+    );
     if(!$type) $type = strtolower(pathinfo($file, PATHINFO_EXTENSION));
     if(!is_file($file)) $file = dirname($this->filePath())."/$file";
     if($type == 'php') {

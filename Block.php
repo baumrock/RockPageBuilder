@@ -290,6 +290,9 @@ abstract class Block extends \ProcessWire\Page {
     $fs->addClass('rmx-item');
     $fs->wrapAttr('data-page', $this->id);
     $fs->wrapAttr('data-tpl', $this->template->name);
+    if($col = $this->getInfo()->color) {
+      $fs->wrapAttr('style', "border-left: 5px solid $col");
+    }
     $fs->collapsed = $this->getCollapsedState();
 
     // prepare form, build GUI and add settings field
@@ -661,6 +664,7 @@ abstract class Block extends \ProcessWire\Page {
     $tpl = $this->getTplName();
     $b->href = "./?id=$page&field=$field&tpl=$tpl";
     $b->addClass('rmx-button');
+    if($col = $info->color) $b->attr('style', "border-left: 5px solid $col");
 
     // fix issue https://github.com/processwire/processwire-issues/issues/1220
     $b->addHookAfter("render", function($event) {

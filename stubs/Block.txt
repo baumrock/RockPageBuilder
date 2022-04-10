@@ -41,4 +41,18 @@ class {name} extends Block {
     ]);
   }
 
+  /*
+  public function settingsTable(RockFieldsField $field) {
+    return [
+      'Description' => $field->input("desc"),
+      'Image size' => $field->input("size", "radios", [
+        'small' => 'Small Image',
+        '*medium' => 'Medium Image',
+        'large' => 'Large Image',
+      ]),
+      'No link to large image' => $field->input('nolightbox', 'checkbox'),
+    ];
+  }
+  */
+
 }

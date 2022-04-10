@@ -1,5 +1,6 @@
 <?php namespace RMBlock;
 
+use ProcessWire\RockFieldsField;
 use RockMatrix\Block;
 
 class {name} extends Block {

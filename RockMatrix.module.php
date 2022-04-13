@@ -29,7 +29,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.3.3',
+      'version' => '1.3.4',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -126,10 +126,17 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   /**
    * Scan dir and add blocks
+   *
+   * By default this will recurse into subdirectories (PW default setting = 10)
+   *
+   * You can disable that by setting it to one level:
+   * $rm->addBlocks(..., ..., 1);
+   *
    * @return void
    */
-  public function addBlocks($dir, $namespace = "RMBlock") {
+  public function addBlocks($dir, $namespace = "RMBlock", $recursive = null) {
     $opt = ['extensions' => ['php']];
+    if($recursive !== null) $opt['recursive'] = $recursive;
     foreach($this->wire->files->find($dir, $opt) as $file) {
       $name = pathinfo($file, PATHINFO_BASENAME);
       if(strpos($name, ".")===0) continue; // no dot-files

@@ -587,9 +587,19 @@ abstract class Block extends \ProcessWire\Page {
       $latte = $this->latte;
       if(!$latte) {
         require_once $this->wire->config->paths->root."vendor/autoload.php";
-        $latte = new Engine();
-        $latte->setTempDirectory($this->wire->config->paths->cache."Latte");
-        $this->latte = $latte;
+        try {
+          $latte = new Engine();
+          $latte->setTempDirectory($this->wire->config->paths->cache."Latte");
+          $this->latte = $latte;
+        } catch (\Throwable $th) {
+          if($th->getMessage() == "Class 'Latte\Engine' not found") {
+            return "<strong>".$th->getMessage()."</strong><br>".
+              "Install Latte via >> composer require latte/latte << in the PW
+              root directory or delete the .latte view file and use the plain
+              php view file instead.";
+          }
+          return $th->getMessage();
+        }
       }
       return $latte->renderToString($file, $vars);
     }

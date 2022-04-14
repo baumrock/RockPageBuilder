@@ -475,9 +475,12 @@ abstract class Block extends \ProcessWire\Page {
       // if rmx-nolabel is true we remove the fields label and make it have
       // smaller paddings
       if($f->hasField->get('rmx-nolabel')) {
-        $f->wrapClass('rmx-pd5');
+        $f->wrapClass('rmx-nolabel');
         $f->label = false;
         $f->skipLabel = Inputfield::skipLabelBlank;
+      }
+      if($f->hasField->get('rmx-smallpadding')) {
+        $f->wrapClass('rmx-pd5');
       }
 
       // prevent recursion

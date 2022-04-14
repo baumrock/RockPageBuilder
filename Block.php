@@ -717,6 +717,7 @@ abstract class Block extends \ProcessWire\Page {
    * @return WireData
    */
   public function settings($prop = null, $default = null) {
+    if(!method_exists($this, "rockfieldValue")) return;
     $settings = $this->rockfieldValue($this->settingsName());
     if($prop) {
       // try to get settings property

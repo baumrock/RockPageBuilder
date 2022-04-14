@@ -97,6 +97,25 @@ class MinimumDemo extends \RockMatrix\Block {
 
 Make sure you save the file as `MinimumDemo.php` and tell RockMatrix about that file (if it is not in an already monitored folder). Use `$mx->addBlocks('/your/dir')` as shown above.
 
+### Block info
+
+You can define several important settings for every block in the `infot()` method of the block.
+
+```php
+  public function info() {
+    return [
+      'icon' => 'bullhorn',
+      'title' => 'Jobs',
+      'color' => 'PaleGreen',
+      'sort' => 900,
+      'show' => function($page) {
+        // show the button to add this block only on page having title 'Jobs'
+        return $page->title == 'Jobs';
+      },
+    ];
+  }
+```
+
 ### Block settings
 
 ```php

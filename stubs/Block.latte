@@ -1,5 +1,3 @@
-{var $img = $block->img()}
 <section class="{cls}"{$rockfrontend->alfred($page)|noescape}>
-  <h2 class="tm-breathing tm-shadow">{$block->title}</h2>
-  <img n:if="$img" data-src="{$img->size(1600,400)->url}" alt="{$block->title}" uk-img>
+  {$block->path}
 </section>

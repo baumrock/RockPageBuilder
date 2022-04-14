@@ -13,6 +13,7 @@ class {name} extends Block {
       'title' => '{name}',
       'description' => 'RockMatrix Block Setup Demo',
       'color' => 'red',
+      'sort' => 500,
     ];
   }
 

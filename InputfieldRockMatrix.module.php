@@ -180,6 +180,10 @@ class InputfieldRockMatrix extends InputfieldRepeater {
   public function ___renderButtons() {
     $page = $this->process->getPage();
     $blocks = $this->master->getAllowedBlocks($this, $page);
+    foreach($blocks as $block) {
+      $block->_rmxsort = $block->getInfo()->sort;
+    }
+    $blocks->sort("_rmxsort");
     $buttons = '<div class="rmx-buttons">';
     foreach($blocks as $block) {
       $buttons .= $block->renderButton($page, $this->hasField);

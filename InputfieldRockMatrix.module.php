@@ -182,6 +182,11 @@ class InputfieldRockMatrix extends InputfieldRepeater {
     $blocks = $this->master->getAllowedBlocks($this, $page);
     foreach($blocks as $block) {
       $block->_rmxsort = $block->getInfo()->sort;
+      $callback = $block->getInfo()->show;
+      if(is_callable($callback)) {
+        $show = $callback($page);
+        if(!$show) $blocks->remove($block);
+      }
     }
     $blocks->sort("_rmxsort");
     $buttons = '<div class="rmx-buttons">';

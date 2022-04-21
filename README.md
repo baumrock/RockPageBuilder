@@ -162,6 +162,25 @@ $mySetting = $block->settings('mySetting', 'default value');
 $mySetting = $settings->mySetting ?: 'default value';
 ```
 
+#### Block Settings Options
+
+You can set options for the block settings' field in the info() method of your block:
+
+```php
+public function info() {
+  return [
+    ...
+    'settings' => false, // no settings field for this block
+
+    'settings' => [
+      'label' => 'Settings for this block',
+      'icon' => 'check',
+      'collapsed' => Inputfield::collapsedNo,
+    ],
+  ];
+}
+```
+
 ## Render content
 
 The content of the field can be rendered via the `render()` method of the field data object. This calls the `render()` method of each block. If you just `echo` the field value it will show the ids of the pagearray (which is the string representation of the pagearray and is necessary for usage on selectors).

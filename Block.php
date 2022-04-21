@@ -80,6 +80,11 @@ abstract class Block extends \ProcessWire\Page {
     if(!$rf = $this->wire->rockfields) return;
     if(!$f = $rf->getInputfield($this, $this->settingsName(), true)) return;
     $f->addClass('rmx-settings');
+
+    // set settings field values from getInfo() of block
+    $settings = $this->getInfo()->settings;
+    if(is_array($settings)) $f->setArray($settings);
+
     $fs->add($f);
   }
 

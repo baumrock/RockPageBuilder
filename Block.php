@@ -141,6 +141,7 @@ abstract class Block extends \ProcessWire\Page {
       // use $block->className for the classname without namespace (pw-feature)
       'name' => get_class($this),
       'icon' => 'cube',
+      'sort' => 500,
     ]);
     $blockInfo = $this->info();
     if($blockInfo instanceof WireData) $blockInfo = $blockInfo->getArray();

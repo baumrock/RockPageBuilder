@@ -183,7 +183,11 @@ function RockMatrix() {
     rm.changeTimer = setTimeout(function() {
       rm.makeSortable(e);
       rm.setTextarea(e, true);
-      console.log(rm.init ? 'RockMatrix changed' : 'RockMatrix init');
+      if(rm.init) {
+        console.log('RockMatrix changed');
+        rm.$root(e).addClass('InputfieldStateChanged');
+      }
+      else console.log('RockMatrix init');
       rm.init = true;
     }, this.editdelay);
   }

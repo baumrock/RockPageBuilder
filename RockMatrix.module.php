@@ -26,10 +26,12 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   private $preload = false;
 
+  private $stylesAdded = false;
+
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.3.13',
+      'version' => '1.4.0',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -58,6 +60,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHookAfter("User::hasPagePermission", $this, "hookImageEdit");
     $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
     $this->addHookBefore('ProcessPageListRender::getNumChildren', $this, "hookNumChildren");
+    $this->addHookBefore("Inputfield::render", $this, "addMagicInputfieldProperties");
+    $this->addHookAfter("ProcessPageEdit::buildForm", $this, "addStyles");
+    $this->addHookAfter("Inputfield::render", $this, "addStyles");
 
     $this->createBlock();
     $this->include("init.php"); // load assets/RockMatrix/init.php
@@ -147,6 +152,62 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
+   * Add magic inputfield properties
+   * @return void
+   */
+  public function addMagicInputfieldProperties(HookEvent $event) {
+    /** @var Inputfield $f */
+    $f = $event->object;
+    if(!$field = $f->hasField) return;
+
+    if($field->get('rmx-nolabel')) {
+      $f->wrapClass('rmx-nolabel');
+      $f->label = false;
+      $f->skipLabel = Inputfield::skipLabelBlank;
+    }
+
+    if($field->get('rmx-smallpadding')) {
+      $f->wrapClass('rmx-pd5');
+    }
+
+  }
+
+  public function addStylesheet() {
+    if($this->stylesAdded) return;
+    $this->stylesAdded = true;
+    $path = $this->path;
+    $url = $this->wire->config->urls($this);
+    $lessFile = $this->className.".less";
+    $cssFile = "$lessFile.css";
+    $mCSS = filemtime($path.$cssFile);
+    $mLESS = filemtime($path.$lessFile);
+
+    if($mLESS > $mCSS AND $this->wire->user->isSuperuser()) {
+      if($less = $this->wire->modules->get('Less')) {
+        // recreate css file
+        /** @var Less $less */
+        $less->addFile($path.$lessFile);
+        $less->saveCss($path.$cssFile);
+        $mCSS = time();
+        $this->log('Created new CSS file for '.$this->className);
+      }
+    }
+
+    $this->wire->config->styles->add($url.$cssFile."?m=".$mCSS);
+  }
+
+  /**
+   * Add stylesheet to pw admin
+   */
+  public function addStyles(HookEvent $event) {
+    // add style either when a rockmatrix field is in the editor
+    // or when we are editing a rockmatrix block
+    if($event->process != 'ProcessPageEdit') return;
+    if($event->process->getPage() instanceof Block) $this->addStylesheet();
+    elseif($event->object instanceof InputfieldRockMatrix) $this->addStylesheet();
+  }
+
+  /**
    * Hook the page edit form of blocks
    * @return void
    */
@@ -154,7 +215,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->preloadAssets();
     $page = $event->process->getPage();
     if(!$page instanceof Block) return;
-    bd('fired');
     $fs = $event->return;
     $page->prepareForm($fs);
     $page->buildForm($fs);

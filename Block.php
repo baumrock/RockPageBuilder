@@ -477,17 +477,6 @@ abstract class Block extends \ProcessWire\Page {
     foreach($fields->children() as $f) {
       $type = $f->hasField->type;
 
-      // if rmx-nolabel is true we remove the fields label and make it have
-      // smaller paddings
-      if($f->hasField->get('rmx-nolabel')) {
-        $f->wrapClass('rmx-nolabel');
-        $f->label = false;
-        $f->skipLabel = Inputfield::skipLabelBlank;
-      }
-      if($f->hasField->get('rmx-smallpadding')) {
-        $f->wrapClass('rmx-pd5');
-      }
-
       // prevent recursion
       if($type instanceof FieldtypeRockMatrix) {
         if($this->wire->process->getPage()->id == $f->value->page->id) {

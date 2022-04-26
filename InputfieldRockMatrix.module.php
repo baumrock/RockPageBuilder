@@ -15,7 +15,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.0.1',
+      'version' => '1.1.0',
       'summary' => 'Your module description',
       'icon' => 'cubes',
       'requires' => ['RockMatrix'],
@@ -26,31 +26,6 @@ class InputfieldRockMatrix extends InputfieldRepeater {
   public function init() {
     $this->master = $this->wire->modules->get('RockMatrix');
     $this->path = $this->master->path;
-  }
-
-  /**
-   * Add stylesheet to pw admin
-   */
-  public function addStyle() {
-    $path = $this->path;
-    $url = $this->wire->config->urls($this);
-    $lessFile = $this->className.".less";
-    $cssFile = "$lessFile.css";
-    $mCSS = filemtime($path.$cssFile);
-    $mLESS = filemtime($path.$lessFile);
-
-    if($mLESS > $mCSS AND $this->wire->user->isSuperuser()) {
-      if($less = $this->wire->modules->get('Less')) {
-        // recreate css file
-        /** @var Less $less */
-        $less->addFile($path.$lessFile);
-        $less->saveCss($path.$cssFile);
-        $mCSS = time();
-        $this->log('Created new CSS file for '.$this->className);
-      }
-    }
-
-    $this->wire->config->styles->add($url.$cssFile."?m=".$mCSS);
   }
 
   /**
@@ -254,9 +229,6 @@ class InputfieldRockMatrix extends InputfieldRepeater {
     $file = $this->className.".js";
     $m = "?m=".filemtime($path.$file);
     $this->wire->config->scripts->add($url.$file.$m);
-
-    // add stylesheet
-    $this->addStyle();
 
     // load vex
     $this->wire('modules')->get('JqueryUI')->use('vex');

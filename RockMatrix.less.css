@@ -55,10 +55,10 @@ li.rmx-item.rmx-trash > .InputfieldHeader .rmx-action-trash {
 li.rmx-item:not(.rmx-trash) > .InputfieldHeader .rmx-action-untrash {
   display: none;
 }
-li.rmx-item input[type=radio] {
+.rmx-settings input[type=radio] {
   margin-right: 5px;
 }
-li.rmx-item .rmx-settings table td {
+.rmx-settings table td {
   padding: 4px 10px;
 }
 .rmx-items > ul:last-child {

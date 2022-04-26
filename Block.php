@@ -75,7 +75,7 @@ abstract class Block extends \ProcessWire\Page {
     ]);
   }
 
-  public function addSettingsFieldToForm(InputfieldFieldset $fs) {
+  public function addSettingsFieldToForm(InputfieldWrapper $fs) {
     /** @var RockFields $rf */
     if(!$rf = $this->wire->rockfields) return;
     if(!$f = $rf->getInputfield($this, $this->settingsName(), true)) return;
@@ -98,9 +98,7 @@ abstract class Block extends \ProcessWire\Page {
    * Build the form when displayed in a matrix field
    * @return void
    */
-  public function ___buildFormMatrix($fs) {
-    $this->buildForm($fs);
-  }
+  public function ___buildFormMatrix($fs) {}
 
   /**
    * Get path of block file
@@ -301,10 +299,11 @@ abstract class Block extends \ProcessWire\Page {
     }
     $fs->collapsed = $this->getCollapsedState();
 
-    // prepare form, build GUI and add settings field
+    // prepare form (and add settings field)
     $this->prepareForm($fs);
+
+    // call buildFormMatrix (if implemented for the block)
     $this->buildFormMatrix($fs);
-    $this->addSettingsFieldToForm($fs);
 
     // add repeater suffix to all children
     foreach($fs->children() as $f) {
@@ -501,7 +500,7 @@ abstract class Block extends \ProcessWire\Page {
           $url = $this->wire->pages->get(2)->url."page/edit/?id=$id&field=".$f->name;
           $label = $f->label;
           $value = "<a href='$url' class='pw-panel pw-panel-reload
-            uk-button uk-button-default'>$label</a>";
+          uk-button uk-button-default'>$label</a>";
         }
         else {
           $value = $this->_("Please save the page, then you can come back here and edit block items.");
@@ -525,6 +524,9 @@ abstract class Block extends \ProcessWire\Page {
       if($fs->has($field->name)) continue;
       $fs->add($field);
     }
+
+    // add rockfields settings to form
+    $this->addSettingsFieldToForm($fs);
   }
 
   /**
@@ -811,6 +813,8 @@ abstract class Block extends \ProcessWire\Page {
       'tags' => RockMatrix::tags,
       'noParents' => 1, // may not be used for new pages
       'flags' => Template::flagSystem,
+      'noChildren' => true, // hide children tab by default
+      'noSettings' => true, // hide settings tab by default
     ]);
   }
 

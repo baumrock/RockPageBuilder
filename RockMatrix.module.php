@@ -29,7 +29,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.3.12',
+      'version' => '1.3.13',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -154,6 +154,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->preloadAssets();
     $page = $event->process->getPage();
     if(!$page instanceof Block) return;
+    bd('fired');
     $fs = $event->return;
     $page->prepareForm($fs);
     $page->buildForm($fs);

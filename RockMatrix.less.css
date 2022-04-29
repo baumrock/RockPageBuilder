@@ -1,6 +1,12 @@
 .uk-tooltip-inner {
   overflow-wrap: break-word;
 }
+body.modal form.rmx-form {
+  margin: 0;
+}
+body.modal form.rmx-form .WireTabs {
+  display: none;
+}
 li.rmx-item {
   transition: outline 0.3s ease-in-out;
   margin-top: 10px;

@@ -53,6 +53,15 @@ abstract class Block extends \ProcessWire\Page {
   public function init() {}
 
   /**
+   * Url to add a new content block above or below this one
+   * @return string
+   */
+  public function addContentBlockUrl($below = false) {
+    return $this->wire->pages->get(2)->url.
+      "rockmatrix/add/?block=$this&below=".($below?1:0);
+  }
+
+  /**
    * Add rockfields settings field for this block
    */
   public function addSettingsField() {
@@ -183,7 +192,7 @@ abstract class Block extends \ProcessWire\Page {
 
   /**
    * Get the matrix data object of the field where this block lives on
-   * @return BlocksArray
+   * @return FieldData
    */
   public function getMatrixData() {
     $page = $this->getMatrixPage();
@@ -666,7 +675,7 @@ abstract class Block extends \ProcessWire\Page {
   /**
    * Get button to add a new page having this template
    */
-  public function renderButton($page, $field) {
+  public function renderButton($page, $field, $render=true) {
     /** @var InputfieldButton $b */
     $b = $this->wire('modules')->get('InputfieldButton');
     $b->secondary = true;
@@ -679,14 +688,24 @@ abstract class Block extends \ProcessWire\Page {
     $b->href = "./?id=$page&field=$field&tpl=$tpl";
     $b->addClass('rmx-button');
     if($col = $info->color) $b->attr('style', "border-left: 5px solid $col");
+    if($render) return $b->render();
+    return $b; // return button
+  }
 
-    // fix issue https://github.com/processwire/processwire-issues/issues/1220
-    $b->addHookAfter("render", function($event) {
-      $out = substr($event->return, 2);
-      $event->return = "<a tabindex='-1'".$out;
-    });
+  /**
+   * Render Button when in modal view
+   */
+  public function renderButtonModal($page, $field) {
+    $block = $this->wire->input->get('block', 'int');
+    $field = $this->wire->input->get('field', 'fieldName');
+    $index = $this->wire->input->get('index', 'int');
+    $below = $this->wire->input->get('below', 'int');
+    $tpl = $this->getTplName();
+    $button = $this->renderButton($page, $field, false);
 
-    return $b->render();
+    $href = "./?block=$block&field=$field&index=$index&below=$below&tpl=$tpl&modal=1";
+    $button->href = $href;
+    return $button->render();
   }
 
   /**

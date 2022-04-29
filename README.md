@@ -237,21 +237,25 @@ The formatValue of the field is the result of the `render()` method call on the 
 Adding existing pages to the field is easy:
 
 ```php
-$data = $page->getUnformatted('rmtest');
-$data->add(1035); // add block id 1035 to this field
-$page->save('rmtest');
+$page->getUnformatted('your_matrix_field')
+  ->add(1035) // add block id 1035 to this field
+  ->save();
 ```
 
-But what if the blockpage does not exist yet? Also easy via the API:
+You can also add new blocks to your field data:
 
 ```php
-$page->rmtest->create([
-  'type' => '\RMDemo\Headline',
-  'add' => true, // default
-  'data' => [
-    'text' => 'This is a demo headline',
-  ],
-]);
+$page->getUnformatted('your_matrix_field')
+  ->add([
+    // define which block to add via the tpl property
+    'tpl' => 'your-block-tpl',
+    'data' => [
+      // you can prepopulate fields of the block
+      'headline' => 'This is a headline',
+      'body' => '<p>Lorem Ipsum</p>',
+    ],
+  ], 3) // add block at index 3
+  ->save();
 ```
 
 Sometimes it's helpful to reset the field before adding new blocks:

@@ -8,6 +8,12 @@
   overflow-wrap: break-word;
 }
 
+// hide tabs for rockmatrix block editor modal
+body.modal form.rmx-form {
+  margin: 0;
+  .WireTabs { display: none; }
+}
+
 // matrix item
 // this is styled outside of .InputfieldRockMatrix context because dragging
 // items don't live inside the inputfield context!

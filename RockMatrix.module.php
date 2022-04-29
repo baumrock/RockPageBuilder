@@ -31,7 +31,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.4.0',
+      'version' => '1.5.0',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -42,6 +42,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       'installs' => [
         'FieldtypeRockMatrix',
         'InputfieldRockMatrix',
+        'ProcessRockMatrix',
       ],
     ];
   }
@@ -52,8 +53,10 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $this->modules->install('FieldtypeRepeater');
     }
     $this->path = $this->wire->config->paths($this);
+    $this->installProcessModule();
 
     $this->setupDemoField();
+    $this->addHookAfter("ProcessPageEdit::buildForm", $this, "buildForm");
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
     $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
     $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
@@ -205,6 +208,16 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     if($event->process != 'ProcessPageEdit') return;
     if($event->process->getPage() instanceof Block) $this->addStylesheet();
     elseif($event->object instanceof InputfieldRockMatrix) $this->addStylesheet();
+  }
+
+  /**
+   * Hook the page edit form of blocks
+   * @return void
+   */
+  public function buildForm(HookEvent $event) {
+    $page = $event->process->getPage();
+    if(!$page instanceof Block) return;
+    $event->return->addClass('rmx-form');
   }
 
   /**
@@ -408,25 +421,12 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
-   * Install demo fields
+   * Install ProcessModule if not yet installed
    * @return void
    */
-  public function installDemo() {
-    $rm = $this->rm();
-    $rm->migrate([
-      'fields' => [
-        self::field_demo => [
-          'type' => 'FieldtypeRockMatrix',
-          'tags' => self::tags,
-          'icon' => 'bug',
-        ],
-      ],
-    ]);
-    $rm->addFieldToTemplate(self::field_demo, "home");
-
-    // now add all sample blocks and trigger the migration
-    $this->addBlocks(__DIR__."/demo/", "RMDemo");
-    $this->migrate();
+  public function installProcessModule() {
+    if($this->wire->modules->isInstalled('ProcessRockMatrix')) return;
+    $this->wire->modules->install('ProcessRockMatrix');
   }
 
   /**

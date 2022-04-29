@@ -45,6 +45,13 @@ class FieldData extends PageArray {
 
     /**
      * Create a new block and add it to the field
+     *
+     * Usage:
+     * $block->getMatrixData()->create([
+     *   'rmblock-text',
+     *   ['myfield'=>'My field value'],
+     * ]);
+     *
      * @return self
      */
     public function create($options = []) {

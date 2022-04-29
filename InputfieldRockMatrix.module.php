@@ -152,8 +152,8 @@ class InputfieldRockMatrix extends InputfieldRepeater {
    * Render buttons to add a block to the current field
    * @return string
    */
-  public function ___renderButtons() {
-    $page = $this->process->getPage();
+  public function ___renderButtons($page = null, $modal = false) {
+    if(!$page) $page = $this->process->getPage();
     $blocks = $this->master->getAllowedBlocks($this, $page);
     foreach($blocks as $block) {
       $block->_rmxsort = $block->getInfo()->sort;
@@ -164,13 +164,14 @@ class InputfieldRockMatrix extends InputfieldRepeater {
       }
     }
     $blocks->sort("_rmxsort");
-    $buttons = '<div class="rmx-buttons">';
+    $buttons = '<div class="rmx-buttons '.($modal?'modal':'').'">';
     foreach($blocks as $block) {
-      $buttons .= $block->renderButton($page, $this->hasField);
+      if($modal) $buttons .= $block->renderButtonModal($page, $this->hasField);
+      else $buttons .= $block->renderButton($page, $this->hasField);
     }
 
     // create toggle for creating new block
-    $buttons .= $this->renderCreateBlock();
+    if(!$modal) $buttons .= $this->renderCreateBlock();
 
     $buttons .= "</div>";
     return "<div class='rmx-buttons-container'>$buttons</div>";

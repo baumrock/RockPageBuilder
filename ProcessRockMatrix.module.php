@@ -62,18 +62,11 @@ class ProcessRockMatrix extends Process {
    * Trash matrix block
    */
   public function executeTrash() {
-    $this->headline('Trash Block');
-    $this->browserTitle('Trash Block');
-    /** @var InputfieldForm $form */
-    $form = $this->modules->get('InputfieldForm');
-
-    $form->add([
-      'type' => 'markup',
-      'label' => 'foo',
-      'value' => 'bar',
-    ]);
-
-    return $form->render();
+    $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
+    if(!$block instanceof Block) throw new WireException("Invalid Block");
+    if(!$block->trashable()) throw new WireException("Unable to trash this block");
+    $block->trash();
+    return $this->json("success");
   }
 
   /**
@@ -81,6 +74,17 @@ class ProcessRockMatrix extends Process {
    */
   public function matrix() {
     return $this->wire->modules->get('RockMatrix');
+  }
+
+  /**
+   * Send json message
+   * @return string
+   */
+  public function json($msg, $error = false) {
+    return json_encode([
+      'error' => $error,
+      'message' => $msg,
+    ]);
   }
 
 }

@@ -43,11 +43,11 @@ class ProcessRockMatrix extends Process {
     // create block if tpl is set
     if($tpl = $this->wire->input->get('tpl', 'templateName')) {
       $fieldData = $block->getMatrixData();
-      if($this->wire->input->get('above', 'int')) {
-        $fieldData->addBefore($tpl, $block)->save();
-      }
-      else $fieldData->addAfter($tpl, $block)->save();
-      $out .= "<script>parent.document.location.reload();</script>";
+      $above = $this->wire->input->get('above', 'int');
+      if($above) $new = $fieldData->addBefore($tpl, $block);
+      else $new = $fieldData->addAfter($tpl, $block);
+      $fieldData->save();
+      $this->wire->session->redirect($new->editUrl());
     }
 
     // the the rockmatrix field

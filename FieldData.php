@@ -18,7 +18,7 @@ class FieldData extends PageArray {
 
     /**
      * Add item to this field data array
-     * @return self
+     * @return Block
      */
     public function add($item, $data = []) {
       if(is_array($item)) {
@@ -47,43 +47,35 @@ class FieldData extends PageArray {
       // add the item to the array
       parent::add($item);
 
-      return $this;
+      return $item;
     }
 
     /**
      * Add a new block after another
-     * @return self
+     * @return Block
      */
     public function addAfter($new, $existing, $data = []) {
       $new = $this->createBlock($new, $data);
       parent::insertAfter($new, $existing);
-      return $this;
+      return $new;
     }
 
     /**
      * Add a new block before another
-     * @return self
+     * @return Block
      */
     public function addBefore($new, $existing, $data = []) {
       $new = $this->createBlock($new, $data);
       parent::insertBefore($new, $existing);
-      return $this;
+      return $new;
     }
 
     /**
-     * Create a new block and add it to the field
-     *
-     * Usage:
-     * $block->getMatrixData()->create([
-     *   'tpl' => 'rmblock-text',
-     *   'set' => ['myfield'=>'My field value'],
-     * ]);
-     *
+     * Create a new block
      * @return Block
      */
     public function createBlock($tpl, $data = []) {
-      // create page
-      // is the block allowed?
+      // get block and check if it is allowed
       $block = $this->master()->getBlockByTpl($tpl);
       if(!$block) throw new WireException("Invalid tpl $tpl");
       if(!$block->isAllowed($this->field, $this->page)) throw new WireException("$tpl not allowed");

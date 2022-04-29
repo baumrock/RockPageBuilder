@@ -245,17 +245,13 @@ $page->getUnformatted('your_matrix_field')
 You can also add new blocks to your field data:
 
 ```php
-$page->getUnformatted('your_matrix_field')
-  ->add([
-    // define which block to add via the tpl property
-    'tpl' => 'your-block-tpl',
-    'data' => [
-      // you can prepopulate fields of the block
-      'headline' => 'This is a headline',
-      'body' => '<p>Lorem Ipsum</p>',
-    ],
-  ], 3) // add block at index 3
-  ->save();
+$field = $page->getUnformatted('your_matrix_field');
+$field->add('your-block-tpl', [
+  // you can prepopulate fields of the block
+  'headline' => 'This is a headline',
+  'body' => '<p>Lorem Ipsum</p>',
+);
+$field->save();
 ```
 
 Sometimes it's helpful to reset the field before adding new blocks:

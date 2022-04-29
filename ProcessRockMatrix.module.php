@@ -6,7 +6,7 @@ class ProcessRockMatrix extends Process {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix Process Module',
-      'version' => '1.0.0',
+      'version' => '1.0.1',
       'summary' => 'Admin Endpoints for RockMatrix Module',
       'icon' => 'cubes',
       'requires' => [
@@ -43,7 +43,10 @@ class ProcessRockMatrix extends Process {
     // create block if tpl is set
     if($tpl = $this->wire->input->get('tpl', 'templateName')) {
       $fieldData = $block->getMatrixData();
-      $fieldData->create(['tpl' => $tpl])->save();
+      if($this->wire->input->get('above', 'int')) {
+        $fieldData->addBefore($tpl, $block)->save();
+      }
+      else $fieldData->addAfter($tpl, $block)->save();
       $out .= "<script>parent.document.location.reload();</script>";
     }
 
@@ -53,6 +56,24 @@ class ProcessRockMatrix extends Process {
     $out .= $f->renderButtons($block->getMatrixPage(), true);
 
     return $out;
+  }
+
+  /**
+   * Trash matrix block
+   */
+  public function executeTrash() {
+    $this->headline('Trash Block');
+    $this->browserTitle('Trash Block');
+    /** @var InputfieldForm $form */
+    $form = $this->modules->get('InputfieldForm');
+
+    $form->add([
+      'type' => 'markup',
+      'label' => 'foo',
+      'value' => 'bar',
+    ]);
+
+    return $form->render();
   }
 
   /**

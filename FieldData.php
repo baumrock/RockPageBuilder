@@ -1,7 +1,7 @@
 <?php namespace RockMatrix;
+
 use ProcessWire\PageArray;
 use ProcessWire\WireException;
-use ProcessWire\WireData;
 use ProcessWire\RockMatrix;
 class FieldData extends PageArray {
 
@@ -20,10 +20,15 @@ class FieldData extends PageArray {
      * Add item to this field data array
      * @return self
      */
-    public function add($item) {
+    public function add($item, $data = []) {
+      if(is_array($item)) {
+        // item is a plain php array
+        // this means we create a new block and add it
+        $item = $this->createBlock($item, $data);
+      }
       if($item instanceof PageArray) {
         foreach($item as $i) $this->add($i);
-        return;
+        return $this;
       }
 
       /** @var RockMatrix */
@@ -39,7 +44,29 @@ class FieldData extends PageArray {
         return $this->error("$item not allowed for field {$this->field}");
       }
 
+      // add the item to the array
       parent::add($item);
+
+      return $this;
+    }
+
+    /**
+     * Add a new block after another
+     * @return self
+     */
+    public function addAfter($new, $existing, $data = []) {
+      $new = $this->createBlock($new, $data);
+      parent::insertAfter($new, $existing);
+      return $this;
+    }
+
+    /**
+     * Add a new block before another
+     * @return self
+     */
+    public function addBefore($new, $existing, $data = []) {
+      $new = $this->createBlock($new, $data);
+      parent::insertBefore($new, $existing);
       return $this;
     }
 
@@ -48,28 +75,18 @@ class FieldData extends PageArray {
      *
      * Usage:
      * $block->getMatrixData()->create([
-     *   'rmblock-text',
-     *   ['myfield'=>'My field value'],
+     *   'tpl' => 'rmblock-text',
+     *   'set' => ['myfield'=>'My field value'],
      * ]);
      *
-     * @return self
+     * @return Block
      */
-    public function create($options = []) {
-      $opt = $this->wire(new WireData()); /** @var WireData $opt */
-      $opt->setArray([
-        'tpl' => null, // block template
-        'set' => [], // block page content
-        'add' => true, // add block to field by default
-      ]);
-      $opt->setArray($options);
-
-      if(!$opt->tpl) throw new WireException("You must set a block template");
-
+    public function createBlock($tpl, $data = []) {
       // create page
       // is the block allowed?
-      $block = $this->master()->getBlockByTpl($opt->tpl);
-      if(!$block) throw new WireException("Invalid tpl ".$opt->tpl);
-      if(!$block->isAllowed($this->field, $this->page)) throw new WireException($opt->tpl. " not allowed");
+      $block = $this->master()->getBlockByTpl($tpl);
+      if(!$block) throw new WireException("Invalid tpl $tpl");
+      if(!$block->isAllowed($this->field, $this->page)) throw new WireException("$tpl not allowed");
 
       // create new block
       $class = $block->getInfo()->name;
@@ -79,17 +96,14 @@ class FieldData extends PageArray {
       $b->title = "$class @ ".date('Y-m-d H:i:s');
       $b->save();
 
-      // set page data
-      foreach($opt->set as $k=>$v) $b->setAndSave($k, $v);
+      // set block data
+      foreach($data as $k=>$v) $b->setAndSave($k, $v);
 
       // save a reference to the page and the field where this page lives
       // this is necessary for deleting unused pages from time to time
       $b->meta('RockMatrix', $this->page->id."-".$this->field->id);
 
-      // add block to field
-      if($opt->add) $this->add($b);
-
-      return $this;
+      return $b;
     }
 
     /**

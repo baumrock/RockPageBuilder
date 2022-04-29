@@ -53,15 +53,6 @@ abstract class Block extends \ProcessWire\Page {
   public function init() {}
 
   /**
-   * Url to add a new content block above or above this one
-   * @return string
-   */
-  public function addContentBlockUrl($above = false) {
-    return $this->wire->pages->get(2)->url.
-      "rockmatrix/add/?block=$this&above=".($above?1:0);
-  }
-
-  /**
    * Add rockfields settings field for this block
    */
   public function addSettingsField() {
@@ -697,13 +688,11 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function renderButtonModal($page, $field) {
     $block = $this->wire->input->get('block', 'int');
-    $field = $this->wire->input->get('field', 'fieldName');
-    $index = $this->wire->input->get('index', 'int');
     $above = $this->wire->input->get('above', 'int');
     $tpl = $this->getTplName();
     $button = $this->renderButton($page, $field, false);
 
-    $href = "./?block=$block&field=$field&index=$index&above=$above&tpl=$tpl&modal=1";
+    $href = "./?block=$block&above=$above&tpl=$tpl&modal=1";
     $button->href = $href;
     return $button->render();
   }
@@ -714,6 +703,16 @@ abstract class Block extends \ProcessWire\Page {
    */
   public function rm() {
     return $this->wire->modules->get('RockMigrations');
+  }
+
+  /**
+   * Get RockMatrix Process Url
+   * Usage: $this->rmxUrl("/add?block=1&field=2");
+   * @return string
+   */
+  public function rmxUrl($url) {
+    $url = ltrim($url, "/");
+    return $this->wire->pages->get(2)->url."rockmatrix/$url";
   }
 
   /**

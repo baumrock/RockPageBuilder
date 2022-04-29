@@ -6,13 +6,17 @@ class ProcessRockMatrix extends Process {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix Process Module',
-      'version' => '1.0.1',
+      'version' => '1.0.2',
       'summary' => 'Admin Endpoints for RockMatrix Module',
       'icon' => 'cubes',
       'requires' => [
         'RockMatrix',
       ],
       'installs' => [],
+
+      // all users with the page-edit permission can execute this module
+      'permission' => 'page-edit',
+
       'page' => [
         'name' => 'rockmatrix',
         'parent' => 2, // admin page
@@ -22,13 +26,6 @@ class ProcessRockMatrix extends Process {
     ];
   }
 
-  public function init() {
-    parent::init(); // always remember to call the parent init
-  }
-
-  public function execute() {
-  }
-
   /**
    * Add a matrix item
    */
@@ -36,8 +33,9 @@ class ProcessRockMatrix extends Process {
     $this->headline('Add Item');
     $this->browserTitle('Add Item');
     $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
-    if(!$block->editable()) throw new WireException("No access");
     if(!$block instanceof Block) throw new WireException("Invalid block");
+    if(!$block->editable()) throw new WireException("No access");
+    if(!$block->getMatrixPage()->editable()) throw new WireException("No access");
     $out = '';
 
     // create block if tpl is set

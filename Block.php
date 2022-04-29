@@ -53,12 +53,12 @@ abstract class Block extends \ProcessWire\Page {
   public function init() {}
 
   /**
-   * Url to add a new content block above or below this one
+   * Url to add a new content block above or above this one
    * @return string
    */
-  public function addContentBlockUrl($below = false) {
+  public function addContentBlockUrl($above = false) {
     return $this->wire->pages->get(2)->url.
-      "rockmatrix/add/?block=$this&below=".($below?1:0);
+      "rockmatrix/add/?block=$this&above=".($above?1:0);
   }
 
   /**
@@ -699,11 +699,11 @@ abstract class Block extends \ProcessWire\Page {
     $block = $this->wire->input->get('block', 'int');
     $field = $this->wire->input->get('field', 'fieldName');
     $index = $this->wire->input->get('index', 'int');
-    $below = $this->wire->input->get('below', 'int');
+    $above = $this->wire->input->get('above', 'int');
     $tpl = $this->getTplName();
     $button = $this->renderButton($page, $field, false);
 
-    $href = "./?block=$block&field=$field&index=$index&below=$below&tpl=$tpl&modal=1";
+    $href = "./?block=$block&field=$field&index=$index&above=$above&tpl=$tpl&modal=1";
     $button->href = $href;
     return $button->render();
   }

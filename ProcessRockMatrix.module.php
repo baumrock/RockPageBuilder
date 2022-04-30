@@ -48,12 +48,35 @@ class ProcessRockMatrix extends Process {
       $this->wire->session->redirect($new->editUrl());
     }
 
-    // the the rockmatrix field
+    // render buttons of rockmatrix field
     $field = $block->getMatrixField();
     $f = $field->getInputfield($block);
     $out .= $f->renderButtons($block->getMatrixPage(), true);
 
     return $out;
+  }
+
+  /**
+   * Add first block
+   */
+  public function executeAddNew() {
+    $this->headline('Add Item');
+    $this->browserTitle('Add Item');
+    $page = $this->wire->pages->get($this->wire->input->get('page', 'int'));
+    if(!$page->editable()) throw new WireException("No access");
+    $field = $this->wire->fields->get($this->wire->input->get('field', 'fieldName'));
+    if(!$field) throw new WireException("Invalid field");
+
+    // create block if tpl is set
+    if($tpl = $this->wire->input->get('tpl', 'templateName')) {
+      $matrix = $page->getUnformatted($field->name);
+      $new = $matrix->add($tpl);
+      $matrix->save();
+      $this->wire->session->redirect($new->editUrl());
+    }
+
+    $f = $field->getInputfield($page);
+    return $f->renderButtons($page, true);
   }
 
   /**

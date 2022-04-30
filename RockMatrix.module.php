@@ -31,7 +31,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.5.2',
+      'version' => '1.5.3',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -564,6 +564,16 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       if(strpos($block->getInfo()->name, "RMDemo\\") !== 0) continue;
       $block->uninstall();
     }
+  }
+
+  /**
+   * Get RockMatrix Process Url
+   * Usage: $this->rmxUrl("/add?block=1&field=2");
+   * @return string
+   */
+  public function rmxUrl($url) {
+    $url = ltrim($url, "/");
+    return $this->wire->pages->get(2)->url."rockmatrix/$url";
   }
 
   /**

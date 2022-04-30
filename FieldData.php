@@ -1,6 +1,7 @@
 <?php namespace RockMatrix;
 
 use ProcessWire\PageArray;
+use ProcessWire\RockFrontend;
 use ProcessWire\WireException;
 use ProcessWire\RockMatrix;
 class FieldData extends PageArray {
@@ -21,12 +22,16 @@ class FieldData extends PageArray {
      * @return Block
      */
     public function add($item, $data = []) {
-      if(is_array($item)) {
+      if(is_string($item)) {
+        // template provided
+        $item = $this->createBlock($item);
+      }
+      elseif(is_array($item)) {
         // item is a plain php array
         // this means we create a new block and add it
         $item = $this->createBlock($item, $data);
       }
-      if($item instanceof PageArray) {
+      elseif($item instanceof PageArray) {
         foreach($item as $i) $this->add($i);
         return $this;
       }
@@ -184,7 +189,22 @@ class FieldData extends PageArray {
 
       $out .= $block->render();
     }
+    if(!$out) return $this->renderEmpty();
     return $out;
+  }
+
+  /**
+   * Render empty matrix field
+   * @return string
+   */
+  public function ___renderEmpty() {
+    if(!$this->wire->page->editable()) return;
+    if($this->wire->config->rmx_noEmptyButton) return;
+    if(!$this->wire->modules->isInstalled('RockFrontend')) return;
+    /** @var RockFrontend $rf */
+    $rf = $this->wire->modules->get('RockFrontend');
+    $href = $this->master()->rmxUrl("/add-new/?page={$this->page}&field=".$this->field);
+    return $rf->iconLink("plus", $href);
   }
 
   /**

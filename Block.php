@@ -692,7 +692,9 @@ abstract class Block extends \ProcessWire\Page {
     $tpl = $this->getTplName();
     $button = $this->renderButton($page, $field, false);
 
-    $href = "./?block=$block&above=$above&tpl=$tpl&modal=1";
+    if($block) $href = $this->rmxUrl("/add/?block=$block&above=$above&tpl=$tpl&modal=1");
+    else $href = $this->rmxUrl("/add-new/?page=$page&field=$field&tpl=$tpl&modal=1");
+
     $button->href = $href;
     return $button->render();
   }
@@ -707,12 +709,13 @@ abstract class Block extends \ProcessWire\Page {
 
   /**
    * Get RockMatrix Process Url
-   * Usage: $this->rmxUrl("/add?block=1&field=2");
+   * Usage:
+   * $this->rmxUrl("/add?block=123");
+   * $this->rmxUrl("/add?field=foo_field");
    * @return string
    */
   public function rmxUrl($url) {
-    $url = ltrim($url, "/");
-    return $this->wire->pages->get(2)->url."rockmatrix/$url";
+    return $this->master()->rmxUrl($url);
   }
 
   /**

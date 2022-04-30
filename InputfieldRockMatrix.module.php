@@ -15,7 +15,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.1.0',
+      'version' => '1.1.1',
       'summary' => 'Your module description',
       'icon' => 'cubes',
       'requires' => ['RockMatrix'],
@@ -141,6 +141,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
   public function ___render() {
     $this->createBlock();
     $out = '';
+    $out .= $this->renderStyle();
     $out .= $this->renderItems();
     $out .= $this->renderButtons();
     $out .= $this->renderTextarea();
@@ -240,6 +241,25 @@ class InputfieldRockMatrix extends InputfieldRepeater {
     $this->wire->config->scripts->add($js.$m);
 
     $this->preloadBlockAssets();
+  }
+
+  /**
+   * Render dynamic style tag
+   * This style tag is rendered whenever we are editing the matrix field
+   * in a modal window.
+   * @return string
+   */
+  public function renderStyle() {
+    if(!$this->wire->input->get('modal', 'int')) return;
+    $field = $this->wire->input->get('field', 'fieldName');
+    if($field !== $this->name) return;
+    $move = $this->wire->input->get('moveblock', 'int');
+    return "<style>li#rmx_$move {
+        border-top: 5px solid #afafaf;
+        border-bottom: 5px solid #afafaf;
+      }
+      .rmx-buttons-container { display: none; }
+      </style>";
   }
 
   /**

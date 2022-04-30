@@ -166,8 +166,16 @@ class InputfieldRockMatrix extends InputfieldRepeater {
     }
     $blocks->sort("_rmxsort");
     $buttons = '<div class="rmx-buttons '.($modal?'modal':'').'">';
+    $group = '';
     foreach($blocks as $block) {
-      if($modal) $buttons .= $block->renderButtonModal($page, $this->hasField);
+      if($modal) {
+        $blockGroup = $block->getInfo()->group;
+        if($blockGroup !== $group) {
+          $buttons .= "<div class='rmx-blockgroup uk-margin-small-bottom'>$blockGroup</div>";
+        }
+        $group = $blockGroup;
+        $buttons .= $block->renderButtonModal($page, $this->hasField);
+      }
       else $buttons .= $block->renderButton($page, $this->hasField);
     }
 

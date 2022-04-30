@@ -31,7 +31,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.5.3',
+      'version' => '1.6.0',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -66,6 +66,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHookBefore("Inputfield::render", $this, "addMagicInputfieldProperties");
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "addStyles");
     $this->addHookAfter("Inputfield::render", $this, "addStyles");
+    $this->addHookAfter("ProcessRockMatrix::browserTitle", $this, "addStyles");
 
     $this->createBlock();
     $this->include("init.php"); // load assets/RockMatrix/init.php
@@ -205,9 +206,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public function addStyles(HookEvent $event) {
     // add style either when a rockmatrix field is in the editor
     // or when we are editing a rockmatrix block
-    if($event->process != 'ProcessPageEdit') return;
-    if($event->process->getPage() instanceof Block) $this->addStylesheet();
+    if($event->process == 'ProcessPageEdit' AND $event->process->getPage() instanceof Block) $this->addStylesheet();
     elseif($event->object instanceof InputfieldRockMatrix) $this->addStylesheet();
+    elseif($event->object instanceof ProcessRockMatrix) $this->addStylesheet();
   }
 
   /**

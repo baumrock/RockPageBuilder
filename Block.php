@@ -696,6 +696,9 @@ abstract class Block extends \ProcessWire\Page {
     else $href = $this->rmxUrl("/add-new/?page=$page&field=$field&tpl=$tpl&modal=1");
 
     $button->href = $href;
+
+    $svg = $this->svg();
+    if($svg) return "<a href={$button->href}>$svg</a>";
     return $button->render();
   }
 
@@ -770,6 +773,32 @@ abstract class Block extends \ProcessWire\Page {
       }
       return $arr;
     }
+  }
+
+  /**
+   * Get SVG image tag for this block
+   * @return string
+   */
+  public function svg() {
+    $file = $this->getMasterBlock()->file;
+    $base = substr($file, 0, -4); // without .php ending
+    $svg = "$base.svg";
+    if(!is_file($svg)) {
+      // no custom svg button found
+      // try to find one in /RockMatrix/buttons/...
+      $svg = $this->wire->config->paths($this->master())."buttons/".$this->className.".svg";
+      if(!is_file($svg)) return;
+    }
+    $url = str_replace(
+      $this->wire->config->paths->root,
+      $this->wire->config->urls->root,
+      $svg
+    );
+    $info = $this->getInfo();
+    $tooltip = $info->description ?: $info->title;
+    $tooltip = "title='$tooltip' uk-tooltip";
+    $style = $info->color ? "style='border-left: 5px solid {$info->color}'" : '';
+    return "<img $tooltip $style class=rmx-addblock-svg src=$url>";
   }
 
   /**

@@ -7,6 +7,15 @@ body.modal form.rmx-form {
 body.modal form.rmx-form .WireTabs {
   display: none;
 }
+.rmx-addblock-svg {
+  height: 200px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  transition: outline 0.3s ease;
+}
+.rmx-addblock-svg:hover {
+  outline: 3px solid #666;
+}
 li.rmx-item {
   transition: outline 0.3s ease-in-out;
   margin-top: 10px;

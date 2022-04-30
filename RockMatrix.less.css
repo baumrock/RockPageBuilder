@@ -13,6 +13,7 @@ body.modal form.rmx-form .WireTabs {
   margin-bottom: 10px;
   transition: outline 0.3s ease;
   text-align: center;
+  display: inline-block;
 }
 .rmx-button:hover {
   outline: 3px solid #666;

@@ -7,14 +7,36 @@ body.modal form.rmx-form {
 body.modal form.rmx-form .WireTabs {
   display: none;
 }
-.rmx-addblock-svg {
-  height: 200px;
+.rmx-button {
+  position: relative;
   margin-right: 10px;
   margin-bottom: 10px;
   transition: outline 0.3s ease;
+  text-align: center;
 }
-.rmx-addblock-svg:hover {
+.rmx-button:hover {
   outline: 3px solid #666;
+}
+.rmx-button img {
+  height: 150px;
+}
+.rmx-button .fa {
+  position: absolute;
+  top: -11px;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  color: #666;
+  margin: auto;
+  font-size: 45px;
+  pointer-events: none;
+}
+li.InputfieldRockMatrix .rmx-button img {
+  height: 75px;
+}
+li.InputfieldRockMatrix .rmx-button .fa {
+  top: 0;
+  font-size: 23px;
 }
 li.rmx-item {
   transition: outline 0.3s ease-in-out;

@@ -198,14 +198,14 @@ function RockMatrix() {
 
     // get link
     let $a = $(e.target).closest('a');
-    let href = $a.attr('href');
+    let href = $a.data('href');
     let rm = this;
 
     // prevent double-click
-    if($a.find("i.fa-spin").length) return;
+    if($a.hasClass('loading')) return;
 
     // show spinner
-    rm.spin($a);
+    $a.addClass('loading');
 
     // send ajax request
     $.getJSON(href, function(json) {
@@ -214,7 +214,7 @@ function RockMatrix() {
     }).fail(function(json) {
       ProcessWire.alert('AJAX Error');
     }).always(function() {
-      rm.unspin($a);
+      $a.removeClass('loading');
     });
   }
 

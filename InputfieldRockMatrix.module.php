@@ -175,9 +175,8 @@ class InputfieldRockMatrix extends InputfieldRepeater {
           $buttons .= "<div class='rmx-blockgroup uk-margin-small-bottom'>$blockGroup</div>";
         }
         $group = $blockGroup;
-        $buttons .= $block->renderButtonModal($page, $this->hasField);
       }
-      else $buttons .= $block->renderButton($page, $this->hasField);
+      $buttons .= $block->renderButton($page, $this->hasField);
     }
 
     // create toggle for creating new block

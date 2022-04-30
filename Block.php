@@ -664,42 +664,18 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
-   * Get button to add a new page having this template
-   */
-  public function renderButton($page, $field, $render=true) {
-    /** @var InputfieldButton $b */
-    $b = $this->wire('modules')->get('InputfieldButton');
-    $b->secondary = true;
-    $b->small = true;
-    $info = $this->getInfo();
-    $b->value = $info->title;
-    $b->icon = $info->icon;
-    if($info->description) $b->attr('uk-tooltip', $info->description);
-    $tpl = $this->getTplName();
-    $b->href = "./?id=$page&field=$field&tpl=$tpl";
-    $b->addClass('rmx-button');
-    if($col = $info->color) $b->attr('style', "border-left: 5px solid $col");
-    if($render) return $b->render();
-    return $b; // return button
-  }
-
-  /**
    * Render Button when in modal view
    */
-  public function renderButtonModal($page, $field) {
+  public function renderButton($page, $field) {
     $block = $this->wire->input->get('block', 'int');
     $above = $this->wire->input->get('above', 'int');
     $tpl = $this->getTplName();
-    $button = $this->renderButton($page, $field, false);
 
     if($block) $href = $this->rmxUrl("/add/?block=$block&above=$above&tpl=$tpl&modal=1");
     else $href = $this->rmxUrl("/add-new/?page=$page&field=$field&tpl=$tpl&modal=1");
 
-    $button->href = $href;
-
-    $svg = $this->svg();
-    if($svg) return "<a href={$button->href}>$svg</a>";
-    return $button->render();
+    $ajax = "./?id=$page&field=$field&tpl=$tpl";
+    return "<a href='$href' data-href='$ajax' class='rmx-button'>{$this->svg()}</a>";
   }
 
   /**
@@ -780,25 +756,30 @@ abstract class Block extends \ProcessWire\Page {
    * @return string
    */
   public function svg() {
+    $info = $this->getInfo();
     $file = $this->getMasterBlock()->file;
     $base = substr($file, 0, -4); // without .php ending
     $svg = "$base.svg";
+    $icon = '';
     if(!is_file($svg)) {
       // no custom svg button found
       // try to find one in /RockMatrix/buttons/...
-      $svg = $this->wire->config->paths($this->master())."buttons/".$this->className.".svg";
-      if(!is_file($svg)) return;
+      $path = $this->wire->config->paths($this->master())."buttons/";
+      $svg = $path.$this->className.".svg";
+      if(!is_file($svg)) {
+        $svg = $path."_blank.svg";
+        $icon = "<i class='fa fa-{$info->icon}'></i>";
+      }
     }
     $url = str_replace(
       $this->wire->config->paths->root,
       $this->wire->config->urls->root,
       $svg
     );
-    $info = $this->getInfo();
     $tooltip = $info->description ?: $info->title;
     $tooltip = "title='$tooltip' uk-tooltip";
     $style = $info->color ? "style='border-left: 5px solid {$info->color}'" : '';
-    return "<img $tooltip $style class=rmx-addblock-svg src=$url>";
+    return "<img $tooltip $style class=rmx-addblock-svg src=$url>$icon";
   }
 
   /**

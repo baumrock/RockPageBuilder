@@ -11,9 +11,25 @@ body.modal form.rmx-form .WireTabs {
   position: relative;
   margin-right: 10px;
   margin-bottom: 10px;
-  transition: outline 0.3s ease;
+  transition: outline opacity 0.5s ease;
   text-align: center;
   display: inline-block;
+}
+.rmx-button.loading {
+  animation: pulsate 2s ease-out;
+  animation-iteration-count: infinite;
+  opacity: 1;
+}
+@keyframes pulsate {
+  0% {
+    opacity: 1.0;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 1.0;
+  }
 }
 .rmx-button:hover {
   outline: 3px solid #666;

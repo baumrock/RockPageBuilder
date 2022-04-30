@@ -37,17 +37,20 @@ body.modal form.rmx-form {
     outline: 3px solid #666;
   }
   img {
-    height: 150px;
+    height: 75px;
+    @media(min-width: 960px) { height: 150px; }
   }
   .fa {
     position: absolute;
-    top: 50px;
     left: 0;
     right: 0;
     color: #666;
     margin: auto;
     font-size: 45px;
     pointer-events: none;
+
+    top: 25px;
+    @media(min-width: 960px) { top: 50px; }
   }
 }
 li.InputfieldRockMatrix .rmx-button {

@@ -35,17 +35,27 @@ body.modal form.rmx-form .WireTabs {
   outline: 3px solid #666;
 }
 .rmx-button img {
-  height: 150px;
+  height: 75px;
+}
+@media (min-width: 960px) {
+  .rmx-button img {
+    height: 150px;
+  }
 }
 .rmx-button .fa {
   position: absolute;
-  top: 50px;
   left: 0;
   right: 0;
   color: #666;
   margin: auto;
   font-size: 45px;
   pointer-events: none;
+  top: 25px;
+}
+@media (min-width: 960px) {
+  .rmx-button .fa {
+    top: 50px;
+  }
 }
 li.InputfieldRockMatrix .rmx-button img {
   height: 75px;

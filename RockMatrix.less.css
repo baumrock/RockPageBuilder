@@ -23,9 +23,8 @@ body.modal form.rmx-form .WireTabs {
 }
 .rmx-button .fa {
   position: absolute;
-  top: -11px;
+  top: 50px;
   left: 0;
-  bottom: 0;
   right: 0;
   color: #666;
   margin: auto;
@@ -36,7 +35,7 @@ li.InputfieldRockMatrix .rmx-button img {
   height: 75px;
 }
 li.InputfieldRockMatrix .rmx-button .fa {
-  top: 0;
+  top: 25px;
   font-size: 23px;
 }
 li.rmx-item {

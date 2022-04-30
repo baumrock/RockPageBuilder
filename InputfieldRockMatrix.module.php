@@ -157,7 +157,8 @@ class InputfieldRockMatrix extends InputfieldRepeater {
     if(!$page) $page = $this->process->getPage();
     $blocks = $this->master->getAllowedBlocks($this, $page);
     foreach($blocks as $block) {
-      $block->_rmxsort = $block->getInfo()->sort;
+      $info = $block->getInfo();
+      $block->_rmxsort = "{$info->groupSort}|{$info->group}|{$info->sort}";
       $callback = $block->getInfo()->show;
       if(is_callable($callback)) {
         $show = $callback($page);

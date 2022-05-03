@@ -263,8 +263,8 @@ class InputfieldRockMatrix extends InputfieldRepeater {
     if($field !== $this->name) return;
     $move = $this->wire->input->get('moveblock', 'int');
     return "<style>li#rmx_$move {
-        border-top: 5px solid #afafaf;
-        border-bottom: 5px solid #afafaf;
+        border-top: 5px solid orange;
+        border-bottom: 5px solid orange;
       }
       .rmx-buttons-container { display: none; }
       </style>";

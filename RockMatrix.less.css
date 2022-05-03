@@ -50,7 +50,7 @@ body.modal form.rmx-form .WireTabs {
   margin: auto;
   font-size: 45px;
   pointer-events: none;
-  top: 25px;
+  top: 27px;
 }
 @media (min-width: 960px) {
   .rmx-button .fa {
@@ -61,7 +61,7 @@ li.InputfieldRockMatrix .rmx-button img {
   height: 75px;
 }
 li.InputfieldRockMatrix .rmx-button .fa {
-  top: 25px;
+  top: 27px;
   font-size: 23px;
 }
 li.rmx-item {

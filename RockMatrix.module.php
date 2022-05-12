@@ -22,6 +22,8 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   public $blocks = [];
 
+  public $loaded = [];
+
   public $mtime = 0;
 
   private $preload = false;
@@ -31,7 +33,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.6.3',
+      'version' => '1.7.0',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,

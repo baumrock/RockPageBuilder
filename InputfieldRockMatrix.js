@@ -258,6 +258,10 @@ var RockMatrix = new RockMatrix();
   $(document).on('change', '.rmx-items input, .rmx-items textarea, .rmx-items select', function(e) {
     setTimeout(function() { RockMatrix.changed(e); });
   });
+  // monitor inline ckeditor fields
+  $(document).on('blur keyup paste input', '[contenteditable]', function(e) {
+    RockMatrix.changed(e);
+  });
 
   // trigger changed event after file uploads
   $(document).on('AjaxUploadDone', function(e) {

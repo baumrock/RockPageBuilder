@@ -57,13 +57,19 @@ class InputfieldRockMatrix extends InputfieldRepeater {
    */
   public function preloadBlockAssets() {
     $page = $this->process->getPage();
+
+    // this prevents endless loops when we have nested block elements
+    if(in_array($this->hasField->name, $this->master->loaded)) return;
+    $this->master->loaded[] = $this->hasField->name;
+
     $blocks = $this->master->getAllowedBlocks($this, $page);
     $nullPage = new NullPage();
     foreach($blocks as $block) {
       if(!$block instanceof Block) continue;
       if(!$tpl = $block->getTpl()) continue;
       foreach($tpl->fields as $field) {
-        $field->getInputfield($nullPage)->renderReady();
+        $f = $field->getInputfield($nullPage);
+        $f->renderReady();
       }
     }
   }

@@ -165,7 +165,7 @@ class FieldData extends PageArray {
    * Render all items of this matrix field
    * @return string
    */
-  public function render() {
+  public function render($renderEmpty = false) {
     $out = '';
     $typeIndex = 0;
     foreach($this as $i=>$block) {
@@ -189,7 +189,7 @@ class FieldData extends PageArray {
 
       $out .= $block->render();
     }
-    if(!$out) return $this->renderEmpty();
+    if(!$out AND $renderEmpty) return $this->renderEmpty();
     return $out;
   }
 

@@ -6,7 +6,7 @@ class ProcessRockMatrix extends Process {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix Process Module',
-      'version' => '1.0.2',
+      'version' => '1.0.3',
       'summary' => 'Admin Endpoints for RockMatrix Module',
       'icon' => 'cubes',
       'requires' => [
@@ -36,10 +36,17 @@ class ProcessRockMatrix extends Process {
     if(!$block instanceof Block) throw new WireException("Invalid block");
     if(!$block->editable()) throw new WireException("No access");
     if(!$block->getMatrixPage()->editable()) throw new WireException("No access");
+    $tpl = $this->wire->input->get('tpl', 'templateName');
+    $field = $block->getMatrixField();
+    $f = $field->getInputfield($block);
     $out = '';
 
+    // set template if we only have one allowed block
+    $allowed = $this->matrix()->getAllowedBlocks($f, $block->getMatrixPage());
+    if(count($allowed)===1) $tpl = $allowed->first()->template;
+
     // create block if tpl is set
-    if($tpl = $this->wire->input->get('tpl', 'templateName')) {
+    if($tpl) {
       $fieldData = $block->getMatrixData();
       $above = $this->wire->input->get('above', 'int');
       if($above) $new = $fieldData->addBefore($tpl, $block);
@@ -49,8 +56,6 @@ class ProcessRockMatrix extends Process {
     }
 
     // render buttons of rockmatrix field
-    $field = $block->getMatrixField();
-    $f = $field->getInputfield($block);
     $out .= $f->renderButtons($block->getMatrixPage(), true);
 
     return $out;

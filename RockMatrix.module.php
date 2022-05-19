@@ -33,7 +33,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.7.3',
+      'version' => '1.8.0',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -55,8 +55,13 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $this->modules->install('FieldtypeRepeater');
     }
     $this->path = $this->wire->config->paths($this);
-    $this->installProcessModule();
 
+    // merge in settings from config.php file
+    if(is_array($this->wire->config->rockmatrix)) {
+      $this->data = array_merge($this->data, $this->wire->config->rockmatrix);
+    }
+
+    $this->installProcessModule();
     $this->setupDemoField();
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "buildForm");
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
@@ -282,21 +287,25 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       else die("File $file does already exist");
 
       // view files
-
-      // php
-      $stub = file_get_contents($this->path."stubs/Block.view.txt");
-      $stub = str_replace("{name}", $name, $stub);
-      $stub = str_replace("{cls}", "rmx-".strtolower($name), $stub);
-      $stub = str_replace("{alfred}", $alfred, $stub);
-      if(!is_file("$folder/$name.view.php")) {
-        $this->wire->files->filePutContents("$folder/$name.view.php", $stub);
+      if($this->createView == 'latte') {
+        $stub = file_get_contents($this->path."stubs/Block.latte");
+        $stub = str_replace("{name}", $name, $stub);
+        $stub = str_replace("{cls}", "rmx-".strtolower($name), $stub);
+        if(!is_file("$folder/$name.latte")) {
+          $this->wire->files->filePutContents("$folder/$name.latte", $stub);
+        }
       }
-      // latte
-      $stub = file_get_contents($this->path."stubs/Block.latte");
-      $stub = str_replace("{name}", $name, $stub);
-      $stub = str_replace("{cls}", "rmx-".strtolower($name), $stub);
-      if(!is_file("$folder/$name.latte")) {
-        $this->wire->files->filePutContents("$folder/$name.latte", $stub);
+      else {
+        $latteNote = $this->stub('latteNote.txt');
+        if($this->createView == 'php') $latteNote = '';
+        $stub = file_get_contents($this->path."stubs/Block.view.txt");
+        $stub = str_replace("{name}", $name, $stub);
+        $stub = str_replace("{cls}", "rmx-".strtolower($name), $stub);
+        $stub = str_replace("{alfred}", $alfred, $stub);
+        $stub = str_replace("{latteNote}", $latteNote, $stub);
+        if(!is_file("$folder/$name.view.php")) {
+          $this->wire->files->filePutContents("$folder/$name.view.php", $stub);
+        }
       }
 
       die('success');
@@ -607,6 +616,15 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $event->return->add('RMDemo\Headline');
       $event->return->add('RMDemo\Image');
     });
+  }
+
+  /**
+   * Get content of stub file
+   * @return string
+   */
+  public function stub($file, $replacements = []) {
+    $content = $this->wire->files->fileGetContents($this->path."stubs/$file");
+    return str_replace(array_keys($replacements), array_values($replacements), $content);
   }
 
   /**

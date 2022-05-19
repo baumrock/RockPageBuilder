@@ -33,7 +33,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.7.2',
+      'version' => '1.7.3',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -77,7 +77,11 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     // TODO: check if that causes errors on uninstalling other modules
     // the readme had a note that migrate is not triggered automatically due to
     // that reason.
-    if($rm = $this->rm()) $rm->watch($this);
+    if($rm = $this->rm()) {
+      // a priority of 0.9 will make it migrate after all other watched files
+      // that have the default priority of 1
+      $rm->watch($this, 0.9);
+    }
   }
 
   public function ready() {

@@ -33,7 +33,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.8.0',
+      'version' => '1.8.1',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -570,19 +570,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
-   * Remove all demo fields and templates
-   * @return void
-   */
-  public function removeDemo() {
-    $rm = $this->rm();
-    $rm->deleteField(self::field_demo);
-    foreach($this->blocks as $block) {
-      if(strpos($block->getInfo()->name, "RMDemo\\") !== 0) continue;
-      $block->uninstall();
-    }
-  }
-
-  /**
    * Get RockMatrix Process Url
    * Usage: $this->rmxUrl("/add?block=1&field=2");
    * @return string
@@ -661,6 +648,15 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   * @param InputfieldWrapper $inputfields
   */
   public function getModuleConfigInputfields($inputfields) {
+    $data = $this->data;
+
+    $inputfields->add([
+      'type' => 'markup',
+      'label' => 'Note',
+      'icon' => 'exclamation',
+      'value' => 'Note that you can overwrite all settings from within your config.php file: $config->rockmatrix = [...];',
+      'notes' => 'Settings in config.php will have priority over settings set on this page!',
+    ]);
 
     $inputfields->add([
       'type' => 'checkbox',
@@ -669,31 +665,14 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       'checked' => $this->showDataPage ? 'checked' : '',
     ]);
 
-    $inputfields->add([
-      'type' => 'checkbox',
-      'name' => 'TriggerMigrations',
-      'label' => 'Trigger Migrations',
-      'description' => 'After adding a new matrix block (via code) you need to run migrations. You can either do this here or via calling $modules->get("RockMatrix")->migrate();',
-    ]);
-    if($this->input->post('TriggerMigrations')) $this->migrate();
-
-    $inputfields->add([
-      'type' => 'checkbox',
-      'name' => 'InstallDemo',
-      'label' => 'Install Demo Data',
-      'description' => 'This will create a demo field and add it to the root page of your site to get you started quickly',
-      'columnWidth' => 50,
-    ]);
-    if($this->input->post('InstallDemo')) $this->installDemo();
-
-    $inputfields->add([
-      'type' => 'checkbox',
-      'name' => 'RemoveDemo',
-      'label' => 'Remove Demo Data',
-      'description' => 'This will remove all demo fields and templates without further asking!',
-      'columnWidth' => 50,
-    ]);
-    if($this->input->post('RemoveDemo')) $this->removeDemo();
+    $f = $this->wire->modules->get('InputfieldSelect');
+    $f->attr('name', 'createView');
+    $f->label = 'File type of view-file';
+    $f->notes = 'Will be used when a new block type is created.';
+    $f->addOption('latte', 'LATTE');
+    $f->addOption('php', 'PHP');
+    if($data['createView']) $f->attr('value', $data['createView']);
+    $inputfields->add($f);
 
     return $inputfields;
   }

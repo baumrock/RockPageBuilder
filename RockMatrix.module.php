@@ -33,7 +33,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.8.1',
+      'version' => '1.8.2',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -74,6 +74,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "addStyles");
     $this->addHookAfter("Inputfield::render", $this, "addStyles");
     $this->addHookAfter("ProcessRockMatrix::browserTitle", $this, "addStyles");
+    $this->addHookAfter("Modules::refresh", $this, "removeUnusedTemplates");
 
     $this->createBlock();
     $this->include("init.php"); // load assets/RockMatrix/init.php
@@ -567,6 +568,20 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     if($this->preload) return;
     (new InputfieldRadios())->renderReady();
     $this->preload = true;
+  }
+
+  /**
+   * Remove old and unused templates
+   * @return void
+   */
+  public function removeUnusedTemplates(HookEvent $event) {
+    $active = [];
+    foreach($this->blocks as $block) $active[] = $block->template->name;
+    $rm = $this->rm();
+    foreach($this->wire->templates as $tpl) {
+      if(strpos($tpl->name, "rmblock-")!==0) continue;
+      if(!in_array($tpl->name, $active)) $rm->deleteTemplate($tpl);
+    }
   }
 
   /**

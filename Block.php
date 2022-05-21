@@ -14,6 +14,7 @@ use \ProcessWire\InputfieldFieldset;
 use ProcessWire\RockFields;
 use ProcessWire\RockFieldsField;
 use ProcessWire\Template;
+use ProcessWire\WireException;
 use ReflectionClass;
 
 abstract class Block extends \ProcessWire\Page {
@@ -586,19 +587,18 @@ abstract class Block extends \ProcessWire\Page {
     elseif($type == 'latte') {
       $latte = $this->latte;
       if(!$latte) {
-        require_once $this->wire->config->paths->root."vendor/autoload.php";
         try {
+          $vendor = $this->wire->config->paths->root."vendor/autoload.php";
+          if(!is_file($vendor)) throw new WireException("Latte autoloader not found");
+          require_once $vendor;
           $latte = new Engine();
           $latte->setTempDirectory($this->wire->config->paths->cache."Latte");
           $this->latte = $latte;
         } catch (\Throwable $th) {
-          if($th->getMessage() == "Class 'Latte\Engine' not found") {
-            return "<strong>".$th->getMessage()."</strong><br>".
-              "Install Latte via >> composer require latte/latte << in the PW
-              root directory or delete the .latte view file and use the plain
-              php view file instead.";
-          }
-          return $th->getMessage();
+          $msg = "<br>Install Latte via >> composer require latte/latte << in the PW
+            root directory or delete the .latte view file and use the plain
+            php view file instead.";
+          return "<strong>".$th->getMessage()."</strong>$msg";
         }
       }
       return $latte->renderToString($file, $vars);

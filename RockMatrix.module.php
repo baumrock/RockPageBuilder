@@ -33,7 +33,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.8.2',
+      'version' => '1.8.3',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -576,7 +576,10 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    */
   public function removeUnusedTemplates(HookEvent $event) {
     $active = [];
-    foreach($this->blocks as $block) $active[] = $block->template->name;
+    foreach($this->blocks as $block) {
+      if(!$block->template) continue;
+      $active[] = $block->template->name;
+    }
     $rm = $this->rm();
     foreach($this->wire->templates as $tpl) {
       if(strpos($tpl->name, "rmblock-")!==0) continue;

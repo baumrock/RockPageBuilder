@@ -17,7 +17,18 @@ class {name} extends Block {
     ];
   }
 
+  /** ##### magic methods ##### */
+
+  public function buildFormMatrix($form) {
+    // here you can edit the block's inputfields at runtime
+    // if($f = $form->get('title')) {
+    //   $f->label = 'Title Label Changed';
+    //   $f->notes = 'Title Note';
+    // }
+  }
+
   public function onCreate() {
+    // here you can set
     $this->title = '';
   }
 

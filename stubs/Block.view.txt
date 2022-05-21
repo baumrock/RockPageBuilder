@@ -3,6 +3,6 @@ use RMBlock\{name};
 /** @var Page $page */
 /** @var {name} $block */
 {latteNote}?>
-<section class="{cls}"{alfred}>
+<section class="{cls}">
   <?= $block->path ?>
 </section>

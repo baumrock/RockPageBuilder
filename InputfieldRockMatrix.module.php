@@ -167,7 +167,10 @@ class InputfieldRockMatrix extends InputfieldRepeater {
       if($block->template) {
         // the check for template is important to prevent errors like this:
         // you must set a template before you can set properties...
-        $block->_rmxsort = "{$info->groupSort}|{$info->group}|{$info->sort}";
+        $sort = str_pad($info->sort, 5, 0, STR_PAD_LEFT);
+        $groupSort = $info->groupSort ?: '_';
+        $group = $info->group ?: '_';
+        $block->_rmxsort = "$groupSort|$group|$sort";
       }
       $callback = $block->getInfo()->show;
       if(is_callable($callback)) {

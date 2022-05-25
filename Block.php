@@ -443,6 +443,14 @@ abstract class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Is this block a RockMatrix widget stored in field rockmatrix_widgets?
+   * @return bool
+   */
+  public function isWidget() {
+    return $this->getMatrixField()->name == RockMatrix::field_widgets;
+  }
+
+  /**
    * Return master module
    * @return RockMatrix
    */

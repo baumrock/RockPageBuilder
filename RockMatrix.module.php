@@ -16,9 +16,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   const prefix = 'rockmatrix_';
   const tags = 'RockMatrix';
 
-  const field_demo = self::prefix."rmxmoduledemo";
-
   const tpl_datapage = self::prefix."datapage";
+
+  const field_widgets = self::prefix."widgets";
 
   public $blocks = [];
 
@@ -33,7 +33,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '1.8.4',
+      'version' => '2.0.0',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -62,7 +62,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     }
 
     $this->installProcessModule();
-    $this->setupDemoField();
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "buildForm");
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
     $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
@@ -556,6 +555,17 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       ],
     ]);
     $rm->createPage("RockMatrixBlocks", null, self::tpl_datapage, 1, ['hidden', 'locked']);
+
+    // create widgets field
+    if(!$rm->getField(self::field_widgets)) {
+      $rm->createField(self::field_widgets, [
+        'type' => 'RockMatrix',
+        'label' => 'Widgets',
+        'tags' => self::tags,
+        'icon' => 'cubes',
+      ]);
+      $rm->addFieldToTemplate(self::field_widgets, 'home');
+    }
   }
 
   /**
@@ -606,24 +616,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
-   * This shows the settings of the demo field (if installed)
-   */
-  public function setupDemoField() {
-    $field = $this->fields->get(self::field_demo);
-    if(!$field) return;
-
-    $this->addBlocks(__DIR__."/demo/", "RMDemo");
-    $this->addHookAfter('getAllowedBlocks', function($event) {
-      $field = $event->arguments(0);
-      if($field->name !== self::field_demo) return;
-      $event->return->add('RMDemo\Textarea');
-      $event->return->add('RMDemo\Markup');
-      $event->return->add('RMDemo\Headline');
-      $event->return->add('RMDemo\Image');
-    });
-  }
-
-  /**
    * Get content of stub file
    * @return string
    */
@@ -659,6 +651,18 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $mCSS = time();
     }
     return "<link rel=stylesheet href='$cssUrl?m=$mCSS'>";
+  }
+
+  /**
+   * Get widget by template or id
+   * @return Block
+   */
+  public function widget($selector) {
+    $widgets = $this->wire->pages->get(1)->getFormatted(self::field_widgets);
+    foreach($widgets as $widget) {
+      if(is_string($selector) AND $widget->className == $selector) return $widget;
+      elseif(is_int($selector) AND $widget->id == $selector) return $widget;
+    }
   }
 
   /**

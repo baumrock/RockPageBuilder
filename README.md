@@ -285,3 +285,11 @@ $rm->migrate([
       'rmx-nolabel' => true,
       ...
 ```
+
+## Widget Concept
+
+RockMatrix will create a field `rockmatrix_widgets` on the `home` template.
+
+```php
+$rockmatrix->widgets('Team')->render()
+```

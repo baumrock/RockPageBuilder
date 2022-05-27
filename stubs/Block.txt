@@ -1,5 +1,6 @@
 <?php namespace RMBlock;
 
+use ProcessWire\Inputfield;
 use ProcessWire\RockFieldsField;
 use RockMatrix\Block;
 
@@ -47,6 +48,7 @@ class {name} extends Block {
           'fields' => [
             'title' => [
               'required' => false,
+              // 'collapsed' => Inputfield::collapsedHidden,
             ],
           ],
         ],

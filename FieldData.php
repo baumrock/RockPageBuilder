@@ -203,6 +203,7 @@ class FieldData extends PageArray {
     if(!$this->wire->modules->isInstalled('RockFrontend')) return;
     /** @var RockFrontend $rf */
     $rf = $this->wire->modules->get('RockFrontend');
+    $rf->hasAlfred = true; // adds a fake <edit> tag on page::render
     $href = $this->master()->rmxUrl("/add-new/?page={$this->page}&field=".$this->field);
     return $rf->iconLink("plus", $href);
   }

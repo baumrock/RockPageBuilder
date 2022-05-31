@@ -16,7 +16,7 @@ use ProcessWire\RockFieldsField;
 use ProcessWire\Template;
 use ReflectionClass;
 
-abstract class Block extends \ProcessWire\Page {
+class Block extends \ProcessWire\Page {
 
   const prefix = "rmblock_";
   const tags = "RockMatrix";
@@ -561,8 +561,6 @@ abstract class Block extends \ProcessWire\Page {
     foreach($this->viewFiles() as $file => $type) {
       if(is_file($file)) return $this->renderFile($file, $type);
     }
-    return "<div style='padding: 40px; border: 2px solid #afafaf;'>
-      ## No render method or view file for block {$this->name} ##</div>";
   }
 
   /**
@@ -819,6 +817,7 @@ abstract class Block extends \ProcessWire\Page {
    * @return array
    */
   public function viewFiles() {
+    if(!$this->getMasterBlock()) return [];
     $file = $this->getMasterBlock()->file;
     $base = substr($file, 0, -4); // without .php ending
     return [

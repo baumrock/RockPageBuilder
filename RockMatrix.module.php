@@ -33,7 +33,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.0.2',
+      'version' => '2.0.3',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -658,12 +658,18 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    * Get widget by template or id
    * @return Block
    */
-  public function widget($selector) {
+  public function widget($selector, $returnBlock = true) {
     $widgets = $this->wire->pages->get(1)->getFormatted(self::field_widgets);
     foreach($widgets as $widget) {
       if(is_string($selector) AND $widget->className == $selector) return $widget;
       elseif(is_int($selector) AND $widget->id == $selector) return $widget;
     }
+    // if no widget was found we return a new block
+    // this is important to make sure that $rockmatrix->widget('Foo')->render()
+    // does not throw an exception
+    // if you want it to return false instead use FALSE as second param
+    if($returnBlock === false) return false;
+    return new Block();
   }
 
   /**

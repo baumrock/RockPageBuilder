@@ -67,13 +67,15 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
     $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
     $this->addHookAfter("User::hasPagePermission", $this, "hookImageEdit");
-    $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
-    $this->addHookBefore('ProcessPageListRender::getNumChildren', $this, "hookNumChildren");
     $this->addHookBefore("Inputfield::render", $this, "addMagicInputfieldProperties");
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "addStyles");
     $this->addHookAfter("Inputfield::render", $this, "addStyles");
     $this->addHookAfter("ProcessRockMatrix::browserTitle", $this, "addStyles");
     $this->addHookAfter("Modules::refresh", $this, "removeUnusedTemplates");
+
+    // hide data page from tree
+    $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
+    $this->addHookBefore('ProcessPageListRender::getNumChildren', $this, "hookNumChildren");
 
     $this->createBlock();
     $this->include("init.php"); // load assets/RockMatrix/init.php

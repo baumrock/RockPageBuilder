@@ -33,7 +33,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.0.4',
+      'version' => '2.0.5',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -248,13 +248,16 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $page->buildForm($fs);
 
     // add link to matrix page
-    $url = $page->getMatrixPage()->editUrl();
-    $label = $page->getMatrixPage()->title;
-    $fs->add([
-      'type' => 'markup',
-      'label' => 'Matrix-Page',
-      'value' => "<a href=$url>$label</a>",
-    ]);
+    if(!$this->wire->input->get('modal')) {
+      $url = $page->getMatrixPage()->editUrl();
+      $label = $page->getMatrixPage()->title;
+      $fs->add([
+        'type' => 'markup',
+        'icon' => 'link',
+        'label' => 'Matrix-Page',
+        'value' => "<a href=$url>$label</a>",
+      ]);
+    }
   }
 
   /**

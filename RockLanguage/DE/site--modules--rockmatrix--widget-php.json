@@ -1,0 +1,9 @@
+{
+    "file": "site\/modules\/RockMatrix\/Widget.php",
+    "textdomain": "site--modules--rockmatrix--widget-php",
+    "translations": {
+        "91287eec81e365d9a2d6364995ff0f6c": {
+            "text": "Widgets bearbeiten"
+        }
+    }
+}

@@ -762,8 +762,9 @@ class Block extends \ProcessWire\Page {
    * @return string
    */
   public function svg() {
+    if(!$master = $this->getMasterBlock()) return;
     $info = $this->getInfo();
-    $file = $this->getMasterBlock()->file;
+    $file = $master->file;
     $base = substr($file, 0, -4); // without .php ending
     $svg = "$base.svg";
     $icon = '';

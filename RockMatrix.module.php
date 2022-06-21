@@ -34,7 +34,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.1.0',
+      'version' => '2.1.1',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -253,7 +253,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     // add link to matrix page
     if(!$this->wire->input->get('modal')) {
       $url = $page->getMatrixPage()->editUrl();
-      $label = $page->getMatrixPage()->title;
+      $label = $page->getMatrixPage()->title ?: $url;
       $fs->add([
         'type' => 'markup',
         'icon' => 'link',
@@ -776,7 +776,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $f->notes = 'Will be used when a new block type is created.';
     $f->addOption('latte', 'LATTE');
     $f->addOption('php', 'PHP');
-    if($data['createView']) $f->attr('value', $data['createView']);
+    if(array_key_exists('createView', $data)) $f->attr('value', $data['createView']);
     $inputfields->add($f);
 
     return $inputfields;

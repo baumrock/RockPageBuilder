@@ -1,6 +1,7 @@
 <?php namespace ProcessWire;
 
 use DirectoryIterator;
+use RMBlock\Widget;
 use RockMatrix\Block;
 use RockMatrix\BlocksArray;
 
@@ -33,7 +34,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.0.5',
+      'version' => '2.1.0',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -72,6 +73,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHookAfter("Inputfield::render", $this, "addStyles");
     $this->addHookAfter("ProcessRockMatrix::browserTitle", $this, "addStyles");
     $this->addHookAfter("Modules::refresh", $this, "removeUnusedTemplates");
+    $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "widgetHint");
 
     // hide data page from tree
     $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
@@ -79,7 +81,8 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
     $this->createBlock();
     $this->include("init.php"); // load assets/RockMatrix/init.php
-    $this->loadBlocksFromAssetsFolder();
+    $this->addBlock(__DIR__."/Widget.php"); // always load the widget block
+    $this->loadBlocksFromAssetsFolder(); // load user blocks from assets
 
     // TODO: check if that causes errors on uninstalling other modules
     // the readme had a note that migrate is not triggered automatically due to
@@ -389,6 +392,26 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
+   * Get pages that reference the given block/widget
+   * @return PageArray
+   */
+  public function ___getWidgetPages($block) {
+    $pages = new PageArray();
+    try {
+      require_once __DIR__ ."/Widget.php";
+      $widget = new Widget();
+      $widgets = $this->wire->pages->find([
+        'template' => $widget->getTplName(),
+        $widget::field_block => $block,
+      ]);
+      foreach($widgets as $w) $pages->add($w->getMatrixPage());
+    } catch (\Throwable $th) {
+      $this->log($th->getMessage());
+    }
+    return $pages;
+  }
+
+  /**
    * Hide data page from page tree for non-superusers
    */
   public function hideDataPage(HookEvent $event) {
@@ -685,6 +708,44 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     // if you want it to return false instead use FALSE as second param
     if($returnBlock === false) return false;
     return new Block();
+  }
+
+  public function widgetHint(HookEvent $event) {
+    $block = $event->process->getPage();
+    if(!$block instanceof Block) return;
+    if($block->getMatrixPage()->id !== 1) return;
+    if($block->getMatrixField()->name !== self::field_widgets) return;
+
+    $references = '';
+    $widgetPages = $this->getWidgetPages($block);
+    foreach($widgetPages->sort('path') as $page) {
+      $references .= "<li><a href={$page->editUrl}>{$page->path}</a></li>";
+    }
+    if($references) $references = "<ul style='margin:0'>$references</ul>";
+
+    $form = $event->return;
+    $form->add([
+      'type' => 'markup',
+      'name' => 'rmx-widget-alert',
+      'label' => $this->_('ATTENTION'),
+      'icon' => 'exclamation-triangle',
+      'value' => "<div>"
+        .$this->_('You are currently editing a global widget that is added to the following pages')
+        .": ".$references
+        ."</div>",
+      'notes' => $this->_('All changes that you apply to this widget will be visible on all pages').".",
+    ]);
+    $f = $form->children()->last();
+    $f->wrapClass('rmx-alert-widget');
+    $form->remove($f)->prepend($f);
+  }
+
+  /**
+   * Get widgets from home page
+   * @return PageArray
+   */
+  public function widgets() {
+    return $this->wire->pages->get(1)->getFormatted(self::field_widgets);
   }
 
   /**

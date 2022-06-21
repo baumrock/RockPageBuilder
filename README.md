@@ -288,8 +288,28 @@ $rm->migrate([
 
 ## Widget Concept
 
-RockMatrix will create a field `rockmatrix_widgets` on the `home` template.
+RockMatrix will create a field `rockmatrix_widgets` on the `home` template. There you can add all blocks that are available on your site as widgets. Simply add an empty(!) file with the corresponding name in the folder `/site/asset/RockMatrix/rockmatrix_widgets`. For example if you had a block called "MyBlock" you would add the empty file `/site/assets/RockMatrix/rockmatrix_widgets/MyBlock.php`.
+
+### Selecting widgets from other pages
+
+
+
+### Rendering widgets from template files
+
+Sometimes you want to create a widget that the user can edit in the backend, but you as a developer want to define where the widget gets rendered. For example you could create a global `Team` widget that you want to render on all `job` pages. In the job's page template file you can render this widget like this:
 
 ```php
 $rockmatrix->widgets('Team')->render()
+```
+
+When editing the widget, it will show a warning on which pages the widget will be displayed. RockMatrix can not know about the code you added to the template file, therefore you need to tell RockMatrix about it:
+
+```php
+// in the widget's init() method
+// in our example this is in Team.php (the php file of the Team widget)
+$this->addHookAfter("RockMatrix::getWidgetPages", function($event) {
+  $pages = $event->return;
+  $pages->add($this->wire->pages->find("template=job"));
+  $event->return = $pages;
+});
 ```

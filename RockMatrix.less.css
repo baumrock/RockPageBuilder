@@ -119,6 +119,9 @@ li.rmx-item.rmx-trash > .InputfieldHeader .rmx-action-trash {
 li.rmx-item:not(.rmx-trash) > .InputfieldHeader .rmx-action-untrash {
   display: none;
 }
+.rmx-settings ul {
+  padding-left: 0;
+}
 .rmx-settings input[type=radio] {
   margin-right: 5px;
 }
@@ -144,6 +147,7 @@ li.rmx-item:not(.rmx-trash) > .InputfieldHeader .rmx-action-untrash {
 .rmx-create input {
   width: 200px;
 }
-li.rmx-settings ul {
-  padding-left: 0;
+.rmx-alert-widget {
+  outline: 4px groove orange;
+  z-index: 1;
 }

@@ -783,7 +783,9 @@ class Block extends \ProcessWire\Page {
       $this->wire->config->urls->root,
       $svg
     );
-    $tooltip = $info->description ?: $info->title;
+    $tooltip = $info->description
+      ? "$info->title: $info->description"
+      : $info->title;
     $tooltip = "title='$tooltip' uk-tooltip";
     $style = $info->color ? "style='border-left: 5px solid {$info->color}'" : '';
     return "<img $tooltip $style class=rmx-addblock-svg src=$url>$icon";

@@ -594,16 +594,21 @@ class Block extends \ProcessWire\Page {
       $latte = $this->latte;
       if(!$latte) {
         try {
-          $vendor = $this->wire->config->paths->root."vendor/autoload.php";
-          if(!is_file($vendor)) throw new WireException("Latte autoloader not found");
-          require_once $vendor;
+          // load latte from RockFrontend
+          $vendor = $this->wire->config->paths->siteModules."RockFrontend/vendor/autoload.php";
+          if(is_file($vendor)) require_once $vendor;
+          else {
+            // load latte from PW root
+            $vendor = $this->wire->config->paths->root."vendor/autoload.php";
+            if(is_file($vendor)) require_once $vendor;
+          }
+
           $latte = new Engine();
           $latte->setTempDirectory($this->wire->config->paths->cache."Latte");
           $this->latte = $latte;
         } catch (\Throwable $th) {
-          $msg = "<br>Install Latte via >> composer require latte/latte << in the PW
-            root directory or delete the .latte view file and use the plain
-            php view file instead.";
+          $msg = "<br>Install Latte or delete the .latte view file and use
+            the plain php view file instead.";
           return "<strong>".$th->getMessage()."</strong>$msg";
         }
       }

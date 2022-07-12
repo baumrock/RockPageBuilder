@@ -797,6 +797,16 @@ class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Array of translatable strings
+   * Use $block->x('your_string') to get string.
+   * See RockMatrix readme about translating blocks.
+   * @return array
+   */
+  public function translations() {
+    return [];
+  }
+
+  /**
    * Truncate text to given length
    * @return string
    */
@@ -860,5 +870,18 @@ class Block extends \ProcessWire\Page {
   public function uninstall() {
     $this->log('Uninstalling ' . $this->getInfo()->name);
     $this->rm()->deleteTemplate($this->getTplName());
+  }
+
+  /**
+   * Translate given string
+   * @return string
+   */
+  public function x($key) {
+    // get translations of the block
+    $translations = $this->translations();
+    if(is_array($translations) AND array_key_exists($key, $translations)) {
+      return $translations[$key];
+    }
+    return $key;
   }
 }

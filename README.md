@@ -181,6 +181,40 @@ public function info() {
 }
 ```
 
+## Translations
+
+When working with frontend template engines like latte one drawback is that you can't use ProcessWire's built in transation functions like `__('your translatable string')`. That's because ProcessWire will only look for such stings in PHP files and also latte has problems understanding those function calls. Since every block has a PHP file we can simply put all translatable strings into that file and access them from the latte file via the `$block->x()` helper function:
+
+```php
+<?php namespace RMBlock;
+use RockMatrix\Block;
+class Demo extends Block {
+
+  public function info() {
+    return [
+      'icon' => 'check',
+      'title' => 'demo block',
+    ];
+  }
+
+  public function translations() {
+    return [
+      'my_foo_string' => $this->_('I am the translatable foo string'),
+      'my_bar_string' => $this->_('I am the translatable bar string'),
+    ];
+  }
+}
+```
+
+And in your template file:
+
+```html
+<div style="padding: 50px; border: 2px solid blue;">
+  <h1>{$block->x('my_foo_string')}</h1>
+  <p>{$block->x('my_bar_string')}</p>
+</div>
+```
+
 ## Render content
 
 The content of the field can be rendered via the `render()` method of the field data object. This calls the `render()` method of each block. If you just `echo` the field value it will show the ids of the pagearray (which is the string representation of the pagearray and is necessary for usage on selectors).

@@ -34,7 +34,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.1.3',
+      'version' => '2.1.4',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -74,6 +74,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHookAfter("ProcessRockMatrix::browserTitle", $this, "addStyles");
     $this->addHookAfter("Modules::refresh", $this, "removeUnusedTemplates");
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "widgetHint");
+    $this->addHookAfter("Pages::saved", $this, "triggerMatrixPageSave");
 
     // hide data page from tree
     $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
@@ -690,6 +691,23 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $mCSS = time();
     }
     return "<link rel=stylesheet href='$cssUrl?m=$mCSS'>";
+  }
+
+  /**
+   * If a matrix block is saved it triggers the save of the matrix page as well.
+   * This is important to make sure that for example ProCache rules are working
+   * as expected, because those rules are set on the Matrix-Page and not on the
+   * content-block.
+   * @return void
+   */
+  public function triggerMatrixPageSave(HookEvent $event) {
+    $page = $event->arguments(0);
+    if(!$page instanceof Block) return;
+    try {
+      $page->getMatrixPage()->save();
+    } catch (\Throwable $th) {
+      $this->log($th->getMessage());
+    }
   }
 
   /**

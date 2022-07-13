@@ -34,7 +34,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.1.2',
+      'version' => '2.1.3',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -592,9 +592,8 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $rm->createPage("RockMatrixBlocks", null, self::tpl_datapage, 1, ['hidden', 'locked']);
 
     // create widgets field
-    if(!$rm->getField(self::field_widgets)) {
-      $rm->createField(self::field_widgets, [
-        'type' => 'RockMatrix',
+    if(!$rm->getField(self::field_widgets, true)) {
+      $rm->createField(self::field_widgets, 'RockMatrix', [
         'label' => 'Widgets',
         'tags' => self::tags,
         'icon' => 'cubes',

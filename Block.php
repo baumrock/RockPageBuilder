@@ -459,6 +459,14 @@ class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Return instance of RockMatrix
+   * @return RockMatrix
+   */
+  public function matrix() {
+    return $this->wire->modules->get('RockMatrix');
+  }
+
+  /**
    * Get next matrix item
    * @return Page|false
    */
@@ -755,6 +763,9 @@ class Block extends \ProcessWire\Page {
     if(method_exists($this, 'settingsTable')) {
       $arr = [];
       $settings = $this->settingsTable($field);
+      if($settings instanceof BlockSettingsArray) {
+        $settings = $settings->getPlainArray();
+      }
       foreach($settings as $label => $f) {
         $arr[] = $field->getInputArray($f->sleepName);
       }

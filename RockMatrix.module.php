@@ -4,6 +4,7 @@ use DirectoryIterator;
 use RMBlock\Widget;
 use RockMatrix\Block;
 use RockMatrix\BlocksArray;
+use RockMatrix\BlockSettingsArray;
 
 /**
  * @author Bernhard Baumrock, 18.07.2020
@@ -23,6 +24,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   public $blocks = [];
 
+  /** @var WireArray */
+  public $blockSettings;
+
   public $loaded = [];
 
   public $mtime = 0;
@@ -34,7 +38,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.1.4',
+      'version' => '2.2.0',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -85,6 +89,10 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addBlock(__DIR__."/Widget.php"); // always load the widget block
     $this->loadBlocksFromAssetsFolder(); // load user blocks from assets
 
+    // create WireArray that holds the default settings
+    require_once __DIR__."/BlockSettingsArray.php";
+    $this->blockSettings = new BlockSettingsArray();
+
     // TODO: check if that causes errors on uninstalling other modules
     // the readme had a note that migrate is not triggered automatically due to
     // that reason.
@@ -93,6 +101,14 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       // that have the default priority of 1
       $rm->watch($this, 0.9);
     }
+  }
+
+  /**
+   * Clone default blocksettings ready to be used and modified in a matrix block
+   * @return BlockSettingsArray
+   */
+  public function ___cloneBlockSettings(RockFieldsField $field) {
+    return clone $this->blockSettings;
   }
 
   public function ready() {
@@ -788,6 +804,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       'checked' => $this->showDataPage ? 'checked' : '',
     ]);
 
+    /** @var InputfieldSelect $f */
     $f = $this->wire->modules->get('InputfieldSelect');
     $f->attr('name', 'createView');
     $f->label = 'File type of view-file';

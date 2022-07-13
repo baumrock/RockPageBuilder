@@ -124,6 +124,73 @@ You can define several important settings for every block in the `infot()` metho
 
 ### Block settings
 
+You can easily define settings for every block. While you could also use regular fields for block settings this method is a lot more efficient and streamlined. The feature uses RockFields for creating the fields. That means fields defined for block settings are runtime fields and don't exist in the database (so you'll also not find them in the fields editor). Also those fields are wrapped in a single Inputfield at the bottom of every block so they will save a lot of unused screen space compared to regular PW fields.
+
+Another benefit is that you can define global settings for your project and then hide or add other settings only for some blocks.
+
+#### Setting block settings via API
+
+To add settings to your block simply install the RockFields module and add a method `settingsTable` to your block:
+
+```php
+// add this to your block's php file
+public function settingsTable(RockFieldsField $field) {
+  $settings = $this->matrix()->cloneBlockSettings();
+  $settings->add([
+    'name' => 'blockpadding',
+    'label' => 'Block-Padding',
+    'value' => $field->input('blockpadding', 'radios', [
+      '*s' => 'small padding',
+      'm' => 'medium padding',
+      'l' => 'large padding',
+    ]),
+  ]);
+  return $settings;
+}
+```
+
+Often you want to define global settings for all blocks and extend those settings on some blocks. You can do so using a hook:
+
+```php
+// in site/ready.php
+/** @var RockMatrix $matrix */
+$matrix = $this->wire('modules')->get('RockMatrix');
+$matrix->addHookBefore("cloneBlockSettings", function($event) {
+  /** @var BlockSettingsArray $settings */
+  $settings = $event->object->blockSettings;
+  /** @var RockFieldsField $field */
+  $field = $event->arguments(0);
+  $settings->add([
+    'label' => 'global setting',
+    'value' => $field->input('global_setting', 'radios', [
+      '*foo' => 'foo label',
+      'bar' => 'bar label',
+    ]),
+  ]);
+});
+```
+
+#### Block Settings Options
+
+You can set options for the settings wrapper field in the info() method of your block:
+
+```php
+public function info() {
+  return [
+    ...
+    'settings' => false, // no settings field for this block
+
+    'settings' => [
+      'label' => 'Settings for this block',
+      'icon' => 'check',
+      'collapsed' => Inputfield::collapsedNo,
+    ],
+  ];
+}
+```
+
+#### The old way of doing it (for better understanding)
+
 ```php
 public function settingsInput(RockFieldsField $field) {
   return $field->table([
@@ -166,25 +233,6 @@ $mySetting = $block->settings('mySetting', 'default value');
 
 // same as above but different syntax
 $mySetting = $settings->mySetting ?: 'default value';
-```
-
-#### Block Settings Options
-
-You can set options for the block settings' field in the info() method of your block:
-
-```php
-public function info() {
-  return [
-    ...
-    'settings' => false, // no settings field for this block
-
-    'settings' => [
-      'label' => 'Settings for this block',
-      'icon' => 'check',
-      'collapsed' => Inputfield::collapsedNo,
-    ],
-  ];
-}
 ```
 
 ## Translations

@@ -16,6 +16,12 @@ if($modules->isInstalled('RockMatrix')) {
 }
 ```
 
+## Benefits using RockMatrix
+
+* You will get a lot more flexibility for your page layouts
+* You will get a lot cleaner user interfaces with less other plugins or workarounds, eg: https://user-images.githubusercontent.com/6616448/178727428-c4c72906-ad57-45cf-ac82-49320edb3b99.png
+* You will get cleaner code (OOP)
+
 ## RockMatrix vs. RepeaterMatrix
 
 Like RepeaterMatrix RockMatrix extends the core Repeater Fieldtype, but the concept is very different. As mentioned above every block of a RockMatrix is a custom Page (that's the same with RepeaterMatrix) having a custom template (that's not the case with RepeaterMatrix) and also having a custom PageClass (that's also not the case with RepeaterMatrix). RepeaterMatrix on the other hand creates ONE template for all your matrix blocks and then hides or shows the fields that you have defined via the admin interface. That means RepeaterMatrix creates less templates but on the code side you'll end up with ONE page type for MANY block types.

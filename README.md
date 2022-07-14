@@ -18,9 +18,15 @@ if($modules->isInstalled('RockMatrix')) {
 
 ## Benefits using RockMatrix
 
+Benefits for users
+
 * You will get a lot more flexibility for your page layouts
 * You will get a lot cleaner user interfaces with less other plugins or workarounds, eg: https://user-images.githubusercontent.com/6616448/178727428-c4c72906-ad57-45cf-ac82-49320edb3b99.png
+
+Technical benefits (compared to other solutions and workarounds)
+
 * You will get cleaner code (OOP)
+* Since all blocks are ProcessWire Pages under the hood they are super easy to handle via API or via RockMigrations
 
 ## RockMatrix vs. RepeaterMatrix
 

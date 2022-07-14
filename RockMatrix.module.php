@@ -38,7 +38,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.2.2',
+      'version' => '2.2.3',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -286,9 +286,13 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   protected function renderMatrixLinks($page, $level = 0) {
     if(!$page instanceof Block) return;
     $mp = $page->getMatrixPage();
-    $out = "<div>".($mp->title ?: $mp->url);
-    $out .= "<a class='uk-margin-left' href={$mp->editUrl}>edit</a>";
-    $out .= $mp->viewable() ? " / <a href={$mp->url}>show</a>" : '';
+    $out = "<div>";
+    $out .= "<a href={$mp->editUrl}><i class='fa fa-edit'></i></a>";
+    $out .= "<span class=uk-margin-left>";
+    $out .= $mp->viewable() ? "<a href={$mp->url}>" : '';
+    $out .= $mp->title ?: $mp->url;
+    $out .= $mp->viewable() ? "</a>" : '';
+    $out .= "</span>";
     $out .= "</div>";
     $out .= $this->renderMatrixLinks($mp, ++$level);
     return $out;

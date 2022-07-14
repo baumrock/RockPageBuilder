@@ -218,7 +218,7 @@ class Block extends \ProcessWire\Page {
   public function getMatrixPage() {
     // the page is stored in metadata of the block
     // the metadata is pageid-fieldid
-    $meta = explode("-", $this->meta('RockMatrix'));
+    $meta = explode("-", (string)$this->meta('RockMatrix'));
     return $this->wire->pages->get($meta[0]);
   }
 

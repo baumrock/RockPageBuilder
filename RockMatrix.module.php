@@ -38,7 +38,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.2.1',
+      'version' => '2.2.2',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -269,15 +269,29 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
     // add link to matrix page
     if(!$this->wire->input->get('modal')) {
-      $url = $page->getMatrixPage()->editUrl();
-      $label = $page->getMatrixPage()->title ?: $url;
       $fs->add([
         'type' => 'markup',
         'icon' => 'link',
-        'label' => 'Matrix-Page',
-        'value' => "<a href=$url>$label</a>",
+        'label' => 'Matrix-Pages',
+        'value' => $this->renderMatrixLinks($page),
       ]);
     }
+  }
+
+  /**
+   * Render links to matrix pages of current block
+   * Can be multiple pages for nested blocks
+   * @return string
+   */
+  protected function renderMatrixLinks($page, $level = 0) {
+    if(!$page instanceof Block) return;
+    $mp = $page->getMatrixPage();
+    $out = "<div>".($mp->title ?: $mp->url);
+    $out .= "<a class='uk-margin-left' href={$mp->editUrl}>edit</a>";
+    $out .= $mp->viewable() ? " / <a href={$mp->url}>show</a>" : '';
+    $out .= "</div>";
+    $out .= $this->renderMatrixLinks($mp, ++$level);
+    return $out;
   }
 
   /**

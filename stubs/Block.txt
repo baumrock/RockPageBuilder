@@ -3,6 +3,7 @@
 use ProcessWire\Inputfield;
 use ProcessWire\RockFieldsField;
 use RockMatrix\Block;
+use RockMatrix\BlockSettingsArray;
 
 class {name} extends Block {
 
@@ -58,6 +59,7 @@ class {name} extends Block {
 
   /*
   public function settingsTable(RockFieldsField $field) {
+    /** @var BlockSettingsArray $settings */
     $settings = $this->matrix()->cloneBlockSettings($field);
     $settings->add([
       'name' => 'demo_setting',

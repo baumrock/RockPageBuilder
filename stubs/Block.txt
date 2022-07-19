@@ -58,15 +58,17 @@ class {name} extends Block {
 
   /*
   public function settingsTable(RockFieldsField $field) {
-    return [
-      'Description' => $field->input("desc"),
-      'Image size' => $field->input("size", "radios", [
-        'small' => 'Small Image',
-        '*medium' => 'Medium Image',
-        'large' => 'Large Image',
+    $settings = $this->matrix()->cloneBlockSettings($field);
+    $settings->add([
+      'name' => 'demo_setting',
+      'label' => 'Your Setting Label',
+      'value' => $field->input('demo_setting', 'select', [
+        '*s' => 'small',
+        'm' => 'medium',
+        'l' => 'large',
       ]),
-      'No link to large image' => $field->input('nolightbox', 'checkbox'),
-    ];
+    ]);
+    return $settings;
   }
   */
 

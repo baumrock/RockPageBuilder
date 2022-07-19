@@ -11,6 +11,7 @@ use \ProcessWire\Inputfield;
 use \ProcessWire\InputfieldFile;
 use \ProcessWire\InputfieldWrapper;
 use \ProcessWire\InputfieldFieldset;
+use ProcessWire\PageArray;
 use ProcessWire\RockFields;
 use ProcessWire\RockFieldsField;
 use ProcessWire\Template;
@@ -252,6 +253,22 @@ class Block extends \ProcessWire\Page {
    */
   public function ___getParent($field, $page) {
     return $this->master()->getDatapage();
+  }
+
+  /**
+   * Get parents of current block that should be saved when a block is saved.
+   * This is necessary to trigger ProCache reset of edited pages
+   * @return PageArray
+   */
+  public function getParentsToSave() {
+    $pages = new PageArray();
+    $current = $this->getMatrixPage();
+    while($current instanceof Block) {
+      $pages->add($current);
+      $current = $current->getMatrixPage();
+    }
+    $pages->add($current);
+    return $pages;
   }
 
   /**

@@ -33,12 +33,14 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   private $preload = false;
 
+  private $_saved;
+
   private $stylesAdded = false;
 
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.2.4',
+      'version' => '2.2.5',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -60,6 +62,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $this->modules->install('FieldtypeRepeater');
     }
     $this->path = $this->wire->config->paths($this);
+    $this->_saved = new PageArray();
 
     // merge in settings from config.php file
     if(is_array($this->wire->config->rockmatrix)) {
@@ -78,6 +81,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHookAfter("ProcessRockMatrix::browserTitle", $this, "addStyles");
     $this->addHookAfter("Modules::refresh", $this, "removeUnusedTemplates");
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "widgetHint");
+
+    // matrix page save trigger
+    $this->_saved = new PageArray();
     $this->addHookAfter("Pages::saved", $this, "triggerMatrixPageSave");
 
     // hide data page from tree
@@ -727,19 +733,19 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
-   * If a matrix block is saved it triggers the save of the matrix page as well.
+   * If a matrix block is saved it triggers the save of parent blocks/pages as well.
    * This is important to make sure that for example ProCache rules are working
    * as expected, because those rules are set on the Matrix-Page and not on the
    * content-block.
    * @return void
    */
   public function triggerMatrixPageSave(HookEvent $event) {
-    $page = $event->arguments(0);
-    if(!$page instanceof Block) return;
-    try {
-      $page->getMatrixPage()->save();
-    } catch (\Throwable $th) {
-      $this->log($th->getMessage());
+    $block = $event->arguments(0);
+    if(!$block instanceof Block) return;
+    foreach($block->getParentsToSave() as $p) {
+      if($this->_saved->has($p)) continue;
+      $p->save();
+      $this->_saved->add($p);
     }
   }
 

@@ -22,6 +22,7 @@ Benefits for users
 
 * You will get a lot more flexibility for your page layouts
 * You will get a lot cleaner user interfaces with less other plugins or workarounds, eg: https://user-images.githubusercontent.com/6616448/178727428-c4c72906-ad57-45cf-ac82-49320edb3b99.png
+* You will get meaningfol labels of your content blocks (compared to only showing the type of the block)
 
 Technical benefits (compared to other solutions and workarounds)
 

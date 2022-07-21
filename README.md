@@ -29,6 +29,10 @@ Technical benefits (compared to other solutions and workarounds)
 * You will get cleaner code (OOP)
 * Since all blocks are ProcessWire Pages under the hood they are super easy to handle via API or via RockMigrations
 
+## Limitations
+
+Seems that showIf does not work with RockMatrix? MPN AnchorHeadline
+
 ## RockMatrix vs. RepeaterMatrix
 
 Like RepeaterMatrix RockMatrix extends the core Repeater Fieldtype, but the concept is very different. As mentioned above every block of a RockMatrix is a custom Page (that's the same with RepeaterMatrix) having a custom template (that's not the case with RepeaterMatrix) and also having a custom PageClass (that's also not the case with RepeaterMatrix). RepeaterMatrix on the other hand creates ONE template for all your matrix blocks and then hides or shows the fields that you have defined via the admin interface. That means RepeaterMatrix creates less templates but on the code side you'll end up with ONE page type for MANY block types.

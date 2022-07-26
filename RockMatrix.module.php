@@ -779,7 +779,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     foreach($widgetPages->sort('path') as $page) {
       $references .= "<li><a href={$page->editUrl}>{$page->path}</a></li>";
     }
-    if($references) $references = ": <ul style='margin:0'>$references</ul>";
+    if($references) $references = "<ul style='margin:0'>$references</ul>";
 
     $form = $event->return;
     $form->add([
@@ -788,7 +788,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       'label' => $this->_('ATTENTION'),
       'icon' => 'exclamation-triangle',
       'value' => "<div>"
-        .$this->_('You are currently editing a global widget that is added to multiple pages')
+        .$this->_('You are currently editing a global widget that is added to multiple pages')."!"
         .$references
         ."</div>",
       'notes' => $this->_('All changes that you apply to this widget will be visible on all pages').".",

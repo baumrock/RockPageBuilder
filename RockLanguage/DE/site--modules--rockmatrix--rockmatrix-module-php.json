@@ -5,11 +5,11 @@
         "097cc86b24ec939a19f8783e64fbb4ee": {
             "text": "ACHTUNG"
         },
-        "c4e2173f60a4ea4093d1e4338c865a07": {
-            "text": "Sie bearbeiten gerade ein globales Widget, das auf mehreren Seiten verwendet wird"
-        },
         "61cdd29df658dac8da87d7370b7ea7d1": {
             "text": "Alle \u00c4nderungen, die Sie an diesem Widget vornehmen, werden auf allen Seiten sichtbar"
+        },
+        "d336721017a96613594ec37540de6dd3": {
+            "text": "Sie bearbeiten gerade ein globales Widget, das auf mehreren Seiten verwendet wird"
         }
     }
 }

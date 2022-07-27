@@ -170,7 +170,7 @@ class FieldData extends PageArray {
   public function render($renderEmpty = false) {
     if($this->wire->user->isSuperuser()) return $this->renderCatch($renderEmpty);
     try {
-      $this->renderCatch($renderEmpty);
+      return $this->renderCatch($renderEmpty);
     } catch (\Throwable $th) {
       try {
         /** @var RockMigrations $rm */

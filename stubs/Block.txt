@@ -12,9 +12,9 @@ class {name} extends Block {
   public function info() {
     return [
       'title' => '{name}',
+      'color' => 'lime',
       // 'icon' => 'picture-o',
       // 'description' => 'RockMatrix Block Setup Demo',
-      // 'color' => 'red',
       // 'sort' => 500,
     ];
   }

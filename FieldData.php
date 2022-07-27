@@ -4,6 +4,8 @@ use ProcessWire\PageArray;
 use ProcessWire\RockFrontend;
 use ProcessWire\WireException;
 use ProcessWire\RockMatrix;
+use ProcessWire\RockMigrations;
+
 class FieldData extends PageArray {
 
   public $page;
@@ -166,6 +168,25 @@ class FieldData extends PageArray {
    * @return string
    */
   public function render($renderEmpty = false) {
+    if($this->wire->user->isSuperuser()) return $this->renderCatch($renderEmpty);
+    try {
+      $this->renderCatch($renderEmpty);
+    } catch (\Throwable $th) {
+      try {
+        /** @var RockMigrations $rm */
+        $rm = $this->wire->modules->get('RockMigrations');
+        $rm->mailToSuperuser($th->getMessage());
+      } catch (\Throwable $th2) {
+        $this->log($th->getMessage());
+      }
+    }
+  }
+
+  /**
+   * Method to catch errors if user is not superuser
+   * @return string
+   */
+  private function renderCatch($renderEmpty) {
     $out = '';
     $typeIndex = 0;
     foreach($this as $i=>$block) {

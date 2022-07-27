@@ -29,10 +29,10 @@ class {name} extends Block {
   //   }
   // }
 
-  // public function onCreate() {
-  //   // set default field values when a new block is created
-  //   $this->title = '';
-  // }
+  public function onCreate() {
+    // set default field values when a new block is created
+    $this->title = '';
+  }
 
   /** ##### frontend ##### */
 

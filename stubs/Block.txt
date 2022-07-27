@@ -11,28 +11,28 @@ class {name} extends Block {
 
   public function info() {
     return [
-      'icon' => 'picture-o',
       'title' => '{name}',
-      'description' => 'RockMatrix Block Setup Demo',
-      'color' => 'red',
-      'sort' => 500,
+      // 'icon' => 'picture-o',
+      // 'description' => 'RockMatrix Block Setup Demo',
+      // 'color' => 'red',
+      // 'sort' => 500,
     ];
   }
 
   /** ##### magic methods ##### */
 
-  public function buildFormMatrix($form) {
-    // here you can edit the block's inputfields at runtime
-    // if($f = $form->get('title')) {
-    //   $f->label = 'Title Label Changed';
-    //   $f->notes = 'Title Note';
-    // }
-  }
+  // public function buildFormMatrix($form) {
+  //   here you can edit the block's inputfields at runtime
+  //   if($f = $form->get('title')) {
+  //     $f->label = 'Title Label Changed';
+  //     $f->notes = 'Title Note';
+  //   }
+  // }
 
-  public function onCreate() {
-    // here you can set
-    $this->title = '';
-  }
+  // public function onCreate() {
+  //   // set default field values when a new block is created
+  //   $this->title = '';
+  // }
 
   /** ##### frontend ##### */
 

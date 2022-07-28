@@ -19,7 +19,7 @@ class Widget extends Block {
   }
 
   public function onCreate() {
-    $this->title = '';
+    $this->setInAllLanguages('title', '');
   }
 
   public function init() {

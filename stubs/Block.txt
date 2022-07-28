@@ -31,7 +31,7 @@ class {name} extends Block {
 
   public function onCreate() {
     // set default field values when a new block is created
-    $this->title = '';
+    $this->setInAllLanguages('title', '');
   }
 
   /** ##### frontend ##### */

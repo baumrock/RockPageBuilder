@@ -742,6 +742,16 @@ class Block extends \ProcessWire\Page {
   }
 
   /**
+   * Set field value in all languages
+   * @return void
+   */
+  public function setInAllLanguages($field, $value) {
+    $this->set($field, $value);
+    if(!$languages = $this->wire->languages) return;
+    foreach($languages as $lang) $this->setLanguageValue($lang, $field, $value);
+  }
+
+  /**
    * Return values of settings field
    *
    * Usage:

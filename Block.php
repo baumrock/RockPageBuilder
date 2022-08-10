@@ -311,7 +311,9 @@ class Block extends \ProcessWire\Page {
     $fs->notes = $this->getNotes();
     $fs->addClass('rmx-item');
     $fs->wrapAttr('data-page', $this->id);
-    if($this->wire->user->isSuperuser()) $fs->wrapAttr('uk-tooltip', $this->id);
+    if($this->wire->user->isSuperuser()) {
+      $fs->wrapAttr('uk-tooltip', "{$this->className} #{$this->id}");
+    }
     $fs->wrapAttr('data-tpl', $this->template->name);
     if($col = $this->getInfo()->color) {
       $fs->wrapAttr('style', "border-left: 5px solid $col");

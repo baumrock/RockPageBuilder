@@ -40,7 +40,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.2.9',
+      'version' => '2.3.0',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -408,6 +408,19 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     } catch (\Throwable $th) {
       $this->error($th->getMessage());
     }
+  }
+
+  /**
+   * Get all children of an inputfield wrapper recursively
+   * @return array
+   */
+  public function getChildrenRecursively(InputfieldWrapper $wrapper, &$items = []) {
+    $items = $items ?: [];
+    foreach($wrapper->children() as $child) {
+      if($child instanceof InputfieldWrapper) $this->getChildrenRecursively($child, $items);
+      else $items[] = $child;
+    }
+    return $items;
   }
 
   /**

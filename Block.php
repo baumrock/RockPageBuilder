@@ -11,6 +11,7 @@ use \ProcessWire\Inputfield;
 use \ProcessWire\InputfieldFile;
 use \ProcessWire\InputfieldWrapper;
 use \ProcessWire\InputfieldFieldset;
+use ProcessWire\InputfieldForm;
 use ProcessWire\PageArray;
 use ProcessWire\RockFields;
 use ProcessWire\RockFieldsField;
@@ -324,7 +325,7 @@ class Block extends \ProcessWire\Page {
     $this->buildFormMatrix($fs);
 
     // add repeater suffix to all children
-    foreach($fs->children() as $f) {
+    foreach($this->matrix()->getChildrenRecursively($fs) as $f) {
       // add the suffix to the inputfields name
       // before we do that we make sure that it does not already
       // have a repeater suffix to avoid adding the suffix twice

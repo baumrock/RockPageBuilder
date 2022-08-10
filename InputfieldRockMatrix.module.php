@@ -194,6 +194,7 @@ class InputfieldRockMatrix extends InputfieldRepeater {
 
     // create toggle for creating new block
     if(!$modal) $buttons .= $this->renderCreateBlock();
+    else $buttons .= "<a href={$page->editUrl} uk-icon=plus></a>";
 
     $buttons .= "</div>";
     return "<div class='rmx-buttons-container'>$buttons</div>";

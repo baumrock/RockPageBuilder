@@ -55,6 +55,46 @@ class Block extends \ProcessWire\Page {
   public function init() {}
 
   /**
+   * Add ALFRED icons (for RockFrontend)
+   * @return void
+   */
+  public function addAlfredIcons(&$icons, $opt) {
+    // if the _block context is set for this block we use it as block
+    // this is to support the concept of "widgets" where widgets render global blocks.
+    // when trashing such a block we want to trash the reference widget and not the global block itself!
+    $block = $this;
+    $widget = $block->_widget ?: $block;
+    if($opt->duplicate AND $block->editable()) {
+      $icons[] = (object)[
+        'icon' => 'clone',
+        'label' => $block->title,
+        'tooltip' => "Duplicate Block #{$widget->id}",
+        'href' => $widget->rmxUrl("/clone/?block=$widget"),
+        'confirm' => $this->_('Do you really want to clone this element?'),
+      ];
+    }
+    if($opt->move) {
+      $icons[] = (object)[
+        'icon' => 'move',
+        'label' => $block->title,
+        'tooltip' => "Move Block #{$widget->id}",
+        'class' => 'pw-modal',
+        'href' => $widget->getMatrixPage()->editUrl."&field=".$widget->getMatrixField()."&moveblock=$widget",
+        'suffix' => 'data-buttons="button.ui-button[type=submit]" data-autoclose data-reload',
+      ];
+    }
+    if($opt->trash AND $block->trashable()) {
+      $icons[] = (object)[
+        'icon' => 'trash-2',
+        'label' => $block->title,
+        'tooltip' => "Trash Block #{$widget->id}",
+        'href' => $widget->rmxUrl("/trash/?block=$widget"),
+        'confirm' => $this->_('Do you really want to delete this element?'),
+      ];
+    }
+  }
+
+  /**
    * Add rockfields settings field for this block
    */
   public function addSettingsField() {
@@ -752,6 +792,14 @@ class Block extends \ProcessWire\Page {
     $this->set($field, $value);
     if(!$languages = $this->wire->languages) return;
     foreach($languages as $lang) $this->setLanguageValue($lang, $field, $value);
+  }
+
+  /**
+   * Save reference to page and field of this matrix block
+   * @return void
+   */
+  public function setMatrixReference($page, $field) {
+    $this->meta('RockMatrix', "$page-$field");
   }
 
   /**

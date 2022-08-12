@@ -32,7 +32,10 @@ class ProcessRockMatrix extends Process {
   public function executeAdd() {
     $this->headline('Add Item');
     $this->browserTitle('Add Item');
+
     $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
+    $above = $this->wire->input->get('above', 'int');
+
     if(!$block instanceof Block) throw new WireException("Invalid block");
     if(!$block->editable()) throw new WireException("No access");
     if(!$block->getMatrixPage()->editable()) throw new WireException("No access");
@@ -48,7 +51,6 @@ class ProcessRockMatrix extends Process {
     // create block if tpl is set
     if($tpl) {
       $fieldData = $block->getMatrixData();
-      $above = $this->wire->input->get('above', 'int');
       if($above) $new = $fieldData->addBefore($tpl, $block);
       else $new = $fieldData->addAfter($tpl, $block);
       $fieldData->save();
@@ -85,6 +87,22 @@ class ProcessRockMatrix extends Process {
   }
 
   /**
+   * Clone give block
+   */
+  public function executeClone() {
+    $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
+    if(!$block instanceof Block) throw new WireException("Invalid Block");
+    if(!$block->editable()) throw new WireException("Block is not editable");
+    if($block->isTrash()) throw new WireException("Cannot clone blocks that are trashed");
+    try {
+      $block->clone();
+      return $this->success();
+    } catch (\Throwable $th) {
+      return $this->json($th->getMessage());
+    }
+  }
+
+  /**
    * Trash matrix block
    */
   public function executeTrash() {
@@ -111,6 +129,10 @@ class ProcessRockMatrix extends Process {
       'error' => $error,
       'message' => $msg,
     ]);
+  }
+
+  public function success() {
+    return $this->json('success');
   }
 
 }

@@ -5,6 +5,7 @@ use RMBlock\Widget;
 use RockMatrix\Block;
 use RockMatrix\BlocksArray;
 use RockMatrix\BlockSettingsArray;
+use RockMatrix\FieldData;
 
 /**
  * @author Bernhard Baumrock, 18.07.2020
@@ -40,7 +41,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.3.0',
+      'version' => '2.4.0',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -85,6 +86,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     // matrix page save trigger
     $this->_saved = new PageArray();
     $this->addHookAfter("Pages::saved", $this, "triggerMatrixPageSave");
+    $this->addHookAfter("Pages::saved", $this, "cloneMatrixBlocks");
 
     // hide data page from tree
     $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
@@ -280,28 +282,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
         'icon' => 'link',
         'label' => 'Matrix-Pages',
         'value' => $this->renderMatrixLinks($page),
+        'notes' => 'This shows all pages that contain the current block',
       ]);
     }
-  }
-
-  /**
-   * Render links to matrix pages of current block
-   * Can be multiple pages for nested blocks
-   * @return string
-   */
-  protected function renderMatrixLinks($page, $level = 0) {
-    if(!$page instanceof Block) return;
-    $mp = $page->getMatrixPage();
-    $out = "<div>";
-    $out .= "<a href={$mp->editUrl}><i class='fa fa-edit'></i></a>";
-    $out .= "<span class=uk-margin-left>";
-    $out .= $mp->viewable() ? "<a href={$mp->url}>" : '';
-    $out .= $mp->title ?: $mp->url;
-    $out .= $mp->viewable() ? "</a>" : '';
-    $out .= "</span>";
-    $out .= "</div>";
-    $out .= $this->renderMatrixLinks($mp, ++$level);
-    return $out;
   }
 
   /**
@@ -316,6 +299,51 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $this->error("Block $name has a $method() method but does not call"
         ." parent::$method()");
     }
+  }
+
+  /**
+   * This hook ensures that when a page is cloned that all matrix blocks of that
+   * page are clones as well and that the new page holds individual copies
+   * and not only references to the original blocks.
+   * @return void
+   */
+  public function cloneMatrixBlocks(HookEvent $event) {
+    $page = $event->arguments(0);
+    // db($page, "page $page was saved");
+
+    // find all matrix fields
+    $fields = $this->getMatrixFields($page);
+    foreach($fields as $field) {
+      // db($field, "found matrix field on saved page $page");
+
+      // check if references match
+      $blocks = $page->get($field->name);
+      if(!$blocks instanceof FieldData) continue;
+      if(!$blocks->count()) continue;
+      $matrixPage = $blocks->first()->getMatrixPage();
+      if($page->id != $matrixPage->id) {
+        // db($matrixPage, 'matrix page does not match! resetting field...');
+
+        // reset the field of the current page
+        $newData = $blocks->getNew();
+
+        // add cloned items
+        foreach($blocks as $block) {
+          /** @var Block $clone */
+          $clone = $this->wire->pages->clone($block);
+          $clone->of(false);
+          $fieldvalues = $block->getArray();
+          $clone->setArray($fieldvalues);
+          $clone->save();
+          $clone->setMatrixReference($page, $field);
+          $newData->add($clone);
+        }
+
+        $page->setAndSave($field->name, $newData);
+      }
+    }
+
+    // db("--- done ---");
   }
 
   /**
@@ -432,6 +460,18 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       'parent' => 1,
       'template' => self::tpl_datapage,
     ]);
+  }
+
+  /**
+   * Return a WireArray containing all matrix fields of given page
+   * @return WireArray
+   */
+  public function getMatrixFields(Page $page) {
+    $fields = $this->wire(new WireArray());
+    foreach($page->fields as $field) {
+      if($field->type instanceof FieldtypeRockMatrix) $fields->add($field);
+    }
+    return $fields;
   }
 
   /**
@@ -686,6 +726,33 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
+   * Render links to matrix pages of current block
+   * Can be multiple pages for nested blocks
+   * @return string
+   */
+  protected function renderMatrixLinks($page, $level = 0) {
+    if(!$page instanceof Block) return;
+    $mp = $page->getMatrixPage();
+
+    $out = '';
+    if(!$level) $out = "<table class='uk-table uk-table-striped uk-table-small'>";
+    $out .= "<tr>";
+    $out .= "<td class=uk-width-auto><a href={$mp->editUrl}><i class='fa fa-edit'></i></a></td>";
+    $out .= "<td class=uk-width-auto>#$mp</td>";
+    $out .= "<td class=uk-width-auto>".$page->getMatrixField()->name."</td>";
+    $out .= "<td class=uk-width-expand>";
+      $out .= $mp->viewable() ? "<a href={$mp->url}>" : '';
+      $out .= $mp->title ?: $mp->url;
+      $out .= $mp->viewable() ? "</a>" : '';
+    $out .= "</td>";
+    $out .= "</tr>";
+    $out .= $this->renderMatrixLinks($mp, $level+1);
+    if(!$level) $out .= "</table>";
+
+    return $out;
+  }
+
+  /**
    * Get RockMatrix Process Url
    * Usage: $this->rmxUrl("/add?block=1&field=2");
    * @return string
@@ -758,7 +825,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     foreach($block->getParentsToSave() as $p) {
       if(!$p->id) continue;
       if($this->_saved->has($p)) continue;
+      $p->rockmatrixTriggerSave = true;
       $p->save();
+      // $this->log("triggerMatrixPageSave #$p");
       $this->_saved->add($p);
     }
   }

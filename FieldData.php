@@ -100,7 +100,7 @@ class FieldData extends PageArray {
 
       // save a reference to the page and the field where this page lives
       // this is necessary for deleting unused pages from time to time
-      $b->meta('RockMatrix', $this->page->id."-".$this->field->id);
+      $b->setMatrixReference($this->page, $this->field);
 
       return $b;
     }
@@ -226,7 +226,9 @@ class FieldData extends PageArray {
     $rf = $this->wire->modules->get('RockFrontend');
     $rf->hasAlfred = true; // adds a fake <edit> tag on page::render
     $href = $this->master()->rmxUrl("/add-new/?page={$this->page}&field=".$this->field);
-    return $rf->iconLink("plus", $href);
+    return $rf->iconLink("plus", $href, [
+      'title' => $this->_('Add new content'),
+    ]);
   }
 
   /**

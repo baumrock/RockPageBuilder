@@ -63,17 +63,19 @@ class Block extends \ProcessWire\Page {
     // this is to support the concept of "widgets" where widgets render global blocks.
     // when trashing such a block we want to trash the reference widget and not the global block itself!
     $block = $this;
+    $data = $block->getMatrixData();
     $widget = $block->_widget ?: $block;
-    if($opt->duplicate AND $block->editable()) {
+    if($opt->clone AND $block->editable()) {
       $icons[] = (object)[
         'icon' => 'clone',
         'label' => $block->title,
-        'tooltip' => "Duplicate Block #{$widget->id}",
+        'tooltip' => "Clone Block #{$widget->id}",
         'href' => $widget->rmxUrl("/clone/?block=$widget"),
         'confirm' => $this->_('Do you really want to clone this element?'),
       ];
     }
-    if($opt->move) {
+    // show move icon only when more than 1 block
+    if($opt->move AND $data->count()>1) {
       $icons[] = (object)[
         'icon' => 'move',
         'label' => $block->title,
@@ -141,6 +143,21 @@ class Block extends \ProcessWire\Page {
    * @return void
    */
   public function ___buildFormMatrix($fs) {}
+
+  /**
+   * Clone this block
+   *
+   * Will add the block to the same field right after the cloned item
+   *
+   * @return Block
+   */
+  public function clone() {
+    $block = $this;
+    $fielddata = $block->getMatrixData();
+    $clone = $this->wire->pages->clone($block); /** @var Block $clone */
+    $fielddata->insertAfter($clone, $block);
+    $fielddata->save();
+  }
 
   /**
    * Get path of block file

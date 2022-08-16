@@ -211,7 +211,13 @@ class FieldData extends PageArray {
       $out .= $block->render();
     }
     if(!$out AND $renderEmpty) return $this->renderEmpty();
-    return $out;
+
+    $editInfo = '';
+    if($this->page->editable()) {
+      $editInfo = "data-page='{$this->page}' data-field='{$this->field}'";
+    }
+
+    return "<div class='rmx-sortable'$editInfo>$out</div>";
   }
 
   /**

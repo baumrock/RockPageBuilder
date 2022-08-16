@@ -41,7 +41,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.4.0',
+      'version' => '2.4.1',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -77,11 +77,19 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
     $this->addHookAfter("User::hasPagePermission", $this, "hookImageEdit");
     $this->addHookBefore("Inputfield::render", $this, "addMagicInputfieldProperties");
+    $this->addHookAfter("Modules::refresh", $this, "removeUnusedTemplates");
+    $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "widgetHint");
+
+    // add styles for backend
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "addStyles");
     $this->addHookAfter("Inputfield::render", $this, "addStyles");
     $this->addHookAfter("ProcessRockMatrix::browserTitle", $this, "addStyles");
-    $this->addHookAfter("Modules::refresh", $this, "removeUnusedTemplates");
-    $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "widgetHint");
+
+    // add JS for frontend
+    $this->addHookAfter("Page::render", function($event) {
+      if($event->object->template == 'admin') return;
+      $this->wire->rockfrontend->scripts()->add(__DIR__."/RockMatrixFrontend.js");
+    });
 
     // matrix page save trigger
     $this->_saved = new PageArray();

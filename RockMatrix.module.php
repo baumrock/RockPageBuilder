@@ -88,7 +88,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     // add JS for frontend
     $this->addHookAfter("Page::render", function($event) {
       if($event->object->template == 'admin') return;
-      $this->wire->rockfrontend->scripts()->add(__DIR__."/RockMatrixFrontend.js");
+      // Bug: sortable makes editable text blocks almost uneditable
+      // you can't click on a specific place in text and must use arrow keys
+      // $this->wire->rockfrontend->scripts()->add(__DIR__."/RockMatrixFrontend.js");
     });
 
     // matrix page save trigger

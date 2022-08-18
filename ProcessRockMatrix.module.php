@@ -1,6 +1,7 @@
 <?php namespace ProcessWire;
 
 use RockMatrix\Block;
+use RockMatrix\FieldData;
 
 class ProcessRockMatrix extends Process {
   public static function getModuleInfo() {
@@ -76,6 +77,7 @@ class ProcessRockMatrix extends Process {
 
     // create block if tpl is set
     if($tpl = $this->wire->input->get('tpl', 'templateName')) {
+      /** @var FieldData $matrix */
       $matrix = $page->getUnformatted($field->name);
       $new = $matrix->add($tpl);
       $matrix->save();
@@ -87,7 +89,7 @@ class ProcessRockMatrix extends Process {
   }
 
   /**
-   * Clone give block
+   * Clone given block
    */
   public function executeClone() {
     $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
@@ -96,6 +98,22 @@ class ProcessRockMatrix extends Process {
     if($block->isTrash()) throw new WireException("Cannot clone blocks that are trashed");
     try {
       $block->clone();
+      return $this->success();
+    } catch (\Throwable $th) {
+      return $this->json($th->getMessage());
+    }
+  }
+
+  /**
+   * Convert given block into a widget
+   */
+  public function executeConvertToWidget() {
+    $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
+    if(!$block instanceof Block) throw new WireException("Invalid Block");
+    if(!$block->editable()) throw new WireException("Block is not editable");
+    if($block->isTrash()) throw new WireException("Cannot clone blocks that are trashed");
+    try {
+      $block->toWidget();
       return $this->success();
     } catch (\Throwable $th) {
       return $this->json($th->getMessage());

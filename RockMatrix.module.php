@@ -41,7 +41,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.4.2',
+      'version' => '2.5.0',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -111,6 +111,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     require_once __DIR__."/BlockSettingsArray.php";
     $this->blockSettings = new BlockSettingsArray();
 
+    // do several health checks
+    $this->checkHealth();
+
     // TODO: check if that causes errors on uninstalling other modules
     // the readme had a note that migrate is not triggered automatically due to
     // that reason.
@@ -119,14 +122,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       // that have the default priority of 1
       $rm->watch($this, 0.9);
     }
-  }
-
-  /**
-   * Clone default blocksettings ready to be used and modified in a matrix block
-   * @return BlockSettingsArray
-   */
-  public function ___cloneBlockSettings(RockFieldsField $field) {
-    return clone $this->blockSettings;
   }
 
   public function ready() {
@@ -298,6 +293,23 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   }
 
   /**
+   * Several health checks
+   */
+  public function checkHealth() {
+    // if rockfrontend is installed check that the version matches
+    if($this->wire->modules->isInstalled('RockFrontend')) {
+      /** @var RockFrontend $rf */
+      $rf = $this->wire->modules->get('RockFrontend');
+      $info = $rf->getModuleInfo();
+      $v = $info['version'];
+      $version = "1.16.1";
+      if(version_compare($v, "1.16.1") < $version) {
+        $this->warning("Please update RockFrontend to version $version+");
+      }
+    }
+  }
+
+  /**
    * Check if we forgot to call parent::xxx
    * @return void
    */
@@ -309,6 +321,14 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       $this->error("Block $name has a $method() method but does not call"
         ." parent::$method()");
     }
+  }
+
+  /**
+   * Clone default blocksettings ready to be used and modified in a matrix block
+   * @return BlockSettingsArray
+   */
+  public function ___cloneBlockSettings(RockFieldsField $field) {
+    return clone $this->blockSettings;
   }
 
   /**
@@ -837,6 +857,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       if(!$p->id) continue;
       if($this->_saved->has($p)) continue;
       $p->rockmatrixTriggerSave = true;
+      $p->of(false);
       $p->save();
       // $this->log("triggerMatrixPageSave #$p");
       $this->_saved->add($p);
@@ -848,8 +869,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    * @return Block
    */
   public function widget($selector, $returnBlock = true) {
-    $widgets = $this->wire->pages->get(1)->getFormatted(self::field_widgets);
-    foreach($widgets as $widget) {
+    foreach($this->widgets() as $widget) {
       if(is_string($selector) AND $widget->className == $selector) return $widget;
       elseif(is_int($selector) AND $widget->id == $selector) return $widget;
     }

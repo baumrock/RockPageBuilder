@@ -93,4 +93,12 @@ class Widget extends Block {
     return $block->render();
   }
 
+  /**
+   * Set reference to widget
+   * @return void
+   */
+  public function setReference($block) {
+    $this->set(self::field_block, $block);
+  }
+
 }

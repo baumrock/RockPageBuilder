@@ -11,12 +11,13 @@ use \ProcessWire\Inputfield;
 use \ProcessWire\InputfieldFile;
 use \ProcessWire\InputfieldWrapper;
 use \ProcessWire\InputfieldFieldset;
-use ProcessWire\InputfieldForm;
 use ProcessWire\PageArray;
 use ProcessWire\RockFields;
 use ProcessWire\RockFieldsField;
 use ProcessWire\Template;
+use ProcessWire\WireException;
 use ReflectionClass;
+use RMBlock\Widget;
 
 class Block extends \ProcessWire\Page {
 
@@ -56,6 +57,7 @@ class Block extends \ProcessWire\Page {
 
   /**
    * Add ALFRED icons (for RockFrontend)
+   * Note: Can not be hookable (reference does not work!)
    * @return void
    */
   public function addAlfredIcons(&$icons, $opt) {
@@ -85,6 +87,18 @@ class Block extends \ProcessWire\Page {
         'suffix' => 'data-buttons="button.ui-button[type=submit]" data-autoclose data-reload',
       ];
     }
+
+    // convert block into widget
+    if($opt->widget AND $block->canBeWidget()) {
+      $icons[] = (object)[
+        'icon' => 'widget',
+        'label' => $block->title,
+        'tooltip' => "Convert Block #{$block->id} into a Widget",
+        'href' => $block->rmxUrl("/convertToWidget/?block=$block"),
+        'confirm' => $this->_('Do you really want to convert this block into a widget?'),
+      ];
+    }
+
     if($opt->trash AND $block->trashable()) {
       $icons[] = (object)[
         'icon' => 'trash-2',
@@ -144,6 +158,10 @@ class Block extends \ProcessWire\Page {
    */
   public function ___buildFormMatrix($fs) {}
 
+  public function canBeWidget() {
+    return $this->isAllowed(RockMatrix::field_widgets, 1);
+  }
+
   /**
    * Clone this block
    *
@@ -157,6 +175,51 @@ class Block extends \ProcessWire\Page {
     $clone = $this->wire->pages->clone($block); /** @var Block $clone */
     $fielddata->insertAfter($clone, $block);
     $fielddata->save();
+  }
+
+  /**
+   * Convert this block into a widget
+   * @return Block
+   */
+  public function toWidget() {
+    $block = $this;
+    $fielddata = $block->getMatrixData();
+
+    // create new widget with reference to block
+    $tpl = (new Widget())->getTplName();
+    $widget = $fielddata->createBlock($tpl);
+    $widget->setReference($block);
+    $widget->save();
+    $fielddata->insertAfter($widget, $block)->save();
+
+    // move block to widgets
+    $block->move(1, RockMatrix::field_widgets);
+  }
+
+  /**
+   * Move this block to given page and field
+   * @return void
+   */
+  public function move($page, $field) {
+    $page = $this->wire->pages->get((string)$page);
+    $field = $this->wire->fields->get((string)$field);
+    if(!$this->isAllowed($field, $page)) {
+      throw new WireException("Block #$this is not allowed on page $page and field $field");
+    }
+    $new = $page->getFormatted($field->name);
+    if(!$new instanceof FieldData) {
+      throw new WireException("Requested field $field on page $page is not valid");
+    }
+
+    // remove from old field
+    $old = $this->getMatrixData();
+    $old->remove($this);
+    $old->save();
+
+    // add to new field
+    $new->add($this);
+    $new->save();
+    $this->setMatrixReference($page, $field);
   }
 
   /**
@@ -443,6 +506,8 @@ class Block extends \ProcessWire\Page {
    * @return bool
    */
   public function isAllowed($field, $page) {
+    $field = $this->wire->fields->get((string)$field);
+    $page = $this->wire->pages->get((string)$page);
     $allowed = $this->master()->getAllowedBlocks($field, $page);
     foreach($allowed as $b) {
       if($b->getInfo()->name === $this->getInfo()->name) return true;

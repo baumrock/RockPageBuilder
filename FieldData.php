@@ -48,7 +48,7 @@ class FieldData extends PageArray {
 
       // check if item is allowed!
       if(!$item->isAllowed($this->field, $this->page)) {
-        return $this->error("$item not allowed for field {$this->field}");
+        throw new WireException("$item not allowed for field {$this->field}");
       }
 
       // add the item to the array
@@ -85,7 +85,9 @@ class FieldData extends PageArray {
       // get block and check if it is allowed
       $block = $this->master()->getBlockByTpl($tpl);
       if(!$block) throw new WireException("Invalid tpl $tpl");
-      if(!$block->isAllowed($this->field, $this->page)) throw new WireException("$tpl not allowed");
+      if(!$block->isAllowed($this->field, $this->page)) {
+        throw new WireException("$tpl not allowed on page $this->page and field $this->field");
+      }
 
       // create new block
       $class = $block->getInfo()->name;
@@ -119,6 +121,9 @@ class FieldData extends PageArray {
      * @return self
      */
     public function save() {
+      // make sure output formatting is off
+      // setting $this->page->of(false) is not enough and throws an exception?!
+      $this->wire->pages->of(false);
       $this->page->setAndSave($this->field->name, $this);
       return $this;
     }

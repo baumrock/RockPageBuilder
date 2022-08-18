@@ -41,7 +41,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.5.0',
+      'version' => '2.5.1',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -299,11 +299,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     // if rockfrontend is installed check that the version matches
     if($this->wire->modules->isInstalled('RockFrontend')) {
       /** @var RockFrontend $rf */
-      $rf = $this->wire->modules->get('RockFrontend');
-      $info = $rf->getModuleInfo();
-      $v = $info['version'];
+      $v = $this->wire->modules->get('RockFrontend')->getModuleInfo()['version'];
       $version = "1.16.1";
-      if(version_compare($v, "1.16.1") < $version) {
+      if(version_compare($v, $version) < 0) {
         $this->warning("Please update RockFrontend to version $version+");
       }
     }

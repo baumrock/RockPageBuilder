@@ -65,8 +65,8 @@ class Block extends \ProcessWire\Page {
     // this is to support the concept of "widgets" where widgets render global blocks.
     // when trashing such a block we want to trash the reference widget and not the global block itself!
     $block = $this;
-    $data = $block->getMatrixData();
     $widget = $block->_widget ?: $block;
+    $data = $widget->getMatrixData();
     if($opt->clone AND $block->editable()) {
       $icons[] = (object)[
         'icon' => 'clone',

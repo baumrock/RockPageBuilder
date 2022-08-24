@@ -217,12 +217,17 @@ class FieldData extends PageArray {
     }
     if(!$out AND $renderEmpty) return $this->renderEmpty();
 
-    $editInfo = '';
-    if($this->page->editable()) {
-      $editInfo = "data-page='{$this->page}' data-field='{$this->field}'";
-    }
+    // if the addWrapper config settings is not set we return the clean markup
+    if(!$this->master()->addWrapper) return $out;
 
-    return "<div class='rmx-sortable'$editInfo>$out</div>";
+    // // create frontend editing wrapper markup
+    // // this feature is not working properly at the moment
+    // // the uikit sortable feature does not work on flex elements for example
+    // $editInfo = '';
+    // if($this->page->editable()) {
+    //   $editInfo = "data-page='{$this->page}' data-field='{$this->field}'";
+    // }
+    // return "<div class='rmx-sortable'$editInfo>$out</div>";
   }
 
   /**

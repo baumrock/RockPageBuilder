@@ -67,7 +67,11 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
     // merge in settings from config.php file
     if(is_array($this->wire->config->rockmatrix)) {
-      $this->data = array_merge($this->data, $this->wire->config->rockmatrix);
+      $this->data = array_merge(
+        ['createLess' => true], // defaults
+        $this->data, // current settings
+        $this->wire->config->rockmatrix // settings from config.php
+      );
     }
 
     $this->installProcessModule();
@@ -418,6 +422,15 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
           "{alfred}" => $alfred,
           "{latteNote}" => $latteNote,
         ], "$folder/$name.view.php");
+      }
+
+      // less file
+      if($this->createLess) {
+        $this->stub(
+          "Block.less",
+          ['{cls}' => "rmx-".strtolower($name)],
+          "$folder/$name.less"
+        );
       }
 
       die('success');

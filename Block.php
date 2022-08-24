@@ -1,6 +1,7 @@
 <?php namespace RockMatrix;
 
 use Latte\Engine;
+use Latte\Runtime\Html;
 use ProcessWire\FieldtypeRockMatrix;
 use ProcessWire\FieldtypeRockShare;
 use ProcessWire\Paths;
@@ -175,25 +176,6 @@ class Block extends \ProcessWire\Page {
     $clone = $this->wire->pages->clone($block); /** @var Block $clone */
     $fielddata->insertAfter($clone, $block);
     $fielddata->save();
-  }
-
-  /**
-   * Convert this block into a widget
-   * @return Block
-   */
-  public function toWidget() {
-    $block = $this;
-    $fielddata = $block->getMatrixData();
-
-    // create new widget with reference to block
-    $tpl = (new Widget())->getTplName();
-    $widget = $fielddata->createBlock($tpl);
-    $widget->setReference($block);
-    $widget->save();
-    $fielddata->insertAfter($widget, $block)->save();
-
-    // move block to widgets
-    $block->move(1, RockMatrix::field_widgets);
   }
 
   /**
@@ -483,6 +465,18 @@ class Block extends \ProcessWire\Page {
     ]);
 
     return $fs;
+  }
+
+  /**
+   * Return an Html object
+   * @return Html
+   */
+  public function html($str) {
+    try {
+      return new Html($str);
+    } catch (\Throwable $th) {
+      return $str;
+    }
   }
 
   /**
@@ -975,6 +969,25 @@ class Block extends \ProcessWire\Page {
    */
   public function translations() {
     return [];
+  }
+
+  /**
+   * Convert this block into a widget
+   * @return Block
+   */
+  public function toWidget() {
+    $block = $this;
+    $fielddata = $block->getMatrixData();
+
+    // create new widget with reference to block
+    $tpl = (new Widget())->getTplName();
+    $widget = $fielddata->createBlock($tpl);
+    $widget->setReference($block);
+    $widget->save();
+    $fielddata->insertAfter($widget, $block)->save();
+
+    // move block to widgets
+    $block->move(1, RockMatrix::field_widgets);
   }
 
   /**

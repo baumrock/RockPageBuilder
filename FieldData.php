@@ -213,7 +213,11 @@ class FieldData extends PageArray {
       if(!$prev OR $prev->getTpl() != $block->getTpl()) $typeIndex = 0;
       $block->typeIndex = $typeIndex++;
 
-      $out .= $block->render();
+      try {
+        $out .= $block->render();
+      } catch (\Throwable $th) {
+        $out .= $th->getMessage();
+      }
     }
     if(!$out AND $renderEmpty) return $this->renderEmpty();
 

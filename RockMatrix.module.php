@@ -47,7 +47,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
       'singular' => true,
       'icon' => 'cubes',
       'requires' => [
-        'RockMigrations>=0.4.1',
+        'RockMigrations>=1.0.0',
       ],
       'installs' => [
         'FieldtypeRockMatrix',
@@ -124,7 +124,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     if($rm = $this->rm()) {
       // a priority of 0.9 will make it migrate after all other watched files
       // that have the default priority of 1
-      $rm->watch($this, 0.9);
+      $rm->watch($this, 0.9, ['force'=>true]);
     }
   }
 
@@ -708,7 +708,8 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     foreach($this->blocks as $name=>$file) {
       $block = $this->getBlock($name);
       if(!$block) return;
-      $block->migrate();
+      if($rm->doMigrate($block)) $block->migrate();
+      else $rm->log("--- Skipping $name (no change)");
     }
 
     // data-page

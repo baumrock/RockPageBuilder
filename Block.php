@@ -176,6 +176,11 @@ class Block extends \ProcessWire\Page {
     $clone = $this->wire->pages->clone($block); /** @var Block $clone */
     $fielddata->insertAfter($clone, $block);
     $fielddata->save();
+
+    // some blocks populate default values on create
+    // this overwrites those values to the ones from the cloned block
+    $clone->setArray($block->getArray());
+    $clone->save();
   }
 
   /**

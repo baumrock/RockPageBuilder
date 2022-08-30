@@ -383,6 +383,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
    * @return void
    */
   public function createBlock() {
+    if(!$this->wire->user) return;
     if(!$this->wire->user->isSuperuser()) return;
     $this->wire->addHookAfter("/rmx-create-block/", function($event) {
       if(!$name = $this->wire->input->get('name','string')) return "invalid name";

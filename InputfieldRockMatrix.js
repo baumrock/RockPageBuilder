@@ -336,6 +336,13 @@ var RockMatrix = new RockMatrix();
     // prevent field toggle if data-toggle is not set (default)
     if(!$action.data('toggle')) e.preventDefault();
 
+    let target = $action.data('target');
+    if(href && target) {
+      e.preventDefault();
+      window.open(href, target);
+      return false;
+    }
+
     // console.log(href);
     if(href && href!='#') location.href = href;
     else RockMatrix.fire($action);

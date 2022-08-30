@@ -21,6 +21,22 @@ class {name} extends Block {
 
   /** ##### magic methods ##### */
 
+  // /**
+  //  * buildForm can be used to modify the GUI both for the matrix editor as well
+  //  * as when the block is edited in a new window
+  //  */
+  // public function buildForm($form) {
+  //   // here you can edit the block's inputfields at runtime
+  //   if($f = $form->get('title')) {
+  //     $f->label = 'Title Label Changed';
+  //     $f->notes = 'Title Note';
+  //   }
+  // }
+
+  // /**
+  //  * buildFormMatrix modifies the GUI only when rendered as a single block
+  //  * inside a regular page editor matrix field
+  //  */
   // public function buildFormMatrix($form) {
   //   // here you can edit the block's inputfields at runtime
   //   if($f = $form->get('title')) {

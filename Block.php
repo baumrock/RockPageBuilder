@@ -430,6 +430,12 @@ class Block extends \ProcessWire\Page {
     // prepare form (and add settings field)
     $this->prepareForm($fs);
 
+    // apply changes added to buildForm
+    // buildForm changes will also be applied when editing
+    // the block in a new window whereas buildFormMatrix
+    // will only be applied when editing in a matrix field
+    $this->buildForm($fs);
+
     // call buildFormMatrix (if implemented for the block)
     $this->buildFormMatrix($fs);
 
@@ -797,6 +803,14 @@ class Block extends \ProcessWire\Page {
    */
   public function renderActions() {
     $out = "<span class='rmx-actions'>";
+    if($this->wire->user->isSuperuser()) {
+      $out .= $this->renderAction('editnew', [
+        'label' => $this->_('edit in new window'),
+        'icon' => 'external-link',
+        'href' => $this->wire->pages->get(2)->url."page/edit/?id=$this",
+        'attrs' => ['target' => '_blank'],
+      ]);
+    }
     $out .= $this->renderAction('edit', [
       'label' => $this->_('edit'),
       'icon' => 'edit',

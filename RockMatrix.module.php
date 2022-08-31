@@ -28,6 +28,13 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   /** @var WireArray */
   public $blockSettings;
 
+  /**
+   * Flag that is set when a block is being cloned
+   * This makes it possible to attach create hooks only for new items
+   * and prevent them from overwriting/resetting cloned field values.
+   */
+  public $isClone = false;
+
   public $loaded = [];
 
   public $mtime = 0;
@@ -41,7 +48,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.5.8',
+      'version' => '2.5.9',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,

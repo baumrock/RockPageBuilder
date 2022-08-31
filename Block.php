@@ -173,7 +173,9 @@ class Block extends \ProcessWire\Page {
   public function clone() {
     $block = $this;
     $fielddata = $block->getMatrixData();
+    $this->matrix()->isClone = true;
     $clone = $this->wire->pages->clone($block); /** @var Block $clone */
+    $this->matrix()->isClone = false;
     $fielddata->insertAfter($clone, $block);
     $fielddata->save();
   }

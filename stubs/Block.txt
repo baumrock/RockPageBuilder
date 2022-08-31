@@ -46,6 +46,8 @@ class {name} extends Block {
   // }
 
   public function onCreate() {
+    // we dont execute resetting the title if the block is being cloned
+    if($this->matrix()->isClone) return;
     // set default field values when a new block is created
     $this->setInAllLanguages('title', '');
   }

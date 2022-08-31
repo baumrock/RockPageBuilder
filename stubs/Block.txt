@@ -56,6 +56,13 @@ class {name} extends Block {
 
   /** ##### backend ##### */
 
+  // /**
+  //  * Return GUI label of this block
+  //  */
+  // public function getLabel() {
+  //   return $this->title;
+  // }
+
   public function migrate() {
     parent::migrate();
     $rm = $this->rm();

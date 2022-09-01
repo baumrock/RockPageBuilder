@@ -82,6 +82,11 @@ class {name} extends Block {
     ]);
   }
 
+  /**
+   * Define settings for this block
+   * You can access settings in your view file like this:
+   * $block->settings('demo_setting', 'optional-default-value')
+   */
   // public function settingsTable(RockFieldsField $field) {
   //   /** @var BlockSettingsArray $settings */
   //   $settings = $this->matrix()->cloneBlockSettings($field);

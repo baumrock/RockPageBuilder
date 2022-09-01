@@ -62,12 +62,15 @@ class Block extends \ProcessWire\Page {
    * @return void
    */
   public function addAlfredIcons(&$icons, $opt) {
+    if($opt->noBlock) return;
+
     // if the _block context is set for this block we use it as block
     // this is to support the concept of "widgets" where widgets render global blocks.
     // when trashing such a block we want to trash the reference widget and not the global block itself!
     $block = $this;
     $widget = $block->_widget ?: $block;
     $data = $widget->getMatrixData();
+
     if($opt->clone AND $block->editable()) {
       $icons[] = (object)[
         'icon' => 'clone',
@@ -109,6 +112,7 @@ class Block extends \ProcessWire\Page {
         'confirm' => $this->_('Do you really want to delete this element?'),
       ];
     }
+
   }
 
   /**

@@ -805,10 +805,17 @@ class Block extends \ProcessWire\Page {
   public function renderActions() {
     $out = "<span class='rmx-actions'>";
     if($this->wire->user->isSuperuser()) {
+      $admin = $this->wire->pages->get(2)->url;
       $out .= $this->renderAction('editnew', [
         'label' => $this->_('edit in new window'),
         'icon' => 'external-link',
-        'href' => $this->wire->pages->get(2)->url."page/edit/?id=$this",
+        'href' => $admin."page/edit/?id=$this",
+        'attrs' => ['target' => '_blank'],
+      ]);
+      $out .= $this->renderAction('edittemplate', [
+        'label' => $this->_('change fields'),
+        'icon' => 'cubes',
+        'href' => $admin."setup/template/edit?id=".$this->getTpl()->id,
         'attrs' => ['target' => '_blank'],
       ]);
     }

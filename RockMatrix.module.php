@@ -21,6 +21,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
 
   const tpl_datapage = self::prefix."datapage";
 
+  const field_matrix = self::prefix."matrix";
   const field_widgets = self::prefix."widgets";
 
   public $blocks = [];
@@ -48,13 +49,13 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public static function getModuleInfo() {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.5.10',
+      'version' => '2.6.0',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
       'icon' => 'cubes',
       'requires' => [
-        'RockMigrations>=1.0.0',
+        'RockMigrations>=1.1.0',
       ],
       'installs' => [
         'FieldtypeRockMatrix',
@@ -90,6 +91,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     $this->addHookBefore("Inputfield::render", $this, "addMagicInputfieldProperties");
     $this->addHookAfter("Modules::refresh", $this, "removeUnusedTemplates");
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "widgetHint");
+    $this->addHookBefore("Modules::uninstall", $this, "beforeUninstall");
 
     // add styles for backend
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "addStyles");
@@ -266,6 +268,24 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     if($event->process == 'ProcessPageEdit' AND $event->process->getPage() instanceof Block) $this->addStylesheet();
     elseif($event->object instanceof InputfieldRockMatrix) $this->addStylesheet();
     elseif($event->object instanceof ProcessRockMatrix) $this->addStylesheet();
+  }
+
+  /**
+   * Remove fields before uninstall
+   */
+  public function beforeUninstall(HookEvent $event) {
+    $module = $event->arguments(0);
+    if($module != 'RockMatrix') return;
+    $rm = $this->rm();
+    $rm->deletePage("parent=2,name=rockmatrix");
+    foreach($this->wire->fields as $field) {
+      if(!$field->type instanceof FieldtypeRockMatrix) continue;
+      $rm->deleteField($field);
+    }
+    foreach($this->wire->templates as $template) {
+      if($template == self::tpl_datapage) $rm->deleteTemplate($template);
+      elseif($template instanceof Block) $rm->deleteTemplate($template);
+    }
   }
 
   /**
@@ -736,6 +756,15 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
     ]);
     $rm->createPage("RockMatrixBlocks", null, self::tpl_datapage, 1, ['hidden', 'locked']);
 
+    // add one matrix field
+    if(!$rm->getField(self::field_matrix, true)) {
+      $rm->createField(self::field_matrix, 'RockMatrix', [
+        'label' => 'Content-Elements',
+        'tags' => self::tags,
+        'icon' => 'cubes',
+      ]);
+    }
+
     // create widgets field
     if(!$rm->getField(self::field_widgets, true)) {
       $rm->createField(self::field_widgets, 'RockMatrix', [
@@ -977,25 +1006,6 @@ class RockMatrix extends WireData implements Module, ConfigurableModule {
   public function ___install() {
     $this->init();
     $this->migrate();
-  }
-
-  public function ___uninstall() {
-    $rm = $this->rm();
-
-    // remove all existing mx fields
-    foreach($this->wire->fields as $f) {
-      if($f->type instanceof FieldtypeRockMatrix) $rm->deleteField($f);
-    }
-
-    // uninstall the fieldtype
-    // this is a hack for preventing "module dependency failed" error
-    $rm->uninstallModule("FieldtypeRockMatrix");
-
-    $this->log("Uninstall Matrix Blocks");
-    foreach($this->blocks as $block) $block->uninstall();
-
-    // remove datapage (template+page)
-    $rm->deleteTemplate(self::tpl_datapage);
   }
 
   public function __debugInfo() {

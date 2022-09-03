@@ -14,7 +14,6 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
       'summary' => 'Your module description',
       'icon' => 'cubes',
       'requires' => ['RockMatrix'],
-      'installs' => [],
     ];
   }
 
@@ -76,4 +75,5 @@ class FieldtypeRockMatrix extends FieldtypeTextarea {
     }
 
   /** HELPER METHODS */
+
 }

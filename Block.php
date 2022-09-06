@@ -1063,8 +1063,11 @@ class Block extends \ProcessWire\Page {
     // we always create the related template
     $rm = $this->rm();
     $rm->log('Migrate '.$this->getInfo()->name);
-    $rm->createTemplate($this->getTplName());
-    $rm->setTemplateData($this, [
+    // use the template name, not $this!!
+    // this ensures that it works even where $this->template = null
+    $tpl = $this->getTplName();
+    $rm->createTemplate($tpl);
+    $rm->setTemplateData($tpl, [
       'icon' => $this->getInfo()->icon,
       'pageClass' => $this->getInfo()->name,
       'tags' => RockMatrix::tags,

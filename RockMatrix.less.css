@@ -141,6 +141,9 @@ li.rmx-item:not(.rmx-trash) > .InputfieldHeader .rmx-action-untrash {
 .rmx-buttons-container .rmx-buttons button.rmx-button {
   margin: 0 5px 5px 0;
 }
+.rmx-buttons-container .rmx-buttons.modal {
+  margin-top: 20px;
+}
 .rmx-create {
   margin: 10px 0;
 }

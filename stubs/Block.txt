@@ -66,11 +66,22 @@ class {name} extends Block {
   public function migrate() {
     parent::migrate();
     $rm = $this->rm();
+
+    // if you need to remove a field that you previously added you can do this:
+    // $rm->removeField('your_old_field', true);
+
     $rm->migrate([
       'fields' => [
+        // here you can create new fields if needed
+        // you can also create fields via the GUI
       ],
       'templates' => [
         $this->getTplName() => [
+          // here you set the fields of the block-template
+          // if you need to remove a field see the removeField() demo above
+          // alternatively you can use the "fields-" key to remove all fields
+          // that are not listed in the array. note that this will remove
+          // fields that were added via GUI!
           'fields' => [
             'title' => [
               'required' => false,

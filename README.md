@@ -181,6 +181,31 @@ $matrix->addHookBefore("cloneBlockSettings", function($event) {
 });
 ```
 
+If you want to hide a global setting on a specific block simply do this:
+
+```php
+// add this to your block's php file
+public function settingsTable(RockFieldsField $field) {
+  // get a clone of the global block settings
+  $settings = $this->matrix()->cloneBlockSettings();
+  // hide one of the global settings
+  $settings->remove('name=foo');
+  // add a custom setting to this block
+  $settings->add([
+    'name' => 'bar',
+    'label' => 'BAR-setting',
+    'value' => $field->input('bar', 'select', [...]),
+  ]);
+  // you can also add settings on top:
+  $settings->prepend([
+    'name' => 'baz',
+    'label' => 'BAZ-setting',
+    'value' => $field->input('baz', 'select', [...]),
+  ]);
+  return $settings;
+}
+```
+
 #### Block Settings Options
 
 You can set options for the settings wrapper field in the info() method of your block:

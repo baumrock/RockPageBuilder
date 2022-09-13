@@ -244,7 +244,7 @@ var RockMatrix = new RockMatrix();
   });
 
   // items sort oder changed
-  $(document).on('stop', '.rmx-items', function(e) {
+  $(document).on('stop sorted', '.rmx-items', function(e) {
     RockMatrix.changed(e);
   });
 

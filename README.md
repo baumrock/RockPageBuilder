@@ -29,9 +29,10 @@ Technical benefits (compared to other solutions and workarounds)
 * You will get cleaner code (OOP)
 * Since all blocks are ProcessWire Pages under the hood they are super easy to handle via API or via RockMigrations
 
-## Limitations
+## Limitations/issues
 
-Seems that showIf does not work with RockMatrix? MPN AnchorHeadline
+- create new block, then click X --> item is added but not visible --> closing modal should trigger page reload!
+- Seems that showIf does not work with RockMatrix? MPN AnchorHeadline
 
 ## RockMatrix vs. RepeaterMatrix
 

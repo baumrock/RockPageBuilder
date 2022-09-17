@@ -53,13 +53,13 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockMatrix',
-      'version' => '2.6.3',
+      'version' => '2.6.4',
       'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
       'icon' => 'cubes',
       'requires' => [
-        'RockMigrations>=1.2.1',
+        'RockMigrations>=1.6.1',
       ],
       'installs' => [
         'FieldtypeRockMatrix',
@@ -185,7 +185,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
 
       // add magic methods to this block
       // this adds defaults() and onCreate() etc
-      $this->rm()->addMagicMethods($block);
+      $this->rm()->magic()->addMagicMethods($block);
 
       $block->addSettingsField();
       $blocks[$name] = $block;

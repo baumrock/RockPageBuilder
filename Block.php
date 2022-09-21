@@ -1,4 +1,6 @@
-<?php namespace RockMatrix;
+<?php
+
+namespace RockMatrix;
 
 use Latte\Engine;
 use Latte\Runtime\Html;
@@ -20,7 +22,8 @@ use ProcessWire\WireException;
 use ReflectionClass;
 use RMBlock\Widget;
 
-class Block extends \ProcessWire\Page {
+class Block extends \ProcessWire\Page
+{
 
   const prefix = "rmblock_";
   const tags = "RockMatrix";
@@ -36,13 +39,15 @@ class Block extends \ProcessWire\Page {
   /** @var Engine */
   private $latte;
 
-  public function info() {
+  public function info()
+  {
     // this is for backwards compatibility
     // for blocks that use the old syntax for info() method
     return new WireData();
   }
 
-  public function __construct() {
+  public function __construct()
+  {
     try {
       $this->template = $this->getTpl();
     } catch (\Throwable $th) {
@@ -54,15 +59,18 @@ class Block extends \ProcessWire\Page {
    * This ensures that we have an init() method on every block
    * so that if extending blocks call parent::init() we'll not run into trouble
    */
-  public function init() {}
+  public function init()
+  {
+  }
 
   /**
    * Add ALFRED icons (for RockFrontend)
    * Note: Can not be hookable (reference does not work!)
    * @return void
    */
-  public function addAlfredIcons(&$icons, $opt) {
-    if($opt->noBlock) return;
+  public function addAlfredIcons(&$icons, $opt)
+  {
+    if ($opt->noBlock) return;
 
     // if the _block context is set for this block we use it as block
     // this is to support the concept of "widgets" where widgets render global blocks.
@@ -71,7 +79,7 @@ class Block extends \ProcessWire\Page {
     $widget = $block->_widget ?: $block;
     $data = $widget->getMatrixData();
 
-    if($opt->clone AND $block->editable()) {
+    if ($opt->clone and $block->editable()) {
       $icons[] = (object)[
         'icon' => 'clone',
         'label' => $block->title,
@@ -81,19 +89,19 @@ class Block extends \ProcessWire\Page {
       ];
     }
     // show move icon only when more than 1 block
-    if($opt->move AND $data->count()>1) {
+    if ($opt->move and $data->count() > 1) {
       $icons[] = (object)[
         'icon' => 'move',
         'label' => $block->title,
         'tooltip' => "Move Block #{$widget->id}",
         'class' => 'pw-modal',
-        'href' => $widget->getMatrixPage()->editUrl."&field=".$widget->getMatrixField()."&moveblock=$widget",
+        'href' => $widget->getMatrixPage()->editUrl . "&field=" . $widget->getMatrixField() . "&moveblock=$widget",
         'suffix' => 'data-buttons="button.ui-button[type=submit]" data-autoclose data-reload',
       ];
     }
 
     // convert block into widget
-    if($opt->widget AND $block->canBeWidget()) {
+    if ($opt->widget and $block->canBeWidget()) {
       $icons[] = (object)[
         'icon' => 'widget',
         'label' => $block->title,
@@ -103,7 +111,7 @@ class Block extends \ProcessWire\Page {
       ];
     }
 
-    if($opt->trash AND $block->trashable()) {
+    if ($opt->trash and $block->trashable()) {
       $icons[] = (object)[
         'icon' => 'trash-2',
         'label' => $block->title,
@@ -112,18 +120,18 @@ class Block extends \ProcessWire\Page {
         'confirm' => $this->_('Do you really want to delete this element?'),
       ];
     }
-
   }
 
   /**
    * Add rockfields settings field for this block
    */
-  public function addSettingsField() {
-    if(!$rf = $this->wire->modules->get('RockFields')) return;
+  public function addSettingsField()
+  {
+    if (!$rf = $this->wire->modules->get('RockFields')) return;
 
     // you can prevent showing the settings field
     // by defining "settings => false" in the info() of your block
-    if($this->getInfo()->settings === false) return;
+    if ($this->getInfo()->settings === false) return;
 
     // add field to rockfields
     $rf->add([
@@ -138,15 +146,16 @@ class Block extends \ProcessWire\Page {
     ]);
   }
 
-  public function addSettingsFieldToForm(InputfieldWrapper $fs) {
+  public function addSettingsFieldToForm(InputfieldWrapper $fs)
+  {
     /** @var RockFields $rf */
-    if(!$rf = $this->wire->rockfields) return;
-    if(!$f = $rf->getInputfield($this, $this->settingsName(), true)) return;
+    if (!$rf = $this->wire->rockfields) return;
+    if (!$f = $rf->getInputfield($this, $this->settingsName(), true)) return;
     $f->addClass('rmx-settings');
 
     // set settings field values from getInfo() of block
     $settings = $this->getInfo()->settings;
-    if(is_array($settings)) $f->setArray($settings);
+    if (is_array($settings)) $f->setArray($settings);
 
     $fs->add($f);
   }
@@ -155,15 +164,20 @@ class Block extends \ProcessWire\Page {
    * Build form to edit this block
    * @return void
    */
-  public function ___buildForm($fs) {}
+  public function ___buildForm($fs)
+  {
+  }
 
   /**
    * Build the form when displayed in a matrix field
    * @return void
    */
-  public function ___buildFormMatrix($fs) {}
+  public function ___buildFormMatrix($fs)
+  {
+  }
 
-  public function canBeWidget() {
+  public function canBeWidget()
+  {
     return $this->isAllowed(RockMatrix::field_widgets, 1);
   }
 
@@ -174,11 +188,13 @@ class Block extends \ProcessWire\Page {
    *
    * @return Block
    */
-  public function clone() {
+  public function clone()
+  {
     $block = $this;
     $fielddata = $block->getMatrixData();
     $this->matrix()->isClone = true;
-    $clone = $this->wire->pages->clone($block); /** @var Block $clone */
+    $clone = $this->wire->pages->clone($block);
+    /** @var Block $clone */
     $this->matrix()->isClone = false;
     $fielddata->insertAfter($clone, $block);
     $fielddata->save();
@@ -188,14 +204,15 @@ class Block extends \ProcessWire\Page {
    * Move this block to given page and field
    * @return void
    */
-  public function move($page, $field) {
+  public function move($page, $field)
+  {
     $page = $this->wire->pages->get((string)$page);
     $field = $this->wire->fields->get((string)$field);
-    if(!$this->isAllowed($field, $page)) {
+    if (!$this->isAllowed($field, $page)) {
       throw new WireException("Block #$this is not allowed on page $page and field $field");
     }
     $new = $page->getFormatted($field->name);
-    if(!$new instanceof FieldData) {
+    if (!$new instanceof FieldData) {
       throw new WireException("Requested field $field on page $page is not valid");
     }
 
@@ -214,7 +231,8 @@ class Block extends \ProcessWire\Page {
    * Get path of block file
    * @return string
    */
-  public function filePath() {
+  public function filePath()
+  {
     $reflector = new ReflectionClass($this);
     return Paths::normalizeSeparators($reflector->getFileName());
   }
@@ -222,7 +240,8 @@ class Block extends \ProcessWire\Page {
   /**
    * Get collapsed state of item
    */
-  public function getCollapsedState() {
+  public function getCollapsedState()
+  {
     return $this->wire->config->ajax
       ? Inputfield::collapsedNo
       : Inputfield::collapsedYes;
@@ -232,7 +251,8 @@ class Block extends \ProcessWire\Page {
    * Get icon for matrix item
    * @return string
    */
-  public function getIcon() {
+  public function getIcon()
+  {
     return $this->getInfo()->icon;
   }
 
@@ -240,9 +260,11 @@ class Block extends \ProcessWire\Page {
    * Get info WireData
    * @return WireData
    */
-  public function getInfo() {
-    if($this->info) return $this->info;
-    $info = $this->wire(new WireData()); /** @var WireData $info */
+  public function getInfo()
+  {
+    if ($this->info) return $this->info;
+    $info = $this->wire(new WireData());
+    /** @var WireData $info */
     $info->setArray([
       'title' => $this->className,
       // this is the full classname eg Foo\Bar\Baz
@@ -252,7 +274,7 @@ class Block extends \ProcessWire\Page {
       'sort' => 500,
     ]);
     $blockInfo = $this->info();
-    if($blockInfo instanceof WireData) $blockInfo = $blockInfo->getArray();
+    if ($blockInfo instanceof WireData) $blockInfo = $blockInfo->getArray();
     $info->setArray($blockInfo);
     return $info;
   }
@@ -261,7 +283,8 @@ class Block extends \ProcessWire\Page {
    * Get label for matrix item
    * @return string
    */
-  public function getLabel() {
+  public function getLabel()
+  {
     $label = $this->title ?: $this->getInfo()->title;
     return $this->wire->sanitizer->truncate($label, 50);
   }
@@ -270,13 +293,14 @@ class Block extends \ProcessWire\Page {
    * Get markup array for wrapper
    * @return array
    */
-  public function getMarkupArray($wrapper) {
+  public function getMarkupArray($wrapper)
+  {
     $markup = $wrapper->getMarkup();
 
     // actions
     $markup['item_label'] = str_replace(
       "{out}",
-      "{out}".$this->renderActions(),
+      "{out}" . $this->renderActions(),
       $markup['item_label']
     );
 
@@ -287,7 +311,8 @@ class Block extends \ProcessWire\Page {
    * Get the master block object that was used for initializing this block
    * @return Block
    */
-  public function getMasterBlock() {
+  public function getMasterBlock()
+  {
     return $this->master()->getBlockByTpl($this->getTpl());
   }
 
@@ -295,10 +320,11 @@ class Block extends \ProcessWire\Page {
    * Get the matrix data object of the field where this block lives on
    * @return FieldData
    */
-  public function getMatrixData() {
+  public function getMatrixData()
+  {
     $page = $this->getMatrixPage();
     $field = $this->getMatrixField();
-    if(!$page OR !$field) return false;
+    if (!$page or !$field) return false;
     return $page->get($field->name);
   }
 
@@ -306,9 +332,10 @@ class Block extends \ProcessWire\Page {
    * Return the field where this block lives on
    * @return Field
    */
-  public function getMatrixField() {
+  public function getMatrixField()
+  {
     $meta = explode("-", $this->meta('RockMatrix'));
-    if(!is_array($meta) OR count($meta)!==2) return false;
+    if (!is_array($meta) or count($meta) !== 2) return false;
     return $this->wire->fields->get($meta[1]);
   }
 
@@ -316,8 +343,9 @@ class Block extends \ProcessWire\Page {
    * Index starting from 1
    * @return integer
    */
-  public function getMatrixNum() {
-    return $this->getMatrixIndex()+1;
+  public function getMatrixNum()
+  {
+    return $this->getMatrixIndex() + 1;
   }
 
   /**
@@ -325,7 +353,8 @@ class Block extends \ProcessWire\Page {
    * Every block can only live on ONE single page!!
    * @return Page
    */
-  public function getMatrixPage() {
+  public function getMatrixPage()
+  {
     // the page is stored in metadata of the block
     // the metadata is pageid-fieldid
     $meta = explode("-", (string)$this->meta('RockMatrix'));
@@ -337,12 +366,13 @@ class Block extends \ProcessWire\Page {
    * @param bool $startAtOne
    * @return int|false
    */
-  public function getMatrixIndex($startAtOne = false) {
+  public function getMatrixIndex($startAtOne = false)
+  {
     $i = $startAtOne ? 1 : 0;
     $items = $this->getMatrixData();
-    if(!$items) return false;
-    foreach($items as $item) {
-      if($item->id === $this->id) return $i;
+    if (!$items) return false;
+    foreach ($items as $item) {
+      if ($item->id === $this->id) return $i;
       $i++;
     }
     return false;
@@ -352,7 +382,8 @@ class Block extends \ProcessWire\Page {
    * Get notes for matrix item
    * @return string
    */
-  public function getNotes() {
+  public function getNotes()
+  {
     return $this->getInfo()->description;
   }
 
@@ -360,7 +391,8 @@ class Block extends \ProcessWire\Page {
    * Get parent for this block
    * @return Page
    */
-  public function ___getParent($field, $page) {
+  public function ___getParent($field, $page)
+  {
     return $this->master()->getDatapage();
   }
 
@@ -369,10 +401,11 @@ class Block extends \ProcessWire\Page {
    * This is necessary to trigger ProCache reset of edited pages
    * @return PageArray
    */
-  public function getParentsToSave() {
+  public function getParentsToSave()
+  {
     $pages = new PageArray();
     $current = $this->getMatrixPage();
-    while($current instanceof Block) {
+    while ($current instanceof Block) {
       $pages->add($current);
       $current = $current->getMatrixPage();
     }
@@ -383,7 +416,8 @@ class Block extends \ProcessWire\Page {
   /**
    * Get the related pw template
    */
-  public function getTpl() {
+  public function getTpl()
+  {
     return $this->wire->templates->get($this->getTplName());
   }
 
@@ -391,7 +425,8 @@ class Block extends \ProcessWire\Page {
    * Convert the class name to a pw valid tpl name
    * @return string
    */
-  public function getTplName() {
+  public function getTplName()
+  {
     $class = $this->getInfo()->name;
     return $this->wire->sanitizer->pagename($class);
   }
@@ -400,10 +435,14 @@ class Block extends \ProcessWire\Page {
    * Get wrapper for editing this block
    * @return InputfieldWrapper
    */
-  public function getWrapper() {
-    $r = $this->wire->modules->get('InputfieldRepeater'); /** @var InputfieldRepeater $r */
-    $wrap = $this->wire(new InputfieldWrapper()); /** @var InputfieldWrapper $wrap */
-    $fs = $this->wire(new InputfieldFieldset()); /** @var InputfieldFieldset $fs */
+  public function getWrapper()
+  {
+    $r = $this->wire->modules->get('InputfieldRepeater');
+    /** @var InputfieldRepeater $r */
+    $wrap = $this->wire(new InputfieldWrapper());
+    /** @var InputfieldWrapper $wrap */
+    $fs = $this->wire(new InputfieldFieldset());
+    /** @var InputfieldFieldset $fs */
 
     $wrap->add($fs);
     $wrap->suffix = "_repeater$this";
@@ -419,11 +458,11 @@ class Block extends \ProcessWire\Page {
     $fs->notes = $this->getNotes();
     $fs->addClass('rmx-item');
     $fs->wrapAttr('data-page', $this->id);
-    if($this->wire->user->isSuperuser()) {
+    if ($this->wire->user->isSuperuser()) {
       $fs->wrapAttr('uk-tooltip', "{$this->className} #{$this->id}");
     }
     $fs->wrapAttr('data-tpl', $this->template->name);
-    if($col = $this->getInfo()->color) {
+    if ($col = $this->getInfo()->color) {
       $fs->wrapAttr('style', "border-left: 5px solid $col");
     }
     $fs->collapsed = $this->getCollapsedState();
@@ -441,26 +480,26 @@ class Block extends \ProcessWire\Page {
     $this->buildFormMatrix($fs);
 
     // add repeater suffix to all children
-    foreach($this->matrix()->getChildrenRecursively($fs) as $f) {
+    foreach ($this->matrix()->getChildrenRecursively($fs) as $f) {
       // add the suffix to the inputfields name
       // before we do that we make sure that it does not already
       // have a repeater suffix to avoid adding the suffix twice
       // this can happen on RockMeta fields (don't know why, quickfix)
       $name = preg_replace('/_repeater\d+$/', '', $f->name);
-      $f->name = $name.$wrap->suffix;
+      $f->name = $name . $wrap->suffix;
 
       // open wrapper if field has an error
-      if(count($f->getErrors())) $fs->collapsed = Inputfield::collapsedNo;
+      if (count($f->getErrors())) $fs->collapsed = Inputfield::collapsedNo;
 
       // non-editable blocks are locked for edits
-      if(!$this->editable()) {
+      if (!$this->editable()) {
         $f->collapsed = ($f->collapsed == Inputfield::collapsedNo)
           ? Inputfield::collapsedNoLocked
           : Inputfield::collapsedYesLocked;
       }
 
       // changes for file inputfields
-      if(!$f instanceof InputfieldFile) continue;
+      if (!$f instanceof InputfieldFile) continue;
       $f->wrapAttr('data-fnsx', $wrap->suffix);
       $itemType = $r->getRepeaterItemType($this);
       $itemTypeName = $r->getRepeaterItemTypeName($itemType);
@@ -483,7 +522,8 @@ class Block extends \ProcessWire\Page {
    * Return an Html object
    * @return Html
    */
-  public function html($str) {
+  public function html($str)
+  {
     try {
       return new Html($str);
     } catch (\Throwable $th) {
@@ -495,28 +535,31 @@ class Block extends \ProcessWire\Page {
    * Does this block have an even index?
    * @return bool
    */
-  public function indexEven() {
-    return $this->getMatrixIndex()%2===0;
+  public function indexEven()
+  {
+    return $this->getMatrixIndex() % 2 === 0;
   }
 
   /**
    * Does this block have an even index?
    * @return bool
    */
-  public function indexOdd() {
-    return $this->getMatrixIndex()%2!==0;
+  public function indexOdd()
+  {
+    return $this->getMatrixIndex() % 2 !== 0;
   }
 
   /**
    * Is this block allowed on given page and field?
    * @return bool
    */
-  public function isAllowed($field, $page) {
+  public function isAllowed($field, $page)
+  {
     $field = $this->wire->fields->get((string)$field);
     $page = $this->wire->pages->get((string)$page);
     $allowed = $this->master()->getAllowedBlocks($field, $page);
-    foreach($allowed as $b) {
-      if($b->getInfo()->name === $this->getInfo()->name) return true;
+    foreach ($allowed as $b) {
+      if ($b->getInfo()->name === $this->getInfo()->name) return true;
     }
     return false;
   }
@@ -526,7 +569,8 @@ class Block extends \ProcessWire\Page {
    * Returns FALSE if the method is inherited
    * See https://bit.ly/3IWuayR
    */
-  protected function isDefined($method) {
+  protected function isDefined($method)
+  {
     $class = get_class($this);
     return (method_exists($class, $method)) &&
       ($class === (new \ReflectionMethod($class, $method))->getDeclaringClass()->name);
@@ -536,7 +580,8 @@ class Block extends \ProcessWire\Page {
    * Is this block-NUMBER even (2, 4, 6)?
    * @return bool
    */
-  public function isEven() {
+  public function isEven()
+  {
     return $this->getMatrixNum() % 2 === 0;
   }
 
@@ -544,15 +589,17 @@ class Block extends \ProcessWire\Page {
    * Is this block-type-NUMBER even (2, 4, 6)?
    * @return bool
    */
-  public function isEvenType() {
-    return ($this->typeIndex()+1) % 2 === 0;
+  public function isEvenType()
+  {
+    return ($this->typeIndex() + 1) % 2 === 0;
   }
 
   /**
    * Is this item the first item?
    * @return bool
    */
-  public function isFirstMatrixItem() {
+  public function isFirstMatrixItem()
+  {
     return $this->getMatrixIndex() === 0;
   }
 
@@ -560,9 +607,10 @@ class Block extends \ProcessWire\Page {
    * Is this item the last item?
    * @return bool
    */
-  public function isLastMatrixItem() {
+  public function isLastMatrixItem()
+  {
     $data = $this->getMatrixData();
-    if(!$data) return true;
+    if (!$data) return true;
     return $this->getMatrixIndex(true) === $data->count();
   }
 
@@ -570,7 +618,8 @@ class Block extends \ProcessWire\Page {
    * Is this block-NUMBER odd (1, 3, 5)?
    * @return bool
    */
-  public function isOdd() {
+  public function isOdd()
+  {
     return $this->getMatrixNum() % 2 !== 0;
   }
 
@@ -578,15 +627,17 @@ class Block extends \ProcessWire\Page {
    * Is this block-type-NUMBER odd (1, 3, 5)?
    * @return bool
    */
-  public function isOddType() {
-    return ($this->typeIndex()+1) % 2 !== 0;
+  public function isOddType()
+  {
+    return ($this->typeIndex() + 1) % 2 !== 0;
   }
 
   /**
    * Is the parent page saved?
    * @return bool
    */
-  public function isSaved() {
+  public function isSaved()
+  {
     return !!$this->getMatrixIndex(true);
   }
 
@@ -594,7 +645,8 @@ class Block extends \ProcessWire\Page {
    * Is this block a RockMatrix widget stored in field rockmatrix_widgets?
    * @return bool
    */
-  public function isWidget() {
+  public function isWidget()
+  {
     return $this->getMatrixField()->name == RockMatrix::field_widgets;
   }
 
@@ -602,7 +654,8 @@ class Block extends \ProcessWire\Page {
    * Return master module
    * @return RockMatrix
    */
-  public function master() {
+  public function master()
+  {
     return $this->wire->modules->get('RockMatrix');
   }
 
@@ -610,7 +663,8 @@ class Block extends \ProcessWire\Page {
    * Return instance of RockMatrix
    * @return RockMatrix
    */
-  public function matrix() {
+  public function matrix()
+  {
     return $this->wire->modules->get('RockMatrix');
   }
 
@@ -618,11 +672,12 @@ class Block extends \ProcessWire\Page {
    * Get next matrix item
    * @return Page|false
    */
-  public function nextMatrixItem() {
+  public function nextMatrixItem()
+  {
     $match = false;
-    foreach($this->getMatrixData() as $item) {
-      if($match) return $item;
-      if($item->id === $this->id) $match = true;
+    foreach ($this->getMatrixData() as $item) {
+      if ($match) return $item;
+      if ($item->id === $this->id) $match = true;
     }
     return false;
   }
@@ -635,32 +690,31 @@ class Block extends \ProcessWire\Page {
    * be prone to errors.
    * @return void
    */
-  protected function prepareForm($fs) {
+  protected function prepareForm($fs)
+  {
     // the default is to add all fields of the page template
     $fields = $this->getInputfields();
-    if(!$fields) return $fs;
-    foreach($fields->children() as $f) {
+    if (!$fields) return $fs;
+    foreach ($fields->children() as $f) {
       $type = $f->hasField->type;
 
       // prevent recursion
-      if($type instanceof FieldtypeRockMatrix) {
-        if($this->wire->process->getPage()->id == $f->value->page->id) {
+      if ($type instanceof FieldtypeRockMatrix) {
+        if ($this->wire->process->getPage()->id == $f->value->page->id) {
           // we are editing the block in the page editor
           // we set the value to empty string to hide the item-edit-button
           $value = '';
-        }
-        elseif($f->value->page->isSaved()) {
+        } elseif ($f->value->page->isSaved()) {
           $id = $f->value->page->id;
-          $url = $this->wire->pages->get(2)->url."page/edit/?id=$id&field=".$f->name;
+          $url = $this->wire->pages->get(2)->url . "page/edit/?id=$id&field=" . $f->name;
           $label = $f->label;
           $value = "<a href='$url' class='pw-panel pw-panel-reload
           uk-button uk-button-default'>$label</a>";
-        }
-        else {
+        } else {
           $value = $this->_("Please save the page, then you can come back here and edit block items.");
         }
         $fields->add([
-          'name' => $f->name."_markup",
+          'name' => $f->name . "_markup",
           'type' => 'markup',
           'value' => $value,
         ]);
@@ -671,11 +725,11 @@ class Block extends \ProcessWire\Page {
       }
 
       // sharing of pages not possible inside matrix
-      if($type instanceof FieldtypeRockShare) $fields->remove($f);
+      if ($type instanceof FieldtypeRockShare) $fields->remove($f);
     }
 
-    foreach($fields as $field) {
-      if($fs->has($field->name)) continue;
+    foreach ($fields as $field) {
+      if ($fs->has($field->name)) continue;
       $fs->add($field);
     }
 
@@ -687,10 +741,11 @@ class Block extends \ProcessWire\Page {
    * Get previous matrix item
    * @return Page|false
    */
-  public function prevMatrixItem() {
+  public function prevMatrixItem()
+  {
     $prev = false;
-    foreach($this->getMatrixData() as $item) {
-      if($item->id === $this->id) return $prev;
+    foreach ($this->getMatrixData() as $item) {
+      if ($item->id === $this->id) return $prev;
       $prev = $item;
     }
     return false;
@@ -701,21 +756,23 @@ class Block extends \ProcessWire\Page {
    * This is handy for getting the path of the customstyles js on CKE fields
    * @return string
    */
-  public function relativePath() {
+  public function relativePath()
+  {
     return str_replace(
       $this->wire->config->paths->root,
       $this->wire->config->urls->root,
       dirname($this->filePath())
-    )."/";
+    ) . "/";
   }
 
   /**
    * Render this block
    * @return string
    */
-  public function render() {
-    foreach($this->viewFiles() as $file => $type) {
-      if(is_file($file)) return $this->renderFile($file, $type);
+  public function render()
+  {
+    foreach ($this->viewFiles() as $file => $type) {
+      if (is_file($file)) return $this->renderFile($file, $type);
     }
   }
 
@@ -731,7 +788,8 @@ class Block extends \ProcessWire\Page {
    *
    * @return string
    */
-  public function renderFile($file, $type = null) {
+  public function renderFile($file, $type = null)
+  {
     // make all api variables available in the template file
     $vars = array_merge(
       $this->wire('all')->getArray(),
@@ -740,32 +798,31 @@ class Block extends \ProcessWire\Page {
         'settings' => $this->settings(),
       ]
     );
-    if(!$type) $type = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-    if(!is_file($file)) $file = dirname($this->filePath())."/$file";
-    if($type == 'php') {
+    if (!$type) $type = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    if (!is_file($file)) $file = dirname($this->filePath()) . "/$file";
+    if ($type == 'php') {
       $opt = ['allowedPaths' => [dirname($file)]];
       return $this->wire->files->render($file, $vars, $opt);
-    }
-    elseif($type == 'latte') {
+    } elseif ($type == 'latte') {
       $latte = $this->latte;
-      if(!$latte) {
+      if (!$latte) {
         try {
           // load latte from RockFrontend
-          $vendor = $this->wire->config->paths->siteModules."RockFrontend/vendor/autoload.php";
-          if(is_file($vendor)) require_once $vendor;
+          $vendor = $this->wire->config->paths->siteModules . "RockFrontend/vendor/autoload.php";
+          if (is_file($vendor)) require_once $vendor;
           else {
             // load latte from PW root
-            $vendor = $this->wire->config->paths->root."vendor/autoload.php";
-            if(is_file($vendor)) require_once $vendor;
+            $vendor = $this->wire->config->paths->root . "vendor/autoload.php";
+            if (is_file($vendor)) require_once $vendor;
           }
 
           $latte = new Engine();
-          $latte->setTempDirectory($this->wire->config->paths->cache."Latte");
+          $latte->setTempDirectory($this->wire->config->paths->cache . "Latte");
           $this->latte = $latte;
         } catch (\Throwable $th) {
           $msg = "<br>Install Latte or delete the .latte view file and use
             the plain php view file instead.";
-          return "<strong>".$th->getMessage()."</strong>$msg";
+          return "<strong>" . $th->getMessage() . "</strong>$msg";
         }
       }
       return $latte->renderToString($file, $vars);
@@ -776,8 +833,10 @@ class Block extends \ProcessWire\Page {
    * Render a single block action
    * @return string
    */
-  public function renderAction($action, $data) {
-    $opt = $this->wire(new WireData()); /** @var WireData $opt */
+  public function renderAction($action, $data)
+  {
+    $opt = $this->wire(new WireData());
+    /** @var WireData $opt */
     $opt->setArray([
       'href' => '#',
       'attrs' => [],
@@ -787,7 +846,7 @@ class Block extends \ProcessWire\Page {
 
     // prepare custom attributes
     $attrs = '';
-    foreach($opt->attrs as $k=>$v) $attrs .= " data-$k='$v'";
+    foreach ($opt->attrs as $k => $v) $attrs .= " data-$k='$v'";
 
     return
       "<a href='{$opt->href}'
@@ -796,26 +855,27 @@ class Block extends \ProcessWire\Page {
         data-action='$action'
         $attrs>
         <i class='fa fa-$icon'></i>"
-      ."</a>";
+      . "</a>";
   }
 
   /**
    * Render actions for this item
    */
-  public function renderActions() {
+  public function renderActions()
+  {
     $out = "<span class='rmx-actions'>";
-    if($this->wire->user->isSuperuser()) {
+    if ($this->wire->user->isSuperuser()) {
       $admin = $this->wire->pages->get(2)->url;
       $out .= $this->renderAction('editnew', [
         'label' => $this->_('edit in new window'),
         'icon' => 'external-link',
-        'href' => $admin."page/edit/?id=$this",
+        'href' => $admin . "page/edit/?id=$this",
         'attrs' => ['target' => '_blank'],
       ]);
       $out .= $this->renderAction('edittemplate', [
         'label' => $this->_('change fields'),
         'icon' => 'cubes',
-        'href' => $admin."setup/template/edit?id=".$this->getTpl()->id,
+        'href' => $admin . "setup/template/edit?id=" . $this->getTpl()->id,
         'attrs' => ['target' => '_blank'],
       ]);
     }
@@ -833,7 +893,7 @@ class Block extends \ProcessWire\Page {
       'label' => $this->_('Undo deletion'),
       'icon' => 'undo',
     ]);
-    if($this->wire->user->isSuperuser()) {
+    if ($this->wire->user->isSuperuser()) {
       $path = $this->rm()->filePath($this, true);
       $out .= $this->renderAction('code', [
         'label' => $path,
@@ -848,23 +908,72 @@ class Block extends \ProcessWire\Page {
   /**
    * Render Button when in modal view
    */
-  public function renderButton($page, $field) {
+  public function renderButton($page, $field)
+  {
     $block = $this->wire->input->get('block', 'int');
     $above = $this->wire->input->get('above', 'int');
     $tpl = $this->getTplName();
 
-    if($block) $href = $this->rmxUrl("/add/?block=$block&above=$above&tpl=$tpl&modal=1");
+    if ($block) $href = $this->rmxUrl("/add/?block=$block&above=$above&tpl=$tpl&modal=1");
     else $href = $this->rmxUrl("/add-new/?page=$page&field=$field&tpl=$tpl&modal=1");
 
     $ajax = "./?id=$page&field=$field&tpl=$tpl";
-    return "<a href='$href' data-href='$ajax' class='rmx-button'>{$this->svg()}</a>";
+    return "<a href='$href' data-href='$ajax' class='rmx-button'>{$this->renderButtonImage()}</a>";
+  }
+
+  /**
+   * Get SVG image tag for this block
+   * @return string
+   */
+  public function renderButtonImage()
+  {
+    if (!$master = $this->getMasterBlock()) return;
+    $info = $this->getInfo();
+    $file = $master->file;
+    $base = substr($file, 0, -4); // without .php ending
+    $icon = '';
+    $extensions = ['png', 'svg']; // svg has to be last!
+    $url = false;
+    foreach ($extensions as $ext) {
+      $imageFile = "$base.$ext";
+      if (!is_file($imageFile)) continue;
+      $url = str_replace(
+        $this->wire->config->paths->root,
+        $this->wire->config->urls->root,
+        $imageFile
+      );
+    }
+
+    if (!$url) {
+      // no custom button found
+      // try to find one in /RockMatrix/buttons/...
+      $path = $this->wire->config->paths($this->master()) . "buttons/";
+      $imageFile = $path . $this->className . ".svg";
+      if (!is_file($imageFile)) {
+        $imageFile = $path . "_blank.svg";
+        $icon = "<i class='fa fa-{$info->icon}'></i>";
+      }
+      $url = str_replace(
+        $this->wire->config->paths->root,
+        $this->wire->config->urls->root,
+        $imageFile
+      );
+    }
+
+    $tooltip = $info->description
+      ? "$info->title: $info->description"
+      : $info->title;
+    $tooltip = "title='$tooltip' uk-tooltip";
+    $style = $info->color ? "style='border-left: 5px solid {$info->color}'" : '';
+    return "<img $tooltip $style class=rmx-addblock-svg src=$url>$icon";
   }
 
   /**
    * Get RockMigrations instance
    * @return RockMigrations
    */
-  public function rm() {
+  public function rm()
+  {
     return $this->wire->modules->get('RockMigrations');
   }
 
@@ -875,7 +984,8 @@ class Block extends \ProcessWire\Page {
    * $this->rmxUrl("/add?field=foo_field");
    * @return string
    */
-  public function rmxUrl($url) {
+  public function rmxUrl($url)
+  {
     return $this->master()->rmxUrl($url);
   }
 
@@ -883,7 +993,8 @@ class Block extends \ProcessWire\Page {
    * Set reference to file
    * @return void
    */
-  public function setFile($file) {
+  public function setFile($file)
+  {
     $this->file = Paths::normalizeSeparators($file);
   }
 
@@ -891,17 +1002,19 @@ class Block extends \ProcessWire\Page {
    * Set field value in all languages
    * @return void
    */
-  public function setInAllLanguages($field, $value) {
+  public function setInAllLanguages($field, $value)
+  {
     $this->set($field, $value);
-    if(!$languages = $this->wire->languages) return;
-    foreach($languages as $lang) $this->setLanguageValue($lang, $field, $value);
+    if (!$languages = $this->wire->languages) return;
+    foreach ($languages as $lang) $this->setLanguageValue($lang, $field, $value);
   }
 
   /**
    * Save reference to page and field of this matrix block
    * @return void
    */
-  public function setMatrixReference($page, $field) {
+  public function setMatrixReference($page, $field)
+  {
     $this->meta('RockMatrix', "$page-$field");
   }
 
@@ -916,76 +1029,47 @@ class Block extends \ProcessWire\Page {
    *
    * @return WireData
    */
-  public function settings($prop = null, $default = null) {
+  public function settings($prop = null, $default = null)
+  {
     try {
       $settings = $this->rockfieldValue($this->settingsName());
     } catch (\Throwable $th) {
       return new WireData();
     }
-    if($prop) {
+    if ($prop) {
       // try to get settings property
       $val = $settings->get($prop);
       return $val ?: $default;
     }
     return $settings;
   }
-  public function settingsName() {
-    return $this->getTplName()."-settingsfield";
+  public function settingsName()
+  {
+    return $this->getTplName() . "-settingsfield";
   }
-  public function settingsInput(RockFieldsField $field) {}
+  public function settingsInput(RockFieldsField $field)
+  {
+  }
 
   /**
    * The sleep method defines which values will be stored in the DB
    */
-  public function settingsSleep(RockFieldsField $field) {
+  public function settingsSleep(RockFieldsField $field)
+  {
     // In RockMatrix we often use the "settingsTable" method as shortcut.
     // This makes it possible to define settings with one single method
     // instead of a pair of settingsInput and settingsSleep
-    if(method_exists($this, 'settingsTable')) {
+    if (method_exists($this, 'settingsTable')) {
       $arr = [];
       $settings = $this->settingsTable($field);
-      if($settings instanceof BlockSettingsArray) {
+      if ($settings instanceof BlockSettingsArray) {
         $settings = $settings->getPlainArray();
       }
-      foreach($settings as $label => $f) {
+      foreach ($settings as $label => $f) {
         $arr[] = $field->getInputArray($f->sleepName);
       }
       return $arr;
     }
-  }
-
-  /**
-   * Get SVG image tag for this block
-   * @return string
-   */
-  public function svg() {
-    if(!$master = $this->getMasterBlock()) return;
-    $info = $this->getInfo();
-    $file = $master->file;
-    $base = substr($file, 0, -4); // without .php ending
-    $svg = "$base.svg";
-    $icon = '';
-    if(!is_file($svg)) {
-      // no custom svg button found
-      // try to find one in /RockMatrix/buttons/...
-      $path = $this->wire->config->paths($this->master())."buttons/";
-      $svg = $path.$this->className.".svg";
-      if(!is_file($svg)) {
-        $svg = $path."_blank.svg";
-        $icon = "<i class='fa fa-{$info->icon}'></i>";
-      }
-    }
-    $url = str_replace(
-      $this->wire->config->paths->root,
-      $this->wire->config->urls->root,
-      $svg
-    );
-    $tooltip = $info->description
-      ? "$info->title: $info->description"
-      : $info->title;
-    $tooltip = "title='$tooltip' uk-tooltip";
-    $style = $info->color ? "style='border-left: 5px solid {$info->color}'" : '';
-    return "<img $tooltip $style class=rmx-addblock-svg src=$url>$icon";
   }
 
   /**
@@ -994,7 +1078,8 @@ class Block extends \ProcessWire\Page {
    * See RockMatrix readme about translating blocks.
    * @return array
    */
-  public function translations() {
+  public function translations()
+  {
     return [];
   }
 
@@ -1002,7 +1087,8 @@ class Block extends \ProcessWire\Page {
    * Convert this block into a widget
    * @return Block
    */
-  public function toWidget() {
+  public function toWidget()
+  {
     $block = $this;
     $fielddata = $block->getMatrixData();
 
@@ -1021,7 +1107,8 @@ class Block extends \ProcessWire\Page {
    * Truncate text to given length
    * @return string
    */
-  public function truncate($str, $maxLength = 300, $options = []) {
+  public function truncate($str, $maxLength = 300, $options = [])
+  {
     return $this->wire->sanitizer->truncate($str, $maxLength, $options);
   }
 
@@ -1030,11 +1117,12 @@ class Block extends \ProcessWire\Page {
    * A(0) / B(0) / B(1) / B(2) / A(0) / A(1) / B(0)
    * @return int
    */
-  public function typeIndex() {
+  public function typeIndex()
+  {
     $i = 0;
     $current = $this;
-    while($prev = $current->prevMatrixItem()) {
-      if($prev->template->name !== $current->template->name) return $i;
+    while ($prev = $current->prevMatrixItem()) {
+      if ($prev->template->name !== $current->template->name) return $i;
       $i++;
       $current = $prev;
     }
@@ -1045,8 +1133,9 @@ class Block extends \ProcessWire\Page {
    * Get all possible view files for current block
    * @return array
    */
-  public function viewFiles() {
-    if(!$this->getMasterBlock()) return [];
+  public function viewFiles()
+  {
+    if (!$this->getMasterBlock()) return [];
     $file = $this->getMasterBlock()->file;
     $base = substr($file, 0, -4); // without .php ending
     return [
@@ -1059,10 +1148,11 @@ class Block extends \ProcessWire\Page {
    * Block Migrations
    * Not hookable --> call parent::migrate() in derived classes
    */
-  public function migrate() {
+  public function migrate()
+  {
     // we always create the related template
     $rm = $this->rm();
-    $rm->log('Migrate '.$this->getInfo()->name);
+    $rm->log('Migrate ' . $this->getInfo()->name);
     // use the template name, not $this!!
     // this ensures that it works even where $this->template = null
     $tpl = $this->getTplName();
@@ -1082,7 +1172,8 @@ class Block extends \ProcessWire\Page {
    * Uninstall this block
    * Not hookable --> call parent::uninstall() in derived classes
    */
-  public function uninstall() {
+  public function uninstall()
+  {
     $this->log('Uninstalling ' . $this->getInfo()->name);
     $this->rm()->deleteTemplate($this->getTplName());
   }
@@ -1091,10 +1182,11 @@ class Block extends \ProcessWire\Page {
    * Translate given string
    * @return string
    */
-  public function x($key) {
+  public function x($key)
+  {
     // get translations of the block
     $translations = $this->translations();
-    if(is_array($translations) AND array_key_exists($key, $translations)) {
+    if (is_array($translations) and array_key_exists($key, $translations)) {
       return $translations[$key];
     }
     return $key;

@@ -104,6 +104,7 @@ class {name} extends Block {
   //   $settings->add([
   //     'name' => 'demo_setting',
   //     'label' => 'Your Setting Label',
+  //     'label123' => 'Label in other language',
   //     'value' => $field->input('demo_setting', 'select', [
   //       '*s' => 'small',
   //       'm' => 'medium',

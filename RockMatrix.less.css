@@ -22,13 +22,13 @@ body.modal form.rmx-form .WireTabs {
 }
 @keyframes pulsate {
   0% {
-    opacity: 1.0;
+    opacity: 1;
   }
   50% {
     opacity: 0.2;
   }
   100% {
-    opacity: 1.0;
+    opacity: 1;
   }
 }
 .rmx-button:hover {
@@ -122,7 +122,7 @@ li.rmx-item:not(.rmx-trash) > .InputfieldHeader .rmx-action-untrash {
 .rmx-settings ul {
   padding-left: 0;
 }
-.rmx-settings input[type=radio] {
+.rmx-settings input[type="radio"] {
   margin-right: 5px;
 }
 .rmx-settings table td {
@@ -140,9 +140,6 @@ li.rmx-item:not(.rmx-trash) > .InputfieldHeader .rmx-action-untrash {
 }
 .rmx-buttons-container .rmx-buttons button.rmx-button {
   margin: 0 5px 5px 0;
-}
-.rmx-buttons-container .rmx-buttons.modal {
-  margin-top: 20px;
 }
 .rmx-create {
   margin: 10px 0;

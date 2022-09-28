@@ -11,7 +11,9 @@
 // hide tabs for rockmatrix block editor modal
 body.modal form.rmx-form {
   margin: 0;
-  .WireTabs { display: none; }
+  .WireTabs {
+    display: none;
+  }
 }
 
 // add block button svg
@@ -28,9 +30,15 @@ body.modal form.rmx-form {
     opacity: 1;
   }
   @keyframes pulsate {
-    0% { opacity: 1.0; }
-    50% { opacity: 0.2; }
-    100% { opacity: 1.0; }
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.2;
+    }
+    100% {
+      opacity: 1;
+    }
   }
   &:hover {
     // tooltip background color
@@ -38,7 +46,9 @@ body.modal form.rmx-form {
   }
   img {
     height: 75px;
-    @media(min-width: 960px) { height: 150px; }
+    @media (min-width: 960px) {
+      height: 150px;
+    }
   }
   .fa {
     position: absolute;
@@ -50,7 +60,7 @@ body.modal form.rmx-form {
     pointer-events: none;
 
     top: 27px;
-    @media(min-width: 960px) {
+    @media (min-width: 960px) {
       font-size: 45px;
       top: 50px;
     }
@@ -88,7 +98,9 @@ li.rmx-item {
       > .rmx-action > i {
         padding-right: 10px;
       }
-      a { text-decoration: none; }
+      a {
+        text-decoration: none;
+      }
     }
   }
   > .InputfieldContent {
@@ -113,31 +125,42 @@ li.rmx-item {
     }
   }
 
-
   // trashed item
   &.rmx-trash {
     outline: 1px solid darken(@color-trash, 20%);
-    > .InputfieldContent, > .InputfieldHeader {
+    > .InputfieldContent,
+    > .InputfieldHeader {
       background: @color-trash;
-      > p.notes { background-color: @color-trash; }
+      > p.notes {
+        background-color: @color-trash;
+      }
     }
 
     // dont show trash icon
-    > .InputfieldHeader .rmx-action-trash { display: none; }
+    > .InputfieldHeader .rmx-action-trash {
+      display: none;
+    }
   }
   &:not(.rmx-trash) {
     // dont show restore icon
-    > .InputfieldHeader .rmx-action-untrash { display: none; }
+    > .InputfieldHeader .rmx-action-untrash {
+      display: none;
+    }
   }
-
 }
 
 // settingsfield
 .rmx-settings {
-  ul { padding-left: 0; }
+  ul {
+    padding-left: 0;
+  }
   // radio buttons (eg in settings field)
-  input[type=radio] { margin-right: 5px; }
-  table td { padding: 4px 10px; }
+  input[type="radio"] {
+    margin-right: 5px;
+  }
+  table td {
+    padding: 4px 10px;
+  }
 }
 
 // add spacing after last matrix item
@@ -162,17 +185,15 @@ li.rmx-item {
     button.rmx-button {
       margin: 0 5px 5px 0;
     }
-    &.modal {
-      // add some space for tooltips
-      margin-top: 20px;
-    }
   }
 }
 
 // create new block
 .rmx-create {
   margin: 10px 0;
-  input { width: 200px; }
+  input {
+    width: 200px;
+  }
 }
 
 // widget alert

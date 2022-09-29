@@ -527,6 +527,7 @@ class Block extends \ProcessWire\Page
     try {
       return new Html($str);
     } catch (\Throwable $th) {
+      if ($this->wire->user->isSuperuser()) return $th->getMessage();
       return $str;
     }
   }

@@ -187,7 +187,7 @@ class InputfieldRockMatrix extends InputfieldRepeater
       }
       $callback = $block->getInfo()->show;
       if (is_callable($callback)) {
-        $show = $callback($page);
+        $show = $callback($page, $this);
         if (!$show) $blocks->remove($block);
       }
     }

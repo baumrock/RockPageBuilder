@@ -525,6 +525,8 @@ class Block extends \ProcessWire\Page
   public function html($str)
   {
     try {
+      $autoload = $this->wire->config->paths->siteModules . "RockFrontend/vendor/autoload.php";
+      if (is_file($autoload)) require_once $autoload;
       return new Html($str);
     } catch (\Throwable $th) {
       if ($this->wire->user->isSuperuser()) return $th->getMessage();

@@ -1,35 +1,41 @@
-<?php namespace RMBlock;
+<?php
+
+namespace RockPageBuilderBlock;
 
 use ProcessWire\FieldtypePage;
 use ProcessWire\Inputfield;
-use ProcessWire\RockMatrix;
-use RockMatrix\Block;
+use ProcessWire\RockPageBuilder;
+use RockPageBuilder\Block;
 
-class Widget extends Block {
+class Widget extends Block
+{
 
-  const prefix = "rmblock_widget_";
+  const prefix = "rockpagebuilderwidget_";
 
-  const field_block = self::prefix."block";
+  const field_block = self::prefix . "block";
 
-  public function info() {
+  public function info()
+  {
     return [
       'icon' => 'magic',
       'title' => 'Widget',
     ];
   }
 
-  public function onCreate() {
+  public function onCreate()
+  {
     $this->setInAllLanguages('title', '');
   }
 
-  public function init() {
-    $this->wire->addHookAfter('InputfieldPage::getSelectablePages', function($event) {
-      if($event->object->hasField == self::field_block) {
-        /** @var RockMatrix $matrix */
-        $matrix = $this->wire->modules->get('RockMatrix');
-        $widgets = $matrix->widgets();
-        foreach($widgets as $widget) {
-          $widget->_title = $widget->className.': '.$widget->getLabel();
+  public function init()
+  {
+    $this->wire->addHookAfter('InputfieldPage::getSelectablePages', function ($event) {
+      if ($event->object->hasField == self::field_block) {
+        /** @var RockPageBuilder $rpb */
+        $rpb = $this->wire->modules->get('RockPageBuilder');
+        $widgets = $rpb->widgets();
+        foreach ($widgets as $widget) {
+          $widget->_title = $widget->className . ': ' . $widget->getLabel();
         }
         $event->return = $widgets;
       }
@@ -42,22 +48,25 @@ class Widget extends Block {
    * Get selected block
    * @return Block
    */
-  public function block() {
+  public function block()
+  {
     return $this->getFormatted(self::field_block);
   }
 
   /** ##### backend ##### */
 
-  public function getLabel() {
+  public function getLabel()
+  {
     $label = parent::getLabel();
-    if(!$block = $this->block()) return $label;
+    if (!$block = $this->block()) return $label;
     return "$label ({$block->getLabel()})";
   }
 
-  public function migrate() {
+  public function migrate()
+  {
     parent::migrate();
     $rm = $this->rm();
-    $url = $this->wire->pages->get(1)->editUrl()."&field=".RockMatrix::field_widgets;
+    $url = $this->wire->pages->get(1)->editUrl() . "&field=" . RockPageBuilder::field_widgets;
     $noteLabel = $this->_('Manage widgets');
     $rm->migrate([
       'fields' => [
@@ -85,11 +94,12 @@ class Widget extends Block {
     ]);
   }
 
-  public function render() {
+  public function render()
+  {
     $block = $this->block();
-    if(!$block) return;
+    if (!$block) return;
     $block->_widget = $this;
-    $block->widgetClass = 'rmx-widget';
+    $block->widgetClass = 'rpb-widget';
     return $block->render();
   }
 
@@ -97,8 +107,8 @@ class Widget extends Block {
    * Set reference to widget
    * @return void
    */
-  public function setReference($block) {
+  public function setReference($block)
+  {
     $this->set(self::field_block, $block);
   }
-
 }

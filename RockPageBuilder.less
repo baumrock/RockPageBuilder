@@ -8,8 +8,8 @@
   overflow-wrap: break-word;
 }
 
-// hide tabs for rockmatrix block editor modal
-body.modal form.rmx-form {
+// hide tabs for rockpagebuilder block editor modal
+body.modal form.rpb-form {
   margin: 0;
   .WireTabs {
     display: none;
@@ -17,7 +17,7 @@ body.modal form.rmx-form {
 }
 
 // add block button svg
-.rmx-button {
+.rpb-button {
   position: relative;
   margin-right: 10px;
   margin-bottom: 10px;
@@ -66,7 +66,7 @@ body.modal form.rmx-form {
     }
   }
 }
-li.InputfieldRockMatrix .rmx-button {
+li.InputfieldRockPageBuilder .rpb-button {
   img {
     height: 75px;
   }
@@ -76,10 +76,10 @@ li.InputfieldRockMatrix .rmx-button {
   }
 }
 
-// matrix item
-// this is styled outside of .InputfieldRockMatrix context because dragging
+// rpb item
+// this is styled outside of .InputfieldRockPageBuilder context because dragging
 // items don't live inside the inputfield context!
-li.rmx-item {
+li.rpb-item {
   transition: outline 0.3s ease-in-out;
   margin-top: 10px;
   &.InputfieldStateCollapsed > .InputfieldHeader:after {
@@ -92,10 +92,10 @@ li.rmx-item {
     transition: background-color 0.5s linear;
 
     // item action buttons
-    .rmx-actions {
+    .rpb-actions {
       float: right;
       margin-right: 5px;
-      > .rmx-action > i {
+      > .rpb-action > i {
         padding-right: 10px;
       }
       a {
@@ -126,7 +126,7 @@ li.rmx-item {
   }
 
   // trashed item
-  &.rmx-trash {
+  &.rpb-trash {
     outline: 1px solid darken(@color-trash, 20%);
     > .InputfieldContent,
     > .InputfieldHeader {
@@ -137,20 +137,20 @@ li.rmx-item {
     }
 
     // dont show trash icon
-    > .InputfieldHeader .rmx-action-trash {
+    > .InputfieldHeader .rpb-action-trash {
       display: none;
     }
   }
-  &:not(.rmx-trash) {
+  &:not(.rpb-trash) {
     // dont show restore icon
-    > .InputfieldHeader .rmx-action-untrash {
+    > .InputfieldHeader .rpb-action-untrash {
       display: none;
     }
   }
 }
 
 // settingsfield
-.rmx-settings {
+.rpb-settings {
   ul {
     padding-left: 0;
   }
@@ -163,33 +163,33 @@ li.rmx-item {
   }
 }
 
-// add spacing after last matrix item
-.rmx-items > ul:last-child {
+// add spacing after last rpb item
+.rpb-items > ul:last-child {
   margin-bottom: 15px;
 }
 
 // content-only inputfields without header
-.rmx-nolabel > .InputfieldContent {
+.rpb-nolabel > .InputfieldContent {
   padding-top: 20px;
 }
 // inputfield with smaller padding
-.rmx-pd5 > .InputfieldContent {
+.rpb-pd5 > .InputfieldContent {
   padding: 5px;
   // fix image fields having only 1px top padding
   padding-top: 5px !important;
 }
 
 // buttons
-.rmx-buttons-container {
-  .rmx-buttons {
-    button.rmx-button {
+.rpb-buttons-container {
+  .rpb-buttons {
+    button.rpb-button {
       margin: 0 5px 5px 0;
     }
   }
 }
 
 // create new block
-.rmx-create {
+.rpb-create {
   margin: 10px 0;
   input {
     width: 200px;
@@ -197,7 +197,7 @@ li.rmx-item {
 }
 
 // widget alert
-.rmx-alert-widget {
+.rpb-alert-widget {
   outline: 4px groove orange;
   z-index: 1;
 }

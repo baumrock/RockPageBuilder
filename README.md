@@ -1,52 +1,52 @@
-# RockMatrix
+# RockPageBuilder
 
 Repeater Matrix for ProcessWire, referenced as RM in this readme.
 
 ## Concept
 
-RockMatrix is a Fieldtype/Inputfield module that helps you creating modular content for your project. The most important part are so called `blocks` that are actually ProcessWire pages with a corresponding `template` and a custom `pageClass`.
+RockPageBuilder is a Fieldtype/Inputfield module that helps you creating modular content for your project. The most important part are so called `blocks` that are actually ProcessWire pages with a corresponding `template` and a custom `pageClass`.
 
-RockMatrix ships with some example blocks that you can use to quickly get started with RockMatrix:
+RockPageBuilder ships with some example blocks that you can use to quickly get started with RockPageBuilder:
 
 ```php
 // site/init.php (or in module init())
-if($modules->isInstalled('RockMatrix')) {
-  $mx = $modules->get('RockMatrix');
-  $mx->addBlocks($config->paths->siteModules."RockMatrix/demo/");
+if($modules->isInstalled('RockPageBuilder')) {
+  $mx = $modules->get('RockPageBuilder');
+  $mx->addBlocks($config->paths->siteModules."RockPageBuilder/demo/");
 }
 ```
 
-## Benefits using RockMatrix
+## Benefits using RockPageBuilder
 
 Benefits for users
 
-* You will get a lot more flexibility for your page layouts
-* You will get a lot cleaner user interfaces with less other plugins or workarounds, eg: https://user-images.githubusercontent.com/6616448/178727428-c4c72906-ad57-45cf-ac82-49320edb3b99.png
-* You will get meaningfol labels of your content blocks (compared to only showing the type of the block)
+- You will get a lot more flexibility for your page layouts
+- You will get a lot cleaner user interfaces with less other plugins or workarounds, eg: https://user-images.githubusercontent.com/6616448/178727428-c4c72906-ad57-45cf-ac82-49320edb3b99.png
+- You will get meaningfol labels of your content blocks (compared to only showing the type of the block)
 
 Technical benefits (compared to other solutions and workarounds)
 
-* You will get cleaner code (OOP)
-* Since all blocks are ProcessWire Pages under the hood they are super easy to handle via API or via RockMigrations
+- You will get cleaner code (OOP)
+- Since all blocks are ProcessWire Pages under the hood they are super easy to handle via API or via RockMigrations
 
 ## Limitations/issues
 
 - create new block, then click X --> item is added but not visible --> closing modal should trigger page reload!
-- Seems that showIf does not work with RockMatrix? MPN AnchorHeadline
+- Seems that showIf does not work with RockPageBuilder? MPN AnchorHeadline
 
-## RockMatrix vs. RepeaterMatrix
+## RockPageBuilder vs. RepeaterMatrix
 
-Like RepeaterMatrix RockMatrix extends the core Repeater Fieldtype, but the concept is very different. As mentioned above every block of a RockMatrix is a custom Page (that's the same with RepeaterMatrix) having a custom template (that's not the case with RepeaterMatrix) and also having a custom PageClass (that's also not the case with RepeaterMatrix). RepeaterMatrix on the other hand creates ONE template for all your matrix blocks and then hides or shows the fields that you have defined via the admin interface. That means RepeaterMatrix creates less templates but on the code side you'll end up with ONE page type for MANY block types.
+Like RepeaterMatrix RockPageBuilder extends the core Repeater Fieldtype, but the concept is very different. As mentioned above every block of a RockPageBuilder is a custom Page (that's the same with RepeaterMatrix) having a custom template (that's not the case with RepeaterMatrix) and also having a custom PageClass (that's also not the case with RepeaterMatrix). RepeaterMatrix on the other hand creates ONE template for all your rpb blocks and then hides or shows the fields that you have defined via the admin interface. That means RepeaterMatrix creates less templates but on the code side you'll end up with ONE page type for MANY block types.
 
-That means that you need to use hooks to customize your pages which has many disadvantages in my opinion. RockMatrix on the other hand creates a custom page type for every block type which makes it super convenient to code:
+That means that you need to use hooks to customize your pages which has many disadvantages in my opinion. RockPageBuilder on the other hand creates a custom page type for every block type which makes it super convenient to code:
 
 ```php
-class BlockFoo extends \RockMatrix\Block {
+class BlockFoo extends \RockPageBuilder\Block {
   public function foo() {
     return 'foo';
   }
 }
-class BlockBar extends \RockMatrix\Block {
+class BlockBar extends \RockPageBuilder\Block {
   public function bar() {
     return 'bar';
   }
@@ -54,17 +54,17 @@ class BlockBar extends \RockMatrix\Block {
 // vs
 $wire->addHookMethod('RepeaterMatrixPage::foo', function($event) {
   $page = $event->object;
-  if($page->type !== 'matrixTypeFoo') return;
+  if($page->type !== 'rpbTypeFoo') return;
   $event->return = 'foo';
 });
 $wire->addHookMethod('RepeaterMatrixPage::bar', function($event) {
   $page = $event->object;
-  if($page->type !== 'matrixTypeBar') return;
+  if($page->type !== 'rpbTypeBar') return;
   $event->return = 'bar';
 });
 ```
 
-Another difference is that every Block in RockMatrix comes with several helper methods that are handy for customizing the output on your frontend. For example you can add classes on every first matrix item or you can style even blocks differently than odd items (for example to swap images from left to right).
+Another difference is that every Block in RockPageBuilder comes with several helper methods that are handy for customizing the output on your frontend. For example you can add classes on every first rpb item or you can style even blocks differently than odd items (for example to swap images from left to right).
 
 ```php
 if($block->isEven()) echo "<h1 class='uk-text-right'><?= $block->title ?></h1>";
@@ -73,12 +73,12 @@ else echo "<h1><?= $block->title ?></h1>";
 
 Some available methods are:
 
-* $block->isEven()
-* $block->isOdd()
-* $block->isFirstMatrixItem()
-* $block->isLastMatrixItem()
-* $block->isLastMatrixItem()
-* $block->isEvenType()
+- $block->isEven()
+- $block->isOdd()
+- $block->isFirstMatrixItem()
+- $block->isLastMatrixItem()
+- $block->isLastMatrixItem()
+- $block->isEvenType()
 
 Note that isEvenType checks if the item has an odd index but only counts blocks of the same type that are in a row and not interrupted by a block of another type, eg:
 
@@ -95,7 +95,7 @@ B -> true
 
 ## Migrations
 
-RockMatrix relies havily on RockMigrations. Migrations are triggered automatically via RockMatrix.module.php on modules::refresh.
+RockPageBuilder relies havily on RockMigrations. Migrations are triggered automatically via RockPageBuilder.module.php on modules::refresh.
 
 ## Setting up new Blocks
 
@@ -105,15 +105,15 @@ RockMatrix relies havily on RockMigrations. Migrations are triggered automatical
 $mx->loadBlocks("fieldname", $path, "FooNamespace");
 ```
 
-Blocks need to extend `\RockMatrix\Block`. To avoid naming conflicts you can use custom namespaces. See the demo folder in this module for examples. The minimum viable block is this:
+Blocks need to extend `\RockPageBuilder\Block`. To avoid naming conflicts you can use custom namespaces. See the demo folder in this module for examples. The minimum viable block is this:
 
 ```php
-<?php namespace RMBlock;
-class MinimumDemo extends \RockMatrix\Block {
+<?php namespace RockPageBuilderBlock;
+class MinimumDemo extends \RockPageBuilder\Block {
 }
 ```
 
-Make sure you save the file as `MinimumDemo.php` and tell RockMatrix about that file (if it is not in an already monitored folder). Use `$mx->addBlocks('/your/dir')` as shown above.
+Make sure you save the file as `MinimumDemo.php` and tell RockPageBuilder about that file (if it is not in an already monitored folder). Use `$mx->addBlocks('/your/dir')` as shown above.
 
 ### Block info
 
@@ -147,7 +147,7 @@ To add settings to your block simply install the RockFields module and add a met
 ```php
 // add this to your block's php file
 public function settingsTable(RockFieldsField $field) {
-  $settings = $this->matrix()->cloneBlockSettings();
+  $settings = $this->rpb()->cloneBlockSettings();
   $settings->add([
     'name' => 'blockpadding',
     'label' => 'Block-Padding',
@@ -165,9 +165,9 @@ Often you want to define global settings for all blocks and extend those setting
 
 ```php
 // in site/ready.php
-/** @var RockMatrix $matrix */
-$matrix = $this->wire('modules')->get('RockMatrix');
-$matrix->addHookBefore("cloneBlockSettings", function($event) {
+/** @var RockPageBuilder $rpb */
+$rpb = $this->wire('modules')->get('RockPageBuilder');
+$rpb->addHookBefore("cloneBlockSettings", function($event) {
   /** @var BlockSettingsArray $settings */
   $settings = $event->object->blockSettings;
   /** @var RockFieldsField $field */
@@ -188,7 +188,7 @@ If you want to hide a global setting on a specific block simply do this:
 // add this to your block's php file
 public function settingsTable(RockFieldsField $field) {
   // get a clone of the global block settings
-  $settings = $this->matrix()->cloneBlockSettings();
+  $settings = $this->rpb()->cloneBlockSettings();
   // hide one of the global settings
   $settings->remove('name=foo');
   // add a custom setting to this block
@@ -277,8 +277,8 @@ $mySetting = $settings->mySetting ?: 'default value';
 When working with frontend template engines like latte one drawback is that you can't use ProcessWire's built in transation functions like `__('your translatable string')`. That's because ProcessWire will only look for such stings in PHP files and also latte has problems understanding those function calls. Since every block has a PHP file we can simply put all translatable strings into that file and access them from the latte file via the `$block->x()` helper function:
 
 ```php
-<?php namespace RMBlock;
-use RockMatrix\Block;
+<?php namespace RockPageBuilderBlock;
+use RockPageBuilder\Block;
 class Demo extends Block {
 
   public function info() {
@@ -320,12 +320,27 @@ This is an example `Image.latte` file:
 
 ```html
 {if $settings->float}
-<img data-src="{$block->src()}" alt="{$block->alt()}" uk-img
-  class="uk-float-{$settings->align}">
+<img
+  data-src="{$block->src()}"
+  alt="{$block->alt()}"
+  uk-img
+  class="uk-float-{$settings->align}"
+/>
 {else}
-<section class="rmx-image uk-padding uk-text-{$settings->align}" uk-lightbox>
-  <a href="{$block->src(1600,1600)}" data-caption="{$block->alt()}" n:tag-if="$settings->lightbox">
-    <img data-src="{$block->src()}" alt="{$block->alt()}" uk-img>
+<section
+  class="rpb-image uk-padding uk-text-{$settings->align}"
+  uk-lightbox
+>
+  <a
+    href="{$block->src(1600,1600)}"
+    data-caption="{$block->alt()}"
+    n:tag-if="$settings->lightbox"
+  >
+    <img
+      data-src="{$block->src()}"
+      alt="{$block->alt()}"
+      uk-img
+    />
   </a>
 </section>
 {/if}
@@ -336,7 +351,7 @@ This is an example `Image.latte` file:
 Now create a new field and add it to a template. Allowed blocks are defined via hook:
 
 ```php
-$wire->addHookAfter('RockMatrix::getAllowedBlocks', function($event) {
+$wire->addHookAfter('RockPageBuilder::getAllowedBlocks', function($event) {
   $field = $event->arguments(0);
   $page = $event->arguments(1);
   if($field->name !== 'rmtest') return;
@@ -349,11 +364,9 @@ $wire->addHookAfter('RockMatrix::getAllowedBlocks', function($event) {
 
 If you don't define a parent for blocks, the blocks will live under the default blocks datapage:
 
-
-
 ## Working with field data
 
-The unformatted value of a RockMatrix field is a `RockMatrix\FieldData` object. This class is based on a `PageArray` and holds all blocks that are saved on that field.
+The unformatted value of a RockPageBuilder field is a `RockPageBuilder\FieldData` object. This class is based on a `PageArray` and holds all blocks that are saved on that field.
 
 The formatValue of the field is the result of the `render()` method call on the `FieldData` object and concats the results of all blocks' `render()` methods.
 
@@ -362,7 +375,7 @@ The formatValue of the field is the result of the `render()` method call on the 
 Adding existing pages to the field is easy:
 
 ```php
-$page->getUnformatted('your_matrix_field')
+$page->getUnformatted('your_rpb_field')
   ->add(1035) // add block id 1035 to this field
   ->save();
 ```
@@ -370,7 +383,7 @@ $page->getUnformatted('your_matrix_field')
 You can also add new blocks to your field data:
 
 ```php
-$field = $page->getUnformatted('your_matrix_field');
+$field = $page->getUnformatted('your_rpb_field');
 $field->add('your-block-tpl', [
   // you can prepopulate fields of the block
   'headline' => 'This is a headline',
@@ -391,7 +404,7 @@ $page->rmtest->reset()->create(...)->create(...)->save();
 $rm->migrate([
   'fields' => [
     'your_field' => [
-      'type' => 'FieldtypeRockMatrix',
+      'type' => 'FieldtypeRockPageBuilder',
       'tags' => self::tags,
     ],
   ],
@@ -400,39 +413,37 @@ $rm->migrate([
 
 ## Content-Only fields
 
-Quite often matrix blocks do only have one single field which has the same label as the block. As this would be redundant information and eat up quite some space on the screen RockMatrix has a shortcut to easily hide the label of such fields and reduce the field's padding:
+Quite often rpb blocks do only have one single field which has the same label as the block. As this would be redundant information and eat up quite some space on the screen RockPageBuilder has a shortcut to easily hide the label of such fields and reduce the field's padding:
 
 ```php
 $rm->migrate([
   'fields' => [
     self::field_body => [
       'type' => 'textarea',
-      'rmx-nolabel' => true,
+      'rpb-nolabel' => true,
       ...
 ```
 
 ## Widget Concept
 
-RockMatrix will create a field `rockmatrix_widgets` on the `home` template. There you can add all blocks that are available on your site as widgets. Simply add an empty(!) file with the corresponding name in the folder `/site/asset/RockMatrix/rockmatrix_widgets`. For example if you had a block called "MyBlock" you would add the empty file `/site/assets/RockMatrix/rockmatrix_widgets/MyBlock.php`.
+RockPageBuilder will create a field `rockpagebuilder_widgets` on the `home` template. There you can add all blocks that are available on your site as widgets. Simply add an empty(!) file with the corresponding name in the folder `/site/asset/RockPageBuilder/rockpagebuilder_widgets`. For example if you had a block called "MyBlock" you would add the empty file `/site/assets/RockPageBuilder/rockpagebuilder_widgets/MyBlock.php`.
 
 ### Selecting widgets from other pages
-
-
 
 ### Rendering widgets from template files
 
 Sometimes you want to create a widget that the user can edit in the backend, but you as a developer want to define where the widget gets rendered. For example you could create a global `Team` widget that you want to render on all `job` pages. In the job's page template file you can render this widget like this:
 
 ```php
-$rockmatrix->widgets('Team')->render()
+$rockpagebuilder->widgets('Team')->render()
 ```
 
-When editing the widget, it will show a warning on which pages the widget will be displayed. RockMatrix can not know about the code you added to the template file, therefore you need to tell RockMatrix about it:
+When editing the widget, it will show a warning on which pages the widget will be displayed. RockPageBuilder can not know about the code you added to the template file, therefore you need to tell RockPageBuilder about it:
 
 ```php
 // in the widget's init() method
 // in our example this is in Team.php (the php file of the Team widget)
-$this->addHookAfter("RockMatrix::getWidgetPages", function($event) {
+$this->addHookAfter("RockPageBuilder::getWidgetPages", function($event) {
   $pages = $event->return;
   $pages->add($this->wire->pages->find("template=job"));
   $event->return = $pages;

@@ -1,13 +1,13 @@
 <?php
 
-namespace RockMatrix;
+namespace RockPageBuilder;
 
 use Latte\Engine;
 use Latte\Runtime\Html;
-use ProcessWire\FieldtypeRockMatrix;
+use ProcessWire\FieldtypeRockPageBuilder;
 use ProcessWire\FieldtypeRockShare;
 use ProcessWire\Paths;
-use ProcessWire\RockMatrix;
+use ProcessWire\RockPageBuilder;
 use \ProcessWire\WireData;
 use \ProcessWire\RockMigrations;
 use \ProcessWire\Inputfield;
@@ -20,13 +20,13 @@ use ProcessWire\RockFieldsField;
 use ProcessWire\Template;
 use ProcessWire\WireException;
 use ReflectionClass;
-use RMBlock\Widget;
+use RockPageBuilderBlock\Widget;
 
 class Block extends \ProcessWire\Page
 {
 
-  const prefix = "rmblock_";
-  const tags = "RockMatrix";
+  const prefix = "rockpagebuilderblock_";
+  const tags = "RockPageBuilder";
 
   /**
    * References the current file
@@ -84,7 +84,7 @@ class Block extends \ProcessWire\Page
         'icon' => 'clone',
         'label' => $block->title,
         'tooltip' => "Clone Block #{$widget->id}",
-        'href' => $widget->rmxUrl("/clone/?block=$widget"),
+        'href' => $widget->rpbUrl("/clone/?block=$widget"),
         'confirm' => $this->_('Do you really want to clone this element?'),
       ];
     }
@@ -106,7 +106,7 @@ class Block extends \ProcessWire\Page
         'icon' => 'widget',
         'label' => $block->title,
         'tooltip' => "Convert Block #{$block->id} into a Widget",
-        'href' => $block->rmxUrl("/convertToWidget/?block=$block"),
+        'href' => $block->rpbUrl("/convertToWidget/?block=$block"),
         'confirm' => $this->_('Do you really want to convert this block into a widget?'),
       ];
     }
@@ -116,7 +116,7 @@ class Block extends \ProcessWire\Page
         'icon' => 'trash-2',
         'label' => $block->title,
         'tooltip' => "Trash Block #{$widget->id}",
-        'href' => $widget->rmxUrl("/trash/?block=$widget"),
+        'href' => $widget->rpbUrl("/trash/?block=$widget"),
         'confirm' => $this->_('Do you really want to delete this element?'),
       ];
     }
@@ -138,7 +138,7 @@ class Block extends \ProcessWire\Page
       'name' => $this->settingsName(),
 
       // the inputfield is either defined by the settingsInput method
-      // or - eg when using rockmatrix - by the settingsTable method
+      // or - eg when using rockpagebuilder - by the settingsTable method
       'inputfield' => method_exists($this, 'settingsTable')
         ? [$this, 'settingsTable']
         : [$this, 'settingsInput'],
@@ -151,7 +151,7 @@ class Block extends \ProcessWire\Page
     /** @var RockFields $rf */
     if (!$rf = $this->wire->rockfields) return;
     if (!$f = $rf->getInputfield($this, $this->settingsName(), true)) return;
-    $f->addClass('rmx-settings');
+    $f->addClass('rpb-settings');
 
     // set settings field values from getInfo() of block
     $settings = $this->getInfo()->settings;
@@ -169,7 +169,7 @@ class Block extends \ProcessWire\Page
   }
 
   /**
-   * Build the form when displayed in a matrix field
+   * Build the form when displayed in a rpb field
    * @return void
    */
   public function ___buildFormMatrix($fs)
@@ -178,7 +178,7 @@ class Block extends \ProcessWire\Page
 
   public function canBeWidget()
   {
-    return $this->isAllowed(RockMatrix::field_widgets, 1);
+    return $this->isAllowed(RockPageBuilder::field_widgets, 1);
   }
 
   /**
@@ -192,10 +192,10 @@ class Block extends \ProcessWire\Page
   {
     $block = $this;
     $fielddata = $block->getMatrixData();
-    $this->matrix()->isClone = true;
+    $this->rpb()->isClone = true;
     $clone = $this->wire->pages->clone($block);
     /** @var Block $clone */
-    $this->matrix()->isClone = false;
+    $this->rpb()->isClone = false;
     $fielddata->insertAfter($clone, $block);
     $fielddata->save();
   }
@@ -248,7 +248,7 @@ class Block extends \ProcessWire\Page
   }
 
   /**
-   * Get icon for matrix item
+   * Get icon for rpb item
    * @return string
    */
   public function getIcon()
@@ -280,7 +280,7 @@ class Block extends \ProcessWire\Page
   }
 
   /**
-   * Get label for matrix item
+   * Get label for rpb item
    * @return string
    */
   public function getLabel()
@@ -317,7 +317,7 @@ class Block extends \ProcessWire\Page
   }
 
   /**
-   * Get the matrix data object of the field where this block lives on
+   * Get the rpb data object of the field where this block lives on
    * @return FieldData
    */
   public function getMatrixData()
@@ -334,7 +334,7 @@ class Block extends \ProcessWire\Page
    */
   public function getMatrixField()
   {
-    $meta = explode("-", $this->meta('RockMatrix'));
+    $meta = explode("-", $this->meta('RockPageBuilder'));
     if (!is_array($meta) or count($meta) !== 2) return false;
     return $this->wire->fields->get($meta[1]);
   }
@@ -357,12 +357,12 @@ class Block extends \ProcessWire\Page
   {
     // the page is stored in metadata of the block
     // the metadata is pageid-fieldid
-    $meta = explode("-", (string)$this->meta('RockMatrix'));
+    $meta = explode("-", (string)$this->meta('RockPageBuilder'));
     return $this->wire->pages->get($meta[0]);
   }
 
   /**
-   * Get the index (sort order) of this matrix item
+   * Get the index (sort order) of this rpb item
    * @param bool $startAtOne
    * @return int|false
    */
@@ -379,7 +379,7 @@ class Block extends \ProcessWire\Page
   }
 
   /**
-   * Get notes for matrix item
+   * Get notes for rpb item
    * @return string
    */
   public function getNotes()
@@ -452,11 +452,11 @@ class Block extends \ProcessWire\Page
     $label = $this->wire->sanitizer->truncate(strip_tags($label), 70);
 
     // prepare the fieldset (item root element)
-    $fs->id = "rmx_$this";
+    $fs->id = "rpb_$this";
     $fs->label = $label;
     $fs->icon = $this->getIcon();
     $fs->notes = $this->getNotes();
-    $fs->addClass('rmx-item');
+    $fs->addClass('rpb-item');
     $fs->wrapAttr('data-page', $this->id);
     if ($this->wire->user->isSuperuser()) {
       $fs->wrapAttr('uk-tooltip', "{$this->className} #{$this->id}");
@@ -473,14 +473,14 @@ class Block extends \ProcessWire\Page
     // apply changes added to buildForm
     // buildForm changes will also be applied when editing
     // the block in a new window whereas buildFormMatrix
-    // will only be applied when editing in a matrix field
+    // will only be applied when editing in a rpb field
     $this->buildForm($fs);
 
     // call buildFormMatrix (if implemented for the block)
     $this->buildFormMatrix($fs);
 
     // add repeater suffix to all children
-    foreach ($this->matrix()->getChildrenRecursively($fs) as $f) {
+    foreach ($this->rpb()->getChildrenRecursively($fs) as $f) {
       // add the suffix to the inputfields name
       // before we do that we make sure that it does not already
       // have a repeater suffix to avoid adding the suffix twice
@@ -645,34 +645,34 @@ class Block extends \ProcessWire\Page
   }
 
   /**
-   * Is this block a RockMatrix widget stored in field rockmatrix_widgets?
+   * Is this block a RockPageBuilder widget stored in field rockpagebuilder_widgets?
    * @return bool
    */
   public function isWidget()
   {
-    return $this->getMatrixField()->name == RockMatrix::field_widgets;
+    return $this->getMatrixField()->name == RockPageBuilder::field_widgets;
   }
 
   /**
    * Return master module
-   * @return RockMatrix
+   * @return RockPageBuilder
    */
   public function master()
   {
-    return $this->wire->modules->get('RockMatrix');
+    return $this->wire->modules->get('RockPageBuilder');
   }
 
   /**
-   * Return instance of RockMatrix
-   * @return RockMatrix
+   * Return instance of RockPageBuilder
+   * @return RockPageBuilder
    */
-  public function matrix()
+  public function rpb()
   {
-    return $this->wire->modules->get('RockMatrix');
+    return $this->wire->modules->get('RockPageBuilder');
   }
 
   /**
-   * Get next matrix item
+   * Get next rpb item
    * @return Page|false
    */
   public function nextMatrixItem()
@@ -686,7 +686,7 @@ class Block extends \ProcessWire\Page
   }
 
   /**
-   * Prepare form for being rendered as a matrix block
+   * Prepare form for being rendered as a rpb block
    * This is a separate method that needs to be called before buildForm
    * or buildFormMatrix. The reason for this method is that buildForm and
    * buildFormMatrix do not need to call parent::buildForm, because that would
@@ -702,7 +702,7 @@ class Block extends \ProcessWire\Page
       $type = $f->hasField->type;
 
       // prevent recursion
-      if ($type instanceof FieldtypeRockMatrix) {
+      if ($type instanceof FieldtypeRockPageBuilder) {
         if ($this->wire->process->getPage()->id == $f->value->page->id) {
           // we are editing the block in the page editor
           // we set the value to empty string to hide the item-edit-button
@@ -727,7 +727,7 @@ class Block extends \ProcessWire\Page
         $fields->remove($f);
       }
 
-      // sharing of pages not possible inside matrix
+      // sharing of pages not possible inside rpb
       if ($type instanceof FieldtypeRockShare) $fields->remove($f);
     }
 
@@ -741,7 +741,7 @@ class Block extends \ProcessWire\Page
   }
 
   /**
-   * Get previous matrix item
+   * Get previous rpb item
    * @return Page|false
    */
   public function prevMatrixItem()
@@ -853,7 +853,7 @@ class Block extends \ProcessWire\Page
 
     return
       "<a href='{$opt->href}'
-        class='rmx-action rmx-action-$action'
+        class='rpb-action rpb-action-$action'
         uk-tooltip='title:{$opt->label};pos:left;'
         data-action='$action'
         $attrs>
@@ -866,7 +866,7 @@ class Block extends \ProcessWire\Page
    */
   public function renderActions()
   {
-    $out = "<span class='rmx-actions'>";
+    $out = "<span class='rpb-actions'>";
     if ($this->wire->user->isSuperuser()) {
       $admin = $this->wire->pages->get(2)->url;
       $out .= $this->renderAction('editnew', [
@@ -917,11 +917,11 @@ class Block extends \ProcessWire\Page
     $above = $this->wire->input->get('above', 'int');
     $tpl = $this->getTplName();
 
-    if ($block) $href = $this->rmxUrl("/add/?block=$block&above=$above&tpl=$tpl&modal=1");
-    else $href = $this->rmxUrl("/add-new/?page=$page&field=$field&tpl=$tpl&modal=1");
+    if ($block) $href = $this->rpbUrl("/add/?block=$block&above=$above&tpl=$tpl&modal=1");
+    else $href = $this->rpbUrl("/add-new/?page=$page&field=$field&tpl=$tpl&modal=1");
 
     $ajax = "./?id=$page&field=$field&tpl=$tpl";
-    return "<a href='$href' data-href='$ajax' class='rmx-button'>{$this->renderButtonImage()}</a>";
+    return "<a href='$href' data-href='$ajax' class='rpb-button'>{$this->renderButtonImage()}</a>";
   }
 
   /**
@@ -949,7 +949,7 @@ class Block extends \ProcessWire\Page
 
     if (!$url) {
       // no custom button found
-      // try to find one in /RockMatrix/buttons/...
+      // try to find one in /RockPageBuilder/buttons/...
       $path = $this->wire->config->paths($this->master()) . "buttons/";
       $imageFile = $path . $this->className . ".svg";
       if (!is_file($imageFile)) {
@@ -968,7 +968,7 @@ class Block extends \ProcessWire\Page
       : $info->title;
     $tooltip = "title='$tooltip' uk-tooltip";
     $style = $info->color ? "style='border-left: 5px solid {$info->color}'" : '';
-    return "<img $tooltip $style class=rmx-addblock-svg src=$url>$icon";
+    return "<img $tooltip $style class=rpb-addblock-svg src=$url>$icon";
   }
 
   /**
@@ -981,15 +981,15 @@ class Block extends \ProcessWire\Page
   }
 
   /**
-   * Get RockMatrix Process Url
+   * Get RockPageBuilder Process Url
    * Usage:
-   * $this->rmxUrl("/add?block=123");
-   * $this->rmxUrl("/add?field=foo_field");
+   * $this->rpbUrl("/add?block=123");
+   * $this->rpbUrl("/add?field=foo_field");
    * @return string
    */
-  public function rmxUrl($url)
+  public function rpbUrl($url)
   {
-    return $this->master()->rmxUrl($url);
+    return $this->master()->rpbUrl($url);
   }
 
   /**
@@ -1013,12 +1013,12 @@ class Block extends \ProcessWire\Page
   }
 
   /**
-   * Save reference to page and field of this matrix block
+   * Save reference to page and field of this rpb block
    * @return void
    */
   public function setMatrixReference($page, $field)
   {
-    $this->meta('RockMatrix', "$page-$field");
+    $this->meta('RockPageBuilder', "$page-$field");
   }
 
   /**
@@ -1059,7 +1059,7 @@ class Block extends \ProcessWire\Page
    */
   public function settingsSleep(RockFieldsField $field)
   {
-    // In RockMatrix we often use the "settingsTable" method as shortcut.
+    // In RockPageBuilder we often use the "settingsTable" method as shortcut.
     // This makes it possible to define settings with one single method
     // instead of a pair of settingsInput and settingsSleep
     if (method_exists($this, 'settingsTable')) {
@@ -1078,7 +1078,7 @@ class Block extends \ProcessWire\Page
   /**
    * Array of translatable strings
    * Use $block->x('your_string') to get string.
-   * See RockMatrix readme about translating blocks.
+   * See RockPageBuilder readme about translating blocks.
    * @return array
    */
   public function translations()
@@ -1103,7 +1103,7 @@ class Block extends \ProcessWire\Page
     $fielddata->insertAfter($widget, $block)->save();
 
     // move block to widgets
-    $block->move(1, RockMatrix::field_widgets);
+    $block->move(1, RockPageBuilder::field_widgets);
   }
 
   /**
@@ -1163,7 +1163,7 @@ class Block extends \ProcessWire\Page
     $rm->setTemplateData($tpl, [
       'icon' => $this->getInfo()->icon,
       'pageClass' => $this->getInfo()->name,
-      'tags' => RockMatrix::tags,
+      'tags' => RockPageBuilder::tags,
       'noParents' => 1, // may not be used for new pages
       'flags' => Template::flagSystem,
       'noChildren' => true, // hide children tab by default

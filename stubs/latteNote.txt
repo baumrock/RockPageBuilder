@@ -1,8 +1,8 @@
 /**
- * By default rockmatrix will create a *.view.php file on block creation
+ * By default rockpagebuilder will create a *.view.php file on block creation
  * if you want to create *.latte files instead set the
  * "createView" property to "latte" in your config.php:
- * $config->rockmatrix = [
+ * $config->rockpagebuilder = [
  *   "createView" => "latte",
  * ];
  *

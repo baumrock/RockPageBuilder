@@ -1,18 +1,18 @@
 {
-    "file": "site\/modules\/RockMatrix\/Block.php",
-    "textdomain": "site--modules--rockmatrix--block-php",
-    "translations": {
-        "8b0bf65267f25b4251f17e3b5ace96d1": {
-            "text": "Bitte speichern Sie die Seite - danach k\u00f6nnen Sie dieses Element bearbeiten."
-        },
-        "de95b43bceeb4b998aed4aed5cef1ae7": {
-            "text": "+"
-        },
-        "b47d06a97aba1795a827b277ac466a82": {
-            "text": "Zum L\u00f6schen markieren"
-        },
-        "dd10c6ee31c034e4d041293ebe71a87e": {
-            "text": "Nicht l\u00f6schen"
-        }
+  "file": "site/modules/RockPageBuilder/Block.php",
+  "textdomain": "site--modules--rockpagebuilder--block-php",
+  "translations": {
+    "8b0bf65267f25b4251f17e3b5ace96d1": {
+      "text": "Bitte speichern Sie die Seite - danach k\u00f6nnen Sie dieses Element bearbeiten."
+    },
+    "de95b43bceeb4b998aed4aed5cef1ae7": {
+      "text": "+"
+    },
+    "b47d06a97aba1795a827b277ac466a82": {
+      "text": "Zum L\u00f6schen markieren"
+    },
+    "dd10c6ee31c034e4d041293ebe71a87e": {
+      "text": "Nicht l\u00f6schen"
     }
+  }
 }

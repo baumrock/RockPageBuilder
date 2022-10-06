@@ -1,13 +1,13 @@
 .uk-tooltip-inner {
   overflow-wrap: break-word;
 }
-body.modal form.rmx-form {
+body.modal form.rpb-form {
   margin: 0;
 }
-body.modal form.rmx-form .WireTabs {
+body.modal form.rpb-form .WireTabs {
   display: none;
 }
-.rmx-button {
+.rpb-button {
   position: relative;
   margin-right: 10px;
   margin-bottom: 10px;
@@ -15,7 +15,7 @@ body.modal form.rmx-form .WireTabs {
   text-align: center;
   display: inline-block;
 }
-.rmx-button.loading {
+.rpb-button.loading {
   animation: pulsate 2s ease-out;
   animation-iteration-count: infinite;
   opacity: 1;
@@ -31,18 +31,18 @@ body.modal form.rmx-form .WireTabs {
     opacity: 1;
   }
 }
-.rmx-button:hover {
+.rpb-button:hover {
   outline: 3px solid #666;
 }
-.rmx-button img {
+.rpb-button img {
   height: 75px;
 }
 @media (min-width: 960px) {
-  .rmx-button img {
+  .rpb-button img {
     height: 150px;
   }
 }
-.rmx-button .fa {
+.rpb-button .fa {
   position: absolute;
   left: 0;
   right: 0;
@@ -53,101 +53,101 @@ body.modal form.rmx-form .WireTabs {
   top: 27px;
 }
 @media (min-width: 960px) {
-  .rmx-button .fa {
+  .rpb-button .fa {
     font-size: 45px;
     top: 50px;
   }
 }
-li.InputfieldRockMatrix .rmx-button img {
+li.InputfieldRockPageBuilder .rpb-button img {
   height: 75px;
 }
-li.InputfieldRockMatrix .rmx-button .fa {
+li.InputfieldRockPageBuilder .rpb-button .fa {
   top: 27px;
   font-size: 23px;
 }
-li.rmx-item {
+li.rpb-item {
   transition: outline 0.3s ease-in-out;
   margin-top: 10px;
 }
-li.rmx-item.InputfieldStateCollapsed > .InputfieldHeader:after {
+li.rpb-item.InputfieldStateCollapsed > .InputfieldHeader:after {
   content: none !important;
 }
-li.rmx-item > .InputfieldHeader {
+li.rpb-item > .InputfieldHeader {
   padding: 2px 5px;
   cursor: move;
   transition: background-color 0.5s linear;
 }
-li.rmx-item > .InputfieldHeader .rmx-actions {
+li.rpb-item > .InputfieldHeader .rpb-actions {
   float: right;
   margin-right: 5px;
 }
-li.rmx-item > .InputfieldHeader .rmx-actions > .rmx-action > i {
+li.rpb-item > .InputfieldHeader .rpb-actions > .rpb-action > i {
   padding-right: 10px;
 }
-li.rmx-item > .InputfieldHeader .rmx-actions a {
+li.rpb-item > .InputfieldHeader .rpb-actions a {
   text-decoration: none;
 }
-li.rmx-item > .InputfieldContent {
+li.rpb-item > .InputfieldContent {
   padding: 4px;
   padding-top: 0;
   transition: background-color 0.5s linear;
 }
-li.rmx-item > .InputfieldContent > .notes {
+li.rpb-item > .InputfieldContent > .notes {
   margin-top: 0;
   border-left: 0;
   padding-left: 0;
   padding-top: 3px;
   transition: background-color 0.5s linear;
 }
-li.rmx-item > .InputfieldContent > ul.Inputfields > li.Inputfield.InputfieldRepeaterItem {
+li.rpb-item > .InputfieldContent > ul.Inputfields > li.Inputfield.InputfieldRepeaterItem {
   outline: 1px solid #eeeeee;
 }
-li.rmx-item.rmx-trash {
+li.rpb-item.rpb-trash {
   outline: 1px solid #ff7e7e;
 }
-li.rmx-item.rmx-trash > .InputfieldContent,
-li.rmx-item.rmx-trash > .InputfieldHeader {
+li.rpb-item.rpb-trash > .InputfieldContent,
+li.rpb-item.rpb-trash > .InputfieldHeader {
   background: #ffe4e4;
 }
-li.rmx-item.rmx-trash > .InputfieldContent > p.notes,
-li.rmx-item.rmx-trash > .InputfieldHeader > p.notes {
+li.rpb-item.rpb-trash > .InputfieldContent > p.notes,
+li.rpb-item.rpb-trash > .InputfieldHeader > p.notes {
   background-color: #ffe4e4;
 }
-li.rmx-item.rmx-trash > .InputfieldHeader .rmx-action-trash {
+li.rpb-item.rpb-trash > .InputfieldHeader .rpb-action-trash {
   display: none;
 }
-li.rmx-item:not(.rmx-trash) > .InputfieldHeader .rmx-action-untrash {
+li.rpb-item:not(.rpb-trash) > .InputfieldHeader .rpb-action-untrash {
   display: none;
 }
-.rmx-settings ul {
+.rpb-settings ul {
   padding-left: 0;
 }
-.rmx-settings input[type="radio"] {
+.rpb-settings input[type="radio"] {
   margin-right: 5px;
 }
-.rmx-settings table td {
+.rpb-settings table td {
   padding: 4px 10px;
 }
-.rmx-items > ul:last-child {
+.rpb-items > ul:last-child {
   margin-bottom: 15px;
 }
-.rmx-nolabel > .InputfieldContent {
+.rpb-nolabel > .InputfieldContent {
   padding-top: 20px;
 }
-.rmx-pd5 > .InputfieldContent {
+.rpb-pd5 > .InputfieldContent {
   padding: 5px;
   padding-top: 5px !important;
 }
-.rmx-buttons-container .rmx-buttons button.rmx-button {
+.rpb-buttons-container .rpb-buttons button.rpb-button {
   margin: 0 5px 5px 0;
 }
-.rmx-create {
+.rpb-create {
   margin: 10px 0;
 }
-.rmx-create input {
+.rpb-create input {
   width: 200px;
 }
-.rmx-alert-widget {
+.rpb-alert-widget {
   outline: 4px groove orange;
   z-index: 1;
 }

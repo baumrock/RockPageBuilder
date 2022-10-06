@@ -1,20 +1,20 @@
-<?php namespace RMBlock;
+<?php namespace RockPageBuilderBlock;
 
 use ProcessWire\Inputfield;
 use ProcessWire\RockFieldsField;
-use RockMatrix\Block;
-use RockMatrix\BlockSettingsArray;
+use RockPageBuilder\Block;
+use RockPageBuilder\BlockSettingsArray;
 
 class {name} extends Block {
 
-  const prefix = "rmblock_{namelower}_";
+  const prefix = "rockpagebuilderblock_{namelower}_";
 
   public function info() {
     return [
       'title' => '{name}',
       'color' => 'lime',
       // 'icon' => 'picture-o',
-      // 'description' => 'RockMatrix Block Setup Demo',
+      // 'description' => 'RockPageBuilder Block Setup Demo',
       // 'sort' => 500,
     ];
   }
@@ -22,7 +22,7 @@ class {name} extends Block {
   /** ##### magic methods ##### */
 
   // /**
-  //  * buildForm can be used to modify the GUI both for the matrix editor as well
+  //  * buildForm can be used to modify the GUI both for the rpb editor as well
   //  * as when the block is edited in a new window
   //  */
   // public function buildForm($form) {
@@ -35,7 +35,7 @@ class {name} extends Block {
 
   // /**
   //  * buildFormMatrix modifies the GUI only when rendered as a single block
-  //  * inside a regular page editor matrix field
+  //  * inside a regular page editor rpb field
   //  */
   // public function buildFormMatrix($form) {
   //   // here you can edit the block's inputfields at runtime
@@ -47,7 +47,7 @@ class {name} extends Block {
 
   public function onCreate() {
     // we dont execute resetting the title if the block is being cloned
-    if($this->matrix()->isClone) return;
+    if($this->rpb()->isClone) return;
     // set default field values when a new block is created
     $this->setInAllLanguages('title', '');
   }
@@ -100,7 +100,7 @@ class {name} extends Block {
    */
   // public function settingsTable(RockFieldsField $field) {
   //   /** @var BlockSettingsArray $settings */
-  //   $settings = $this->matrix()->cloneBlockSettings($field);
+  //   $settings = $this->rpb()->cloneBlockSettings($field);
   //   $settings->add([
   //     'name' => 'demo_setting',
   //     'label' => 'Your Setting Label',

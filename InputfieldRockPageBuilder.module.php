@@ -2,17 +2,17 @@
 
 namespace ProcessWire;
 
-use RockMatrix\Block;
+use RockPageBuilder\Block;
 
 /**
  * @author Bernhard Baumrock, 10.08.2020
  * @license COMMERCIAL DO NOT DISTRIBUTE
  * @link https://www.baumrock.com
  */
-class InputfieldRockMatrix extends InputfieldRepeater
+class InputfieldRockPageBuilder extends InputfieldRepeater
 {
 
-  /** @var RockMatrix */
+  /** @var RockPageBuilder */
   public $master;
 
   public $path;
@@ -20,18 +20,18 @@ class InputfieldRockMatrix extends InputfieldRepeater
   public static function getModuleInfo()
   {
     return [
-      'title' => 'RockMatrix',
+      'title' => 'RockPageBuilder',
       'version' => '1.1.1',
       'summary' => 'Your module description',
       'icon' => 'cubes',
-      'requires' => ['RockMatrix'],
+      'requires' => ['RockPageBuilder'],
       'installs' => [],
     ];
   }
 
   public function init()
   {
-    $this->master = $this->wire->modules->get('RockMatrix');
+    $this->master = $this->wire->modules->get('RockPageBuilder');
     $this->path = $this->master->path;
   }
 
@@ -183,7 +183,7 @@ class InputfieldRockMatrix extends InputfieldRepeater
         $sort = str_pad($info->sort, 5, 0, STR_PAD_LEFT);
         $groupSort = $info->groupSort ?: '_';
         $group = $info->group ?: '_';
-        $block->_rmxsort = "$groupSort|$group|$sort";
+        $block->_rpbsort = "$groupSort|$group|$sort";
       }
       $callback = $block->getInfo()->show;
       if (is_callable($callback)) {
@@ -191,8 +191,8 @@ class InputfieldRockMatrix extends InputfieldRepeater
         if (!$show) $blocks->remove($block);
       }
     }
-    $blocks->sort("_rmxsort");
-    $buttons = '<div class="rmx-buttons ' . ($modal ? 'modal' : '') . '">';
+    $blocks->sort("_rpbsort");
+    $buttons = '<div class="rpb-buttons ' . ($modal ? 'modal' : '') . '">';
     $group = '';
     $i = 0;
     foreach ($blocks as $block) {
@@ -200,7 +200,7 @@ class InputfieldRockMatrix extends InputfieldRepeater
         $blockGroup = $block->getInfo()->group;
         if ($blockGroup !== $group or $i === 0) {
           // if i===0 we add the div to get some space for tooltips! nbsp intentional!
-          $buttons .= "<div class='rmx-blockgroup uk-margin-small-bottom'>$blockGroup&nbsp;</div>";
+          $buttons .= "<div class='rpb-blockgroup uk-margin-small-bottom'>$blockGroup&nbsp;</div>";
         }
         $group = $blockGroup;
       }
@@ -212,7 +212,7 @@ class InputfieldRockMatrix extends InputfieldRepeater
     if (!$modal) $buttons .= $this->renderCreateBlock();
 
     $buttons .= "</div>";
-    return "<div class='rmx-buttons-container'>$buttons</div>";
+    return "<div class='rpb-buttons-container'>$buttons</div>";
   }
 
   /**
@@ -252,7 +252,7 @@ class InputfieldRockMatrix extends InputfieldRepeater
    */
   public function ___renderItems()
   {
-    $out = '<div class="rmx-items">';
+    $out = '<div class="rpb-items">';
     foreach ($this->value as $item) {
       $out .= $this->renderItem($item);
     }
@@ -278,8 +278,8 @@ class InputfieldRockMatrix extends InputfieldRepeater
     $this->wire('modules')->get('JqueryUI')->use('vex');
 
     // load JS
-    $js = $url . "RockMatrixItem.js";
-    $m = "?m=" . filemtime($path . "RockMatrixItem.js");
+    $js = $url . "RockPageBuilderItem.js";
+    $m = "?m=" . filemtime($path . "RockPageBuilderItem.js");
     $this->wire->config->scripts->add($js . $m);
 
     $this->preloadBlockAssets();
@@ -287,7 +287,7 @@ class InputfieldRockMatrix extends InputfieldRepeater
 
   /**
    * Render dynamic style tag
-   * This style tag is rendered whenever we are editing the matrix field
+   * This style tag is rendered whenever we are editing the rpb field
    * in a modal window.
    * @return string
    */
@@ -297,11 +297,11 @@ class InputfieldRockMatrix extends InputfieldRepeater
     $field = $this->wire->input->get('field', 'fieldName');
     if ($field !== $this->name) return;
     $move = $this->wire->input->get('moveblock', 'int');
-    return "<style>li#rmx_$move {
+    return "<style>li#rpb_$move {
         border-top: 5px solid orange;
         border-bottom: 5px solid orange;
       }
-      .rmx-buttons-container { display: none; }
+      .rpb-buttons-container { display: none; }
       </style>";
   }
 
@@ -315,7 +315,7 @@ class InputfieldRockMatrix extends InputfieldRepeater
     $tx = $this->wire->modules->get('InputfieldTextarea');
     $tx->name = $this->name;
     $tx->value = $this->value->sleepValue();
-    $tx->addClass('rmx-data uk-hidden');
+    $tx->addClass('rpb-data uk-hidden');
     return $tx->render();
   }
 }

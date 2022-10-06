@@ -1,21 +1,27 @@
-<?php namespace RockMatrix;
+<?php
+
+namespace RockPageBuilder;
+
 use ProcessWire\WireArray;
 use ProcessWire\WireException;
-class BlocksArray extends WireArray {
+
+class BlocksArray extends WireArray
+{
 
   /**
    * Add item to this array
    */
-  public function add($item) {
-    if(is_array($item)) {
-      foreach($item as $i) $this->add($i);
+  public function add($item)
+  {
+    if (is_array($item)) {
+      foreach ($item as $i) $this->add($i);
       return;
     }
-    if(is_string($item)) {
-      /** @var RockMatrix */
-      $mx = $this->wire->modules->get('RockMatrix');
+    if (is_string($item)) {
+      /** @var RockPageBuilder */
+      $mx = $this->wire->modules->get('RockPageBuilder');
       $block = $mx->getBlock($item);
-      if($block) return parent::add($block);
+      if ($block) return parent::add($block);
       else {
         // silent return
         // This makes sure that fields stay usable even

@@ -1,7 +1,9 @@
-<?php namespace RockMatrix;
+<?php
+
+namespace RockPageBuilder;
 
 use ProcessWire\WireData;
 
-class BlockSettingsItem extends WireData {
-
+class BlockSettingsItem extends WireData
+{
 }

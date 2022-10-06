@@ -1,17 +1,21 @@
-<?php namespace ProcessWire;
+<?php
 
-use RockMatrix\Block;
-use RockMatrix\FieldData;
+namespace ProcessWire;
 
-class ProcessRockMatrix extends Process {
-  public static function getModuleInfo() {
+use RockPageBuilder\Block;
+use RockPageBuilder\FieldData;
+
+class ProcessRockPageBuilder extends Process
+{
+  public static function getModuleInfo()
+  {
     return [
-      'title' => 'RockMatrix Process Module',
+      'title' => 'RockPageBuilder Process Module',
       'version' => '1.0.3',
-      'summary' => 'Admin Endpoints for RockMatrix Module',
+      'summary' => 'Admin Endpoints for RockPageBuilder Module',
       'icon' => 'cubes',
       'requires' => [
-        'RockMatrix',
+        'RockPageBuilder',
       ],
       'installs' => [],
 
@@ -19,46 +23,47 @@ class ProcessRockMatrix extends Process {
       'permission' => 'page-edit',
 
       'page' => [
-        'name' => 'rockmatrix',
+        'name' => 'rockpagebuilder',
         'parent' => 2, // admin page
-        'title' => 'RockMatrix',
+        'title' => 'RockPageBuilder',
         'status' => Page::statusHidden,
       ],
     ];
   }
 
   /**
-   * Add a matrix item
+   * Add a rpb item
    */
-  public function executeAdd() {
+  public function executeAdd()
+  {
     $this->headline('Add Item');
     $this->browserTitle('Add Item');
 
     $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
     $above = $this->wire->input->get('above', 'int');
 
-    if(!$block instanceof Block) throw new WireException("Invalid block");
-    if(!$block->editable()) throw new WireException("No access");
-    if(!$block->getMatrixPage()->editable()) throw new WireException("No access");
+    if (!$block instanceof Block) throw new WireException("Invalid block");
+    if (!$block->editable()) throw new WireException("No access");
+    if (!$block->getMatrixPage()->editable()) throw new WireException("No access");
     $tpl = $this->wire->input->get('tpl', 'templateName');
     $field = $block->getMatrixField();
     $f = $field->getInputfield($block);
     $out = '';
 
     // set template if we only have one allowed block
-    $allowed = $this->matrix()->getAllowedBlocks($f, $block->getMatrixPage());
-    if(count($allowed)===1) $tpl = $allowed->first()->template;
+    $allowed = $this->rpb()->getAllowedBlocks($f, $block->getMatrixPage());
+    if (count($allowed) === 1) $tpl = $allowed->first()->template;
 
     // create block if tpl is set
-    if($tpl) {
+    if ($tpl) {
       $fieldData = $block->getMatrixData();
-      if($above) $new = $fieldData->addBefore($tpl, $block);
+      if ($above) $new = $fieldData->addBefore($tpl, $block);
       else $new = $fieldData->addAfter($tpl, $block);
       $fieldData->save();
       $this->wire->session->redirect($new->editUrl());
     }
 
-    // render buttons of rockmatrix field
+    // render buttons of rockpagebuilder field
     $out .= $f->renderButtons($block->getMatrixPage(), true);
 
     return $out;
@@ -67,20 +72,21 @@ class ProcessRockMatrix extends Process {
   /**
    * Add first block
    */
-  public function executeAddNew() {
+  public function executeAddNew()
+  {
     $this->headline('Add Item');
     $this->browserTitle('Add Item');
     $page = $this->wire->pages->get($this->wire->input->get('page', 'int'));
-    if(!$page->editable()) throw new WireException("No access");
+    if (!$page->editable()) throw new WireException("No access");
     $field = $this->wire->fields->get($this->wire->input->get('field', 'fieldName'));
-    if(!$field) throw new WireException("Invalid field");
+    if (!$field) throw new WireException("Invalid field");
 
     // create block if tpl is set
-    if($tpl = $this->wire->input->get('tpl', 'templateName')) {
-      /** @var FieldData $matrix */
-      $matrix = $page->getUnformatted($field->name);
-      $new = $matrix->add($tpl);
-      $matrix->save();
+    if ($tpl = $this->wire->input->get('tpl', 'templateName')) {
+      /** @var FieldData $rpb */
+      $rpb = $page->getUnformatted($field->name);
+      $new = $rpb->add($tpl);
+      $rpb->save();
       $this->wire->session->redirect($new->editUrl());
     }
 
@@ -91,11 +97,12 @@ class ProcessRockMatrix extends Process {
   /**
    * Clone given block
    */
-  public function executeClone() {
+  public function executeClone()
+  {
     $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
-    if(!$block instanceof Block) throw new WireException("Invalid Block");
-    if(!$block->editable()) throw new WireException("Block is not editable");
-    if($block->isTrash()) throw new WireException("Cannot clone blocks that are trashed");
+    if (!$block instanceof Block) throw new WireException("Invalid Block");
+    if (!$block->editable()) throw new WireException("Block is not editable");
+    if ($block->isTrash()) throw new WireException("Cannot clone blocks that are trashed");
     try {
       $block->clone();
       return $this->success();
@@ -107,11 +114,12 @@ class ProcessRockMatrix extends Process {
   /**
    * Convert given block into a widget
    */
-  public function executeConvertToWidget() {
+  public function executeConvertToWidget()
+  {
     $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
-    if(!$block instanceof Block) throw new WireException("Invalid Block");
-    if(!$block->editable()) throw new WireException("Block is not editable");
-    if($block->isTrash()) throw new WireException("Cannot clone blocks that are trashed");
+    if (!$block instanceof Block) throw new WireException("Invalid Block");
+    if (!$block->editable()) throw new WireException("Block is not editable");
+    if ($block->isTrash()) throw new WireException("Cannot clone blocks that are trashed");
     try {
       $block->toWidget();
       return $this->success();
@@ -121,36 +129,39 @@ class ProcessRockMatrix extends Process {
   }
 
   /**
-   * Trash matrix block
+   * Trash rpb block
    */
-  public function executeTrash() {
+  public function executeTrash()
+  {
     $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
-    if(!$block instanceof Block) throw new WireException("Invalid Block");
-    if(!$block->trashable()) throw new WireException("Unable to trash this block");
+    if (!$block instanceof Block) throw new WireException("Invalid Block");
+    if (!$block->trashable()) throw new WireException("Unable to trash this block");
     $block->trash();
     return $this->json("success");
   }
 
   /**
-   * @return RockMatrix
+   * @return RockPageBuilder
    */
-  public function matrix() {
-    return $this->wire->modules->get('RockMatrix');
+  public function rpb()
+  {
+    return $this->wire->modules->get('RockPageBuilder');
   }
 
   /**
    * Send json message
    * @return string
    */
-  public function json($msg, $error = false) {
+  public function json($msg, $error = false)
+  {
     return json_encode([
       'error' => $error,
       'message' => $msg,
     ]);
   }
 
-  public function success() {
+  public function success()
+  {
     return $this->json('success');
   }
-
 }

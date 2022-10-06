@@ -1,17 +1,21 @@
-<?php namespace RockMatrix;
+<?php
+
+namespace RockPageBuilder;
 
 use ProcessWire\PageArray;
 use ProcessWire\RockFrontend;
 use ProcessWire\WireException;
-use ProcessWire\RockMatrix;
+use ProcessWire\RockPageBuilder;
 use ProcessWire\RockMigrations;
 
-class FieldData extends PageArray {
+class FieldData extends PageArray
+{
 
   public $page;
   public $field;
 
-  public function __construct($page, $field) {
+  public function __construct($page, $field)
+  {
     $this->page = $page;
     $this->field = $field;
     parent::__construct();
@@ -19,114 +23,119 @@ class FieldData extends PageArray {
 
   /** Field data manipulation API */
 
-    /**
-     * Add item to this field data array
-     * @return Block
-     */
-    public function add($item, $data = []) {
-      if(is_string($item)) {
-        // template provided
-        $item = $this->createBlock($item);
-      }
-      elseif(is_array($item)) {
-        // item is a plain php array
-        // this means we create a new block and add it
-        $item = $this->createBlock($item, $data);
-      }
-      elseif($item instanceof PageArray) {
-        foreach($item as $i) $this->add($i);
-        return $this;
-      }
-
-      /** @var RockMatrix */
-      $mx = $this->wire->modules->get('RockMatrix');
-
-      // make sure item is a page
-      $_item = $item;
-      $item = $mx->getBlockPage($item);
-      if(!$item) throw new WireException("Invalid item $_item - did you call parent::migrate() in your block?");
-
-      // check if item is allowed!
-      if(!$item->isAllowed($this->field, $this->page)) {
-        throw new WireException("$item not allowed for field {$this->field}");
-      }
-
-      // add the item to the array
-      parent::add($item);
-
-      return $item;
-    }
-
-    /**
-     * Add a new block after another
-     * @return Block
-     */
-    public function addAfter($new, $existing, $data = []) {
-      $new = $this->createBlock($new, $data);
-      parent::insertAfter($new, $existing);
-      return $new;
-    }
-
-    /**
-     * Add a new block before another
-     * @return Block
-     */
-    public function addBefore($new, $existing, $data = []) {
-      $new = $this->createBlock($new, $data);
-      parent::insertBefore($new, $existing);
-      return $new;
-    }
-
-    /**
-     * Create a new block
-     * @return Block
-     */
-    public function createBlock($tpl, $data = []) {
-      // get block and check if it is allowed
-      $block = $this->master()->getBlockByTpl($tpl);
-      if(!$block) throw new WireException("Invalid tpl $tpl");
-      if(!$block->isAllowed($this->field, $this->page)) {
-        throw new WireException("$tpl not allowed on page $this->page and field $this->field");
-      }
-
-      // create new block
-      $class = $block->getInfo()->name;
-      $b = $this->wire(new $class()); /** @var Block $b */
-      $b->template = $block->getTpl();
-      $b->parent = $block->getParent($this->field, $this->page);
-      $b->title = "$class @ ".date('Y-m-d H:i:s');
-      $b->save();
-
-      // set block data
-      foreach($data as $k=>$v) $b->setAndSave($k, $v);
-
-      // save a reference to the page and the field where this page lives
-      // this is necessary for deleting unused pages from time to time
-      $b->setMatrixReference($this->page, $this->field);
-
-      return $b;
-    }
-
-    /**
-     * Reset this field and delete all blocks
-     * @return self
-     */
-    public function reset() {
-      foreach($this as $block) $block->delete();
+  /**
+   * Add item to this field data array
+   * @return Block
+   */
+  public function add($item, $data = [])
+  {
+    if (is_string($item)) {
+      // template provided
+      $item = $this->createBlock($item);
+    } elseif (is_array($item)) {
+      // item is a plain php array
+      // this means we create a new block and add it
+      $item = $this->createBlock($item, $data);
+    } elseif ($item instanceof PageArray) {
+      foreach ($item as $i) $this->add($i);
       return $this;
     }
 
-    /**
-     * Save this field on current page
-     * @return self
-     */
-    public function save() {
-      // make sure output formatting is off
-      // setting $this->page->of(false) is not enough and throws an exception?!
-      $this->wire->pages->of(false);
-      $this->page->setAndSave($this->field->name, $this);
-      return $this;
+    /** @var RockPageBuilder */
+    $mx = $this->wire->modules->get('RockPageBuilder');
+
+    // make sure item is a page
+    $_item = $item;
+    $item = $mx->getBlockPage($item);
+    if (!$item) throw new WireException("Invalid item $_item - did you call parent::migrate() in your block?");
+
+    // check if item is allowed!
+    if (!$item->isAllowed($this->field, $this->page)) {
+      throw new WireException("$item not allowed for field {$this->field}");
     }
+
+    // add the item to the array
+    parent::add($item);
+
+    return $item;
+  }
+
+  /**
+   * Add a new block after another
+   * @return Block
+   */
+  public function addAfter($new, $existing, $data = [])
+  {
+    $new = $this->createBlock($new, $data);
+    parent::insertAfter($new, $existing);
+    return $new;
+  }
+
+  /**
+   * Add a new block before another
+   * @return Block
+   */
+  public function addBefore($new, $existing, $data = [])
+  {
+    $new = $this->createBlock($new, $data);
+    parent::insertBefore($new, $existing);
+    return $new;
+  }
+
+  /**
+   * Create a new block
+   * @return Block
+   */
+  public function createBlock($tpl, $data = [])
+  {
+    // get block and check if it is allowed
+    $block = $this->master()->getBlockByTpl($tpl);
+    if (!$block) throw new WireException("Invalid tpl $tpl");
+    if (!$block->isAllowed($this->field, $this->page)) {
+      throw new WireException("$tpl not allowed on page $this->page and field $this->field");
+    }
+
+    // create new block
+    $class = $block->getInfo()->name;
+    $b = $this->wire(new $class());
+    /** @var Block $b */
+    $b->template = $block->getTpl();
+    $b->parent = $block->getParent($this->field, $this->page);
+    $b->title = "$class @ " . date('Y-m-d H:i:s');
+    $b->save();
+
+    // set block data
+    foreach ($data as $k => $v) $b->setAndSave($k, $v);
+
+    // save a reference to the page and the field where this page lives
+    // this is necessary for deleting unused pages from time to time
+    $b->setMatrixReference($this->page, $this->field);
+
+    return $b;
+  }
+
+  /**
+   * Reset this field and delete all blocks
+   * @return self
+   */
+  public function reset()
+  {
+    foreach ($this as $block) $block->delete();
+    return $this;
+  }
+
+  /**
+   * Save this field on current page
+   * @return self
+   */
+  public function save()
+  {
+    // make sure output formatting is off
+    // setting $this->page->of(false) is not enough and throws an exception?!
+    $this->wire->pages->of(false);
+    $this->page->setAndSave($this->field->name, $this);
+    return $this;
+  }
 
   /** END Field data manipulation API */
 
@@ -134,9 +143,10 @@ class FieldData extends PageArray {
    * Get a blank copy
    * @return FieldData
    */
-  public function getNew($data = null) {
+  public function getNew($data = null)
+  {
     $new = $this->field->type->getBlankValue($this->page, $this->field);
-    if($data) $new->wakeup($data);
+    if ($data) $new->wakeup($data);
     return $new;
   }
 
@@ -144,7 +154,8 @@ class FieldData extends PageArray {
    * Get property of object
    * @return mixed
    */
-  public function getProp($obj, $prop) {
+  public function getProp($obj, $prop)
+  {
     return property_exists($obj, $prop) ? $obj->$prop : null;
   }
 
@@ -154,7 +165,8 @@ class FieldData extends PageArray {
    * having a MX field is saved and input is processed.
    * @return bool
    */
-  public function hasChanged($other) {
+  public function hasChanged($other)
+  {
     $new = $this->sleepValue();
     $old = $other->sleepValue();
     return $new !== $old;
@@ -162,18 +174,20 @@ class FieldData extends PageArray {
 
   /**
    * Get master module instance
-   * @return RockMatrix
+   * @return RockPageBuilder
    */
-  public function master() {
-    return $this->wire->modules->get('RockMatrix');
+  public function master()
+  {
+    return $this->wire->modules->get('RockPageBuilder');
   }
 
   /**
-   * Render all items of this matrix field
+   * Render all items of this rpb field
    * @return string
    */
-  public function render($renderEmpty = false) {
-    if($this->wire->user->isSuperuser()) return $this->renderCatch($renderEmpty);
+  public function render($renderEmpty = false)
+  {
+    if ($this->wire->user->isSuperuser()) return $this->renderCatch($renderEmpty);
     try {
       return $this->renderCatch($renderEmpty);
     } catch (\Throwable $th) {
@@ -191,26 +205,27 @@ class FieldData extends PageArray {
    * Method to catch errors if user is not superuser
    * @return string
    */
-  private function renderCatch($renderEmpty) {
+  private function renderCatch($renderEmpty)
+  {
     $out = '';
     $typeIndex = 0;
-    foreach($this as $i=>$block) {
+    foreach ($this as $i => $block) {
       /** @var Block $block */
       /** @var Block $next */
       /** @var Block $prev */
-      $next = $this->eq($i+1);
-      $prev = $this->eq($i-1);
+      $next = $this->eq($i + 1);
+      $prev = $this->eq($i - 1);
 
       // is this block last of same type?
       $block->lastOfType = true;
-      if($next AND $next->getTpl() == $block->getTpl()) {
+      if ($next and $next->getTpl() == $block->getTpl()) {
         $block->lastOfType = false;
       }
 
       // set type index of this block
       // this is helpful for switching left/right option based on index
       // eg even = left, odd = right aligned block
-      if(!$prev OR $prev->getTpl() != $block->getTpl()) $typeIndex = 0;
+      if (!$prev or $prev->getTpl() != $block->getTpl()) $typeIndex = 0;
       $block->typeIndex = $typeIndex++;
 
       try {
@@ -219,10 +234,10 @@ class FieldData extends PageArray {
         $out .= $th->getMessage();
       }
     }
-    if(!$out AND $renderEmpty) return $this->renderEmpty();
+    if (!$out and $renderEmpty) return $this->renderEmpty();
 
     // if the addWrapper config settings is not set we return the clean markup
-    if(!$this->master()->addWrapper) return $out;
+    if (!$this->master()->addWrapper) return $out;
 
     // // create frontend editing wrapper markup
     // // this feature is not working properly at the moment
@@ -231,21 +246,22 @@ class FieldData extends PageArray {
     // if($this->page->editable()) {
     //   $editInfo = "data-page='{$this->page}' data-field='{$this->field}'";
     // }
-    // return "<div class='rmx-sortable'$editInfo>$out</div>";
+    // return "<div class='rpb-sortable'$editInfo>$out</div>";
   }
 
   /**
-   * Render empty matrix field
+   * Render empty rpb field
    * @return string
    */
-  public function ___renderEmpty() {
-    if(!$this->wire->page->editable()) return;
-    if($this->wire->config->rmx_noEmptyButton) return;
-    if(!$this->wire->modules->isInstalled('RockFrontend')) return;
+  public function ___renderEmpty()
+  {
+    if (!$this->wire->page->editable()) return;
+    if ($this->wire->config->rpb_noEmptyButton) return;
+    if (!$this->wire->modules->isInstalled('RockFrontend')) return;
     /** @var RockFrontend $rf */
     $rf = $this->wire->modules->get('RockFrontend');
     $rf->hasAlfred = true; // adds a fake <edit> tag on page::render
-    $href = $this->master()->rmxUrl("/add-new/?page={$this->page}&field=".$this->field);
+    $href = $this->master()->rpbUrl("/add-new/?page={$this->page}&field=" . $this->field);
     return $rf->iconLink("plus", $href, [
       'title' => $this->_('Add new content'),
     ]);
@@ -256,9 +272,10 @@ class FieldData extends PageArray {
    * This does NOT check if items are allowed etc.
    * @return string
    */
-  public function sleepValue() {
+  public function sleepValue()
+  {
     $sleep = [];
-    foreach($this as $item) {
+    foreach ($this as $item) {
       $sleep[] = (object)[
         'id' => $item->id,
       ];
@@ -270,17 +287,18 @@ class FieldData extends PageArray {
    * Wakeup from given data
    * @return FieldData
    */
-  public function wakeup($data) {
-    /** @var RockMatrix */
-    $mx = $this->wire->modules->get('RockMatrix');
+  public function wakeup($data)
+  {
+    /** @var RockPageBuilder */
+    $mx = $this->wire->modules->get('RockPageBuilder');
     $json = json_decode($data);
-    if($json === null) throw new WireException("Invalid json");
+    if ($json === null) throw new WireException("Invalid json");
 
     // loop items
-    foreach($json as $item) {
+    foreach ($json as $item) {
       $block = $mx->getBlockPage($item->id);
-      if(!$block) continue;
-      if($block->isTrash()) continue;
+      if (!$block) continue;
+      if ($block->isTrash()) continue;
 
       // set the changed property of this block
       // this value us used on processInput to trigger page save of the item
@@ -292,7 +310,8 @@ class FieldData extends PageArray {
     return $this;
   }
 
-  public function __debugInfo() {
+  public function __debugInfo()
+  {
     return array_merge([
       'page' => $this->page,
       'field' => $this->field,

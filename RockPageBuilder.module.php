@@ -3,11 +3,11 @@
 namespace ProcessWire;
 
 use DirectoryIterator;
-use RMBlock\Widget;
-use RockMatrix\Block;
-use RockMatrix\BlocksArray;
-use RockMatrix\BlockSettingsArray;
-use RockMatrix\FieldData;
+use RockPageBuilder\Block;
+use RockPageBuilder\BlocksArray;
+use RockPageBuilder\BlockSettingsArray;
+use RockPageBuilder\FieldData;
+use RockPageBuilderBlock\Widget;
 
 /**
  * @author Bernhard Baumrock, 18.07.2020
@@ -16,15 +16,15 @@ use RockMatrix\FieldData;
  */
 require_once(__DIR__ . "/Block.php");
 require_once(__DIR__ . "/BlocksArray.php");
-class RockMatrix extends WireData implements Module, ConfigurableModule
+class RockPageBuilder extends WireData implements Module, ConfigurableModule
 {
 
-  const prefix = 'rockmatrix_';
-  const tags = 'RockMatrix';
+  const prefix = 'rockpagebuilder_';
+  const tags = 'RockPageBuilder';
 
   const tpl_datapage = self::prefix . "datapage";
 
-  const field_matrix = self::prefix . "matrix";
+  const field_blocks = self::prefix . "blocks";
   const field_widgets = self::prefix . "widgets";
 
   public $blocks = [];
@@ -52,9 +52,9 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
   public static function getModuleInfo()
   {
     return [
-      'title' => 'RockMatrix',
+      'title' => 'RockPageBuilder',
       'version' => '2.6.7',
-      'summary' => 'Master module for RockMatrix Fieldtype + Inputfield',
+      'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
       'icon' => 'cubes',
@@ -62,16 +62,16 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
         'RockMigrations>=1.6.1',
       ],
       'installs' => [
-        'FieldtypeRockMatrix',
-        'InputfieldRockMatrix',
-        'ProcessRockMatrix',
+        'FieldtypeRockPageBuilder',
+        'InputfieldRockPageBuilder',
+        'ProcessRockPageBuilder',
       ],
     ];
   }
 
   public function init()
   {
-    $this->wire('rockmatrix', $this);
+    $this->wire('rockpagebuilder', $this);
     if (!$this->modules->isInstalled('FieldtypeRepeater')) {
       $this->modules->install('FieldtypeRepeater');
     }
@@ -79,11 +79,11 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
     $this->_saved = new PageArray();
 
     // merge in settings from config.php file
-    if (is_array($this->wire->config->rockmatrix)) {
+    if (is_array($this->wire->config->rockpagebuilder)) {
       $this->data = array_merge(
         ['createLess' => true], // defaults
         $this->data, // current settings
-        $this->wire->config->rockmatrix // settings from config.php
+        $this->wire->config->rockpagebuilder // settings from config.php
       );
     }
 
@@ -101,17 +101,17 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
     // add styles for backend
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "addStyles");
     $this->addHookAfter("Inputfield::render", $this, "addStyles");
-    $this->addHookAfter("ProcessRockMatrix::browserTitle", $this, "addStyles");
+    $this->addHookAfter("ProcessRockPageBuilder::browserTitle", $this, "addStyles");
 
     // add JS for frontend
     $this->addHookAfter("Page::render", function ($event) {
       if ($event->object->template == 'admin') return;
       // Bug: sortable makes editable text blocks almost uneditable
       // you can't click on a specific place in text and must use arrow keys
-      // $this->wire->rockfrontend->scripts()->add(__DIR__."/RockMatrixFrontend.js");
+      // $this->wire->rockfrontend->scripts()->add(__DIR__."/RockPageBuilderFrontend.js");
     });
 
-    // matrix page save trigger
+    // rpb page save trigger
     $this->_saved = new PageArray();
     $this->addHookAfter("Pages::saved", $this, "triggerMatrixPageSave");
     $this->addHookAfter("Pages::saved", $this, "cloneMatrixBlocks");
@@ -121,7 +121,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
     $this->addHookBefore('ProcessPageListRender::getNumChildren', $this, "hookNumChildren");
 
     $this->createBlock();
-    $this->include("init.php"); // load assets/RockMatrix/init.php
+    $this->include("init.php"); // load assets/RockPageBuilder/init.php
     $this->addBlock(__DIR__ . "/Widget.php"); // always load the widget block
     $this->loadBlocksFromAssetsFolder(); // load user blocks from assets
 
@@ -144,14 +144,14 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
 
   public function ready()
   {
-    $this->include("ready.php"); // load assets/RockMatrix/ready.php
+    $this->include("ready.php"); // load assets/RockPageBuilder/ready.php
   }
 
   /**
    * Add a single block file
    * @return void
    */
-  public function addBlock($file, $namespace = "RMBlock")
+  public function addBlock($file, $namespace = "RockPageBuilderBlock")
   {
     $blocks = $this->blocks;
     if (!is_file($file)) throw new WireException("File $file not found");
@@ -209,7 +209,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
    *
    * @return void
    */
-  public function addBlocks($dir, $namespace = "RMBlock", $recursive = null)
+  public function addBlocks($dir, $namespace = "RockPageBuilderBlock", $recursive = null)
   {
     $opt = ['extensions' => ['php']];
     if ($recursive !== null) $opt['recursive'] = $recursive;
@@ -232,14 +232,14 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
     $f = $event->object;
     if (!$field = $f->hasField) return;
 
-    if ($field->get('rmx-nolabel')) {
-      $f->wrapClass('rmx-nolabel');
+    if ($field->get('rpb-nolabel')) {
+      $f->wrapClass('rpb-nolabel');
       $f->label = false;
       $f->skipLabel = Inputfield::skipLabelBlank;
     }
 
-    if ($field->get('rmx-smallpadding')) {
-      $f->wrapClass('rmx-pd5');
+    if ($field->get('rpb-smallpadding')) {
+      $f->wrapClass('rpb-pd5');
     }
   }
 
@@ -273,11 +273,11 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
    */
   public function addStyles(HookEvent $event)
   {
-    // add style either when a rockmatrix field is in the editor
-    // or when we are editing a rockmatrix block
+    // add style either when a rockpagebuilder field is in the editor
+    // or when we are editing a rockpagebuilder block
     if ($event->process == 'ProcessPageEdit' and $event->process->getPage() instanceof Block) $this->addStylesheet();
-    elseif ($event->object instanceof InputfieldRockMatrix) $this->addStylesheet();
-    elseif ($event->object instanceof ProcessRockMatrix) $this->addStylesheet();
+    elseif ($event->object instanceof InputfieldRockPageBuilder) $this->addStylesheet();
+    elseif ($event->object instanceof ProcessRockPageBuilder) $this->addStylesheet();
   }
 
   /**
@@ -286,11 +286,11 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
   public function beforeUninstall(HookEvent $event)
   {
     $module = $event->arguments(0);
-    if ($module != 'RockMatrix') return;
+    if ($module != 'RockPageBuilder') return;
     $rm = $this->rm();
-    $rm->deletePage("parent=2,name=rockmatrix");
+    $rm->deletePage("parent=2,name=rockpagebuilder");
     foreach ($this->wire->fields as $field) {
-      if (!$field->type instanceof FieldtypeRockMatrix) continue;
+      if (!$field->type instanceof FieldtypeRockPageBuilder) continue;
       $rm->deleteField($field);
     }
     foreach ($this->wire->templates as $template) {
@@ -308,7 +308,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
     $page = $event->process->getPage();
     if (!$page instanceof Block) return;
     $form = $event->return;
-    $form->addClass('rmx-form');
+    $form->addClass('rpb-form');
   }
 
   /**
@@ -324,7 +324,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
     $page->prepareForm($fs);
     $page->buildForm($fs);
 
-    // add link to matrix page
+    // add link to rpb page
     if (!$this->wire->input->get('modal')) {
       $fs->add([
         'type' => 'markup',
@@ -368,7 +368,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * Clone default blocksettings ready to be used and modified in a matrix block
+   * Clone default blocksettings ready to be used and modified in a rpb block
    * @return BlockSettingsArray
    */
   public function ___cloneBlockSettings(RockFieldsField $field)
@@ -377,7 +377,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * This hook ensures that when a page is cloned that all matrix blocks of that
+   * This hook ensures that when a page is cloned that all rpb blocks of that
    * page are clones as well and that the new page holds individual copies
    * and not only references to the original blocks.
    * @return void
@@ -387,18 +387,18 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
     $page = $event->arguments(0);
     // db($page, "page $page was saved");
 
-    // find all matrix fields
+    // find all rpb fields
     $fields = $this->getMatrixFields($page);
     foreach ($fields as $field) {
-      // db($field, "found matrix field on saved page $page");
+      // db($field, "found rpb field on saved page $page");
 
       // check if references match
       $blocks = $page->get($field->name);
       if (!$blocks instanceof FieldData) continue;
       if (!$blocks->count()) continue;
-      $matrixPage = $blocks->first()->getMatrixPage();
-      if ($page->id != $matrixPage->id) {
-        // db($matrixPage, 'matrix page does not match! resetting field...');
+      $rpbPage = $blocks->first()->getMatrixPage();
+      if ($page->id != $rpbPage->id) {
+        // db($rpbPage, 'rpb page does not match! resetting field...');
 
         // reset the field of the current page
         $newData = $blocks->getNew();
@@ -430,10 +430,10 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
   {
     if (!$this->wire->user) return;
     if (!$this->wire->user->isSuperuser()) return;
-    $this->wire->addHookAfter("/rmx-create-block/", function ($event) {
+    $this->wire->addHookAfter("/rpb-create-block/", function ($event) {
       if (!$name = $this->wire->input->get('name', 'string')) return "invalid name";
       if (!$field = $this->wire->input->get('field', 'string')) return "invalid field";
-      $folder = $this->wire->config->paths->assets . "RockMatrix/$field";
+      $folder = $this->wire->config->paths->assets . "RockPageBuilder/$field";
       if (!is_dir($folder)) mkdir($folder);
       $name = ucfirst($name);
 
@@ -453,7 +453,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
       if ($this->createView == 'latte') {
         $this->stub("Block.latte", [
           '{name}' => $name,
-          '{cls}' => "rmx-" . strtolower($name),
+          '{cls}' => "rpb-" . strtolower($name),
           '{alfred}' => $this->wire->modules->isInstalled('RockFrontend')
             ? ' {alfred($block)|noescape}'
             : '',
@@ -463,7 +463,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
         if ($this->createView == 'php') $latteNote = '';
         $this->stub("Block.view.txt", [
           "{name}" => $name,
-          "{cls}" => "rmx-" . strtolower($name),
+          "{cls}" => "rpb-" . strtolower($name),
           "{alfred}" => $alfred,
           "{latteNote}" => $latteNote,
         ], "$folder/$name.view.php");
@@ -473,7 +473,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
       if ($this->createLess) {
         $this->stub(
           "Block.less",
-          ['{cls}' => "rmx-" . strtolower($name)],
+          ['{cls}' => "rpb-" . strtolower($name)],
           "$folder/$name.less"
         );
       }
@@ -556,14 +556,14 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * Return a WireArray containing all matrix fields of given page
+   * Return a WireArray containing all rpb fields of given page
    * @return WireArray
    */
   public function getMatrixFields(Page $page)
   {
     $fields = $this->wire(new WireArray());
     foreach ($page->fields as $field) {
-      if ($field->type instanceof FieldtypeRockMatrix) $fields->add($field);
+      if ($field->type instanceof FieldtypeRockPageBuilder) $fields->add($field);
     }
     return $fields;
   }
@@ -612,7 +612,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * Make sure that blocks are editable if the matrix page is editable
+   * Make sure that blocks are editable if the rpb page is editable
    * @return void
    */
   public function hookBlockEditable(HookEvent $event)
@@ -624,10 +624,10 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
     // if page is already editable we exit early
     if ($editable == true) return;
 
-    // otherwise we make the block editable if the matrix page is editable
-    $matrixPage = $page->getMatrixPage();
-    if (!$matrixPage or !$matrixPage->id) return;
-    $event->return = $matrixPage->editable();
+    // otherwise we make the block editable if the rpb page is editable
+    $rpbPage = $page->getMatrixPage();
+    if (!$rpbPage or !$rpbPage->id) return;
+    $event->return = $rpbPage->editable();
   }
 
   /**
@@ -659,7 +659,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
    */
   public function include($file)
   {
-    $dir = $this->wire->config->paths->assets . "RockMatrix";
+    $dir = $this->wire->config->paths->assets . "RockPageBuilder";
     $file = "$dir/$file";
     $vars = ['mx' => $this];
     $opt = ['allowedPaths' => [$dir]];
@@ -672,17 +672,17 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
    */
   public function installProcessModule()
   {
-    if ($this->wire->modules->isInstalled('ProcessRockMatrix')) return;
-    $this->wire->modules->install('ProcessRockMatrix');
+    if ($this->wire->modules->isInstalled('ProcessRockPageBuilder')) return;
+    $this->wire->modules->install('ProcessRockPageBuilder');
   }
 
   /**
    * Load all files in directory as blocks for given field
    * @return void
    */
-  public function loadBlocks($fieldname, $path, $namespace = 'RMBlock', $add = [])
+  public function loadBlocks($fieldname, $path, $namespace = 'RockPageBuilderBlock', $add = [])
   {
-    // add blocks to rockmatrix
+    // add blocks to rockpagebuilder
     $this->addBlocks($path, $namespace);
 
     // get blocks
@@ -750,7 +750,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
    */
   public function loadBlocksFromAssetsFolder()
   {
-    $folder = $this->wire->config->paths->assets . "RockMatrix";
+    $folder = $this->wire->config->paths->assets . "RockPageBuilder";
     if (!is_dir($folder)) $this->wire->files->mkdir($folder);
     foreach (new DirectoryIterator($folder) as $fileInfo) {
       if ($fileInfo->isDot()) continue;
@@ -787,11 +787,11 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
         ],
       ],
     ]);
-    $rm->createPage("RockMatrixBlocks", null, self::tpl_datapage, 1, ['hidden', 'locked']);
+    $rm->createPage("RockPageBuilderBlocks", null, self::tpl_datapage, 1, ['hidden', 'locked']);
 
-    // add one matrix field
-    if (!$rm->getField(self::field_matrix, true)) {
-      $rm->createField(self::field_matrix, 'RockMatrix', [
+    // add one rpb field
+    if (!$rm->getField(self::field_blocks, true)) {
+      $rm->createField(self::field_blocks, 'RockPageBuilder', [
         'label' => 'Content-Elements',
         'tags' => self::tags,
         'icon' => 'cubes',
@@ -800,7 +800,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
 
     // create widgets field
     if (!$rm->getField(self::field_widgets, true)) {
-      $rm->createField(self::field_widgets, 'RockMatrix', [
+      $rm->createField(self::field_widgets, 'RockPageBuilder', [
         'label' => 'Widgets',
         'tags' => self::tags,
         'icon' => 'cubes',
@@ -810,7 +810,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * We preload some styles when a rockmatrix field is present on the page
+   * We preload some styles when a rockpagebuilder field is present on the page
    * for example the styles for the radio button need to be available when
    * it is used in a RockFields field. Otherwise the first loaded block will
    * have a messed markup: https://i.imgur.com/6rr2ZIX.png
@@ -841,7 +841,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * Render links to matrix pages of current block
+   * Render links to rpb pages of current block
    * Can be multiple pages for nested blocks
    * @return string
    */
@@ -869,14 +869,14 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * Get RockMatrix Process Url
-   * Usage: $this->rmxUrl("/add?block=1&field=2");
+   * Get RockPageBuilder Process Url
+   * Usage: $this->rpbUrl("/add?block=1&field=2");
    * @return string
    */
-  public function rmxUrl($url)
+  public function rpbUrl($url)
   {
     $url = ltrim($url, "/");
-    return $this->wire->pages->get(2)->url . "rockmatrix/$url";
+    return $this->wire->pages->get(2)->url . "rockpagebuilder/$url";
   }
 
   /**
@@ -917,7 +917,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
     if (!$less) return "<link rel=stylesheet href='$cssUrl?m=$mCSS'>";
 
     $lessFiles = $this->wire->files->find(
-      $this->wire->config->paths->assets . "RockMatrix",
+      $this->wire->config->paths->assets . "RockPageBuilder",
       ['extensions' => ['less']]
     );
     $compile = false;
@@ -933,7 +933,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * If a matrix block is saved it triggers the save of parent blocks/pages as well.
+   * If a rpb block is saved it triggers the save of parent blocks/pages as well.
    * This is important to make sure that for example ProCache rules are working
    * as expected, because those rules are set on the Matrix-Page and not on the
    * content-block.
@@ -946,7 +946,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
     foreach ($block->getParentsToSave() as $p) {
       if (!$p->id) continue;
       if ($this->_saved->has($p)) continue;
-      $p->rockmatrixTriggerSave = true;
+      $p->rockpagebuilderTriggerSave = true;
       $p->of(false);
       $p->save();
       // $this->log("triggerMatrixPageSave #$p");
@@ -965,7 +965,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
       elseif (is_int($selector) and $widget->id == $selector) return $widget;
     }
     // if no widget was found we return a new block
-    // this is important to make sure that $rockmatrix->widget('Foo')->render()
+    // this is important to make sure that $rockpagebuilder->widget('Foo')->render()
     // does not throw an exception
     // if you want it to return false instead use FALSE as second param
     if ($returnBlock === false) return false;
@@ -989,7 +989,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
     $form = $event->return;
     $form->add([
       'type' => 'markup',
-      'name' => 'rmx-widget-alert',
+      'name' => 'rpb-widget-alert',
       'label' => $this->_('ATTENTION'),
       'icon' => 'exclamation-triangle',
       'value' => "<div>"
@@ -999,7 +999,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
       'notes' => $this->_('All changes that you apply to this widget will be visible on all pages') . ".",
     ]);
     $f = $form->children()->last();
-    $f->wrapClass('rmx-alert-widget');
+    $f->wrapClass('rpb-alert-widget');
     $form->remove($f)->prepend($f);
   }
 
@@ -1024,7 +1024,7 @@ class RockMatrix extends WireData implements Module, ConfigurableModule
       'type' => 'markup',
       'label' => 'Note',
       'icon' => 'exclamation',
-      'value' => 'Note that you can overwrite all settings from within your config.php file: $config->rockmatrix = [...];',
+      'value' => 'Note that you can overwrite all settings from within your config.php file: $config->rockpagebuilder = [...];',
       'notes' => 'Settings in config.php will have priority over settings set on this page!',
     ]);
 

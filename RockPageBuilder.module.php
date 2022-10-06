@@ -53,7 +53,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '2.6.7',
+      'version' => '3.0.0',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -330,7 +330,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         'type' => 'markup',
         'icon' => 'link',
         'label' => 'Matrix-Pages',
-        'value' => $this->renderMatrixLinks($page),
+        'value' => $this->renderBlockLinks($page),
         'notes' => 'This shows all pages that contain the current block',
       ]);
     }
@@ -455,7 +455,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
           '{name}' => $name,
           '{cls}' => "rpb-" . strtolower($name),
           '{alfred}' => $this->wire->modules->isInstalled('RockFrontend')
-            ? ' {alfred($block)|noescape}'
+            ? ' {alfred($block)}'
             : '',
         ], "$folder/$name.latte");
       } else {
@@ -835,7 +835,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     }
     $rm = $this->rm();
     foreach ($this->wire->templates as $tpl) {
-      if (strpos($tpl->name, "rmblock-") !== 0) continue;
+      $p = $this->wire->pages->newPage(['template' => $tpl]);
+      if (!$p instanceof Block) continue;
       if (!in_array($tpl->name, $active)) $rm->deleteTemplate($tpl);
     }
   }
@@ -845,7 +846,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * Can be multiple pages for nested blocks
    * @return string
    */
-  protected function renderMatrixLinks($page, $level = 0)
+  protected function renderBlockLinks($page, $level = 0)
   {
     if (!$page instanceof Block) return;
     $mp = $page->getMatrixPage();
@@ -862,7 +863,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $out .= $mp->viewable() ? "</a>" : '';
     $out .= "</td>";
     $out .= "</tr>";
-    $out .= $this->renderMatrixLinks($mp, $level + 1);
+    $out .= $this->renderBlockLinks($mp, $level + 1);
     if (!$level) $out .= "</table>";
 
     return $out;

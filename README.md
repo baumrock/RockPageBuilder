@@ -31,7 +31,6 @@ Technical benefits (compared to other solutions and workarounds)
 
 ## Limitations/issues
 
-- create new block, then click X --> item is added but not visible --> closing modal should trigger page reload!
 - Seems that showIf does not work with RockPageBuilder? MPN AnchorHeadline
 
 ## RockPageBuilder vs. RepeaterMatrix
@@ -41,12 +40,12 @@ Like RepeaterMatrix RockPageBuilder extends the core Repeater Fieldtype, but the
 That means that you need to use hooks to customize your pages which has many disadvantages in my opinion. RockPageBuilder on the other hand creates a custom page type for every block type which makes it super convenient to code:
 
 ```php
-class BlockFoo extends \RockPageBuilder\Block {
+class BlockFoo extends Block {
   public function foo() {
     return 'foo';
   }
 }
-class BlockBar extends \RockPageBuilder\Block {
+class BlockBar extends Block {
   public function bar() {
     return 'bar';
   }

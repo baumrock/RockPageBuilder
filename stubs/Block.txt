@@ -34,10 +34,10 @@ class {name} extends Block {
   // }
 
   // /**
-  //  * buildFormMatrix modifies the GUI only when rendered as a single block
+  //  * buildFormBlock modifies the GUI only when rendered as a single block
   //  * inside a regular page editor rpb field
   //  */
-  // public function buildFormMatrix($form) {
+  // public function buildFormBlock($form) {
   //   // here you can edit the block's inputfields at runtime
   //   if($f = $form->get('title')) {
   //     $f->label = 'Title Label Changed';

@@ -1,6 +1,6 @@
 # RockPageBuilder
 
-Repeater Matrix for ProcessWire, referenced as RM in this readme.
+Repeater Block for ProcessWire, referenced as RM in this readme.
 
 ## Concept
 
@@ -33,9 +33,9 @@ Technical benefits (compared to other solutions and workarounds)
 
 - Seems that showIf does not work with RockPageBuilder? MPN AnchorHeadline
 
-## RockPageBuilder vs. RepeaterMatrix
+## RockPageBuilder vs. RepeaterBlock
 
-Like RepeaterMatrix RockPageBuilder extends the core Repeater Fieldtype, but the concept is very different. As mentioned above every block of a RockPageBuilder is a custom Page (that's the same with RepeaterMatrix) having a custom template (that's not the case with RepeaterMatrix) and also having a custom PageClass (that's also not the case with RepeaterMatrix). RepeaterMatrix on the other hand creates ONE template for all your rpb blocks and then hides or shows the fields that you have defined via the admin interface. That means RepeaterMatrix creates less templates but on the code side you'll end up with ONE page type for MANY block types.
+Like RepeaterBlock RockPageBuilder extends the core Repeater Fieldtype, but the concept is very different. As mentioned above every block of a RockPageBuilder is a custom Page (that's the same with RepeaterBlock) having a custom template (that's not the case with RepeaterBlock) and also having a custom PageClass (that's also not the case with RepeaterBlock). RepeaterBlock on the other hand creates ONE template for all your rpb blocks and then hides or shows the fields that you have defined via the admin interface. That means RepeaterBlock creates less templates but on the code side you'll end up with ONE page type for MANY block types.
 
 That means that you need to use hooks to customize your pages which has many disadvantages in my opinion. RockPageBuilder on the other hand creates a custom page type for every block type which makes it super convenient to code:
 
@@ -51,12 +51,12 @@ class BlockBar extends Block {
   }
 }
 // vs
-$wire->addHookMethod('RepeaterMatrixPage::foo', function($event) {
+$wire->addHookMethod('RepeaterBlockPage::foo', function($event) {
   $page = $event->object;
   if($page->type !== 'rpbTypeFoo') return;
   $event->return = 'foo';
 });
-$wire->addHookMethod('RepeaterMatrixPage::bar', function($event) {
+$wire->addHookMethod('RepeaterBlockPage::bar', function($event) {
   $page = $event->object;
   if($page->type !== 'rpbTypeBar') return;
   $event->return = 'bar';
@@ -74,9 +74,9 @@ Some available methods are:
 
 - $block->isEven()
 - $block->isOdd()
-- $block->isFirstMatrixItem()
-- $block->isLastMatrixItem()
-- $block->isLastMatrixItem()
+- $block->isFirstBlock()
+- $block->isLastBlock()
+- $block->isLastBlock()
 - $block->isEvenType()
 
 Note that isEvenType checks if the item has an odd index but only counts blocks of the same type that are in a row and not interrupted by a block of another type, eg:

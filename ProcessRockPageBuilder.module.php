@@ -44,19 +44,19 @@ class ProcessRockPageBuilder extends Process
 
     if (!$block instanceof Block) throw new WireException("Invalid block");
     if (!$block->editable()) throw new WireException("No access");
-    if (!$block->getMatrixPage()->editable()) throw new WireException("No access");
+    if (!$block->getBlockPage()->editable()) throw new WireException("No access");
     $tpl = $this->wire->input->get('tpl', 'templateName');
-    $field = $block->getMatrixField();
+    $field = $block->getBlockField();
     $f = $field->getInputfield($block);
     $out = '';
 
     // set template if we only have one allowed block
-    $allowed = $this->rpb()->getAllowedBlocks($f, $block->getMatrixPage());
+    $allowed = $this->rpb()->getAllowedBlocks($f, $block->getBlockPage());
     if (count($allowed) === 1) $tpl = $allowed->first()->template;
 
     // create block if tpl is set
     if ($tpl) {
-      $fieldData = $block->getMatrixData();
+      $fieldData = $block->getBlockData();
       if ($above) $new = $fieldData->addBefore($tpl, $block);
       else $new = $fieldData->addAfter($tpl, $block);
       $fieldData->save();
@@ -64,7 +64,7 @@ class ProcessRockPageBuilder extends Process
     }
 
     // render buttons of rockpagebuilder field
-    $out .= $f->renderButtons($block->getMatrixPage(), true);
+    $out .= $f->renderButtons($block->getBlockPage(), true);
 
     return $out;
   }

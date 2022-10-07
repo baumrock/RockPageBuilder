@@ -53,7 +53,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.0.1',
+      'version' => '3.0.2',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -113,8 +113,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     // rpb page save trigger
     $this->_saved = new PageArray();
-    $this->addHookAfter("Pages::saved", $this, "triggerMatrixPageSave");
-    $this->addHookAfter("Pages::saved", $this, "cloneMatrixBlocks");
+    $this->addHookAfter("Pages::saved", $this, "triggerBlockPageSave");
+    $this->addHookAfter("Pages::saved", $this, "cloneBlocks");
 
     // hide data page from tree
     $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
@@ -329,7 +329,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       $fs->add([
         'type' => 'markup',
         'icon' => 'link',
-        'label' => 'Matrix-Pages',
+        'label' => 'Block-Pages',
         'value' => $this->renderBlockLinks($page),
         'notes' => 'This shows all pages that contain the current block',
       ]);
@@ -382,13 +382,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * and not only references to the original blocks.
    * @return void
    */
-  public function cloneMatrixBlocks(HookEvent $event)
+  public function cloneBlocks(HookEvent $event)
   {
     $page = $event->arguments(0);
     // db($page, "page $page was saved");
 
     // find all rpb fields
-    $fields = $this->getMatrixFields($page);
+    $fields = $this->getBlockFields($page);
     foreach ($fields as $field) {
       // db($field, "found rpb field on saved page $page");
 
@@ -396,7 +396,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       $blocks = $page->get($field->name);
       if (!$blocks instanceof FieldData) continue;
       if (!$blocks->count()) continue;
-      $rpbPage = $blocks->first()->getMatrixPage();
+      $rpbPage = $blocks->first()->getBlockPage();
       if ($page->id != $rpbPage->id) {
         // db($rpbPage, 'rpb page does not match! resetting field...');
 
@@ -411,7 +411,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
           $fieldvalues = $block->getArray();
           $clone->setArray($fieldvalues);
           $clone->save();
-          $clone->setMatrixReference($page, $field);
+          $clone->setBlockReference($page, $field);
           $newData->add($clone);
         }
 
@@ -559,7 +559,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * Return a WireArray containing all rpb fields of given page
    * @return WireArray
    */
-  public function getMatrixFields(Page $page)
+  public function getBlockFields(Page $page)
   {
     $fields = $this->wire(new WireArray());
     foreach ($page->fields as $field) {
@@ -594,7 +594,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         'template' => $widget->getTplName(),
         $widget::field_block => $block,
       ]);
-      foreach ($widgets as $w) $pages->add($w->getMatrixPage());
+      foreach ($widgets as $w) $pages->add($w->getBlockPage());
     } catch (\Throwable $th) {
       $this->log($th->getMessage());
     }
@@ -625,7 +625,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if ($editable == true) return;
 
     // otherwise we make the block editable if the rpb page is editable
-    $rpbPage = $page->getMatrixPage();
+    $rpbPage = $page->getBlockPage();
     if (!$rpbPage or !$rpbPage->id) return;
     $event->return = $rpbPage->editable();
   }
@@ -848,14 +848,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   protected function renderBlockLinks($page, $level = 0)
   {
     if (!$page instanceof Block) return;
-    $mp = $page->getMatrixPage();
+    $mp = $page->getBlockPage();
 
     $out = '';
     if (!$level) $out = "<table class='uk-table uk-table-striped uk-table-small'>";
     $out .= "<tr>";
     $out .= "<td class=uk-width-auto><a href={$mp->editUrl}><i class='fa fa-edit'></i></a></td>";
     $out .= "<td class=uk-width-auto>#$mp</td>";
-    $out .= "<td class=uk-width-auto>" . $page->getMatrixField()->name . "</td>";
+    $out .= "<td class=uk-width-auto>" . $page->getBlockField()->name . "</td>";
     $out .= "<td class=uk-width-expand>";
     $out .= $mp->viewable() ? "<a href={$mp->url}>" : '';
     $out .= $mp->title ?: $mp->url;
@@ -935,11 +935,11 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   /**
    * If a rpb block is saved it triggers the save of parent blocks/pages as well.
    * This is important to make sure that for example ProCache rules are working
-   * as expected, because those rules are set on the Matrix-Page and not on the
+   * as expected, because those rules are set on the Block-Page and not on the
    * content-block.
    * @return void
    */
-  public function triggerMatrixPageSave(HookEvent $event)
+  public function triggerBlockPageSave(HookEvent $event)
   {
     $block = $event->arguments(0);
     if (!$block instanceof Block) return;
@@ -949,7 +949,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       $p->rockpagebuilderTriggerSave = true;
       $p->of(false);
       $p->save();
-      // $this->log("triggerMatrixPageSave #$p");
+      // $this->log("triggerBlockPageSave #$p");
       $this->_saved->add($p);
     }
   }
@@ -976,8 +976,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     $block = $event->process->getPage();
     if (!$block instanceof Block) return;
-    if ($block->getMatrixPage()->id !== 1) return;
-    if ($block->getMatrixField()->name !== self::field_widgets) return;
+    if ($block->getBlockPage()->id !== 1) return;
+    if ($block->getBlockField()->name !== self::field_widgets) return;
 
     $references = '';
     $widgetPages = $this->getWidgetPages($block);

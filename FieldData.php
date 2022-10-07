@@ -109,7 +109,7 @@ class FieldData extends PageArray
 
     // save a reference to the page and the field where this page lives
     // this is necessary for deleting unused pages from time to time
-    $b->setMatrixReference($this->page, $this->field);
+    $b->setBlockReference($this->page, $this->field);
 
     return $b;
   }

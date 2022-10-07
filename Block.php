@@ -77,7 +77,7 @@ class Block extends \ProcessWire\Page
     // when trashing such a block we want to trash the reference widget and not the global block itself!
     $block = $this;
     $widget = $block->_widget ?: $block;
-    $data = $widget->getMatrixData();
+    $data = $widget->getBlockData();
 
     if ($opt->clone and $block->editable()) {
       $icons[] = (object)[
@@ -95,7 +95,7 @@ class Block extends \ProcessWire\Page
         'label' => $block->title,
         'tooltip' => "Move Block #{$widget->id}",
         'class' => 'pw-modal',
-        'href' => $widget->getMatrixPage()->editUrl . "&field=" . $widget->getMatrixField() . "&moveblock=$widget",
+        'href' => $widget->getBlockPage()->editUrl . "&field=" . $widget->getBlockField() . "&moveblock=$widget",
         'suffix' => 'data-buttons="button.ui-button[type=submit]" data-autoclose data-reload',
       ];
     }
@@ -172,7 +172,7 @@ class Block extends \ProcessWire\Page
    * Build the form when displayed in a rpb field
    * @return void
    */
-  public function ___buildFormMatrix($fs)
+  public function ___buildFormBlock($fs)
   {
   }
 
@@ -191,7 +191,7 @@ class Block extends \ProcessWire\Page
   public function clone()
   {
     $block = $this;
-    $fielddata = $block->getMatrixData();
+    $fielddata = $block->getBlockData();
     $this->rpb()->isClone = true;
     $clone = $this->wire->pages->clone($block);
     /** @var Block $clone */
@@ -217,14 +217,14 @@ class Block extends \ProcessWire\Page
     }
 
     // remove from old field
-    $old = $this->getMatrixData();
+    $old = $this->getBlockData();
     $old->remove($this);
     $old->save();
 
     // add to new field
     $new->add($this);
     $new->save();
-    $this->setMatrixReference($page, $field);
+    $this->setBlockReference($page, $field);
   }
 
   /**
@@ -320,10 +320,10 @@ class Block extends \ProcessWire\Page
    * Get the rpb data object of the field where this block lives on
    * @return FieldData
    */
-  public function getMatrixData()
+  public function getBlockData()
   {
-    $page = $this->getMatrixPage();
-    $field = $this->getMatrixField();
+    $page = $this->getBlockPage();
+    $field = $this->getBlockField();
     if (!$page or !$field) return false;
     return $page->get($field->name);
   }
@@ -332,7 +332,7 @@ class Block extends \ProcessWire\Page
    * Return the field where this block lives on
    * @return Field
    */
-  public function getMatrixField()
+  public function getBlockField()
   {
     $meta = explode("-", $this->meta('RockPageBuilder'));
     if (!is_array($meta) or count($meta) !== 2) return false;
@@ -343,9 +343,9 @@ class Block extends \ProcessWire\Page
    * Index starting from 1
    * @return integer
    */
-  public function getMatrixNum()
+  public function getBlockNum()
   {
-    return $this->getMatrixIndex() + 1;
+    return $this->getBlockIndex() + 1;
   }
 
   /**
@@ -353,7 +353,7 @@ class Block extends \ProcessWire\Page
    * Every block can only live on ONE single page!!
    * @return Page
    */
-  public function getMatrixPage()
+  public function getBlockPage()
   {
     // the page is stored in metadata of the block
     // the metadata is pageid-fieldid
@@ -366,10 +366,10 @@ class Block extends \ProcessWire\Page
    * @param bool $startAtOne
    * @return int|false
    */
-  public function getMatrixIndex($startAtOne = false)
+  public function getBlockIndex($startAtOne = false)
   {
     $i = $startAtOne ? 1 : 0;
-    $items = $this->getMatrixData();
+    $items = $this->getBlockData();
     if (!$items) return false;
     foreach ($items as $item) {
       if ($item->id === $this->id) return $i;
@@ -404,10 +404,10 @@ class Block extends \ProcessWire\Page
   public function getParentsToSave()
   {
     $pages = new PageArray();
-    $current = $this->getMatrixPage();
+    $current = $this->getBlockPage();
     while ($current instanceof Block) {
       $pages->add($current);
-      $current = $current->getMatrixPage();
+      $current = $current->getBlockPage();
     }
     $pages->add($current);
     return $pages;
@@ -472,12 +472,12 @@ class Block extends \ProcessWire\Page
 
     // apply changes added to buildForm
     // buildForm changes will also be applied when editing
-    // the block in a new window whereas buildFormMatrix
+    // the block in a new window whereas buildFormBlock
     // will only be applied when editing in a rpb field
     $this->buildForm($fs);
 
-    // call buildFormMatrix (if implemented for the block)
-    $this->buildFormMatrix($fs);
+    // call buildFormBlock (if implemented for the block)
+    $this->buildFormBlock($fs);
 
     // add repeater suffix to all children
     foreach ($this->rpb()->getChildrenRecursively($fs) as $f) {
@@ -540,7 +540,7 @@ class Block extends \ProcessWire\Page
    */
   public function indexEven()
   {
-    return $this->getMatrixIndex() % 2 === 0;
+    return $this->getBlockIndex() % 2 === 0;
   }
 
   /**
@@ -549,7 +549,7 @@ class Block extends \ProcessWire\Page
    */
   public function indexOdd()
   {
-    return $this->getMatrixIndex() % 2 !== 0;
+    return $this->getBlockIndex() % 2 !== 0;
   }
 
   /**
@@ -585,7 +585,7 @@ class Block extends \ProcessWire\Page
    */
   public function isEven()
   {
-    return $this->getMatrixNum() % 2 === 0;
+    return $this->getBlockNum() % 2 === 0;
   }
 
   /**
@@ -601,20 +601,20 @@ class Block extends \ProcessWire\Page
    * Is this item the first item?
    * @return bool
    */
-  public function isFirstMatrixItem()
+  public function isFirstBlock()
   {
-    return $this->getMatrixIndex() === 0;
+    return $this->getBlockIndex() === 0;
   }
 
   /**
    * Is this item the last item?
    * @return bool
    */
-  public function isLastMatrixItem()
+  public function isLastBlock()
   {
-    $data = $this->getMatrixData();
+    $data = $this->getBlockData();
     if (!$data) return true;
-    return $this->getMatrixIndex(true) === $data->count();
+    return $this->getBlockIndex(true) === $data->count();
   }
 
   /**
@@ -623,7 +623,7 @@ class Block extends \ProcessWire\Page
    */
   public function isOdd()
   {
-    return $this->getMatrixNum() % 2 !== 0;
+    return $this->getBlockNum() % 2 !== 0;
   }
 
   /**
@@ -641,7 +641,7 @@ class Block extends \ProcessWire\Page
    */
   public function isSaved()
   {
-    return !!$this->getMatrixIndex(true);
+    return !!$this->getBlockIndex(true);
   }
 
   /**
@@ -650,7 +650,7 @@ class Block extends \ProcessWire\Page
    */
   public function isWidget()
   {
-    return $this->getMatrixField()->name == RockPageBuilder::field_widgets;
+    return $this->getBlockField()->name == RockPageBuilder::field_widgets;
   }
 
   /**
@@ -675,10 +675,10 @@ class Block extends \ProcessWire\Page
    * Get next rpb item
    * @return Page|false
    */
-  public function nextMatrixItem()
+  public function nextBlock()
   {
     $match = false;
-    foreach ($this->getMatrixData() as $item) {
+    foreach ($this->getBlockData() as $item) {
       if ($match) return $item;
       if ($item->id === $this->id) $match = true;
     }
@@ -688,8 +688,8 @@ class Block extends \ProcessWire\Page
   /**
    * Prepare form for being rendered as a rpb block
    * This is a separate method that needs to be called before buildForm
-   * or buildFormMatrix. The reason for this method is that buildForm and
-   * buildFormMatrix do not need to call parent::buildForm, because that would
+   * or buildFormBlock. The reason for this method is that buildForm and
+   * buildFormBlock do not need to call parent::buildForm, because that would
    * be prone to errors.
    * @return void
    */
@@ -744,10 +744,10 @@ class Block extends \ProcessWire\Page
    * Get previous rpb item
    * @return Page|false
    */
-  public function prevMatrixItem()
+  public function prevBlock()
   {
     $prev = false;
-    foreach ($this->getMatrixData() as $item) {
+    foreach ($this->getBlockData() as $item) {
       if ($item->id === $this->id) return $prev;
       $prev = $item;
     }
@@ -1016,7 +1016,7 @@ class Block extends \ProcessWire\Page
    * Save reference to page and field of this rpb block
    * @return void
    */
-  public function setMatrixReference($page, $field)
+  public function setBlockReference($page, $field)
   {
     $this->meta('RockPageBuilder', "$page-$field");
   }
@@ -1093,7 +1093,7 @@ class Block extends \ProcessWire\Page
   public function toWidget()
   {
     $block = $this;
-    $fielddata = $block->getMatrixData();
+    $fielddata = $block->getBlockData();
 
     // create new widget with reference to block
     $tpl = (new Widget())->getTplName();
@@ -1124,7 +1124,7 @@ class Block extends \ProcessWire\Page
   {
     $i = 0;
     $current = $this;
-    while ($prev = $current->prevMatrixItem()) {
+    while ($prev = $current->prevBlock()) {
       if ($prev->template->name !== $current->template->name) return $i;
       $i++;
       $current = $prev;
@@ -1145,6 +1145,18 @@ class Block extends \ProcessWire\Page
       "$base.latte" => "latte",
       "$base.view.php" => "php",
     ];
+  }
+
+  /**
+   * Add vertical spacing style attribute to the current block
+   */
+  public function vSpace()
+  {
+    $v = $this->getInfo()->spaceV ?: 0;
+    return "style='
+      padding-top: calc({$v}rem + 10rem * var(--rf-grow));
+      padding-bottom: calc({$v}rem + 10rem * var(--rf-grow));
+      '";
   }
 
   /**

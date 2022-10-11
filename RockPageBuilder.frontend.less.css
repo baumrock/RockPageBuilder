@@ -1,0 +1,8 @@
+.rpb-nomargin > *:last-child:not(.alfredelements),
+.rpb-nomargin .pw-edit-orig > *:last-child:not(.alfredelements) {
+  margin-bottom: 0;
+}
+.rpb-nomargin > *:first-child,
+.rpb-nomargin .pw-edit-orig > *:first-child {
+  margin-top: 0;
+}

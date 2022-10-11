@@ -16,6 +16,11 @@ class {name} extends Block {
       // 'icon' => 'picture-o',
       // 'description' => 'RockPageBuilder Block Setup Demo',
       // 'sort' => 500,
+
+      // block spacing
+      // see readme about block spacing!
+      // 'spaceID' => 'white',
+      // 'spaceV' => '20pxrem, 40pxrem',
     ];
   }
 

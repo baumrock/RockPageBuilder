@@ -1178,6 +1178,10 @@ class Block extends \ProcessWire\Page
       if (!$u1) $u1 = $u2;
       if (!$u2) $u2 = $u1;
       if ($u1 !== $u2) {
+        // bd($v1, 'v1');
+        // bd($v2, 'v2');
+        // bd($u1, 'u1');
+        // bd($u2, 'u2');
         throw new WireException("The units of your block spacings have to match - otherwise we cant calculate the deviding value!");
       }
 
@@ -1215,7 +1219,7 @@ class Block extends \ProcessWire\Page
   {
     $spaceB = $this->getInfo()->spaceB;
     if ($spaceB === null) return $this->spaceV();
-    return $spaceB;
+    return $this->spaceArray($spaceB);
   }
 
   public function spaceID(): string
@@ -1229,12 +1233,19 @@ class Block extends \ProcessWire\Page
   {
     $spaceT = $this->getInfo()->spaceT;
     if ($spaceT === null) return $this->spaceV();
-    return $spaceT;
+    return $this->spaceArray($spaceT);
   }
 
   public function spaceV()
   {
-    return $this->getInfo()->spaceV ?: 0;
+    return $this->spaceArray($this->getInfo()->spaceV ?: 0);
+  }
+
+  public function spaceArray($value): array
+  {
+    if (is_array($value)) return $value;
+    if (strpos($value, ",")) return explode(",", $value);
+    return [$value];
   }
 
   /**

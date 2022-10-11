@@ -145,6 +145,35 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   public function ready()
   {
     $this->include("ready.php"); // load assets/RockPageBuilder/ready.php
+    $this->addFrontendStyle();
+  }
+
+  /**
+   * Add backend stylesheet
+   */
+  public function addBackendStyle()
+  {
+    if ($this->stylesAdded) return;
+    $this->stylesAdded = true;
+    $path = $this->path;
+    $url = $this->wire->config->urls($this);
+    $lessFile = $this->className . ".less";
+    $cssFile = "$lessFile.css";
+    $mCSS = filemtime($path . $cssFile);
+    $mLESS = filemtime($path . $lessFile);
+
+    if ($mLESS > $mCSS and $this->wire->user->isSuperuser()) {
+      if ($less = $this->wire->modules->get('Less')) {
+        // recreate css file
+        /** @var Less $less */
+        $less->addFile($path . $lessFile);
+        $less->saveCss($path . $cssFile);
+        $mCSS = time();
+        $this->log('Created new CSS file for ' . $this->className);
+      }
+    }
+
+    $this->wire->config->styles->add($url . $cssFile . "?m=" . $mCSS);
   }
 
   /**
@@ -223,6 +252,24 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
+   * Add frontend styles via RockFrontend
+   */
+  public function addFrontendStyle()
+  {
+    if ($this->wire->page->template == 'admin') return;
+    if (!$rf = $this->wire->modules->get('RockFrontend')) return;
+    try {
+      /** @var RockFrontend $rf */
+      /** @var RockMigrations $rm */
+      $rm = $this->wire->modules->get('RockMigrations');
+      $css = $rm->saveCSS(__DIR__ . "/RockPageBuilder.frontend.less");
+      $rf->styles()->add($css);
+    } catch (\Throwable $th) {
+      $this->log($th->getMessage());
+    }
+  }
+
+  /**
    * Add magic inputfield properties
    * @return void
    */
@@ -243,31 +290,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     }
   }
 
-  public function addStylesheet()
-  {
-    if ($this->stylesAdded) return;
-    $this->stylesAdded = true;
-    $path = $this->path;
-    $url = $this->wire->config->urls($this);
-    $lessFile = $this->className . ".less";
-    $cssFile = "$lessFile.css";
-    $mCSS = filemtime($path . $cssFile);
-    $mLESS = filemtime($path . $lessFile);
-
-    if ($mLESS > $mCSS and $this->wire->user->isSuperuser()) {
-      if ($less = $this->wire->modules->get('Less')) {
-        // recreate css file
-        /** @var Less $less */
-        $less->addFile($path . $lessFile);
-        $less->saveCss($path . $cssFile);
-        $mCSS = time();
-        $this->log('Created new CSS file for ' . $this->className);
-      }
-    }
-
-    $this->wire->config->styles->add($url . $cssFile . "?m=" . $mCSS);
-  }
-
   /**
    * Add stylesheet to pw admin
    */
@@ -275,9 +297,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     // add style either when a rockpagebuilder field is in the editor
     // or when we are editing a rockpagebuilder block
-    if ($event->process == 'ProcessPageEdit' and $event->process->getPage() instanceof Block) $this->addStylesheet();
-    elseif ($event->object instanceof InputfieldRockPageBuilder) $this->addStylesheet();
-    elseif ($event->object instanceof ProcessRockPageBuilder) $this->addStylesheet();
+    if ($event->process == 'ProcessPageEdit' and $event->process->getPage() instanceof Block) $this->addBackendStyle();
+    elseif ($event->object instanceof InputfieldRockPageBuilder) $this->addBackendStyle();
+    elseif ($event->object instanceof ProcessRockPageBuilder) $this->addBackendStyle();
   }
 
   /**

@@ -29,6 +29,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   public $blocks = [];
 
+  /** @var WireData */
+  public $blockStylesCache;
+
   /** @var WireArray */
   public $blockSettings;
 
@@ -53,7 +56,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.0.3',
+      'version' => '3.0.4',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -76,7 +79,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       $this->modules->install('FieldtypeRepeater');
     }
     $this->path = $this->wire->config->paths($this);
-    $this->_saved = new PageArray();
+    $this->_saved = $this->wire(new PageArray());
+    $this->blockStylesCache = $this->wire(new WireData());
 
     // merge in settings from config.php file
     if (is_array($this->wire->config->rockpagebuilder)) {
@@ -92,6 +96,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
     $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
     $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
+    $this->addHookAfter("Page::render", $this, "addMagicStyles");
     $this->addHookAfter("User::hasPagePermission", $this, "hookImageEdit");
     $this->addHookBefore("Inputfield::render", $this, "addMagicInputfieldProperties");
     $this->addHookAfter("Modules::refresh", $this, "removeUnusedTemplates");
@@ -140,6 +145,16 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       // that have the default priority of 1
       $rm->watch($this, 0.9, ['force' => true]);
     }
+  }
+
+  public function addMagicStyles(HookEvent $event)
+  {
+    $html = $event->return;
+    if (!strpos($html, "#rpbstyle-")) return;
+    foreach ($this->blockStylesCache as $id => $str) {
+      $html = str_replace("\"$id\"", $str, $html);
+    }
+    $event->return = $html;
   }
 
   public function ready()

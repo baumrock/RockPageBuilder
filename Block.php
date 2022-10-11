@@ -1099,12 +1099,19 @@ class Block extends \ProcessWire\Page
   /**
    * Add vertical spacing style attribute to the current block
    */
-  public function spaceStyles()
+  public function spaceStyles($useMagic = true)
   {
     // get the correct spacing that depends on prev+next block
     $top = $this->postCSS($this->getSpaceTop());
     $bottom = $this->postCSS($this->getSpaceBottom());
-    return "style='padding-top: $top; padding-bottom: $bottom;'";
+    $str = "style='padding-top: $top; padding-bottom: $bottom;'";
+    if (!$useMagic) return $str;
+
+    // using rockfrontend magic to replace a uniqe string with real markup
+    // without using |noescape filter in latte
+    $key = "#rpbstyle-$this";
+    $this->rpb()->blockStylesCache->set($key, $str);
+    return $key;
   }
 
   /**

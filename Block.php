@@ -17,6 +17,7 @@ use \ProcessWire\InputfieldFieldset;
 use ProcessWire\PageArray;
 use ProcessWire\RockFields;
 use ProcessWire\RockFieldsField;
+use ProcessWire\RockFrontend;
 use ProcessWire\Template;
 use ProcessWire\WireException;
 use ReflectionClass;
@@ -1076,6 +1077,167 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Try to apply RockFrontend postCSS rules
+   */
+  public function postCSS($str): string
+  {
+    if (is_array($str)) {
+      if (count($str) == 2) $str = "rfGrow({$str[0]}, {$str[1]})";
+      // a vSpace of 0 leads to a single value array
+      // this converts it back to a single string value
+      else $str = (string)$str[0];
+    }
+    if (!$rf = $this->rockfrontend()) return $str;
+    return $rf->postCSS($str);
+  }
+
+  public function rockfrontend(): RockFrontend|null
+  {
+    return $this->wire->modules->get('RockFrontend');
+  }
+
+  /**
+   * Add vertical spacing style attribute to the current block
+   */
+  public function spaceStyles()
+  {
+    // get the correct spacing that depends on prev+next block
+    $top = $this->postCSS($this->getSpaceTop());
+    $bottom = $this->postCSS($this->getSpaceBottom());
+    return "style='padding-top: $top; padding-bottom: $bottom;'";
+  }
+
+  /**
+   * Get bottom spacing that depends on the next block
+   */
+  public function getSpaceBottom()
+  {
+    $next = $this->nextBlock();
+    $spaceB = $this->spaceB();
+
+    // if there is no next block we return the full space of current block
+    if (!$next) return $spaceB;
+
+    // there is a block above this one
+    // now check if the spaceID matches
+    if ($next->spaceID() != $this->spaceID()) return $spaceB;
+
+    // we need to calculate half space for each block
+    return $this->halfSpace($this->spaceB(), $next->spaceB());
+  }
+  /**
+   * Get top spacing that depends on the previous block
+   */
+  public function getSpaceTop()
+  {
+    $prev = $this->prevBlock();
+    $spaceT = $this->spaceT();
+
+    // if there is no previous block we return the full space of current block
+    if (!$prev) return $spaceT;
+
+    // there is a block above this one
+    // now check if the spaceID matches
+    if ($prev->spaceID() != $this->spaceID()) return $spaceT;
+
+    // we need to calculate half space for each block
+    return $this->halfSpace($this->spaceT(), $prev->spaceT());
+  }
+
+  /**
+   * Return half space of this block and other block
+   * 
+   * Usage:
+   * halfSpace('10pxrem', '20pxrem'); // 15pxrem
+   * 
+   * halfSpace(
+   *  ['10pxrem', '20pxrem'],
+   *  ['20pxrem', '40pxrem'],
+   * ); // ['15pxrem', '30pxrem']
+   */
+  public function halfSpace($one, $two)
+  {
+    if (is_string($one) or is_numeric($one)) $one = [(string)$one];
+    if (is_string($two) or is_numeric($two)) $two = [(string)$two];
+    if (count($one) !== count($two)) {
+      // one block has a single value spacing
+      // in that case we use it for both values
+      if (count($one) === 1) $one = [$one[0], $one[0]];
+      if (count($two) === 1) $two = [$two[0], $two[0]];
+    }
+    $half = [];
+    foreach ($one as $i => $o) {
+      $t = $two[$i];
+      $v1 = $this->spaceVal($o);
+      $u1 = $this->spaceUnit($o);
+      $v2 = $this->spaceVal($t);
+      $u2 = $this->spaceUnit($t);
+
+      // this makes sure that a vSpace of 0 works as expected
+      // the 0 value than takes the same unit as the other value
+      if (!$u1) $u1 = $u2;
+      if (!$u2) $u2 = $u1;
+      if ($u1 !== $u2) {
+        throw new WireException("The units of your block spacings have to match - otherwise we cant calculate the deviding value!");
+      }
+
+      // calculate half spacing of both blocks
+      $half[$i] = round(max($v1, $v2) / 2, 3) . $u1;
+    }
+    return $half;
+  }
+
+  /**
+   * Return number part of space data
+   * 
+   * spaceVal('10px'); // 10
+   * spaceVal('2pxrem'); // 2
+   */
+  public function spaceVal($data): float
+  {
+    return (float)$data;
+  }
+
+  /**
+   * Return unit part of given space data
+   * 
+   * spaceUnit('10px'); // px
+   * spaceUnit('2.5rem'); // rem
+   */
+  public function spaceUnit($data): string
+  {
+    preg_match("/(.*?)([a-z]+)/", $data, $matches);
+    if (array_key_exists(2, $matches)) return $matches[2];
+    return '';
+  }
+
+  public function spaceB()
+  {
+    $spaceB = $this->getInfo()->spaceB;
+    if ($spaceB === null) return $this->spaceV();
+    return $spaceB;
+  }
+
+  public function spaceID(): string
+  {
+    $id = $this->getInfo()->spaceID;
+    if (!$id) $id = $this->getTplName();
+    return $id;
+  }
+
+  public function spaceT()
+  {
+    $spaceT = $this->getInfo()->spaceT;
+    if ($spaceT === null) return $this->spaceV();
+    return $spaceT;
+  }
+
+  public function spaceV()
+  {
+    return $this->getInfo()->spaceV ?: 0;
+  }
+
+  /**
    * Array of translatable strings
    * Use $block->x('your_string') to get string.
    * See RockPageBuilder readme about translating blocks.
@@ -1145,18 +1307,6 @@ class Block extends \ProcessWire\Page
       "$base.latte" => "latte",
       "$base.view.php" => "php",
     ];
-  }
-
-  /**
-   * Add vertical spacing style attribute to the current block
-   */
-  public function vSpace()
-  {
-    $v = $this->getInfo()->spaceV ?: 0;
-    return "style='
-      padding-top: calc({$v}rem + 10rem * var(--rf-grow));
-      padding-bottom: calc({$v}rem + 10rem * var(--rf-grow));
-      '";
   }
 
   /**

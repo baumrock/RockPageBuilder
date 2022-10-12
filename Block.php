@@ -1102,8 +1102,8 @@ class Block extends \ProcessWire\Page
   public function spaceStyles($useMagic = true)
   {
     // get the correct spacing that depends on prev+next block
-    $top = $this->postCSS($this->getSpaceTop());
-    $bottom = $this->postCSS($this->getSpaceBottom());
+    $top = $this->postCSS($this->spaceArray($this->getSpaceTop()));
+    $bottom = $this->postCSS($this->spaceArray($this->getSpaceBottom()));
     $str = "style='padding-top: $top; padding-bottom: $bottom;'";
     if (!$useMagic) return $str;
 
@@ -1222,11 +1222,15 @@ class Block extends \ProcessWire\Page
     return '';
   }
 
+  /**
+   * Method that returns bottom space for this block
+   * Can be overridden in users block file
+   */
   public function spaceB()
   {
     $spaceB = $this->getInfo()->spaceB;
     if ($spaceB === null) return $this->spaceV();
-    return $this->spaceArray($spaceB);
+    return $spaceB;
   }
 
   public function spaceID(): string
@@ -1236,16 +1240,24 @@ class Block extends \ProcessWire\Page
     return $id;
   }
 
+  /**
+   * Method that returns top space for this block
+   * Can be overridden in users block file
+   */
   public function spaceT()
   {
     $spaceT = $this->getInfo()->spaceT;
     if ($spaceT === null) return $this->spaceV();
-    return $this->spaceArray($spaceT);
+    return $spaceT;
   }
 
+  /**
+   * Method that returns vertical space for this block
+   * Can be overridden in users block file
+   */
   public function spaceV()
   {
-    return $this->spaceArray($this->getInfo()->spaceV ?: 0);
+    return $this->getInfo()->spaceV ?: 0;
   }
 
   public function spaceArray($value): array

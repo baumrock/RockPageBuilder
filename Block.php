@@ -1164,8 +1164,8 @@ class Block extends \ProcessWire\Page
    */
   public function halfSpace($one, $two)
   {
-    if (is_string($one) or is_numeric($one)) $one = [(string)$one];
-    if (is_string($two) or is_numeric($two)) $two = [(string)$two];
+    $one = $this->spaceArray($one);
+    $two = $this->spaceArray($two);
     if (count($one) !== count($two)) {
       // one block has a single value spacing
       // in that case we use it for both values

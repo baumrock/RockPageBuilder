@@ -1091,7 +1091,10 @@ class Block extends \ProcessWire\Page
     return $rf->postCSS($str);
   }
 
-  public function rockfrontend(): RockFrontend|null
+  /**
+   * @return RockFrontend
+   */
+  public function rockfrontend()
   {
     return $this->wire->modules->get('RockFrontend');
   }

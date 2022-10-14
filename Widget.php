@@ -78,6 +78,7 @@ class Widget extends Block
           'findPagesSelector' => '',
           'labelFieldName' => '_title',
           'notes' => "[$noteLabel]($url)",
+          'tags' => RockPageBuilder::tags,
         ],
       ],
       'templates' => [

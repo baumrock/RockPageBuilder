@@ -56,7 +56,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.0.4',
+      'version' => '3.0.5',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -107,6 +107,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "addStyles");
     $this->addHookAfter("Inputfield::render", $this, "addStyles");
     $this->addHookAfter("ProcessRockPageBuilder::browserTitle", $this, "addStyles");
+
+    // add builder() method to all pages
+    $this->addHookMethod("Page::builder", $this, "builder");
 
     // add JS for frontend
     $this->addHookAfter("Page::render", function ($event) {
@@ -333,6 +336,28 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     foreach ($this->wire->templates as $template) {
       if ($template == self::tpl_datapage) $rm->deleteTemplate($template);
       elseif ($template instanceof Block) $rm->deleteTemplate($template);
+    }
+  }
+
+  /**
+   * See IntelliSense/Page.php for docs
+   */
+  public function builder(HookEvent $event)
+  {
+    /** @var Page $page */
+    $page = $event->object;
+    try {
+      $html = $page->getFormatted(self::field_blocks)->render(!!$event->arguments(0));
+      $event->return = $html;
+      if ($this->wire->modules->isInstalled('RockFrontend')) {
+        /** @var RockFrontend $rf */
+        $rf = $this->wire->modules->get('RockFrontend');
+        $event->return = $rf->html($html);
+      }
+    } catch (\Throwable $th) {
+      $msg = $th->getMessage();
+      $this->log($msg);
+      if ($this->wire->config->debug) $event->return = $msg;
     }
   }
 

@@ -164,6 +164,20 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     $this->include("ready.php"); // load assets/RockPageBuilder/ready.php
     $this->addFrontendStyle();
+
+    if ($this->wire->page->template == 'admin') {
+      $this->wire->config->js('RockPageBuilderBlocks', $this->blockNames());
+    }
+  }
+
+  /**
+   * Return array of names of all blocks
+   */
+  public function blockNames(): array
+  {
+    $names = [];
+    foreach ($this->blocks as $block) $names[] = $block->className();
+    return $names;
   }
 
   /**
@@ -210,9 +224,11 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     // if block was already added we do not add it again
     $name = pathinfo($file, PATHINFO_FILENAME);
-    $class = "\\$namespace\\$name";
-    $this->wire->classLoader->addNamespace($namespace, dirname($file));
     try {
+      // use require_once instead of PW classloader
+      // because classLoader had issues when adding widgets (class xx not found)
+      require_once $file;
+      $class = "\\$namespace\\$name";
       $block = new $class();
       $block->setFile($file);
       $name = $block->getInfo()->name;
@@ -337,6 +353,15 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       if ($template == self::tpl_datapage) $rm->deleteTemplate($template);
       elseif ($template instanceof Block) $rm->deleteTemplate($template);
     }
+  }
+
+  /**
+   * Does block with given name exist?
+   */
+  public function blockExists($name, $prefix = "RockPageBuilderBlock\\"): bool
+  {
+    $name = $prefix . $name;
+    return !!$this->getBlock($name);
   }
 
   /**
@@ -503,6 +528,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       $alfred = '';
       if ($this->wire->modules->isInstalled('RockFrontend')) {
         $alfred = ' <?= $rockfrontend->alfred($page) ?>';
+      }
+
+      // if a block with given name exists we create an empty file
+      // this means we reuse the existing block on this field
+      if ($this->blockExists($name)) {
+        $blockFile = "$folder/$name.php";
+        if (!is_file($blockFile)) $this->wire->files->filePutContents($blockFile, "");
+        die('success');
       }
 
       // block file

@@ -323,10 +323,16 @@ $(document).on("click", ".createBlockType", function (e) {
   let $li = RockPageBuilder.$root(e.target);
   if (!$li.length) return;
   let field = RockPageBuilder.getName(e);
+  let existing = "";
+  $.each(ProcessWire.config.RockPageBuilderBlocks, function (i, item) {
+    existing += "<a href=/ class=rpb-copyblockname>" + item + "</a><br>";
+  });
   UIkit.modal
-    .prompt("Name of new block type:", null, function () {
-      console.log("foo");
-    })
+    .prompt(
+      "Name of block to be created (or reused):<br><small>" +
+        existing +
+        "</small>"
+    )
     .then(function (name) {
       if (!name) return;
       $(".uk-modal-body").text("loading...");
@@ -338,6 +344,12 @@ $(document).on("click", ".createBlockType", function (e) {
           UIkit.modal.alert("Request failed");
         });
     });
+});
+
+$(document).on("click", ".rpb-copyblockname", function (e) {
+  e.preventDefault();
+  let name = $(e.target).text();
+  $(e.target).closest(".uk-modal-body").find("input").val(name);
 });
 
 /** Block Actions */

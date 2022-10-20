@@ -738,8 +738,11 @@ class Block extends \ProcessWire\Page
           $id = $f->value->page->id;
           $url = $this->wire->pages->get(2)->url . "page/edit/?id=$id&field=" . $f->name;
           $label = $f->label;
-          $value = "<a href='$url' class='pw-panel pw-panel-reload
-          uk-button uk-button-default'>$label</a>";
+          $value = "<a href='$url'
+            class='pw-modal pw-modal-reload uk-button uk-button-default'
+            data-buttons='button.ui-button[type=submit]'
+            data-autoclose=''
+            >$label</a>";
         } else {
           $value = $this->_("Please save the page, then you can come back here and edit block items.");
         }

@@ -297,6 +297,7 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
     $field = $this->wire->input->get('field', 'fieldName');
     if ($field !== $this->name) return;
     $move = $this->wire->input->get('moveblock', 'int');
+    if (!$move) return;
     return "<style>li#rpb_$move {
         border-top: 5px solid orange;
         border-bottom: 5px solid orange;

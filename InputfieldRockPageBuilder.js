@@ -325,7 +325,7 @@ $(document).on("click", ".createBlockType", function (e) {
   let field = RockPageBuilder.getName(e);
   let existing = "";
   $.each(ProcessWire.config.RockPageBuilderBlocks, function (i, item) {
-    existing += "<a href=/ class=rpb-copyblockname>" + item + "</a><br>";
+    existing += "<a href=/ class=rpb-copyblockname>" + item + "</a> | ";
   });
   UIkit.modal
     .prompt(

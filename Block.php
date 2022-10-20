@@ -6,6 +6,7 @@ use Latte\Engine;
 use Latte\Runtime\Html;
 use ProcessWire\FieldtypeRockPageBuilder;
 use ProcessWire\FieldtypeRockShare;
+use ProcessWire\FieldtypeText;
 use ProcessWire\Paths;
 use ProcessWire\RockPageBuilder;
 use \ProcessWire\WireData;
@@ -54,6 +55,20 @@ class Block extends \ProcessWire\Page
     } catch (\Throwable $th) {
       $this->log($th->getMessage());
     }
+  }
+
+  /**
+   * Magic
+   */
+  public function __call($method, $args)
+  {
+    if ($fieldname = $this->getFieldName($method)) {
+      $type = $this->fields->get($fieldname)->type;
+      if ($type instanceof FieldtypeText) {
+        return $this->html($this->edit($fieldname));
+      } else return $this->html($this->get($fieldname));
+    }
+    return parent::__call($method, $args);
   }
 
   /**
@@ -246,6 +261,17 @@ class Block extends \ProcessWire\Page
     return $this->wire->config->ajax
       ? Inputfield::collapsedNo
       : Inputfield::collapsedYes;
+  }
+
+  /**
+   * Get fieldname from magic method call
+   */
+  protected function getFieldName($method)
+  {
+    if ($method === 'title') return 'title';
+    if (property_exists($this, $method)) return false;
+    $r = new ReflectionClass($this);
+    return $r->getConstant("field_$method");
   }
 
   /**
@@ -1156,10 +1182,10 @@ class Block extends \ProcessWire\Page
 
   /**
    * Return half space of this block and other block
-   * 
+   *
    * Usage:
    * halfSpace('10pxrem', '20pxrem'); // 15pxrem
-   * 
+   *
    * halfSpace(
    *  ['10pxrem', '20pxrem'],
    *  ['20pxrem', '40pxrem'],
@@ -1203,7 +1229,7 @@ class Block extends \ProcessWire\Page
 
   /**
    * Return number part of space data
-   * 
+   *
    * spaceVal('10px'); // 10
    * spaceVal('2pxrem'); // 2
    */
@@ -1214,7 +1240,7 @@ class Block extends \ProcessWire\Page
 
   /**
    * Return unit part of given space data
-   * 
+   *
    * spaceUnit('10px'); // px
    * spaceUnit('2.5rem'); // rem
    */

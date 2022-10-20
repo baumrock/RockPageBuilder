@@ -92,6 +92,20 @@ B
 B -> true
 ```
 
+### Getting field values on the Frontend
+
+When creating blocks you usually add a bunch of fields. And when working on the frontend you'll likely output those fields. If you stick to the naming convention using class constants for fields named `Block::field_yourfield` then you can request your fields simply by invoking `yourfield()`:
+
+```php
+echo $block->yourfield();
+```
+
+This will not only output the content of your field but will also take care of converting it into a Latte HTML object so you don't have to |noescape the output! Wait... wouldn't that open doors for people adding HTML into their inputfields? No, because PW already returns the value of the input encoded. Nice!
+
+Another great thing is that this will automatically make all instances of InputfieldText frontend editable! I love it :)
+
+And what if you needed a custom return value for your `yourfield` value? Simply implement the `yourfield()` method in your block's PHP file and that will bypass all the magic and you'll have full control!
+
 ## Migrations
 
 RockPageBuilder relies havily on RockMigrations. Migrations are triggered automatically via RockPageBuilder.module.php on modules::refresh.

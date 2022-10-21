@@ -106,7 +106,7 @@ Another great thing is that this will automatically make all instances of Inputf
 
 And what if you needed a custom return value for your `yourfield` value? Simply implement the `yourfield()` method in your block's PHP file and that will bypass all the magic and you'll have full control!
 
-## Migrations
+## Migrations (outdated!!)
 
 RockPageBuilder relies havily on RockMigrations. Migrations are triggered automatically via RockPageBuilder.module.php on modules::refresh.
 

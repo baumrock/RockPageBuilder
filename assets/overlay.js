@@ -68,7 +68,7 @@
   };
 
   Overlay.prototype.move = function (val) {
-    this.img.style.top = val + "px";
+    this.img.style.top = val * -1 + "px";
     this.vslider.value = val;
     this.save();
   };
@@ -98,6 +98,6 @@
   for (let i = 0; i < roots.length; i++) {
     let overlay = new Overlay();
     overlay.init(roots[i]);
-    console.log(overlay);
+    // console.log(overlay);
   }
 })();

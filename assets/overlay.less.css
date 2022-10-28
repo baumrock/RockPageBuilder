@@ -10,6 +10,7 @@
   width: 100%;
   max-width: 100%;
   opacity: 0;
+  outline: 1px dashed gray;
 }
 .rpb-overlay .rpb-gui {
   position: absolute;
@@ -24,21 +25,25 @@
   width: 20px;
   height: 20px;
   transition: all 0.5s ease;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
   outline: 2px solid #ececec;
 }
 .rpb-overlay .rpb-gui > * {
   margin-right: 10px;
+  flex-shrink: 0;
+}
+.rpb-overlay .rpb-gui > *:last-child {
+  margin-right: 0;
 }
 .rpb-overlay .rpb-gui > input {
   width: 100px;
 }
 .rpb-overlay .rpb-gui svg {
-  flex-shrink: 0;
   width: 20px;
   height: 20px;
   cursor: pointer;
 }
 .rpb-overlay .rpb-gui:hover {
-  width: 200px;
+  width: 334px;
 }

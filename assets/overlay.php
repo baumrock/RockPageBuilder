@@ -31,5 +31,12 @@
         <circle cx="16.5" cy="10.5" r=".5" fill="currentColor" />
       </g>
     </svg>
+    <input class="rpb-vslider" type="range" min="-100" max="100" value="0" step="1">
+    <svg class="rpb-reset" width="32" height="32" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+        <path d="M19.933 13.041a8 8 0 1 1-9.925-8.788C13.907 3.251 17.943 5.26 19.433 9" />
+        <path d="M20 4v5h-5" />
+      </g>
+    </svg>
   </div>
 </div>

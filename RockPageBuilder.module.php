@@ -56,7 +56,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.1.1',
+      'version' => '3.1.2',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -915,22 +915,22 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     if (!$this->wire->config->overlays) return;
     $rf = $this->wire->modules->get("RockFrontend");
-    $src = $this->overlaySrc($name, $rf);
+    $path = $this->overlayPath($name, $rf);
     return $rf->html(
       $rf->render(__DIR__ . "/assets/overlay.php", [
-        'id' => basename($src),
-        'src' => $src,
+        'id' => basename($path),
+        'src' => $rf->url($path, true),
       ])
     );
   }
 
-  public function overlaySrc($name, $rf)
+  public function overlayPath($name, RockFrontend $rf)
   {
     $name = (string)$name;
     foreach (['', 'png', 'jpg', 'jpeg', 'svg'] as $ext) {
       if ($ext) $ext = ".$ext";
       $file = $this->wire->config->paths->templates . "overlays/$name{$ext}";
-      if (is_file($file)) return $rf->url($file);
+      if (is_file($file)) return $file;
     }
   }
 

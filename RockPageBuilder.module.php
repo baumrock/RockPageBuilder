@@ -56,7 +56,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.0.8',
+      'version' => '3.1.0',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -163,7 +163,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   public function ready()
   {
     $this->include("ready.php"); // load assets/RockPageBuilder/ready.php
-    $this->addFrontendStyle();
+    $this->addFrontendAssets();
 
     if ($this->wire->page->template == 'admin') {
       $this->wire->config->js('RockPageBuilderBlocks', $this->blockNames());
@@ -288,16 +288,20 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   /**
    * Add frontend styles via RockFrontend
    */
-  public function addFrontendStyle()
+  public function addFrontendAssets()
   {
     if ($this->wire->page->template == 'admin') return;
     if (!$rf = $this->wire->modules->get('RockFrontend')) return;
     try {
       /** @var RockFrontend $rf */
       /** @var RockMigrations $rm */
+      $dir = __DIR__ . "/assets/";
       $rm = $this->wire->modules->get('RockMigrations');
-      $css = $rm->saveCSS(__DIR__ . "/RockPageBuilder.frontend.less");
+      $css = $rm->saveCSS($dir . "RockPageBuilder.less");
       $rf->styles()->add($css);
+      $css = $rm->saveCSS($dir . "overlay.less");
+      $rf->styles()->add($css);
+      $rf->scripts()->add($dir . "overlay.js", "defer");
     } catch (\Throwable $th) {
       $this->log($th->getMessage());
     }
@@ -901,6 +905,30 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         'icon' => 'cubes',
       ]);
       $rm->addFieldToTemplate(self::field_widgets, 'home');
+    }
+  }
+
+  /**
+   * Place an overlay image here
+   */
+  public function overlay($name, $gui = true)
+  {
+    if (!$this->wire->config->overlays) return;
+    $rf = $this->wire->modules->get("RockFrontend");
+    return $rf->html(
+      $rf->render(__DIR__ . "/assets/overlay.php", [
+        'src' => $this->overlaySrc($name, $rf),
+      ])
+    );
+  }
+
+  public function overlaySrc($name, $rf)
+  {
+    $name = (string)$name;
+    foreach (['', 'png', 'jpg', 'jpeg', 'svg'] as $ext) {
+      if ($ext) $ext = ".$ext";
+      $file = $this->wire->config->paths->templates . "overlays/$name{$ext}";
+      if (is_file($file)) return $rf->url($file);
     }
   }
 

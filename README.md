@@ -462,3 +462,20 @@ $this->addHookAfter("RockPageBuilder::getWidgetPages", function($event) {
   $event->return = $pages;
 });
 ```
+
+## Overlay Feature
+
+You can add an image of your design as overlay to your website. First enable the feature in your config.php
+
+```php
+$config->overlays = true;
+```
+
+Then render your overlay where you want it to be placed:
+
+```php
+// this will render /site/templates/overlays/home.png on the home template
+echo $rockpagebuilder->overlay($page->template);
+```
+
+Then add your design image in `/site/templates/overlays` and RockPageBuilder will show the preview image as 50% overlay with a nice opacity slider.

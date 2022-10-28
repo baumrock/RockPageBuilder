@@ -1,0 +1,28 @@
+.rf-overlay {
+  position: relative;
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 98;
+    opacity: 0.5;
+    pointer-events: none;
+    width: 100%;
+    max-width: none;
+  }
+  .rf-gui {
+    position: absolute;
+    top: 0;
+    left: 0;
+    outline: 2px solid #ececec;
+    background: white;
+    z-index: 99;
+    padding: 10px 10px;
+    display: flex;
+    align-items: center;
+    color: #898989;
+    svg {
+      margin: 0 10px;
+    }
+  }
+}

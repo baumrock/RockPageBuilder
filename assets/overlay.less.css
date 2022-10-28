@@ -1,29 +1,44 @@
-.rf-overlay {
+.rpb-overlay {
   position: relative;
 }
-.rf-overlay img {
+.rpb-overlay .rpb-img {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 98;
   pointer-events: none;
   width: 100%;
-  max-width: none;
-  opacity: 0.5;
+  max-width: 100%;
+  opacity: 0;
 }
-.rf-overlay .rf-gui {
+.rpb-overlay .rpb-gui {
   position: absolute;
   top: 0;
   left: 0;
-  outline: 2px solid #ececec;
   background: white;
   z-index: 99;
   padding: 10px 10px;
   display: flex;
   align-items: center;
   color: #898989;
+  width: 20px;
+  height: 20px;
+  transition: all 0.5s ease;
+  overflow: hidden;
+  outline: 2px solid #ececec;
 }
-.rf-overlay .rf-gui svg {
-  margin: 0 10px;
+.rpb-overlay .rpb-gui > * {
+  margin-right: 10px;
+}
+.rpb-overlay .rpb-gui > input {
+  width: 100px;
+}
+.rpb-overlay .rpb-gui svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
+}
+.rpb-overlay .rpb-gui:hover {
+  width: 200px;
 }

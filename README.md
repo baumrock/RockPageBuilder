@@ -1,10 +1,18 @@
 # RockPageBuilder
 
-Repeater Block for ProcessWire, referenced as RM in this readme.
+RockPageBuilder is a Fieldtype/Inputfield module that helps you creating modular content for your project.
+
+## Goals
+
+The goals of this module are
+
+- Make it easy for the client to create custom section-based pages
+- Make it easy, fast and fun to develop blocks
+- Make it possible to copy blocks to other projects
 
 ## Concept
 
-RockPageBuilder is a Fieldtype/Inputfield module that helps you creating modular content for your project. The most important part are so called `blocks` that are actually ProcessWire pages with a corresponding `template` and a custom `pageClass`.
+The most important part are so called `blocks` that are actually ProcessWire pages with a corresponding `template` and a custom `pageClass`.
 
 RockPageBuilder ships with some example blocks that you can use to quickly get started with RockPageBuilder:
 

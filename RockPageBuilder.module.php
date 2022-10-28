@@ -56,7 +56,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.1.0',
+      'version' => '3.1.1',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -911,13 +911,15 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   /**
    * Place an overlay image here
    */
-  public function overlay($name, $gui = true)
+  public function overlay($name)
   {
     if (!$this->wire->config->overlays) return;
     $rf = $this->wire->modules->get("RockFrontend");
+    $src = $this->overlaySrc($name, $rf);
     return $rf->html(
       $rf->render(__DIR__ . "/assets/overlay.php", [
-        'src' => $this->overlaySrc($name, $rf),
+        'id' => basename($src),
+        'src' => $src,
       ])
     );
   }

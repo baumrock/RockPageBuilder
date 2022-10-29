@@ -717,6 +717,14 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Inject markup to show block design as overlay
+   */
+  public function overlay()
+  {
+    return $this->master()->overlay($this->filePath());
+  }
+
+  /**
    * Prepare form for being rendered as a rpb block
    * This is a separate method that needs to be called before buildForm
    * or buildFormBlock. The reason for this method is that buildForm and

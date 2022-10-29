@@ -1,3 +1,11 @@
+*:hover > .rpb-overlay .rpb-gui {
+  width: 20px;
+  padding: 10px 10px;
+  outline: 2px solid #ececec;
+}
+*:hover > .rpb-overlay .rpb-img {
+  outline: 1px dashed gray;
+}
 .rpb-overlay {
   position: relative;
 }
@@ -10,24 +18,23 @@
   width: 100%;
   max-width: 100%;
   opacity: 0;
-  outline: 1px dashed gray;
 }
 .rpb-overlay .rpb-gui {
   position: absolute;
   top: 0;
   left: 0;
+  width: 0px;
+  padding: 0;
+  outline: 0;
   background: white;
   z-index: 99;
-  padding: 10px 10px;
   display: flex;
   align-items: center;
   color: #898989;
-  width: 20px;
   height: 20px;
-  transition: all 0.5s ease;
+  transition: all 0.3s ease;
   overflow-x: hidden;
   overflow-y: visible;
-  outline: 2px solid #ececec;
 }
 .rpb-overlay .rpb-gui > * {
   margin-right: 10px;

@@ -75,9 +75,13 @@
 
   Overlay.prototype.restore = function () {
     let storage = JSON.parse(localStorage.getItem("rpb-overlay-" + this.id));
-    this.fade(storage.slider);
-    this.filter(storage.filter);
-    this.move(storage.move);
+    if (!storage) {
+      this.fade(0.5);
+    } else {
+      this.fade(storage.slider);
+      this.filter(storage.filter);
+      this.move(storage.move);
+    }
   };
 
   /**

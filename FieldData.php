@@ -229,7 +229,7 @@ class FieldData extends PageArray
       $block->typeIndex = $typeIndex++;
 
       try {
-        $out .= $block->render();
+        $out .= $this->addOverlay($block);
       } catch (\Throwable $th) {
         $out .= $th->getMessage();
       }
@@ -247,6 +247,16 @@ class FieldData extends PageArray
     //   $editInfo = "data-page='{$this->page}' data-field='{$this->field}'";
     // }
     // return "<div class='rpb-sortable'$editInfo>$out</div>";
+  }
+
+  /**
+   * Render block and add overlay markup
+   */
+  public function addOverlay($block): string
+  {
+    $html = $block->render();
+    if (strpos($html, '<div class="rpb-overlay"') !== false) return $html;
+    return $block->overlay() . $html;
   }
 
   /**

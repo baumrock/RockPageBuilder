@@ -65,7 +65,9 @@ class Block extends \ProcessWire\Page
   {
     if ($fieldname = $this->getFieldName($method)) {
       $type = $this->fields->get($fieldname)->type;
-      if ($type instanceof FieldtypeText) {
+      if ($type instanceof FieldtypeRockPageBuilder) {
+        return $this->getFormatted($fieldname);
+      } elseif ($type instanceof FieldtypeText) {
         return $this->html($this->edit($fieldname));
       } elseif ($type instanceof FieldtypeFile) {
         // files are returned as formatted value
@@ -977,7 +979,7 @@ class Block extends \ProcessWire\Page
     $file = $master->file;
     $base = substr($file, 0, -4); // without .php ending
     $icon = '';
-    $extensions = ['png', 'svg']; // svg has to be last!
+    $extensions = ['jpg', 'png', 'svg']; // svg has to be last!
     $url = false;
     foreach ($extensions as $ext) {
       $imageFile = "$base.$ext";

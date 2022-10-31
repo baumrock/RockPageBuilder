@@ -56,7 +56,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.1.4',
+      'version' => '3.1.5',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -970,6 +970,19 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       if (strpos($tpl->name, "rockpagebuilderblock-") !== 0) continue;
       if (!in_array($tpl->name, $active)) $rm->deleteTemplate($tpl);
     }
+  }
+
+  /**
+   * Render content of blocks field
+   */
+  public function render()
+  {
+    $page = $this->wire->page;
+    $blocks = $page->getFormatted(self::field_blocks);
+    if (!$blocks) return;
+    $html = $blocks->render();
+    if ($rf = $this->wire->rockfrontend) return $rf->html($html);
+    return $html;
   }
 
   /**

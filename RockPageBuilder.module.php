@@ -56,7 +56,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.1.5',
+      'version' => '3.1.6',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -975,12 +975,12 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   /**
    * Render content of blocks field
    */
-  public function render()
+  public function render($renderPlus = false)
   {
     $page = $this->wire->page;
     $blocks = $page->getFormatted(self::field_blocks);
     if (!$blocks) return;
-    $html = $blocks->render();
+    $html = $blocks->render($renderPlus);
     if ($rf = $this->wire->rockfrontend) return $rf->html($html);
     return $html;
   }

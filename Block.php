@@ -5,6 +5,7 @@ namespace RockPageBuilder;
 use Latte\Engine;
 use Latte\Runtime\Html;
 use ProcessWire\FieldtypeFile;
+use ProcessWire\FieldtypePage;
 use ProcessWire\FieldtypeRockPageBuilder;
 use ProcessWire\FieldtypeRockShare;
 use ProcessWire\FieldtypeText;
@@ -66,6 +67,8 @@ class Block extends \ProcessWire\Page
     if ($fieldname = $this->getFieldName($method)) {
       $type = $this->fields->get($fieldname)->type;
       if ($type instanceof FieldtypeRockPageBuilder) {
+        return $this->getFormatted($fieldname);
+      } elseif ($type instanceof FieldtypePage) {
         return $this->getFormatted($fieldname);
       } elseif ($type instanceof FieldtypeText) {
         return $this->html($this->edit($fieldname));

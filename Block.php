@@ -1164,6 +1164,14 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Shortcut for spaceStyles
+   */
+  public function styles($useMagic = true)
+  {
+    return $this->spaceStyles($useMagic);
+  }
+
+  /**
    * Get bottom spacing that depends on the next block
    */
   public function getSpaceBottom()

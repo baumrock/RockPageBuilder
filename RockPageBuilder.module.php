@@ -56,13 +56,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.1.6',
+      'version' => '3.2.0',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
       'icon' => 'cubes',
       'requires' => [
         'RockMigrations>=1.6.1',
+        'RockFrontend>=2.4.0',
       ],
       'installs' => [
         'FieldtypeRockPageBuilder',
@@ -117,6 +118,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       // Bug: sortable makes editable text blocks almost uneditable
       // you can't click on a specific place in text and must use arrow keys
       // $this->wire->rockfrontend->scripts()->add(__DIR__."/RockPageBuilderFrontend.js");
+      $rf = $event->wire->rockfrontend;
+      if ($rf->loadVspace) $rf->scripts()->add(__DIR__ . "/scripts/vspace.js", "defer");
     });
 
     // rpb page save trigger
@@ -132,6 +135,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->include("init.php"); // load assets/RockPageBuilder/init.php
     $this->addBlock(__DIR__ . "/Widget.php"); // always load the widget block
     $this->loadBlocksFromAssetsFolder(); // load user blocks from assets
+
+    // add ajax endpoints
+    $this->addHookAfter("/rockpagebuilder-vscale", $this, "saveVScaleValue");
 
     // create WireArray that holds the default settings
     require_once __DIR__ . "/BlockSettingsArray.php";
@@ -168,16 +174,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if ($this->wire->page->template == 'admin') {
       $this->wire->config->js('RockPageBuilderBlocks', $this->blockNames());
     }
-  }
-
-  /**
-   * Return array of names of all blocks
-   */
-  public function blockNames(): array
-  {
-    $names = [];
-    foreach ($this->blocks as $block) $names[] = $block->className();
-    return $names;
   }
 
   /**
@@ -366,6 +362,16 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     $name = $prefix . $name;
     return !!$this->getBlock($name);
+  }
+
+  /**
+   * Return array of names of all blocks
+   */
+  public function blockNames(): array
+  {
+    $names = [];
+    foreach ($this->blocks as $block) $names[] = $block->className();
+    return $names;
   }
 
   /**
@@ -1031,6 +1037,25 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   public function rm()
   {
     return $this->wire->modules->get('RockMigrations');
+  }
+
+  /**
+   * Ajax endpoint for saving vscale value for a block
+   */
+  public function saveVScaleValue(HookEvent $event)
+  {
+    $id = $event->input->get('block', 'int');
+    $block = $this->wire->pages->get($id);
+    if (!$block instanceof Block) throw new WireException("$id is not a valid block");
+    if (!$block->editable()) throw new WireException("Block $id not editable");
+    $type = $event->input->get('type', 'string');
+    $block->meta(
+      'vspace-' . $type,
+      $event->input->get('value', 'float')
+    );
+    return json_encode([
+      'success' => true,
+    ]);
   }
 
   /**

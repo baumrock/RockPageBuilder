@@ -38,3 +38,5 @@ document.addEventListener(
   },
   false
 );
+
+console.log("loaded");

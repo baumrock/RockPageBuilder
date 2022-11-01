@@ -104,6 +104,20 @@ class Block extends \ProcessWire\Page
     $widget = $block->_widget ?: $block;
     $data = $widget->getBlockData();
 
+    $icons[] = (object)[
+      'icon' => 'up',
+      'label' => $block->title,
+      'tooltip' => "vSpace top",
+      'type' => 'vspacetop',
+    ];
+    $icons[] = (object)[
+      'icon' => 'down',
+      'label' => $block->title,
+      'tooltip' => "vSpace bottom",
+      'type' => 'vspacebottom',
+    ];
+    $this->rockfrontend()->loadVspace = true;
+
     if ($opt->clone and $block->editable()) {
       $icons[] = (object)[
         'icon' => 'clone',
@@ -1150,10 +1164,25 @@ class Block extends \ProcessWire\Page
    */
   public function spaceStyles($useMagic = true)
   {
-    // get the correct spacing that depends on prev+next block
-    $top = $this->postCSS($this->spaceArray($this->getSpaceTop()));
-    $bottom = $this->postCSS($this->spaceArray($this->getSpaceBottom()));
-    $str = "style='padding-top: $top; padding-bottom: $bottom;'";
+    $top = $this->spaceArray($this->getSpaceTop());
+    $top = $this->rockfrontend()->rfGrow([
+      'min' => $top[0],
+      'max' => $top[1],
+      'scale' => 'var(--vscale-top)',
+    ]);
+    $bottom = $this->spaceArray($this->getSpaceBottom());
+    $bottom = $this->rockfrontend()->rfGrow([
+      'min' => $bottom[0],
+      'max' => $bottom[1],
+      'scale' => 'var(--vscale-bottom)',
+    ]);
+
+    $vtop = $this->meta('vspace-top');
+    if ($vtop === null) $vtop = 1;
+    $vbottom = $this->meta('vspace-bottom');
+    if ($vbottom === null) $vbottom = 1;
+
+    $str = "style='padding-top: $top; padding-bottom: $bottom; --vscale-top:$vtop; --vscale-bottom:$vbottom;'";
     if (!$useMagic) return $str;
 
     // using rockfrontend magic to replace a uniqe string with real markup

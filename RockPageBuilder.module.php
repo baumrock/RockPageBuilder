@@ -35,6 +35,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   /** @var WireArray */
   public $blockSettings;
 
+  private $defaultSettings = false;
+
   /**
    * Flag that is set when a block is being cloned
    * This makes it possible to attach create hooks only for new items
@@ -56,7 +58,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.2.0',
+      'version' => '3.2.1',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -468,9 +470,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * Clone default blocksettings ready to be used and modified in a rpb block
    * @return BlockSettingsArray
    */
-  public function ___cloneBlockSettings(RockFieldsField $field)
+  public function ___cloneBlockSettings(RockFieldsField $field, Block $block)
   {
-    return clone $this->blockSettings;
+    $settings = clone $this->blockSettings;
+    if ($this->defaultSettings) {
+      $this->defaultSettings->__invoke($settings, $field, $block);
+    }
+    return $settings;
   }
 
   /**
@@ -585,6 +591,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
       die('success');
     });
+  }
+
+  /**
+   * Set default settings callback
+   */
+  public function defaultSettings($callback)
+  {
+    $this->defaultSettings = $callback;
   }
 
   /**

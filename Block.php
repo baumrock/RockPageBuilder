@@ -290,6 +290,14 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Get default blocksettings
+   */
+  public function getDefaultSettings(RockFieldsField $field)
+  {
+    return $this->master()->cloneBlockSettings($field, $this);
+  }
+
+  /**
    * Get fieldname from magic method call
    */
   protected function getFieldName($method)

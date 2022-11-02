@@ -168,7 +168,7 @@ To add settings to your block simply install the RockFields module and add a met
 ```php
 // add this to your block's php file
 public function settingsTable(RockFieldsField $field) {
-  $settings = $this->rpb()->cloneBlockSettings();
+  $settings = $this->getDefaultSettings();
   $settings->add([
     'name' => 'blockpadding',
     'label' => 'Block-Padding',
@@ -182,34 +182,34 @@ public function settingsTable(RockFieldsField $field) {
 }
 ```
 
-Often you want to define global settings for all blocks and extend those settings on some blocks. You can do so using a hook:
+Often you want to define global settings for all blocks and extend those settings on some blocks:
 
 ```php
 // in site/ready.php
 /** @var RockPageBuilder $rpb */
-$rpb = $this->wire('modules')->get('RockPageBuilder');
-$rpb->addHookBefore("cloneBlockSettings", function($event) {
-  /** @var BlockSettingsArray $settings */
-  $settings = $event->object->blockSettings;
-  /** @var RockFieldsField $field */
-  $field = $event->arguments(0);
-  $settings->add([
-    'label' => 'global setting',
-    'value' => $field->input('global_setting', 'radios', [
-      '*foo' => 'foo label',
-      'bar' => 'bar label',
-    ]),
-  ]);
-});
+$rpb = $this->wire->modules->get('RockPageBuilder');
+$rpb->defaultSettings(
+  function (BlockSettingsArray $settings, RockFieldsField $field, Block $block) {
+    $settings->add([
+      'name' => 'bgmuted',
+      'label' => 'Add muted background',
+      'value' => $field->input('bgmuted', 'checkbox'),
+    ]);
+
+    if($block->template == 'fooblock') {
+      $settings->add(...);
+    }
+  }
+);
 ```
 
-If you want to hide a global setting on a specific block simply do this:
+Instead of if/else in the default settings callback you can also remove default settings in a specific block:
 
 ```php
 // add this to your block's php file
 public function settingsTable(RockFieldsField $field) {
-  // get a clone of the global block settings
-  $settings = $this->rpb()->cloneBlockSettings();
+  $settings = $this->getDefaultSettings();
+
   // hide one of the global settings
   $settings->remove('name=foo');
   // add a custom setting to this block

@@ -1168,12 +1168,15 @@ class Block extends \ProcessWire\Page
   public function spaceStyles($useMagic = true)
   {
     $top = $this->spaceArray($this->getSpaceTop());
+    $bottom = $this->spaceArray($this->getSpaceBottom());
+    if (!is_array($top) or !is_array($bottom)) return;
+    if (count($top) < 2 or count($bottom) < 2) return;
+
     $top = $this->rockfrontend()->rfGrow([
       'min' => $top[0],
       'max' => $top[1],
       'scale' => 'var(--vscale-top)',
     ]);
-    $bottom = $this->spaceArray($this->getSpaceBottom());
     $bottom = $this->rockfrontend()->rfGrow([
       'min' => $bottom[0],
       'max' => $bottom[1],

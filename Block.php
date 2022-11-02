@@ -104,19 +104,22 @@ class Block extends \ProcessWire\Page
     $widget = $block->_widget ?: $block;
     $data = $widget->getBlockData();
 
-    $icons[] = (object)[
-      'icon' => 'up',
-      'label' => $block->title,
-      'tooltip' => "vSpace top",
-      'type' => 'vspacetop',
-    ];
-    $icons[] = (object)[
-      'icon' => 'down',
-      'label' => $block->title,
-      'tooltip' => "vSpace bottom",
-      'type' => 'vspacebottom',
-    ];
-    $this->rockfrontend()->loadVspace = true;
+    // add vspace buttons?
+    if ($block->spaceV()) {
+      $this->rockfrontend()->loadVspace = true;
+      $icons[] = (object)[
+        'icon' => 'up',
+        'label' => $block->title,
+        'tooltip' => "vSpace top",
+        'type' => 'vspacetop',
+      ];
+      $icons[] = (object)[
+        'icon' => 'down',
+        'label' => $block->title,
+        'tooltip' => "vSpace bottom",
+        'type' => 'vspacebottom',
+      ];
+    }
 
     if ($opt->clone and $block->editable()) {
       $icons[] = (object)[

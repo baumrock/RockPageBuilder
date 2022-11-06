@@ -1368,6 +1368,14 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Shortcut for $rockfrontend->svg()
+   */
+  public function svg($file, $replace = null)
+  {
+    return $this->rockfrontend()->svg($file, $replace);
+  }
+
+  /**
    * Array of translatable strings
    * Use $block->x('your_string') to get string.
    * See RockPageBuilder readme about translating blocks.

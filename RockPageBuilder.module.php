@@ -65,7 +65,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'icon' => 'cubes',
       'requires' => [
         'RockMigrations>=1.6.1',
-        'RockFrontend>=2.4.0',
+        'RockFrontend>=2.6.5',
       ],
       'installs' => [
         'FieldtypeRockPageBuilder',
@@ -175,6 +175,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     if ($this->wire->page->template == 'admin') {
       $this->wire->config->js('RockPageBuilderBlocks', $this->blockNames());
+    } else {
+      $this->rockfrontend()->styles()->addAll('/site/assets/RockPageBuilder', '', 3);
     }
   }
 
@@ -634,6 +636,19 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
+   * Return a WireArray containing all rpb fields of given page
+   * @return WireArray
+   */
+  public function getBlockFields(Page $page)
+  {
+    $fields = $this->wire(new WireArray());
+    foreach ($page->fields as $field) {
+      if ($field->type instanceof FieldtypeRockPageBuilder) $fields->add($field);
+    }
+    return $fields;
+  }
+
+  /**
    * Get Block page from given data
    */
   public function getBlockPage($data)
@@ -675,16 +690,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * Return a WireArray containing all rpb fields of given page
-   * @return WireArray
+   * Method to get fieldname to support short folder names
    */
-  public function getBlockFields(Page $page)
+  private function getFieldname($name)
   {
-    $fields = $this->wire(new WireArray());
-    foreach ($page->fields as $field) {
-      if ($field->type instanceof FieldtypeRockPageBuilder) $fields->add($field);
-    }
-    return $fields;
+    if ($this->wire->fields->get("rockpagebuilderblock_$name")) return "rockpagebuilderblock_$name";
+    if ($this->wire->fields->get("rockpagebuilder_$name")) return "rockpagebuilder_$name";
+    return $name;
   }
 
   /**
@@ -801,6 +813,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    */
   public function loadBlocks($fieldname, $path, $namespace = 'RockPageBuilderBlock', $add = [])
   {
+    // this is to support short folder names in /site/assets/RockPageBuilder
+    $fieldname = $this->getFieldname($fieldname);
+
     // add blocks to rockpagebuilder
     $this->addBlocks($path, $namespace);
 
@@ -1051,6 +1066,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   public function rm()
   {
     return $this->wire->modules->get('RockMigrations');
+  }
+
+  /**
+   * @return RockFrontend
+   */
+  public function rockfrontend()
+  {
+    return $this->wire->modules->get('RockFrontend');
   }
 
   /**

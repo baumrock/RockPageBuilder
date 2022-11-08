@@ -538,9 +538,17 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->wire->addHookAfter("/rpb-create-block/", function ($event) {
       if (!$name = $this->wire->input->get('name', 'string')) return "invalid name";
       if (!$field = $this->wire->input->get('field', 'string')) return "invalid field";
-      $folder = $this->wire->config->paths->assets . "RockPageBuilder/$field";
+
+      // create short fieldname
+      $short = $field;
+      if (strpos($field, "rockpagebuilder_") === 0) $short = substr($field, 16);
+      elseif (strpos($field, "rockpagebuilderblock_") === 0) $short = substr($field, 21);
+
+      $folder = $this->wire->config->paths->assets . "RockPageBuilder/$short";
       if (!is_dir($folder)) mkdir($folder);
       $name = ucfirst($name);
+      $subfolder = "$folder/$name";
+      if (!is_dir($subfolder)) mkdir($subfolder);
 
       // alfred installed?
       $alfred = '';
@@ -551,7 +559,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       // if a block with given name exists we create an empty file
       // this means we reuse the existing block on this field
       if ($this->blockExists($name)) {
-        $blockFile = "$folder/$name.php";
+        $blockFile = "$subfolder/$name.php";
         if (!is_file($blockFile)) $this->wire->files->filePutContents($blockFile, "");
         die('success');
       }
@@ -560,7 +568,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       $this->stub("Block.txt", [
         "{name}" => $name,
         "{namelower}" => strtolower($name),
-      ], "$folder/$name.php");
+      ], "$subfolder/$name.php");
 
       // view files
       if ($this->createView == 'latte') {
@@ -570,7 +578,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
           '{alfred}' => $this->wire->modules->isInstalled('RockFrontend')
             ? ' {alfred($block)}'
             : '',
-        ], "$folder/$name.latte");
+        ], "$subfolder/$name.latte");
       } else {
         $latteNote = $this->stub('latteNote.txt');
         if ($this->createView == 'php') $latteNote = '';
@@ -579,7 +587,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
           "{cls}" => "rpb-" . strtolower($name),
           "{alfred}" => $alfred,
           "{latteNote}" => $latteNote,
-        ], "$folder/$name.view.php");
+        ], "$subfolder/$name.view.php");
       }
 
       // less file
@@ -587,7 +595,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         $this->stub(
           "Block.less",
           ['{cls}' => "rpb-" . strtolower($name)],
-          "$folder/$name.less"
+          "$subfolder/$name.less"
         );
       }
 

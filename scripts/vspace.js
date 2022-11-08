@@ -55,7 +55,7 @@ document.addEventListener("AlfredReady", function () {
           throw new Error("Something went wrong");
         })
         .then((responseJson) => {
-          console.log(responseJson);
+          // console.log(responseJson);
         })
         .catch((error) => {
           console.error(error);

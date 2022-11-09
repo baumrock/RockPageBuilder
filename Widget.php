@@ -42,6 +42,26 @@ class Widget extends Block
     });
   }
 
+  public function spaceB()
+  {
+    return $this->block()->spaceB();
+  }
+
+  public function spaceID(): string
+  {
+    return $this->block()->spaceID();
+  }
+
+  public function spaceT()
+  {
+    return $this->block()->spaceT();
+  }
+
+  public function spaceV()
+  {
+    return $this->block()->spaceV();
+  }
+
   /** ##### frontend ##### */
 
   /**
@@ -57,7 +77,7 @@ class Widget extends Block
 
   public function getLabel()
   {
-    $label = parent::getLabel();
+    $label = parent::getLabel() ?: "Widget";
     if (!$block = $this->block()) return $label;
     return "$label ({$block->getLabel()})";
   }

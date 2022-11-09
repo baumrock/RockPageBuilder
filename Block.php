@@ -112,12 +112,14 @@ class Block extends \ProcessWire\Page
         'label' => $block->title,
         'tooltip' => "vSpace top",
         'type' => 'vspacetop',
+        'widget' => $widget->id,
       ];
       $icons[] = (object)[
         'icon' => 'down',
         'label' => $block->title,
         'tooltip' => "vSpace bottom",
         'type' => 'vspacebottom',
+        'widget' => $widget->id,
       ];
     }
 
@@ -1175,8 +1177,10 @@ class Block extends \ProcessWire\Page
    */
   public function spaceStyles($useMagic = true)
   {
-    $top = $this->spaceArray($this->getSpaceTop());
-    $bottom = $this->spaceArray($this->getSpaceBottom());
+    /** @var Block $block */
+    $block = $this->getWidgetBlock();
+    $top = $this->spaceArray($block->getSpaceTop());
+    $bottom = $this->spaceArray($block->getSpaceBottom());
     if (!is_array($top) or !is_array($bottom)) return;
     if (count($top) < 2 or count($bottom) < 2) return;
 
@@ -1191,10 +1195,10 @@ class Block extends \ProcessWire\Page
       'scale' => 'var(--vscale-bottom)',
     ]);
 
-    $vtop = $this->meta('vspace-top');
-    if ($vtop === null) $vtop = 1;
-    $vbottom = $this->meta('vspace-bottom');
-    if ($vbottom === null) $vbottom = 1;
+    $vtop = $block->meta('vspace-top');
+    if ($vtop === null) $vtop = RockFrontend::defaultVspaceScale;
+    $vbottom = $block->meta('vspace-bottom');
+    if ($vbottom === null) $vbottom = RockFrontend::defaultVspaceScale;
 
     $str = "style='padding-top: $top; padding-bottom: $bottom; --vscale-top:$vtop; --vscale-bottom:$vbottom;'";
     if (!$useMagic) return $str;
@@ -1204,6 +1208,11 @@ class Block extends \ProcessWire\Page
     $key = "#rpbstyle-$this";
     $this->rpb()->blockStylesCache->set($key, $str);
     return $key;
+  }
+
+  public function getWidgetBlock()
+  {
+    return $this->_widget ?: $this;
   }
 
   /**

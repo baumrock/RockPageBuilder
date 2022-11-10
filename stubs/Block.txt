@@ -103,20 +103,18 @@ class {name} extends Block {
    * You can access settings in your view file like this:
    * $block->settings('demo_setting', 'optional-default-value')
    */
-  // public function settingsTable(RockFieldsField $field) {
-  //   /** @var BlockSettingsArray $settings */
-  //   $settings = $this->rpb()->cloneBlockSettings($field);
-  //   $settings->add([
-  //     'name' => 'demo_setting',
-  //     'label' => 'Your Setting Label',
-  //     'label123' => 'Label in other language',
-  //     'value' => $field->input('demo_setting', 'select', [
-  //       '*s' => 'small',
-  //       'm' => 'medium',
-  //       'l' => 'large',
-  //     ]),
-  //   ]);
-  //   return $settings;
-  // }
+   // public function settingsTable(RockFieldsField $field)
+   // {
+   //   $settings = $this->getDefaultSettings($field);
+   //   $settings->add([
+   //     'name' => 'demo_setting',
+   //     'label' => 'Demo-Setting',
+   //     'value' => $field->input('demo_setting', 'select', [
+   //       'foo' => 'foo style',
+   //       'bar' => 'bar style',
+   //     ]),
+   //   ]);
+   //   return $settings;
+   // }
 
 }

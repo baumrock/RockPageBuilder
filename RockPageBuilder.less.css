@@ -38,6 +38,7 @@ body.modal form.rpb-form .WireTabs {
   height: 75px;
 }
 .rpb-button .fa {
+  pointer-events: none;
   font-size: 25px;
   color: #666;
   position: absolute;

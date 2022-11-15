@@ -1173,6 +1173,16 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Set and save a single settings value
+   */
+  public function saveSetting($key, $value)
+  {
+    $settings = $this->settings();
+    $settings->set($key, $value);
+    $this->meta("rockfield-" . $this->settingsName(), $settings->getArray());
+  }
+
+  /**
    * Add vertical spacing style attribute to the current block
    */
   public function spaceStyles($useMagic = true)

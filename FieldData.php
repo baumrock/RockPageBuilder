@@ -8,6 +8,8 @@ use ProcessWire\WireException;
 use ProcessWire\RockPageBuilder;
 use ProcessWire\RockMigrations;
 
+use function ProcessWire\wireClassName;
+
 class FieldData extends PageArray
 {
 
@@ -157,6 +159,17 @@ class FieldData extends PageArray
   public function getProp($obj, $prop)
   {
     return property_exists($obj, $prop) ? $obj->$prop : null;
+  }
+
+  /**
+   * Usage:
+   * $blocks = $page->getFormatted('blocks');
+   * if($blocks->has('Hero')) ...
+   */
+  public function hasBlock($type): bool
+  {
+    foreach ($this as $block) if (wireClassName($block) == $type) return true;
+    return false;
   }
 
   /**

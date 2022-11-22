@@ -44,22 +44,38 @@ class Widget extends Block
 
   public function spaceB()
   {
-    return $this->block()->spaceB();
+    try {
+      return $this->block()->spaceB();
+    } catch (\Throwable $th) {
+      return false;
+    }
   }
 
   public function spaceID(): string
   {
-    return $this->block()->spaceID();
+    try {
+      return $this->block()->spaceID();
+    } catch (\Throwable $th) {
+      return false;
+    }
   }
 
   public function spaceT()
   {
-    return $this->block()->spaceT();
+    try {
+      return $this->block()->spaceT();
+    } catch (\Throwable $th) {
+      return false;
+    }
   }
 
   public function spaceV()
   {
-    return $this->block()->spaceV();
+    try {
+      return $this->block()->spaceV();
+    } catch (\Throwable $th) {
+      return false;
+    }
   }
 
   /** ##### frontend ##### */

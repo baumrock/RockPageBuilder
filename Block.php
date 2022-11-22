@@ -17,6 +17,7 @@ use \ProcessWire\Inputfield;
 use \ProcessWire\InputfieldFile;
 use \ProcessWire\InputfieldWrapper;
 use \ProcessWire\InputfieldFieldset;
+use ProcessWire\NullPage;
 use ProcessWire\PageArray;
 use ProcessWire\RockFields;
 use ProcessWire\RockFieldsField;
@@ -420,6 +421,7 @@ class Block extends \ProcessWire\Page
   {
     // the page is stored in metadata of the block
     // the metadata is pageid-fieldid
+    if (!$this->id) return new NullPage();
     $meta = explode("-", (string)$this->meta('RockPageBuilder'));
     return $this->wire->pages->get($meta[0]);
   }
@@ -849,7 +851,9 @@ class Block extends \ProcessWire\Page
   public function render()
   {
     foreach ($this->viewFiles() as $file => $type) {
-      if (is_file($file)) return $this->renderFile($file, $type);
+      if (is_file($file)) {
+        return $this->html($this->renderFile($file, $type));
+      }
     }
   }
 

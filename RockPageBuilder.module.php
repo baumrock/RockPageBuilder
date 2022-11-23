@@ -386,7 +386,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     /** @var Page $page */
     $page = $event->object;
     try {
-      $html = $page->getFormatted(self::field_blocks)->render(!!$event->arguments(0));
+      $html = $page->getFormatted(self::field_blocks)->renderBlock(!!$event->arguments(0));
       $event->return = $html;
       if ($this->wire->modules->isInstalled('RockFrontend')) {
         /** @var RockFrontend $rf */

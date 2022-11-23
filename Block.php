@@ -18,6 +18,7 @@ use \ProcessWire\InputfieldFile;
 use \ProcessWire\InputfieldWrapper;
 use \ProcessWire\InputfieldFieldset;
 use ProcessWire\NullPage;
+use ProcessWire\Page;
 use ProcessWire\PageArray;
 use ProcessWire\RockFields;
 use ProcessWire\RockFieldsField;
@@ -26,6 +27,8 @@ use ProcessWire\Template;
 use ProcessWire\WireException;
 use ReflectionClass;
 use RockPageBuilderBlock\Widget;
+
+use function ProcessWire\wireClassName;
 
 class Block extends \ProcessWire\Page
 {
@@ -710,6 +713,17 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Is block given type?
+   *
+   * Usage:
+   * $block->isType("EventItem");
+   */
+  public function isType($type): bool
+  {
+    return wireClassName($this) == $type;
+  }
+
+  /**
    * Is this block a RockPageBuilder widget stored in field rockpagebuilder_widgets?
    * @return bool
    */
@@ -845,10 +859,16 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Dont implement this method! It is needed for PW for $page->render() to work
+   * public function render() {
+   * }
+   */
+
+  /**
    * Render this block
    * @return string
    */
-  public function render()
+  public function renderBlock()
   {
     foreach ($this->viewFiles() as $file => $type) {
       if (is_file($file)) {

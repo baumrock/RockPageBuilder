@@ -383,7 +383,35 @@ $wire->addHookAfter('RockPageBuilder::getAllowedBlocks', function($event) {
 });
 ```
 
-If you don't define a parent for blocks, the blocks will live under the default blocks datapage:
+If you don't define a parent for blocks, the blocks will live under the default blocks datapage.
+
+### Custom Parent
+
+RockPageBuilder Blocks are a special kind of ProcessWire Pages, but they can just be regular pages with a custom URL endpoint as well!
+
+First you need to define which parent to use in the block's php file:
+
+```php
+public function getParent($field, $page)
+{
+  // use the page where the block is created as parent
+  // that means new blocks will be added as child of the page
+  return $page->getBlockPage();
+}
+```
+
+Then add a template file for your block. You can either create that file manually or use RockMigrations for it:
+
+```php
+// in the block's migrate() method:
+$rm->createViewFile($this);
+```
+
+Now you should be able to click on "view" in your block's page editor. If you see an empty page you might need to manually include the `appendTemplateFile`:
+
+```php
+include '_main.php';
+```
 
 ## Working with field data
 

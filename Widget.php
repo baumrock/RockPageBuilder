@@ -137,7 +137,7 @@ class Widget extends Block
     if (!$block) return;
     $block->_widget = $this;
     $block->widgetClass = 'rpb-widget';
-    return $block->render();
+    return $block->renderBlock();
   }
 
   /**

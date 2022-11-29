@@ -131,7 +131,7 @@ class Widget extends Block
     ]);
   }
 
-  public function render()
+  public function renderBlock()
   {
     $block = $this->block();
     if (!$block) return;

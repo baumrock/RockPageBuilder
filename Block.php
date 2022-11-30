@@ -65,21 +65,32 @@ class Block extends \ProcessWire\Page
 
   /**
    * Magic
+   *
+   * Usage:
+   * $block->headline() will render an editable headline if the field follows
+   * the naming convention using class constants.
+   *
+   * $block->headline(true) will return the raw (uneditable) value.
    */
   public function __call($method, $args)
   {
     if ($fieldname = $this->getFieldName($method)) {
+      $raw = !!(is_array($args) and array_key_exists(0, $args) and $args[0] === true);
       $type = $this->fields->get($fieldname)->type;
       if ($type instanceof FieldtypeRockPageBuilder) {
         return $this->getFormatted($fieldname);
       } elseif ($type instanceof FieldtypePage) {
         return $this->getFormatted($fieldname);
       } elseif ($type instanceof FieldtypeText) {
+        if ($raw) return $this->getFormatted($fieldname);
         return $this->html($this->edit($fieldname));
       } elseif ($type instanceof FieldtypeFile) {
         // files are returned as formatted value
         return $this->getFormatted($fieldname);
-      } else return $this->html($this->get($fieldname));
+      } else {
+        if ($raw) return $this->get($fieldname);
+        return $this->html($this->get($fieldname));
+      }
     }
     return parent::__call($method, $args);
   }

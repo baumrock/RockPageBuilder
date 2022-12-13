@@ -26,10 +26,18 @@ document.addEventListener("AlfredReady", function (e) {
     this.slider = el;
     this.container = el.closest("a.icon");
     this.block = el.closest("[data-rpbblock]");
+
+    // by default the vspace styles are added to the block element
+    // if you need to add the vspacing to a child element you can do so but
+    // you need to tell RPB about that by adding the 'rpb-styles' class to that element
+    this.stylesElement = this.block.querySelector(".rpb-styles") || this.block;
+
     this.blockID = this.slider.getAttribute("data-block");
     this.type = el.classList.contains("vspacetop") ? "top" : "bottom";
     this.timer = false;
-    this.setValue(this.block.style.getPropertyValue("--vscale-" + this.type));
+    this.setValue(
+      this.stylesElement.style.getPropertyValue("--vscale-" + this.type)
+    );
     this.addEventListeners();
     // console.log(this);
   };
@@ -50,7 +58,7 @@ document.addEventListener("AlfredReady", function (e) {
   };
 
   VSpace.prototype.setValue = function (val, save) {
-    this.block.style.setProperty("--vscale-" + this.type, val);
+    this.stylesElement.style.setProperty("--vscale-" + this.type, val);
     this.slider.value = val;
     if (save) this.saveValue(val);
   };

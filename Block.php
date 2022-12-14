@@ -769,6 +769,10 @@ class Block extends \ProcessWire\Page
   {
     $match = false;
     foreach ($this->getBlockData() as $item) {
+      // some blocks don't have visible markup (like anchor blocks)
+      // those blocks are ignored when calculating vertical spacings
+      if ($item->noMarkup) continue;
+
       if ($match) return $item;
       if ($item->id === $this->id) $match = true;
     }
@@ -849,6 +853,10 @@ class Block extends \ProcessWire\Page
   {
     $prev = false;
     foreach ($this->getBlockData() as $item) {
+      // some blocks don't have visible markup (like anchor blocks)
+      // those blocks are ignored when calculating vertical spacings
+      if ($item->noMarkup) continue;
+
       if ($item->id === $this->id) return $prev;
       $prev = $item;
     }
@@ -1484,6 +1492,22 @@ class Block extends \ProcessWire\Page
       $current = $prev;
     }
     return $i;
+  }
+
+  /**
+   * Get total typeindex
+   * A(0) / B(0) / A(1) / A(2) / B(1)
+   */
+  public function typeIndexTotal()
+  {
+    $i = 0;
+    $current = $this;
+    $tpl = $current->template->name;
+    while ($prev = $current->prevBlock()) {
+      if ($current->template->name == $tpl) $i++;
+      $current = $prev;
+    }
+    return $i - 1;
   }
 
   /**

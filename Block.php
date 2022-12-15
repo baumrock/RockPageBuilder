@@ -1112,7 +1112,7 @@ class Block extends \ProcessWire\Page
   /**
    * Return section background class
    */
-  public function sectionBG()
+  public function sectionBG(): string
   {
     $key = $this->settings('sectionbg');
     $arr = $this->sectionBGArray(0);

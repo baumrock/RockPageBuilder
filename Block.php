@@ -1110,6 +1110,47 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Return section background class
+   */
+  public function sectionBG()
+  {
+    $key = $this->settings('sectionbg');
+    $arr = $this->sectionBGArray(0);
+    return array_key_exists($key, $arr) ? $arr[$key] : '';
+  }
+
+  /**
+   * Get section background values array
+   * what 0 = values
+   * what 1 = labels
+   */
+  public function sectionBGArray($what = 0): array
+  {
+    $conf = $this->wire->config->sectionBG ?: [
+      'muted' => ['uk-background-muted', $this->_('Ausgegraut')],
+    ];
+
+    $arr = [];
+    foreach ($conf as $k => $v) {
+      $arr[$k] = $v[$what];
+    }
+
+    return $arr;
+  }
+
+  /**
+   * Get settings dropdown for section background
+   */
+  public function sectionBGSettings(&$settings, $field)
+  {
+    $settings->add([
+      'name' => 'sectionbg',
+      'label' => 'Background',
+      'value' => $field->input('sectionbg', 'select', $this->sectionBGArray(1)),
+    ]);
+  }
+
+  /**
    * Set reference to file
    * @return void
    */

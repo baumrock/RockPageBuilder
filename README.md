@@ -499,6 +499,34 @@ $this->addHookAfter("RockPageBuilder::getWidgetPages", function($event) {
 });
 ```
 
+## Block Spacings / Vertical Spacings (spaceV)
+
+Static:
+
+```php
+'spaceV' => "50pxrem, 100pxrem",
+'spaceID' => "white",
+```
+
+Dynamic:
+
+```php
+public function spaceID() {
+  return $this->colorClass();
+}
+```
+
+Remove margin from first and last element:
+
+```php
+<section ...>
+  <div class="rpb-nomargin">
+    <h1>Foo bar</h1>
+    <p>Baz</p>
+  </div>
+</section>
+```
+
 ## Overlay Feature
 
 You can add an image of your design as overlay to your website. First enable the feature in your config.php

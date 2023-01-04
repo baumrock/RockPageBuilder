@@ -74,6 +74,8 @@ class Block extends \ProcessWire\Page
    */
   public function __call($method, $args)
   {
+    // if a fieldname method was requested we try to
+    // return the content of the field or its editor
     if ($fieldname = $this->getFieldName($method)) {
       $raw = !!(is_array($args) and array_key_exists(0, $args) and $args[0] === true);
       $type = $this->fields->get($fieldname)->type;
@@ -92,7 +94,24 @@ class Block extends \ProcessWire\Page
         return $this->html($this->get($fieldname));
       }
     }
-    return parent::__call($method, $args);
+
+    // a regular page method was requested
+    try {
+      // try to return its result
+      return parent::__call($method, $args);
+    } catch (\Throwable $th) {
+      // if the method does not exist we show
+      // a message to superusers
+      if ($this->wire->user->isSuperuser()) {
+        return $this->html(
+          "<span style='padding:5px 10px;font-weight:bold;color:red;"
+            . "background-color:rgba(255,0,0,0.2);border-radius:20px;'>"
+            . $th->getMessage()
+            . "</span>"
+        );
+      }
+      return '';
+    }
   }
 
   /**

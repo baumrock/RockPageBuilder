@@ -6,6 +6,7 @@ use Latte\Engine;
 use Latte\Runtime\Html;
 use ProcessWire\FieldtypeFile;
 use ProcessWire\FieldtypePage;
+use ProcessWire\FieldtypeRepeater;
 use ProcessWire\FieldtypeRockPageBuilder;
 use ProcessWire\FieldtypeRockShare;
 use ProcessWire\FieldtypeText;
@@ -86,6 +87,8 @@ class Block extends \ProcessWire\Page
       } elseif ($type instanceof FieldtypeText) {
         if ($raw) return $this->getFormatted($fieldname);
         return $this->html($this->edit($fieldname));
+      } elseif ($type instanceof FieldtypeRepeater) {
+        return $this->getFormatted($fieldname);
       } elseif ($type instanceof FieldtypeFile) {
         // files are returned as formatted value
         return $this->getFormatted($fieldname);

@@ -10,6 +10,14 @@ The goals of this module are
 - Make it easy, fast and fun to develop blocks
 - Make it possible to copy blocks to other projects
 
+## Limitations/issues
+
+- Seems that showIf does not work with RockPageBuilder? MPN AnchorHeadline
+
+## Roadmap
+
+- Hide/unpublish blocks
+
 ## Concept
 
 The most important part are so called `blocks` that are actually ProcessWire pages with a corresponding `template` and a custom `pageClass`.
@@ -36,10 +44,6 @@ Technical benefits (compared to other solutions and workarounds)
 
 - You will get cleaner code (OOP)
 - Since all blocks are ProcessWire Pages under the hood they are super easy to handle via API or via RockMigrations
-
-## Limitations/issues
-
-- Seems that showIf does not work with RockPageBuilder? MPN AnchorHeadline
 
 ## RockPageBuilder vs. RepeaterMatrix
 

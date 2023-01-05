@@ -18,6 +18,8 @@ The goals of this module are
 
 - Hide/unpublish blocks
 
+----------------- everything below is partly outdated!! ------------------------
+
 ## Concept
 
 The most important part are so called `blocks` that are actually ProcessWire pages with a corresponding `template` and a custom `pageClass`.

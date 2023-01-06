@@ -64,8 +64,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'singular' => true,
       'icon' => 'cubes',
       'requires' => [
-        'RockMigrations>=1.6.1',
-        'RockFrontend>=2.7.1',
+        'RockMigrations>=2.6.0',
+        'RockFrontend>=2.11.0',
       ],
       'installs' => [
         'FieldtypeRockPageBuilder',

@@ -181,6 +181,125 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
+   * Add alfred icons to a repeaterpage
+   */
+  public function addAlfredIcons(RepeaterPage $block, &$icons, $opt)
+  {
+    if ($opt->noBlock) return;
+
+    if ($opt->clone and $block->editable()) {
+      $icons[] = (object)[
+        'icon' => 'clone',
+        'label' => $block->title,
+        'tooltip' => "Clone Block #{$block->id}",
+        'href' => $this->repeaterUrl("/clone/?block=$block"),
+        'confirm' => $this->_('Do you really want to clone this element?'),
+      ];
+    }
+    // show move icon only when more than 1 block
+    // if ($opt->move and $data->count() > 1) {
+    //   $icons[] = (object)[
+    //     'icon' => 'move',
+    //     'label' => $block->title,
+    //     'tooltip' => "Move Block #{$block->id}",
+    //     'class' => 'pw-modal',
+    //     'href' => $block->getBlockPage()->editUrl . "&field=" . $block->getBlockField() . "&moveblock=$block",
+    //     'suffix' => 'data-buttons="button.ui-button[type=submit]" data-autoclose data-reload',
+    //   ];
+    // }
+
+    if ($opt->trash and $block->trashable()) {
+      $icons[] = (object)[
+        'icon' => 'trash-2',
+        'label' => $block->title,
+        'tooltip' => "Trash Block #{$block->id}",
+        'href' => $this->repeaterUrl("/trash/?block=$block"),
+        'confirm' => $this->_('Do you really want to delete this element?'),
+      ];
+    }
+  }
+
+  /**
+   * This method is responsible for adding the plus-icons for ALFRED to blocks
+   */
+  public function addAlfredOptions($data): WireData
+  {
+    $page = $data->page;
+    $opt = $data->opt;
+
+    $exit = true;
+    if ($page instanceof Block) $exit = false;
+    elseif ($page instanceof RepeaterPage) $exit = false;
+
+    // early exit?
+    if ($exit) return $opt;
+
+    // is the block a widget?
+    $isWidget = false;
+    $widgetable = false;
+    if ($page instanceof Block) {
+      if ($page->isWidget()) $isWidget = true;
+      else $widgetable = true;
+    }
+    $widget = $page->_widget ?: $page;
+
+    // add pagebuilder specific attributes
+    $opt->setArray([
+      // setting specific to rockpagebuilder blocks
+      'noBlock' => false, // prevent block icons if true
+      'addTop' => null, // set to false to prevent icon
+      'addBottom' => null, // set to false to prevent icon
+      'addHorizontal' => null, // shortcut for addLeft + addRight
+      'move' => true,
+      'isWidget' => $isWidget, // is block saved in rockpagebuilder_widgets?
+      'widgetStyle' => $isWidget, // make it orange
+      'trash' => true, // will set the trash icon for rockpagebuilder blocks
+      'clone' => true, // can item be cloned?
+      'widgetable' => $widgetable, // can be converted into widget?
+    ]);
+    $opt->setArray($data->options);
+
+    if ($opt->noBlock) {
+      if ($opt->addTop !== true) $opt->addTop = false;
+      if ($opt->addBottom !== true) $opt->addBottom = false;
+      if ($opt->addHorizontal !== true) {
+        $opt->addLeft = false;
+        $opt->addRight = false;
+      }
+    }
+    if ($opt->addTop !== false) {
+      if ($widget instanceof Block) {
+        $opt->addTop = $widget->rpbUrl("/add/?block=$widget&above=1");
+      } elseif ($widget instanceof RepeaterPage) {
+        $opt->addTop = $this->repeaterUrl("/add/?block=$widget&sort=" . $widget->sort);
+      }
+    }
+    if ($opt->addBottom !== false) {
+      if ($widget instanceof Block) {
+        $opt->addBottom = $widget->rpbUrl("/add/?block=$widget");
+      } elseif ($widget instanceof RepeaterPage) {
+        $opt->addBottom = $this->repeaterUrl("/add/?block=$widget&sort=" . ($widget->sort + 1));
+      }
+    }
+    if ($opt->addHorizontal === true) {
+      $opt->addTop = false;
+      $opt->addBottom = false;
+      if ($widget instanceof Block) {
+        $opt->addLeft = $widget->rpbUrl("/add/?block=$widget&above=1");
+        $opt->addRight = $widget->rpbUrl("/add/?block=$widget");
+      } elseif ($widget instanceof RepeaterPage) {
+        $opt->addLeft = $this->repeaterUrl("/add/?block=$widget&sort=" . $widget->sort);
+        $opt->addRight = $this->repeaterUrl("/add/?block=$widget&sort=" . ($widget->sort + 1));
+      }
+    }
+
+    // setup blockid string
+    $opt->blockid = "data-rpbblock=$widget";
+
+    return $opt;
+  }
+
+  /**
    * Add backend stylesheet
    */
   public function addBackendStyle()
@@ -335,9 +454,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     // add style either when a rockpagebuilder field is in the editor
     // or when we are editing a rockpagebuilder block
-    if ($event->process == 'ProcessPageEdit' and $event->process->getPage() instanceof Block) $this->addBackendStyle();
-    elseif ($event->object instanceof InputfieldRockPageBuilder) $this->addBackendStyle();
-    elseif ($event->object instanceof ProcessRockPageBuilder) $this->addBackendStyle();
+    if ($this->backendStylesAdded) return;
+    $this->addBackendStyle();
+    $this->backendStylesAdded = true;
   }
 
   /**
@@ -407,9 +526,10 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   public function buildForm(HookEvent $event)
   {
     $page = $event->process->getPage();
-    if (!$page instanceof Block) return;
-    $form = $event->return;
-    $form->addClass('rpb-form');
+    $addClass = false;
+    if ($page instanceof Block) $addClass = true;
+    if ($page instanceof RepeaterPage) $addClass = true;
+    if ($addClass) $event->return->addClass('rpb-form');
   }
 
   /**
@@ -1054,6 +1174,12 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if (!$level) $out .= "</table>";
 
     return $out;
+  }
+
+  public function repeaterUrl($url): string
+  {
+    $url = ltrim($url, "/");
+    return $this->wire->pages->get(2)->url . "rockpagebuilder/repeater-$url";
   }
 
   /**

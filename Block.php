@@ -182,7 +182,7 @@ class Block extends \ProcessWire\Page
     }
 
     // convert block into widget
-    if ($opt->widget and $block->canBeWidget()) {
+    if ($opt->widgetable and $block->canBeWidget()) {
       $icons[] = (object)[
         'icon' => 'widget',
         'label' => $block->title,
@@ -551,6 +551,8 @@ class Block extends \ProcessWire\Page
     // prepare label
     $label = (string)$this->getLabel() ?: $this->getInfo()->title;
     $label = $this->wire->sanitizer->truncate(strip_tags($label), 70);
+    $label = "<i class='fa fa-arrows'></i> $label";
+    $fs->entityEncodeLabel = false;
 
     // prepare the fieldset (item root element)
     $fs->id = "rpb_$this";

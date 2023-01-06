@@ -129,6 +129,60 @@ class ProcessRockPageBuilder extends Process
   }
 
   /**
+   * Add a repeater page
+   */
+  public function executeRepeaterAdd()
+  {
+    $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
+    $sort = $this->wire->input->get('sort', 'int');
+
+    if (!$block instanceof RepeaterPage) throw new WireException("Invalid block");
+    if (!$block->editable()) throw new WireException("No access");
+    $forPage = $block->getForPage();
+    if (!$forPage->editable()) throw new WireException("No access");
+
+    // get necessary objects
+    $field = $block->getForField();
+    $items = $forPage->getUnformatted($field->name);
+
+    // create new page
+    $new = $items->getNew();
+    $new->save();
+    $this->wire->pages->sort($new, $sort);
+
+    $this->wire->session->redirect($new->editUrl());
+  }
+
+  /**
+   * Clone a repeater page
+   */
+  public function executeRepeaterClone()
+  {
+    $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
+    if (!$block instanceof RepeaterPage) throw new WireException("Invalid Block");
+    if (!$block->editable()) throw new WireException("Block is not editable");
+    if ($block->isTrash()) throw new WireException("Cannot clone blocks that are trashed");
+    try {
+      $this->wire->pages->clone($block);
+      return $this->success();
+    } catch (\Throwable $th) {
+      return $this->json($th->getMessage());
+    }
+  }
+
+  /**
+   * Trash a repeater page
+   */
+  public function executeRepeaterTrash()
+  {
+    $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
+    if (!$block instanceof RepeaterPage) throw new WireException("Invalid Block");
+    if (!$block->trashable()) throw new WireException("Unable to trash this block");
+    $block->trash();
+    return $this->json("success");
+  }
+
+  /**
    * Trash rpb block
    */
   public function executeTrash()

@@ -8,11 +8,11 @@
   overflow-wrap: break-word;
 }
 
-// hide tabs for rockpagebuilder block editor modal
-body.modal form.rpb-form {
+// hide tabs for block editor modal
+body.modal form.rpb-hidetabs {
   margin: 0;
   .WireTabs {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -77,8 +77,16 @@ li.rpb-item {
 
   > .InputfieldHeader {
     padding: 2px 5px;
-    cursor: move;
+    cursor: pointer;
     transition: background-color 0.5s linear;
+
+    // move icon
+    .fa-arrows {
+      cursor: move;
+      padding-left: 5px;
+      padding-right: 5px;
+      margin: 0;
+    }
 
     // item action buttons
     .rpb-actions {
@@ -168,7 +176,16 @@ li.rpb-item {
   padding-top: 5px !important;
 }
 
-// buttons
+// buttons + actions
+.rpb-item {
+  .rpb-actions {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  &:hover .rpb-actions {
+    opacity: 1;
+  }
+}
 .rpb-buttons-container {
   .rpb-buttons {
     button.rpb-button {

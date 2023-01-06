@@ -12,11 +12,20 @@ The goals of this module are
 
 ## Limitations/issues
 
+- I dont know which profields are supported, please let me know!
 - Seems that showIf does not work with RockPageBuilder? MPN AnchorHeadline
 
 ## Roadmap
 
+-- v1 --
+
 - Hide/unpublish blocks
+- caching?
+
+-- v2 --
+
+- undo/restore feature
+- copy blocks to other pages
 
 ----------------- everything below is partly outdated!! ------------------------
 

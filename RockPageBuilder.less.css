@@ -1,11 +1,11 @@
 .uk-tooltip-inner {
   overflow-wrap: break-word;
 }
-body.modal form.rpb-form {
+body.modal form.rpb-hidetabs {
   margin: 0;
 }
-body.modal form.rpb-form .WireTabs {
-  display: none;
+body.modal form.rpb-hidetabs .WireTabs {
+  display: none !important;
 }
 .rpb-button {
   position: relative;
@@ -60,8 +60,14 @@ li.rpb-item.InputfieldStateCollapsed > .InputfieldHeader:after {
 }
 li.rpb-item > .InputfieldHeader {
   padding: 2px 5px;
-  cursor: move;
+  cursor: pointer;
   transition: background-color 0.5s linear;
+}
+li.rpb-item > .InputfieldHeader .fa-arrows {
+  cursor: move;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 0;
 }
 li.rpb-item > .InputfieldHeader .rpb-actions {
   float: right;
@@ -123,6 +129,13 @@ li.rpb-item:not(.rpb-trash) > .InputfieldHeader .rpb-action-untrash {
 .rpb-pd5 > .InputfieldContent {
   padding: 5px;
   padding-top: 5px !important;
+}
+.rpb-item .rpb-actions {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.rpb-item:hover .rpb-actions {
+  opacity: 1;
 }
 .rpb-buttons-container .rpb-buttons button.rpb-button {
   margin: 0 5px 5px 0;

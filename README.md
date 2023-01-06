@@ -28,6 +28,29 @@ The goals of this module are
 - undo/restore feature
 - copy blocks to other pages
 
+## Magic field methods
+
+You can access every field of your blocks via short method calls. So if you had a field called `rockpagebuilder_textblock_foo` you could access that field via `$page->foo()`.
+
+That will not only display the value of the field but will also make it editable on the frontend and if you are using RockFrontend + LATTE it will return an HTML object so that you don't need to apply the `|noescape` filter!
+
+Note: The magic method call will always use the fraction of the fieldname that comes after the last underscore:
+
+```
+my_foo_field --> field()
+my_bar_field --> field()
+what_so_ever --> ever()
+```
+
+Obviously that would collide for `my_foo_field` and `my_bar_field`. In that case just access your fields the regular PW way.
+
+### Magic field value return types
+
+By default (with no argument) the `$page->foo()` call will return the editable field. There are two more options:
+
+- `$page->foo(1)` will return the raw formatted value
+- `$page->foo(2)` will return the raw unformatted value
+
 ----------------- everything below is partly outdated!! ------------------------
 
 ## Concept

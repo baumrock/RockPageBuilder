@@ -65,59 +65,6 @@ class Block extends \ProcessWire\Page
   }
 
   /**
-   * Magic
-   *
-   * Usage:
-   * $block->headline() will render an editable headline if the field follows
-   * the naming convention using class constants.
-   *
-   * $block->headline(true) will return the raw (uneditable) value.
-   */
-  public function __call($method, $args)
-  {
-    // if a fieldname method was requested we try to
-    // return the content of the field or its editor
-    if ($fieldname = $this->getFieldName($method)) {
-      $raw = !!(is_array($args) and array_key_exists(0, $args) and $args[0] === true);
-      $type = $this->fields->get($fieldname)->type;
-      if ($type instanceof FieldtypeRockPageBuilder) {
-        return $this->getFormatted($fieldname);
-      } elseif ($type instanceof FieldtypePage) {
-        return $this->getFormatted($fieldname);
-      } elseif ($type instanceof FieldtypeText) {
-        if ($raw) return $this->getFormatted($fieldname);
-        return $this->html($this->edit($fieldname));
-      } elseif ($type instanceof FieldtypeRepeater) {
-        return $this->getFormatted($fieldname);
-      } elseif ($type instanceof FieldtypeFile) {
-        // files are returned as formatted value
-        return $this->getFormatted($fieldname);
-      } else {
-        if ($raw) return $this->get($fieldname);
-        return $this->html($this->get($fieldname));
-      }
-    }
-
-    // a regular page method was requested
-    try {
-      // try to return its result
-      return parent::__call($method, $args);
-    } catch (\Throwable $th) {
-      // if the method does not exist we show
-      // a message to superusers
-      if ($this->wire->user->isSuperuser()) {
-        return $this->html(
-          "<span style='padding:5px 10px;font-weight:bold;color:red;"
-            . "background-color:rgba(255,0,0,0.2);border-radius:20px;'>"
-            . $th->getMessage()
-            . "</span>"
-        );
-      }
-      return '';
-    }
-  }
-
-  /**
    * This ensures that we have an init() method on every block
    * so that if extending blocks call parent::init() we'll not run into trouble
    */

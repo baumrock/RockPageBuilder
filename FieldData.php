@@ -215,10 +215,10 @@ class FieldData extends PageArray
   }
 
   /**
-   * Method to catch errors if user is not superuser
+   * Render all blocks and catch errors
    * @return string
    */
-  private function renderCatch($renderEmpty)
+  private function renderCatch($renderEmpty): string
   {
     $out = '';
     $typeIndex = 0;
@@ -242,6 +242,8 @@ class FieldData extends PageArray
       $block->typeIndex = $typeIndex++;
 
       try {
+        // try to render the block and add some magic
+        // add the image overlay for rapid development
         $out .= $this->addOverlay($block);
       } catch (\Throwable $th) {
         $out .= $th->getMessage();

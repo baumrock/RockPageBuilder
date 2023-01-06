@@ -58,7 +58,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.6.0',
+      'version' => '3.7.0',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -159,20 +159,15 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     }
   }
 
-  public function addMagicStyles(HookEvent $event)
-  {
-    $html = $event->return;
-    if (!strpos($html, "#rpbstyle-")) return;
-    foreach ($this->blockStylesCache as $id => $str) {
-      $html = str_replace("\"$id\"", $str, $html);
-    }
-    $event->return = $html;
-  }
-
   public function ready()
   {
     $this->include("ready.php"); // load assets/RockPageBuilder/ready.php
     $this->addFrontendAssets();
+
+    // add magic field getter methods
+    // this is to support $page->foo() calls instead of
+    // $rockfrontend->html($page->edit("rockpagebuilder_something_foo"))
+    $this->addMagicFieldMethods();
 
     if ($this->wire->page->template == 'admin') {
       $this->wire->config->js('RockPageBuilderBlocks', $this->blockNames());
@@ -430,6 +425,58 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
+   * Attach magic field methods
+   * Makes it possible to access field "rockpagebuilder_foo_bar" as $page->bar()
+   */
+  public function addMagicFieldMethods($page = null, $tpl = null)
+  {
+    if ($page) {
+      $fields = $tpl->fields;
+      foreach ($fields as $field) {
+        $fieldname = $field->name;
+        $parts = explode("_", $fieldname);
+        $methodname = array_pop($parts);
+
+        // add the dynamic method via hook to the page
+        $this->wire->addHookMethod(
+          "Page(template=$tpl)::$methodname",
+          function ($event) use ($fieldname, $methodname) {
+            // get field value of original field
+            $page = $event->object;
+            $raw = $event->arguments(0);
+            if ($raw === 2) {
+              $event->return = $page->getUnformatted($fieldname);
+              return;
+            }
+            if ($raw) {
+              $event->return = $page->getFormatted($fieldname);
+              return;
+            }
+            $val = $page->edit($fieldname);
+            if (is_string($val)) {
+              /** @var RockFrontend $rf */
+              $rf = $this->wire->modules->get('RockFrontend');
+              if ($rf) $val = $rf->html($val);
+            }
+            $event->return = $val;
+          },
+          // we attach the hook as early as possible
+          // that means if other hooks kick in later they have priority
+          // this is to make sure we don't overwrite $page->editable() etc.
+          ['priority' => 0]
+        );
+      }
+      return;
+    }
+
+    // loop over all available templates and create runtime page objects
+    foreach ($this->wire->templates as $tpl) {
+      $p = $this->wire->pages->newPage(['template' => $tpl]);
+      $this->addMagicFieldMethods($p, $tpl);
+    }
+  }
+
+  /**
    * Add magic inputfield properties
    * @return void
    */
@@ -448,6 +495,16 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if ($field->get('rpb-smallpadding')) {
       $f->wrapClass('rpb-pd5');
     }
+  }
+
+  public function addMagicStyles(HookEvent $event)
+  {
+    $html = $event->return;
+    if (!strpos($html, "#rpbstyle-")) return;
+    foreach ($this->blockStylesCache as $id => $str) {
+      $html = str_replace("\"$id\"", $str, $html);
+    }
+    $event->return = $html;
   }
 
   /**

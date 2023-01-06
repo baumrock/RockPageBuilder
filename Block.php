@@ -176,7 +176,7 @@ class Block extends \ProcessWire\Page
         'label' => $block->title,
         'tooltip' => "Move Block #{$widget->id}",
         'class' => 'pw-modal',
-        'href' => $widget->getBlockPage()->editUrl . "&field=" . $widget->getBlockField() . "&moveblock=$widget",
+        'href' => $widget->getBlockPage()->editUrl . "&field=" . $widget->getBlockField() . "&rpb-moveblock=$widget",
         'suffix' => 'data-buttons="button.ui-button[type=submit]" data-autoclose data-reload',
       ];
     }

@@ -12,6 +12,7 @@ The goals of this module are
 
 ## Limitations/issues
 
+- works only with AdminThemeUikit!
 - I dont know which profields are supported, please let me know!
 - Seems that showIf does not work with RockPageBuilder? MPN AnchorHeadline
 

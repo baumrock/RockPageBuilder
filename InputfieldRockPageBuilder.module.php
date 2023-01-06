@@ -159,7 +159,6 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
   {
     $this->createBlock();
     $out = '';
-    $out .= $this->renderStyle();
     $out .= $this->renderItems();
     $out .= $this->renderButtons();
     $out .= $this->renderTextarea();
@@ -283,27 +282,6 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
     $this->wire->config->scripts->add($js . $m);
 
     $this->preloadBlockAssets();
-  }
-
-  /**
-   * Render dynamic style tag
-   * This style tag is rendered whenever we are editing the rpb field
-   * in a modal window.
-   * @return string
-   */
-  public function renderStyle()
-  {
-    if (!$this->wire->input->get('modal', 'int')) return;
-    $field = $this->wire->input->get('field', 'fieldName');
-    if ($field !== $this->name) return;
-    $move = $this->wire->input->get('moveblock', 'int');
-    if (!$move) return;
-    return "<style>li#rpb_$move {
-        border-top: 5px solid orange;
-        border-bottom: 5px solid orange;
-      }
-      .rpb-buttons-container { display: none; }
-      </style>";
   }
 
   /**

@@ -105,6 +105,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addHookAfter("Modules::refresh", $this, "removeUnusedTemplates");
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "widgetHint");
     $this->addHookBefore("Modules::uninstall", $this, "beforeUninstall");
+    $this->addHookAfter("Page::render", $this, "addMoveStyles");
 
     // add styles for backend
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "addStyles");
@@ -197,16 +198,18 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       ];
     }
     // show move icon only when more than 1 block
-    // if ($opt->move and $data->count() > 1) {
-    //   $icons[] = (object)[
-    //     'icon' => 'move',
-    //     'label' => $block->title,
-    //     'tooltip' => "Move Block #{$block->id}",
-    //     'class' => 'pw-modal',
-    //     'href' => $block->getBlockPage()->editUrl . "&field=" . $block->getBlockField() . "&moveblock=$block",
-    //     'suffix' => 'data-buttons="button.ui-button[type=submit]" data-autoclose data-reload',
-    //   ];
-    // }
+    $forPage = $block->getForPage();
+    $forField = $block->getForField()->name;
+    if ($forPage->get($forField)->count() > 1) {
+      $icons[] = (object)[
+        'icon' => 'move',
+        'label' => $block->title,
+        'tooltip' => "Move Block #{$block->id}",
+        'class' => 'pw-modal',
+        'href' => $block->getForPage()->editUrl . "&field=" . $block->getForField() . "&rpb-moveblock=$block",
+        'suffix' => 'data-buttons="button.ui-button[type=submit]" data-autoclose data-reload',
+      ];
+    }
 
     if ($opt->trash and $block->trashable()) {
       $icons[] = (object)[
@@ -448,6 +451,25 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
+   * Styles that are injected when moving a block on the frontend
+   */
+  public function addMoveStyles(HookEvent $event)
+  {
+    if (!$id = $this->wire->input->get('rpb-moveblock')) return;
+
+    $style = file_get_contents(__DIR__ . "/assets/move.css");
+
+    $style = str_replace("#rpb-moveblock-id", "#rpb_$id", $style);
+    $style = str_replace("#repeater-moveblock-id", "#Inputfield_repeater_item_$id", $style);
+
+    $event->return = str_replace(
+      "</head>",
+      "<style>$style</style></head>",
+      $event->return
+    );
+  }
+
+  /**
    * Add stylesheet to pw admin
    */
   public function addStyles(HookEvent $event)
@@ -526,10 +548,12 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   public function buildForm(HookEvent $event)
   {
     $page = $event->process->getPage();
+    $form = $event->return;
+
     $addClass = false;
     if ($page instanceof Block) $addClass = true;
     if ($page instanceof RepeaterPage) $addClass = true;
-    if ($addClass) $event->return->addClass('rpb-form');
+    if ($addClass) $form->addClass('rpb-form rpb-hidetabs');
   }
 
   /**

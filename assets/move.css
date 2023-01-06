@@ -1,0 +1,37 @@
+/* dynamic part --> ids will be replaced by PHP at runtime */
+#rpb-moveblock-id,
+#repeater-moveblock-id {
+  border-top: 5px solid orange !important;
+  border-bottom: 5px solid orange !important;
+}
+
+/* hide content of pagebuilder fields (even when dragged) */
+.rpb-item .InputfieldContent {
+  display: none;
+}
+/* hide rockpagebuilder type icons (left of move icon) */
+.rpb-item .InputfieldHeader i.fa:first-of-type {
+  display: none;
+}
+
+.InputfieldRepeaterAddItem {
+  display: none;
+}
+.InputfieldRepeater > .InputfieldContent .InputfieldHeader::after {
+  display: none;
+}
+.InputfieldRepeater
+  > .InputfieldContent
+  .InputfieldHeader
+  .InputfieldRepeaterItemControls {
+  display: none !important;
+}
+.InputfieldRepeater > .InputfieldContent .InputfieldContent {
+  display: none;
+}
+.rpb-item .InputfieldHeader .toggle-icon {
+  display: none;
+}
+.rpb-buttons-container {
+  display: none;
+}

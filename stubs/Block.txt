@@ -1,9 +1,8 @@
-<?php namespace RockPageBuilderBlock;
+<?php
 
-use ProcessWire\Inputfield;
-use ProcessWire\RockFieldsField;
+namespace RockPageBuilderBlock;
+
 use RockPageBuilder\Block;
-use RockPageBuilder\BlockSettingsArray;
 
 class {name} extends Block {
 
@@ -15,106 +14,7 @@ class {name} extends Block {
       'color' => 'lime',
       // 'icon' => 'picture-o',
       // 'description' => 'RockPageBuilder Block Setup Demo',
-      // 'sort' => 500,
-
-      // block spacing
-      // see readme about block spacing!
-      // 'spaceID' => 'white',
-      // 'spaceV' => '20pxrem, 40pxrem',
     ];
   }
-
-  /** ##### magic methods ##### */
-
-  // /**
-  //  * buildForm can be used to modify the GUI both for the rpb editor as well
-  //  * as when the block is edited in a new window
-  //  */
-  // public function buildForm($form) {
-  //   // here you can edit the block's inputfields at runtime
-  //   if($f = $form->get('title')) {
-  //     $f->label = 'Title Label Changed';
-  //     $f->notes = 'Title Note';
-  //   }
-  // }
-
-  // /**
-  //  * buildFormBlock modifies the GUI only when rendered as a single block
-  //  * inside a regular page editor rpb field
-  //  */
-  // public function buildFormBlock($form) {
-  //   // here you can edit the block's inputfields at runtime
-  //   if($f = $form->get('title')) {
-  //     $f->label = 'Title Label Changed';
-  //     $f->notes = 'Title Note';
-  //   }
-  // }
-
-  public function onCreate() {
-    // we dont execute resetting the title if the block is being cloned
-    if($this->rpb()->isClone) return;
-    // set default field values when a new block is created
-    $this->setInAllLanguages('title', '');
-  }
-
-  /** ##### frontend ##### */
-
-  /** ##### backend ##### */
-
-  // /**
-  //  * Return GUI label of this block
-  //  */
-  // public function getLabel() {
-  //   return $this->title;
-  // }
-
-  public function migrate() {
-    parent::migrate();
-    $rm = $this->rm();
-
-    // if you need to remove a field that you previously added you can do this:
-    // $rm->removeField('your_old_field', true);
-
-    $rm->migrate([
-      'fields' => [
-        // here you can create new fields if needed
-        // you can also create fields via the GUI
-      ],
-      'templates' => [
-        $this->getTplName() => [
-          // here you set the fields of the block-template
-          // if you need to remove a field see the removeField() demo above
-          // alternatively you can use the "fields-" key to remove all fields
-          // that are not listed in the array. note that this will remove
-          // fields that were added via GUI!
-          'fields' => [
-            'title' => [
-              'required' => false,
-              // 'collapsed' => Inputfield::collapsedHidden,
-            ],
-          ],
-        ],
-      ],
-    ]);
-  }
-
-  /**
-   * Define settings for this block
-   * You can access settings in your view file like this:
-   * $block->settings('demo_setting', 'optional-default-value')
-   */
-   // public function settingsTable(RockFieldsField $field)
-   // {
-   //   $settings = $this->getDefaultSettings($field);
-   //   $settings->add([
-   //     'name' => 'demo_setting',
-   //     'label' => 'Demo-Setting',
-   //     'value' => $field->input('demo_setting', 'select', [
-   //       'foo' => 'foo style',
-   //       'bar' => 'bar style',
-   //     ]),
-   //   ]);
-   //   return $settings;
-   // }
 
 }

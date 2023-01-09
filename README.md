@@ -1,4 +1,4 @@
-# RockPageBuilder
+<img src=RockPageBuilder.svg height=50>
 
 RockPageBuilder is a Fieldtype/Inputfield module that helps you creating modular content for your project.
 

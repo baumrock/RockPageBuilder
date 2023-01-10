@@ -58,7 +58,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.9.0',
+      'version' => '3.10.0',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,

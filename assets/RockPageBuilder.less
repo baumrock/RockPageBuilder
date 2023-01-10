@@ -1,8 +1,14 @@
+// This makes sure that we don't get any wrong margins on the wrapper.
+// This is important for sections that add top and bottom padding
+// so that the resulting padding does not add up with some unintended
+// margin! If you need margins on your elements try to go with a
+// margin-top approach so that the div.alfredelements does not interfere
+// with your margins (that div is added to the very end of the wrapper).
 .rpb-nomargin,
 .rpb-nomargin .pw-edit-orig,
 .rpb-nomargin .pw-edit-copy {
-  > *:last-child:not(.alfredelements) {
-    margin-bottom: 0;
+  > * {
+    margin: 0;
   }
   > *:first-child {
     margin-top: 0;

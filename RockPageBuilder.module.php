@@ -58,7 +58,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.8.0',
+      'version' => '3.9.0',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -449,12 +449,12 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
           function ($event) use ($fieldname, $methodname) {
             // get field value of original field
             $page = $event->object;
-            $raw = $event->arguments(0);
-            if ($raw === 2) {
+            $mode = $event->arguments(0);
+            if ($mode === 2) {
               $event->return = $page->getUnformatted($fieldname);
               return;
             }
-            if ($raw) {
+            if ($mode) {
               $event->return = $page->getFormatted($fieldname);
               return;
             }

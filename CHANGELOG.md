@@ -1,3 +1,12 @@
+# [3.10.0](https://github.com/baumrock/RockPageBuilder/compare/v3.9.0...v3.10.0) (2023-01-10)
+
+
+### Features
+
+* add setting to create block-yaml or not ([5f4ec12](https://github.com/baumrock/RockPageBuilder/commit/5f4ec1243caa8c9d34d081bce31f00faa3ab9b6d))
+
+
+
 # [3.9.0](https://github.com/baumrock/RockPageBuilder/compare/v3.8.0...v3.9.0) (2023-01-10)
 
 

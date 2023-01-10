@@ -1,3 +1,12 @@
+# [3.9.0](https://github.com/baumrock/RockPageBuilder/compare/v3.8.0...v3.9.0) (2023-01-10)
+
+
+### Features
+
+* tweak .rpb-nomargin class ([8b88bb9](https://github.com/baumrock/RockPageBuilder/commit/8b88bb9d4bab9f82119f3d166af2dcee766fed35))
+
+
+
 # [3.8.0](https://github.com/baumrock/RockPageBuilder/compare/v3.7.0...v3.8.0) (2023-01-10)
 
 

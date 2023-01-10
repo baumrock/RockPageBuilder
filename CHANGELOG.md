@@ -1,3 +1,13 @@
+# [3.8.0](https://github.com/baumrock/RockPageBuilder/compare/v3.7.0...v3.8.0) (2023-01-10)
+
+
+### Features
+
+* keep block stub simple ([98cf56c](https://github.com/baumrock/RockPageBuilder/commit/98cf56ce058864a8630f3b490c16554ee33cf88d))
+* support yaml migrations + html labels ([46ca25a](https://github.com/baumrock/RockPageBuilder/commit/46ca25aad7e30b5fa8d8b5bb76ff95e0a952d6c6))
+
+
+
 # [3.7.0](https://github.com/baumrock/RockPageBuilder/compare/v3.6.0...v3.7.0) (2023-01-06)
 
 

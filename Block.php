@@ -1098,6 +1098,15 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Get RockMigrations instance
+   * @return RockMigrations
+   */
+  public function rockmigrations()
+  {
+    return $this->wire->modules->get('RockMigrations');
+  }
+
+  /**
    * Get RockPageBuilder Process Url
    * Usage:
    * $this->rpbUrl("/add?block=123");

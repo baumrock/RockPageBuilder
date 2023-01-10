@@ -13,7 +13,7 @@ The goals of this module are
 ## Limitations/issues
 
 - works only with AdminThemeUikit!
-- I dont know which profields are supported, please let me know!
+- The module should work with all common fields out of the box. If you find any field that is not fully supported, please let me know and I'll add support for it as it should be quite easy for really any field I can think of.
 - Seems that showIf does not work with RockPageBuilder? MPN AnchorHeadline
 
 ## Roadmap
@@ -21,6 +21,7 @@ The goals of this module are
 -- v1 --
 
 - Hide/unpublish blocks
+- GUI to edit multiple hidden blocks on the frontend (eg anchor + colorblock)
 - caching?
 
 -- v2 --
@@ -50,6 +51,22 @@ By default (with no argument) the `$page->foo()` call will return the editable f
 
 - `$page->foo(1)` will return the raw formatted value
 - `$page->foo(2)` will return the raw unformatted value
+
+## Block Labels
+
+```php
+public function getLabel() {
+  return $this->body;
+}
+```
+
+Label with custom HTML:
+
+```php
+public function getLabel() {
+  return $this->html("<strong>MyBlock:</strong> {$this->title}");
+}
+```
 
 ----------------- everything below is partly outdated!! ------------------------
 

@@ -106,6 +106,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "widgetHint");
     $this->addHookBefore("Modules::uninstall", $this, "beforeUninstall");
     $this->addHookAfter("Page::render", $this, "addMoveStyles");
+    $this->addHookAfter("Templates::saved", $this, "hookBlockMigrateFile");
+    $this->addHookAfter("Fields::saved", $this, "hookBlockMigrateFile");
 
     // add styles for backend
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "addStyles");
@@ -348,6 +350,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       $class = "\\$namespace\\$name";
       $block = new $class();
       $block->setFile($file);
+      $block->setMigrateFile($file);
       $name = $block->getInfo()->name;
 
       // if block already exists dont add and init it again
@@ -376,6 +379,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       $this->rm()->watch($file, false);
     } catch (\Throwable $th) {
       $this->warning($class . ": " . $th->getMessage());
+      if ($this->wire->user->isSuperuser()) {
+        bd(Debug::backtrace());
+      }
     }
   }
 
@@ -805,6 +811,47 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
+   * Create migrate file (triggered by tpl/field save hook)
+   */
+  private function createBlockMigrateFile($tpl)
+  {
+    $block = $this->getBlockByTpl($tpl);
+    if (!$block) return;
+    if (!$file = $block->yaml) return;
+    $dir = dirname($file);
+    if (!is_writable($dir)) {
+      $this->warning("Directory not writable - cannot write migration file to $dir");
+      return;
+    }
+
+    $rm = $this->rm();
+    $file = $rm->toPath($file);
+    $tplcode = $rm->getCode($tpl, 2);
+    $fieldcode = [];
+    foreach ($tpl->fields as $field) {
+      if ($field->name === 'title') continue;
+      if ($field->name === 'email') continue;
+
+      // get a fresh copy of the current field
+      // This is somehow necessary because if we take $field directly
+      // it has some weird runtime flags applied that get then
+      // written into the yaml and applied on the next migration.
+      $field = $this->wire->fields->get($field->id);
+      $fieldcode[$field->name] = $rm->getCode($field, 2);
+    }
+    $data = [
+      'fields' => $fieldcode,
+      'templates' => [
+        $tpl->name => $tplcode,
+      ],
+    ];
+    $yaml = $rm->yaml($file, $data);
+    if ($yaml) {
+      $this->log("Saved migration data to $file");
+    }
+  }
+
+  /**
    * Set default settings callback
    */
   public function defaultSettings($callback)
@@ -971,6 +1018,22 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
+   * Create yaml file whenever a field or template is saved
+   */
+  public function hookBlockMigrateFile(HookEvent $event)
+  {
+    if ($this->rm()->ismigrating) return;
+    $saved = $event->arguments(0);
+    if ($saved instanceof Template) $this->createBlockMigrateFile($saved);
+    elseif ($saved instanceof Field) {
+      foreach ($this->wire->templates as $tpl) {
+        if (!$tpl->fields->has($saved)) continue;
+        $this->createBlockMigrateFile($tpl);
+      }
+    }
+  }
+
+  /**
    * Make sure that images are editable and image actions are shown
    * @return void
    */
@@ -1112,8 +1175,12 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     foreach ($this->blocks as $name => $file) {
       $block = $this->getBlock($name);
       if (!$block) return;
-      if ($rm->doMigrate($block)) $block->migrate();
-      else $rm->log("--- Skipping $name (no change)");
+      if ($rm->doMigrate($block)) {
+        $block->migrateInitial();
+        $block->migrateBeforeYaml();
+        $block->migrateYaml();
+        $block->migrateAfterYaml();
+      } else $rm->log("--- Skipping $name (no change)");
     }
 
     // data-page

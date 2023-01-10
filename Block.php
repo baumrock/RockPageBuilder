@@ -27,6 +27,7 @@ use ProcessWire\RockFrontend;
 use ProcessWire\Template;
 use ProcessWire\WireException;
 use ReflectionClass;
+use RockPageBuilder\Html as RockPageBuilderHtml;
 use RockPageBuilderBlock\Widget;
 
 use function ProcessWire\wireClassName;
@@ -42,6 +43,12 @@ class Block extends \ProcessWire\Page
    * @var string
    **/
   public $file;
+
+  /**
+   * Reference to the yaml migrate file
+   * @var string
+   */
+  public $yaml;
 
   private $info;
 
@@ -71,6 +78,18 @@ class Block extends \ProcessWire\Page
   public function init()
   {
   }
+
+  /** magic methods */
+
+  public function onCreate()
+  {
+    // we dont execute resetting the title if the block is being cloned
+    if ($this->rpb()->isClone) return;
+    // set default field values when a new block is created
+    $this->setInAllLanguages('title', '');
+  }
+
+  /** end magic methods */
 
   /**
    * Add ALFRED icons (for RockFrontend)
@@ -496,8 +515,12 @@ class Block extends \ProcessWire\Page
     $wrap->suffix = "_repeater$this";
 
     // prepare label
-    $label = (string)$this->getLabel() ?: $this->getInfo()->title;
-    $label = $this->wire->sanitizer->truncate(strip_tags($label), 70);
+    $label = $this->getLabel() ?: $this->getInfo()->title;
+    if ($label instanceof Html or $label instanceof RockPageBuilderHtml) {
+      // do not change the label
+    } else {
+      $label = $this->wire->sanitizer->truncate(strip_tags($label), 70);
+    }
     $label = "<i class='fa fa-arrows'></i> $label";
     $fs->entityEncodeLabel = false;
 
@@ -579,6 +602,12 @@ class Block extends \ProcessWire\Page
       if (is_file($autoload)) require_once $autoload;
       return new Html($str);
     } catch (\Throwable $th) {
+      try {
+        require_once __DIR__ . "/Html.php";
+        $html = new RockPageBuilderHtml($str);
+        return $html;
+      } catch (\Throwable $th) {
+      }
       if ($this->wire->user->isSuperuser()) return $th->getMessage();
       return $str;
     }
@@ -1127,7 +1156,15 @@ class Block extends \ProcessWire\Page
    */
   public function setFile($file)
   {
-    $this->file = Paths::normalizeSeparators($file);
+    $this->file = $file;
+  }
+
+  /**
+   * Set reference to migration yaml
+   */
+  public function setMigrateFile($file)
+  {
+    $this->yaml = substr($file, 0, -4) . ".yaml";
   }
 
   /**
@@ -1538,14 +1575,28 @@ class Block extends \ProcessWire\Page
   }
 
   /**
-   * Block Migrations
-   * Not hookable --> call parent::migrate() in derived classes
+   * Migrations applied before migrating the yaml file
    */
-  public function migrate()
+  public function migrateBeforeYaml()
+  {
+  }
+
+  /**
+   * Migrations applied after migrating the yaml file
+   */
+  public function migrateAfterYaml()
+  {
+  }
+
+  /**
+   * Initial Block Migrations
+   */
+  public final function migrateInitial()
   {
     // we always create the related template
     $rm = $this->rm();
     $rm->log('Migrate ' . $this->getInfo()->name);
+
     // use the template name, not $this!!
     // this ensures that it works even where $this->template = null
     $tpl = $this->getTplName();
@@ -1558,7 +1609,18 @@ class Block extends \ProcessWire\Page
       'flags' => Template::flagSystem,
       'noChildren' => true, // hide children tab by default
       'noSettings' => true, // hide settings tab by default
+      'fields' => [
+        'title' => ['required' => false],
+      ],
     ]);
+  }
+
+  /**
+   * Migrate YAML file
+   */
+  public final function migrateYaml()
+  {
+    $this->rm()->migrateYAML($this->yaml);
   }
 
   /**

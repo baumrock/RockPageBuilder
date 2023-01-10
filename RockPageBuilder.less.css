@@ -63,6 +63,9 @@ li.rpb-item > .InputfieldHeader {
   cursor: pointer;
   transition: background-color 0.5s linear;
 }
+li.rpb-item > .InputfieldHeader > .fa:first-of-type {
+  display: none;
+}
 li.rpb-item > .InputfieldHeader .fa-arrows {
   cursor: move;
   padding-left: 5px;

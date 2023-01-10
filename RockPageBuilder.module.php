@@ -818,6 +818,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $block = $this->getBlockByTpl($tpl);
     if (!$block) return;
     if (!$file = $block->yaml) return;
+    if (!$block->getInfo()->yaml) return;
+
     $dir = dirname($file);
     if (!is_writable($dir)) {
       $this->warning("Directory not writable - cannot write migration file to $dir");

@@ -68,6 +68,38 @@ public function getLabel() {
 }
 ```
 
+## YAML recorder
+
+You can make RockPageBuilder save a yaml configuration of your block's field and template settings like this:
+
+```php
+class ExampleBlock extends Block
+{
+  public function info()
+  {
+    return [
+      'title' => 'IconColumns',
+      'yaml' => true,
+    ];
+  }
+}
+```
+
+### Migrations
+
+You can use migrations additionally to the YAML recorder:
+
+```php
+public function migrateBeforeYaml() {
+  // this code will run BEFORE yaml settings have been applied
+  // that means settings from the yaml file will overwrite settings from here
+}
+public function migrateAfterYaml() {
+  // this code will run AFTER yaml settings have been applied
+  // that means settings from here will overwrite settings from the yaml file
+}
+```
+
 ----------------- everything below is partly outdated!! ------------------------
 
 ## Concept

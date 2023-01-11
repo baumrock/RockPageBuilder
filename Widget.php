@@ -98,9 +98,8 @@ class Widget extends Block
     return "$label ({$block->getLabel()})";
   }
 
-  public function migrate()
+  public function migrateBeforeYaml()
   {
-    parent::migrate();
     $rm = $this->rm();
     $url = $this->wire->pages->get(1)->editUrl() . "&field=" . RockPageBuilder::field_widgets;
     $noteLabel = $this->_('Manage widgets');

@@ -58,7 +58,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.10.0',
+      'version' => '3.11.0',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -450,18 +450,37 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
             // get field value of original field
             $page = $event->object;
             $mode = $event->arguments(0);
+            /** @var RockFrontend $rf */
+            $rf = $this->wire->modules->get('RockFrontend');
+
+            // mode 3 --> return unformatted html
+            if ($mode === 3) {
+              $val = $page->getUnformatted($fieldname);
+              if ($rf) $val = $rf->html($val);
+              $event->return = $val;
+              return;
+            }
+
+            // mode 2 --> return unformatted value
             if ($mode === 2) {
               $event->return = $page->getUnformatted($fieldname);
               return;
             }
+
+            // mode 1 --> return formatted value
             if ($mode) {
               $event->return = $page->getFormatted($fieldname);
               return;
             }
-            $val = $page->edit($fieldname);
+
+            // default mode --> return editable field
+            if ($page->editable()) $val = $page->edit($fieldname);
+            else {
+              bd($page->getFormatted($fieldname));
+              $event->return = $page->getFormatted($fieldname);
+              return;
+            }
             if (is_string($val)) {
-              /** @var RockFrontend $rf */
-              $rf = $this->wire->modules->get('RockFrontend');
               if ($rf) $val = $rf->html($val);
             }
             $event->return = $val;

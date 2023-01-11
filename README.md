@@ -51,6 +51,7 @@ By default (with no argument) the `$page->foo()` call will return the editable f
 
 - `$page->foo(1)` will return the raw formatted value
 - `$page->foo(2)` will return the raw unformatted value
+- `$page->foo(3)` will return the raw unformatted value as nette html object
 
 ## Block Labels
 

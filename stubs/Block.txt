@@ -6,7 +6,7 @@ use RockPageBuilder\Block;
 
 class {name} extends Block {
 
-  const prefix = "rockpagebuilderblock_{namelower}_";
+  const prefix = "rpb_{namelower}_";
 
   public function info() {
     return [

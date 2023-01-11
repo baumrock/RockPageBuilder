@@ -474,12 +474,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
             }
 
             // default mode --> return editable field
-            if ($page->editable()) $val = $page->edit($fieldname);
-            else {
-              bd($page->getFormatted($fieldname));
-              $event->return = $page->getFormatted($fieldname);
-              return;
-            }
+            $val = $page->edit($fieldname);
             if (is_string($val)) {
               if ($rf) $val = $rf->html($val);
             }

@@ -1,3 +1,12 @@
+## [3.11.1](https://github.com/baumrock/RockPageBuilder/compare/v3.11.0...v3.11.1) (2023-01-11)
+
+
+### Bug Fixes
+
+* refactor old widget migrate() call ([9da28f4](https://github.com/baumrock/RockPageBuilder/commit/9da28f463a1634361dba936880797054a1809bda))
+
+
+
 # [3.11.0](https://github.com/baumrock/RockPageBuilder/compare/v3.10.0...v3.11.0) (2023-01-11)
 
 
@@ -32,15 +41,6 @@
 
 * keep block stub simple ([98cf56c](https://github.com/baumrock/RockPageBuilder/commit/98cf56ce058864a8630f3b490c16554ee33cf88d))
 * support yaml migrations + html labels ([46ca25a](https://github.com/baumrock/RockPageBuilder/commit/46ca25aad7e30b5fa8d8b5bb76ff95e0a952d6c6))
-
-
-
-# [3.7.0](https://github.com/baumrock/RockPageBuilder/compare/v3.6.0...v3.7.0) (2023-01-06)
-
-
-### Features
-
-* add docs for magic field methods + support repeaters ([ecefe79](https://github.com/baumrock/RockPageBuilder/commit/ecefe79b97ce40f79d7f15e32a61c51afda9c517))
 
 
 

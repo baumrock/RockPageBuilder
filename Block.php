@@ -4,12 +4,8 @@ namespace RockPageBuilder;
 
 use Latte\Engine;
 use Latte\Runtime\Html;
-use ProcessWire\FieldtypeFile;
-use ProcessWire\FieldtypePage;
-use ProcessWire\FieldtypeRepeater;
 use ProcessWire\FieldtypeRockPageBuilder;
 use ProcessWire\FieldtypeRockShare;
-use ProcessWire\FieldtypeText;
 use ProcessWire\Paths;
 use ProcessWire\RockPageBuilder;
 use \ProcessWire\WireData;
@@ -1622,6 +1618,14 @@ class Block extends \ProcessWire\Page
         'title' => ['required' => false],
       ],
     ]);
+
+    if ($this->getInfo()->hideTitle) {
+      $rm->setFieldData(
+        "title",
+        ['collapsed' => Inputfield::collapsedHidden],
+        $this->getTplName()
+      );
+    }
   }
 
   /**

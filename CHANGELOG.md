@@ -1,3 +1,12 @@
+# [3.13.0](https://github.com/baumrock/RockPageBuilder/compare/v3.12.0...v3.13.0) (2023-01-12)
+
+
+### Features
+
+* add show=false for blocks ([e09c591](https://github.com/baumrock/RockPageBuilder/commit/e09c591fa6dc71377d6f40581ca7e1f6fb3107cc))
+
+
+
 # [3.12.0](https://github.com/baumrock/RockPageBuilder/compare/v3.11.2...v3.12.0) (2023-01-12)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add new fieldvalue key 3 to return html ([f6c6476](https://github.com/baumrock/RockPageBuilder/commit/f6c6476f31f4ba05e512ed8768fc2181313b7147))
-
-
-
-# [3.10.0](https://github.com/baumrock/RockPageBuilder/compare/v3.9.0...v3.10.0) (2023-01-10)
-
-
-### Features
-
-* add setting to create block-yaml or not ([5f4ec12](https://github.com/baumrock/RockPageBuilder/commit/5f4ec1243caa8c9d34d081bce31f00faa3ab9b6d))
 
 
 

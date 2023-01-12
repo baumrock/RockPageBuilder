@@ -184,8 +184,13 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
         $group = $info->group ?: '_';
         $block->_rpbsort = "$groupSort|$group|$sort";
       }
+
+      // check if the block should be shown on current page
+      // you can set a callback or FALSE in the blocks info array
       $callback = $block->getInfo()->show;
-      if (is_callable($callback)) {
+      if ($callback === false) {
+        $blocks->remove($block);
+      } elseif (is_callable($callback)) {
         $show = $callback($page, $this);
         if (!$show) $blocks->remove($block);
       }

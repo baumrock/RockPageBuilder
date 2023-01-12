@@ -1,3 +1,12 @@
+# [3.12.0](https://github.com/baumrock/RockPageBuilder/compare/v3.11.2...v3.12.0) (2023-01-12)
+
+
+### Features
+
+* add hideTitle info setting ([7d3eae4](https://github.com/baumrock/RockPageBuilder/commit/7d3eae410393d3709aecf125df904b4f84cf5896))
+
+
+
 ## [3.11.2](https://github.com/baumrock/RockPageBuilder/compare/v3.11.1...v3.11.2) (2023-01-11)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add setting to create block-yaml or not ([5f4ec12](https://github.com/baumrock/RockPageBuilder/commit/5f4ec1243caa8c9d34d081bce31f00faa3ab9b6d))
-
-
-
-# [3.9.0](https://github.com/baumrock/RockPageBuilder/compare/v3.8.0...v3.9.0) (2023-01-10)
-
-
-### Features
-
-* tweak .rpb-nomargin class ([8b88bb9](https://github.com/baumrock/RockPageBuilder/commit/8b88bb9d4bab9f82119f3d166af2dcee766fed35))
 
 
 

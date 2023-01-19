@@ -194,6 +194,11 @@ class ProcessRockPageBuilder extends Process
     return $this->json("success");
   }
 
+  public function rockpagebuilder(): RockPageBuilder
+  {
+    return $this->wire->modules->get('RockPageBuilder');
+  }
+
   /**
    * @return RockPageBuilder
    */

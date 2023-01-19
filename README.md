@@ -257,7 +257,7 @@ To add settings to your block simply install the RockFields module and add a met
 ```php
 // add this to your block's php file
 public function settingsTable(RockFieldsField $field) {
-  $settings = $this->getDefaultSettings();
+  $settings = $this->getDefaultSettings($field);
   $settings->add([
     'name' => 'blockpadding',
     'label' => 'Block-Padding',

@@ -8,7 +8,7 @@ The goals of this module are
 
 - Make it easy for the client to create custom section-based pages
 - Make it easy, fast and fun to develop blocks
-- Make it possible to copy blocks to other projects
+- Make it possible to reuse blocks across projects by simply copying all block-files
 
 ## Limitations/issues
 
@@ -43,7 +43,7 @@ my_bar_field --> field()
 what_so_ever --> ever()
 ```
 
-Obviously that would collide for `my_foo_field` and `my_bar_field`. In that case just access your fields the regular PW way.
+Obviously that would collide for `my_foo_field` and `my_bar_field`. In that case just access your fields the regular PW way or rename your fields to `my_foofield` and `my_barfield`.
 
 ### Magic field value return types
 

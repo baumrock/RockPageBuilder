@@ -1,3 +1,12 @@
+## [3.14.2](https://github.com/baumrock/RockPageBuilder/compare/v3.14.1...v3.14.2) (2023-01-22)
+
+
+### Bug Fixes
+
+* call migrate() on migrate ([51f6821](https://github.com/baumrock/RockPageBuilder/commit/51f6821c03f7ee9545e8564ba7daceda9d1e7cce))
+
+
+
 ## [3.14.1](https://github.com/baumrock/RockPageBuilder/compare/v3.14.0...v3.14.1) (2023-01-22)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add hideTitle info setting ([7d3eae4](https://github.com/baumrock/RockPageBuilder/commit/7d3eae410393d3709aecf125df904b4f84cf5896))
-
-
-
-## [3.11.2](https://github.com/baumrock/RockPageBuilder/compare/v3.11.1...v3.11.2) (2023-01-11)
-
-
-### Bug Fixes
-
-* wrong return value of magic field method ([4260a30](https://github.com/baumrock/RockPageBuilder/commit/4260a306e94fb700d3b71158583f3d311abedd94))
 
 
 

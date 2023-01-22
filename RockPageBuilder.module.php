@@ -680,6 +680,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    */
   public function checkParent($method, $content, $name)
   {
+    if ($method == 'migrate') return;
     $fu = strpos($content, "function $method(");
     $fuParent = strpos($content, "parent::$method(")
       or strpos($content, "parent::___$method(");

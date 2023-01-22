@@ -1,3 +1,12 @@
+## [3.14.1](https://github.com/baumrock/RockPageBuilder/compare/v3.14.0...v3.14.1) (2023-01-22)
+
+
+### Bug Fixes
+
+* prevent warning about parent::migrate ([1d4fe3b](https://github.com/baumrock/RockPageBuilder/commit/1d4fe3b182dc5ce14260853524d369ca2daa89c2))
+
+
+
 # [3.14.0](https://github.com/baumrock/RockPageBuilder/compare/v3.13.0...v3.14.0) (2023-01-22)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * wrong return value of magic field method ([4260a30](https://github.com/baumrock/RockPageBuilder/commit/4260a306e94fb700d3b71158583f3d311abedd94))
-
-
-
-## [3.11.1](https://github.com/baumrock/RockPageBuilder/compare/v3.11.0...v3.11.1) (2023-01-11)
-
-
-### Bug Fixes
-
-* refactor old widget migrate() call ([9da28f4](https://github.com/baumrock/RockPageBuilder/commit/9da28f463a1634361dba936880797054a1809bda))
 
 
 

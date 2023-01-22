@@ -1499,7 +1499,7 @@ class Block extends \ProcessWire\Page
    */
   public function translations()
   {
-    return [];
+    return $this->getInfo()->x ?: [];
   }
 
   /**
@@ -1577,6 +1577,13 @@ class Block extends \ProcessWire\Page
       "$base.latte" => "latte",
       "$base.view.php" => "php",
     ];
+  }
+
+  /**
+   * Short-alias for migrateAfterYaml
+   */
+  public function migrate()
+  {
   }
 
   /**

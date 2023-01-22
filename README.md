@@ -101,6 +101,41 @@ public function migrateAfterYaml() {
 }
 ```
 
+## Translations
+
+When working with frontend template engines like latte one drawback is that you can't use ProcessWire's built in transation functions like `__('your translatable string')`. That's because ProcessWire will only look for such stings in PHP files and also latte has problems understanding those function calls. Since every block has a PHP file we can simply put all translatable strings into that file and access them from the latte file via the `$block->x()` helper function:
+
+```php
+<?php namespace RockPageBuilderBlock;
+use RockPageBuilder\Block;
+class Demo extends Block {
+
+  public function info() {
+    return [
+      'icon' => 'check',
+      'title' => 'demo block',
+      'x' => [
+        'my_foo_string' => $this->_('I am the translatable foo string'),
+        'my_bar_string' => $this->_('I am the translatable bar string'),
+
+        // this syntax will need the following line before the class statement
+        // use function ProcessWire\__;
+        'my_bar_string' => __('I am the translatable bar string'),
+      ],
+    ];
+  }
+}
+```
+
+And in your template file:
+
+```html
+<div style="padding: 50px; border: 2px solid blue;">
+  <h1>{$block->x('my_foo_string')}</h1>
+  <p>{$block->x('my_bar_string')}</p>
+</div>
+```
+
 ----------------- everything below is partly outdated!! ------------------------
 
 ## Concept
@@ -380,40 +415,6 @@ $mySetting = $block->settings('mySetting', 'default value');
 
 // same as above but different syntax
 $mySetting = $settings->mySetting ?: 'default value';
-```
-
-## Translations
-
-When working with frontend template engines like latte one drawback is that you can't use ProcessWire's built in transation functions like `__('your translatable string')`. That's because ProcessWire will only look for such stings in PHP files and also latte has problems understanding those function calls. Since every block has a PHP file we can simply put all translatable strings into that file and access them from the latte file via the `$block->x()` helper function:
-
-```php
-<?php namespace RockPageBuilderBlock;
-use RockPageBuilder\Block;
-class Demo extends Block {
-
-  public function info() {
-    return [
-      'icon' => 'check',
-      'title' => 'demo block',
-    ];
-  }
-
-  public function translations() {
-    return [
-      'my_foo_string' => $this->_('I am the translatable foo string'),
-      'my_bar_string' => $this->_('I am the translatable bar string'),
-    ];
-  }
-}
-```
-
-And in your template file:
-
-```html
-<div style="padding: 50px; border: 2px solid blue;">
-  <h1>{$block->x('my_foo_string')}</h1>
-  <p>{$block->x('my_bar_string')}</p>
-</div>
 ```
 
 ## Render content

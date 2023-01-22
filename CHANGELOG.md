@@ -1,3 +1,12 @@
+# [3.14.0](https://github.com/baumrock/RockPageBuilder/compare/v3.13.0...v3.14.0) (2023-01-22)
+
+
+### Features
+
+* tweak translation feature ([993c21c](https://github.com/baumrock/RockPageBuilder/commit/993c21c09c8bef5d269c33b25a1a848bfd229974))
+
+
+
 # [3.13.0](https://github.com/baumrock/RockPageBuilder/compare/v3.12.0...v3.13.0) (2023-01-12)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * refactor old widget migrate() call ([9da28f4](https://github.com/baumrock/RockPageBuilder/commit/9da28f463a1634361dba936880797054a1809bda))
-
-
-
-# [3.11.0](https://github.com/baumrock/RockPageBuilder/compare/v3.10.0...v3.11.0) (2023-01-11)
-
-
-### Features
-
-* add new fieldvalue key 3 to return html ([f6c6476](https://github.com/baumrock/RockPageBuilder/commit/f6c6476f31f4ba05e512ed8768fc2181313b7147))
 
 
 

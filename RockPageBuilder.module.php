@@ -798,7 +798,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
           '{name}' => $name,
           '{cls}' => "rpb-" . strtolower($name),
           '{alfred}' => $this->wire->modules->isInstalled('RockFrontend')
-            ? ' {alfred($block)}'
+            ? '{alfred($block)}'
             : '',
         ], "$subfolder/$name.latte");
       } else {
@@ -1196,6 +1196,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         $block->migrateInitial();
         $block->migrateBeforeYaml();
         $block->migrateYaml();
+        $block->migrate();
         $block->migrateAfterYaml();
       } else $rm->log("--- Skipping $name (no change)");
     }

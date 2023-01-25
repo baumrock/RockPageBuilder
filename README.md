@@ -29,6 +29,20 @@ The goals of this module are
 - undo/restore feature
 - copy blocks to other pages
 
+## Fragen:
+
+Installationsprozess
+Wie erstelle ich Content Blöcke (erläutern + warum)
+Jeder Block ist ein Template (automatisch) -> wo landen die und wie kann ich die bearbeiten. Brauche ich RM oder kann ich das per GUI?
+Wie mache ich das im Frontend editierbar für den User.
+Voraussetzungen dafür?
+Was braucht RPB generell für andere Module?
+Kann ich es bestehende Projekte nachrüsten?
+Do's and Don'ts.
+Repeater + Nesting.
+Responsive benutzbar??
+Konzept von Widgets
+
 ## Magic field methods
 
 You can access every field of your blocks via short method calls. So if you had a field called `rockpagebuilder_textblock_foo` you could access that field via `$page->foo()`.

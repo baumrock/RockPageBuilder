@@ -218,7 +218,7 @@ class FieldData extends PageArray
    * Render all blocks and catch errors
    * @return string
    */
-  private function renderCatch($renderEmpty): string
+  private function renderCatch($renderEmpty)
   {
     $out = '';
     $typeIndex = 0;

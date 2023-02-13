@@ -1,3 +1,12 @@
+# [3.15.0](https://github.com/baumrock/RockPageBuilder/compare/v3.14.2...v3.15.0) (2023-02-13)
+
+
+### Features
+
+* update readme and improve uninstall ([b1a9c63](https://github.com/baumrock/RockPageBuilder/commit/b1a9c631bc8af1e50e60724509134ec5e3f9ce4f))
+
+
+
 ## [3.14.2](https://github.com/baumrock/RockPageBuilder/compare/v3.14.1...v3.14.2) (2023-01-22)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add show=false for blocks ([e09c591](https://github.com/baumrock/RockPageBuilder/commit/e09c591fa6dc71377d6f40581ca7e1f6fb3107cc))
-
-
-
-# [3.12.0](https://github.com/baumrock/RockPageBuilder/compare/v3.11.2...v3.12.0) (2023-01-12)
-
-
-### Features
-
-* add hideTitle info setting ([7d3eae4](https://github.com/baumrock/RockPageBuilder/commit/7d3eae410393d3709aecf125df904b4f84cf5896))
 
 
 

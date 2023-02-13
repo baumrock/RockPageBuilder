@@ -58,7 +58,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.14.1',
+      'version' => '3.15.0',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -88,7 +88,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // merge in settings from config.php file
     if (is_array($this->wire->config->rockpagebuilder)) {
       $this->data = array_merge(
-        ['createLess' => true], // defaults
         $this->data, // current settings
         $this->wire->config->rockpagebuilder // settings from config.php
       );
@@ -807,7 +806,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       }
 
       // less file
-      if ($this->createLess) {
+      if ($this->createLessFile) {
         $this->stub(
           "Block.less",
           ['{cls}' => "rpb-" . strtolower($name)],
@@ -1535,6 +1534,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'name' => 'showDataPage',
       'label' => 'Show datapage in tree for superusers',
       'checked' => $this->showDataPage ? 'checked' : '',
+    ]);
+
+    $inputfields->add([
+      'type' => 'checkbox',
+      'name' => 'createLessFile',
+      'label' => 'Create LESS file for new blocks',
+      'checked' => $this->createLessFile ? 'checked' : '',
     ]);
 
     /** @var InputfieldSelect $f */

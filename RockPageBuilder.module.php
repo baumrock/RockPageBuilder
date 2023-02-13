@@ -58,7 +58,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.13.0',
+      'version' => '3.14.0',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -567,14 +567,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if ($module != 'RockPageBuilder') return;
     $rm = $this->rm();
     $rm->deletePage("parent=2,name=rockpagebuilder");
-    foreach ($this->wire->fields as $field) {
-      if (!$field->type instanceof FieldtypeRockPageBuilder) continue;
-      $rm->deleteField($field);
-    }
-    foreach ($this->wire->templates as $template) {
-      if ($template == self::tpl_datapage) $rm->deleteTemplate($template);
-      elseif ($template instanceof Block) $rm->deleteTemplate($template);
-    }
+    $rm->deleteTemplates("tags=RockPageBuilder");
+    $rm->deleteFields("tags=RockPageBuilder");
   }
 
   /**
@@ -1224,6 +1218,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         'tags' => self::tags,
         'icon' => 'cubes',
       ]);
+      $rm->addFieldToTemplate(self::field_blocks, 'home');
     }
 
     // create widgets field

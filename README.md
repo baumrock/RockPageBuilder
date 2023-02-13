@@ -2,6 +2,25 @@
 
 RockPageBuilder is a Fieldtype/Inputfield module that helps you creating modular content for your project.
 
+## Setup
+
+- Install RockMigrations and RockFrontend
+- Install RockPageBuilder
+- RockPageBuilder will automatically add the `Widgets` and `Content-Elements` field to your home template
+- Create your first Content-Element (Block) by clicking on the plus-icon:
+
+<img src=https://i.imgur.com/4e8ScVs.png height=300>
+
+On your frontend all you have to do is render the field's content:
+
+```php
+// site/templates/home.php
+<div id="content">
+	Homepage content
+	<?= $rockpagebuilder->render(true) ?>
+</div>
+```
+
 ## Goals
 
 The goals of this module are

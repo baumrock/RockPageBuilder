@@ -1,3 +1,12 @@
+# [3.16.0](https://github.com/baumrock/RockPageBuilder/compare/v3.15.1...v3.16.0) (2023-02-13)
+
+
+### Features
+
+* add setting to create less file ([8445aab](https://github.com/baumrock/RockPageBuilder/commit/8445aab9feafb417034f24fcee583825ba189abc))
+
+
+
 ## [3.15.1](https://github.com/baumrock/RockPageBuilder/compare/v3.15.0...v3.15.1) (2023-02-13)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * prevent warning about parent::migrate ([1d4fe3b](https://github.com/baumrock/RockPageBuilder/commit/1d4fe3b182dc5ce14260853524d369ca2daa89c2))
-
-
-
-# [3.14.0](https://github.com/baumrock/RockPageBuilder/compare/v3.13.0...v3.14.0) (2023-01-22)
-
-
-### Features
-
-* tweak translation feature ([993c21c](https://github.com/baumrock/RockPageBuilder/commit/993c21c09c8bef5d269c33b25a1a848bfd229974))
 
 
 

@@ -1,3 +1,12 @@
+# [3.17.0](https://github.com/baumrock/RockPageBuilder/compare/v3.16.0...v3.17.0) (2023-02-14)
+
+
+### Features
+
+* improvements based on feedback of StefanThumann ([dccd6f3](https://github.com/baumrock/RockPageBuilder/commit/dccd6f350e2a0fb1bd7ef06202db1dcbdb24c13f))
+
+
+
 # [3.16.0](https://github.com/baumrock/RockPageBuilder/compare/v3.15.1...v3.16.0) (2023-02-13)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * call migrate() on migrate ([51f6821](https://github.com/baumrock/RockPageBuilder/commit/51f6821c03f7ee9545e8564ba7daceda9d1e7cce))
-
-
-
-## [3.14.1](https://github.com/baumrock/RockPageBuilder/compare/v3.14.0...v3.14.1) (2023-01-22)
-
-
-### Bug Fixes
-
-* prevent warning about parent::migrate ([1d4fe3b](https://github.com/baumrock/RockPageBuilder/commit/1d4fe3b182dc5ce14260853524d369ca2daa89c2))
 
 
 

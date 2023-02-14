@@ -58,12 +58,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.15.0',
+      'version' => '3.16.0',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
       'icon' => 'cubes',
       'requires' => [
+        'ProcessWire>=3.0.211',
         'RockMigrations>=2.6.0',
         'RockFrontend>=2.11.0',
       ],
@@ -754,6 +755,10 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       if (!$name = $this->wire->input->get('name', 'string')) return "invalid name";
       if (!$field = $this->wire->input->get('field', 'string')) return "invalid field";
 
+      // make sure we have a valid name
+      // 7 test Nummer 5 --> TestNummer5
+      $name = ucfirst($this->wire->sanitizer->camelCase($name));
+
       // create short fieldname
       $short = $field;
       if (strpos($field, "rockpagebuilder_") === 0) $short = substr($field, 16);
@@ -879,14 +884,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * Get block by name
+   * Get block by array key
    * @return false|Block
    */
-  public function getBlock($name)
+  public function getBlock($key)
   {
-    if ($name instanceof Block) $name = $name->getInfo()->name;
-    if (!array_key_exists($name, $this->blocks)) return false;
-    return $this->blocks[$name];
+    if ($key instanceof Block) $key = $key->getInfo()->name;
+    if (!array_key_exists($key, $this->blocks)) return false;
+    return $this->blocks[$key];
   }
 
   /**
@@ -1298,12 +1303,12 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   /**
    * Render content of blocks field
    */
-  public function render($renderPlus = false)
+  public function render($renderPlus = true)
   {
     $page = $this->wire->page;
-    $blocks = $page->getFormatted(self::field_blocks);
-    if (!$blocks) return;
-    $html = $blocks->render($renderPlus);
+    $field = $page->getFormatted(self::field_blocks);
+    if (!$field) return;
+    $html = $field->render($renderPlus);
     if ($rf = $this->wire->rockfrontend) return $rf->html($html);
     return $html;
   }
@@ -1553,7 +1558,47 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if (array_key_exists('createView', $data)) $f->attr('value', $data['createView']);
     $inputfields->add($f);
 
+    /** @var InputfieldSelect $f */
+    $this->deleteBlock();
+    $f = $this->wire->modules->get('InputfieldSelect');
+    $f->name = 'deleteBlock';
+    $f->label = 'Delete Block';
+    $f->prependMarkup("<div class='uk-alert uk-alert-danger'>WARNING: This will delete all block-files and also all user-data saved within blocks of that type!</div>");
+    $f->collapsed = Inputfield::collapsedYes;
+    $f->icon = 'trash-o';
+    foreach ($this->blocks as $k => $block) {
+      $f->addOption($k, $block->className());
+    }
+    $inputfields->add($f);
+
     return $inputfields;
+  }
+
+  public function deleteBlock()
+  {
+    if ($this->wire->session->deleteBlockRefresh) {
+      $this->wire->session->deleteBlockRefresh = false;
+      $this->wire->modules->refresh();
+      $this->wire->session->redirect(
+        $this->wire->pages->get(2)->url . "module/edit?name=RockPageBuilder"
+      );
+    }
+
+    $key = $this->wire->input->post->deleteBlock;
+    if (!$key) return;
+    $block = $this->getBlock($key);
+    if (!$block) return;
+
+    // delete files
+    foreach ($block->getFiles() as $f) $this->wire->files->unlink($f);
+
+    // delete directory if no files left
+    $dir = dirname($f);
+    $files = count($this->wire->files->find($dir));
+    if (!$files) $this->wire->files->rmdir($dir);
+
+    $this->message("Deleted block " . $block->className());
+    $this->wire->session->deleteBlockRefresh = true;
   }
 
   public function ___install()

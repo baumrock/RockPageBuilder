@@ -329,7 +329,7 @@ $(document).on("click", ".createBlockType", function (e) {
   });
   UIkit.modal
     .prompt(
-      "Name of block to be created (or reused):<br><small>" +
+      "Technical name of block to be created (or reused):<br><small>" +
         existing +
         "</small>"
     )

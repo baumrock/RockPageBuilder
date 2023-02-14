@@ -310,6 +310,23 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Get all files related to this block
+   */
+  public function getFiles(): array
+  {
+    $files = [];
+    $tmp = new ReflectionClass($this);
+    $file = $tmp->getFileName();
+    $name = pathinfo($file, PATHINFO_FILENAME);
+    $dir = dirname($file);
+    foreach ($this->wire->files->find($dir) as $f) {
+      if (strpos($f, "$dir/$name") !== 0) continue;
+      $files[] = $f;
+    }
+    return $files;
+  }
+
+  /**
    * Get icon for rpb item
    * @return string
    */

@@ -7,19 +7,88 @@ RockPageBuilder is a Fieldtype/Inputfield module that helps you creating modular
 - Install RockMigrations and RockFrontend
 - Install RockPageBuilder
 - RockPageBuilder will automatically add the `Widgets` and `Content-Elements` field to your home template
-- Create your first Content-Element (Block) by clicking on the plus-icon:
+- Add your first block (see section below)
+- Render the field on the frontend (see section below)
+
+### Creating New Blocks
+
+To create a new block simply click on the plus icon in the field that you want to add a new block to:
 
 <img src=https://i.imgur.com/4e8ScVs.png height=300>
 
-On your frontend all you have to do is render the field's content:
+Enter a name and submit the form - RockPageBuilder will automatically create all the necessary files in the background!
+
+#### Block Settings
+
+You can define several block settings in the block's PHP file:
+
+```php
+<?php
+
+namespace RockPageBuilderBlock;
+
+use RockPageBuilder\Block;
+
+class Demo extends Block
+{
+
+  const prefix = "rpb_demo_";
+
+  public function info()
+  {
+    return [
+      'title' => 'Demo-Title',
+      'color' => 'lime',
+      'icon' => 'picture-o',
+      'description' => 'RockPageBuilder Block Setup Demo',
+      // 'hideTitle' => true, // shortcut to set title field to hidden
+    ];
+  }
+}
+```
+
+<img src=https://i.imgur.com/2iBm6nd.png height=200>
+
+You can either set a fontawesome icon name (like `check`, `user-o` [etc]) or you can create your own block-preview-mockups or just make a screenshot of your rendered block and use that as a preview by adding the image as `YourBlockName.svg/png/jpg`:
+
+<img src=https://i.imgur.com/xorsOjm.png height=100>
+
+In this case the logo-image path is `/site/assets/RockPageBuilder/blocks/Demo/Demo.svg`.
+
+### Rendering RockPageBuilder on the Frontend
+
+Rendering the default "blocks" field is as simple as adding this line to your frontend:
 
 ```php
 // site/templates/home.php
 <div id="content">
 	Homepage content
-	<?= $rockpagebuilder->render(true) ?>
+	<?= $rockpagebuilder->render() ?>
 </div>
 ```
+
+You can create as many RockPageBuilder fields as you want. If you added a RPB field called `foo` you can render it like this:
+
+```php
+echo $page->foo->render();
+```
+
+By default RockPageBuilder will render a "plus" icon on empty fields. If you don't want that you can provice `false` as render parameter:
+
+```php
+echo $rockpagebuilder->render(false);
+echo $page->foo->render(false);
+```
+
+## ProcessWire Version
+
+RockPageBuilder requires PW 3.0.211 or higher. This is the latest master version (3.0.210) with one additional commit that fixes a problem with the core implementation of repeaters.
+
+Here is the mentioned commit: https://github.com/processwire/processwire/commit/b12c7e903101ba595029ad2fa9e1ed0f8d01f669
+
+And here is the download link of that version of ProcessWire: https://github.com/processwire/processwire/archive/b12c7e903101ba595029ad2fa9e1ed0f8d01f669.zip
+
+I've been using the latest DEV version for years now and can't remember of any problems, so in my opinion there's no need to stick with the master version.
 
 ## Goals
 

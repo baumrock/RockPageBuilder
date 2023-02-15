@@ -64,8 +64,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'singular' => true,
       'icon' => 'cubes',
       'requires' => [
-        'ProcessWire>=3.0.211',
-        'RockMigrations>=2.6.0',
+        'PHP>=8.0', // for named arguments in RockMigrations
+        'ProcessWire>=3.0.211', // for repeater.js updates
+        'RockMigrations>=3.0.0',
         'RockFrontend>=2.11.0',
       ],
       'installs' => [
@@ -1213,7 +1214,12 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         ],
       ],
     ]);
-    $rm->createPage("RockPageBuilderBlocks", null, self::tpl_datapage, 1, ['hidden', 'locked']);
+    $rm->createPage(
+      title: "RockPageBuilderBlocks",
+      template: self::tpl_datapage,
+      parent: 1,
+      status: ['hidden', 'locked']
+    );
 
     // add one rpb field
     if (!$rm->getField(self::field_blocks, true)) {

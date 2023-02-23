@@ -1,3 +1,12 @@
+# [3.18.0](https://github.com/baumrock/RockPageBuilder/compare/v3.17.0...v3.18.0) (2023-02-23)
+
+
+### Features
+
+* new buttons layout (thx Stefan Thumann) ([a51d063](https://github.com/baumrock/RockPageBuilder/commit/a51d0631ce963720c967c99041e3cd60e961ad38))
+
+
+
 # [3.17.0](https://github.com/baumrock/RockPageBuilder/compare/v3.16.0...v3.17.0) (2023-02-14)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * update readme and improve uninstall ([b1a9c63](https://github.com/baumrock/RockPageBuilder/commit/b1a9c631bc8af1e50e60724509134ec5e3f9ce4f))
-
-
-
-## [3.14.2](https://github.com/baumrock/RockPageBuilder/compare/v3.14.1...v3.14.2) (2023-01-22)
-
-
-### Bug Fixes
-
-* call migrate() on migrate ([51f6821](https://github.com/baumrock/RockPageBuilder/commit/51f6821c03f7ee9545e8564ba7daceda9d1e7cce))
 
 
 

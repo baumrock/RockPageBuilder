@@ -203,8 +203,8 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
       if ($modal) {
         $blockGroup = $block->getInfo()->group;
         if ($blockGroup !== $group or $i === 0) {
-          // if i===0 we add the div to get some space for tooltips! nbsp intentional!
-          $buttons .= "<div class='rpb-blockgroup uk-margin-small-bottom'>$blockGroup&nbsp;</div>";
+          // if i===0 we add the div to get some space for tooltips!
+          $buttons .= "<div class='rpb-blockgroup'>$blockGroup</div>";
         }
         $group = $blockGroup;
       }

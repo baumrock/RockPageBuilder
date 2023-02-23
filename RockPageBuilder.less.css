@@ -7,13 +7,20 @@ body.modal form.rpb-hidetabs {
 body.modal form.rpb-hidetabs .WireTabs {
   display: none !important;
 }
+.rpb-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
 .rpb-button {
   position: relative;
-  margin-right: 10px;
-  margin-bottom: 10px;
   transition: outline opacity 0.5s ease;
   text-align: center;
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background: #f2f2f2;
+  transition: transform 0.3s ease;
 }
 .rpb-button.loading {
   animation: pulsate 2s ease-out;
@@ -31,8 +38,12 @@ body.modal form.rpb-hidetabs .WireTabs {
     opacity: 1;
   }
 }
+.rpb-button .uk-badge {
+  border-radius: 5px;
+}
 .rpb-button:hover {
-  outline: 3px solid #666;
+  transform: scale(1.05);
+  text-decoration: none;
 }
 .rpb-button img {
   height: 75px;
@@ -152,4 +163,11 @@ li.rpb-item:not(.rpb-trash) > .InputfieldHeader .rpb-action-untrash {
 .rpb-alert-widget {
   outline: 4px groove orange;
   z-index: 1;
+}
+.createBlockType {
+  display: flex;
+  justify-content: center;
+}
+.rpb-blockgroup {
+  flex-basis: 100%;
 }

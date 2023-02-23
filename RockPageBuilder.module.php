@@ -58,16 +58,18 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.16.0',
+      'version' => '3.17.0',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
       'icon' => 'cubes',
+      // php8.0 for named arguments in RockMigrations
+      // pw2.0.211 for repeater.js updates
       'requires' => [
-        'PHP>=8.0', // for named arguments in RockMigrations
-        'ProcessWire>=3.0.211', // for repeater.js updates
-        'RockMigrations>=3.0.0',
-        'RockFrontend>=2.11.0',
+        'PHP>=8.0',
+        'ProcessWire>=3.0.211',
+        'RockMigrations>=2.6.0',
+        'RockFrontend>=2.24.1',
       ],
       'installs' => [
         'FieldtypeRockPageBuilder',
@@ -1215,9 +1217,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       ],
     ]);
     $rm->createPage(
+      parent: 1,
       title: "RockPageBuilderBlocks",
       template: self::tpl_datapage,
-      parent: 1,
       status: ['hidden', 'locked']
     );
 

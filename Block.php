@@ -1051,7 +1051,17 @@ class Block extends \ProcessWire\Page
     else $href = $this->rpbUrl("/add-new/?page=$page&field=$field&tpl=$tpl&modal=1");
 
     $ajax = "./?id=$page&field=$field&tpl=$tpl";
-    return "<a href='$href' data-href='$ajax' class='rpb-button'>{$this->renderButtonImage()}</a>";
+
+    $info = $this->getInfo();
+    $tooltip = $info->description ?: '';
+    $tooltip = "title='$tooltip' uk-tooltip";
+
+    $style = $info->color ? "style='border-left: 3px solid {$info->color}'" : '';
+
+    return "<a href='$href' data-href='$ajax' class='rpb-button' $tooltip $style>
+      <div class='uk-position-relative'>{$this->renderButtonImage()}</div>
+      <span class='uk-margin-small-top uk-badge'>{$this->getInfo()->title}</span>
+      </a>";
   }
 
   /**
@@ -1093,12 +1103,7 @@ class Block extends \ProcessWire\Page
       );
     }
 
-    $tooltip = $info->description
-      ? "$info->title: $info->description"
-      : $info->title;
-    $tooltip = "title='$tooltip' uk-tooltip";
-    $style = $info->color ? "style='border-left: 5px solid {$info->color}'" : '';
-    return "<img $tooltip $style class=rpb-addblock-svg src=$url>$icon";
+    return "<img class=rpb-addblock-svg src=$url>$icon";
   }
 
   /**

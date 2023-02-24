@@ -40,6 +40,7 @@ body.modal form.rpb-hidetabs .WireTabs {
 }
 .rpb-button .uk-badge {
   border-radius: 5px;
+  padding: 0 15px;
 }
 .rpb-button:hover {
   outline: 3px solid #666;

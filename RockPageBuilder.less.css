@@ -42,7 +42,7 @@ body.modal form.rpb-hidetabs .WireTabs {
   border-radius: 5px;
 }
 .rpb-button:hover {
-  transform: scale(1.05);
+  outline: 3px solid #666;
   text-decoration: none;
 }
 .rpb-button img {

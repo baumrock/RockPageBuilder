@@ -2,6 +2,7 @@
 
 namespace RockPageBuilder;
 
+use ProcessWire\Notice;
 use ProcessWire\PageArray;
 use ProcessWire\RockFrontend;
 use ProcessWire\WireException;
@@ -53,7 +54,8 @@ class FieldData extends PageArray
 
     // check if item is allowed!
     if (!$item->isAllowed($this->field, $this->page)) {
-      throw new WireException("$item not allowed for field {$this->field}");
+      $this->error("Block [$item]($item->editUrl) not allowed for field {$this->field} on page {$this->page}", Notice::allowMarkdown);
+      return false;
     }
 
     // add the item to the array

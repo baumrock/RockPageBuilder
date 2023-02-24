@@ -1,3 +1,12 @@
+# [3.19.0](https://github.com/baumrock/RockPageBuilder/compare/v3.18.0...v3.19.0) (2023-02-24)
+
+
+### Features
+
+* improve notice and revert block button hover style ([83827d5](https://github.com/baumrock/RockPageBuilder/commit/83827d591380b445c3bb13b77404e7bbbcaf95dd))
+
+
+
 # [3.18.0](https://github.com/baumrock/RockPageBuilder/compare/v3.17.0...v3.18.0) (2023-02-23)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * add missing alfred to stub file ([474eb2b](https://github.com/baumrock/RockPageBuilder/commit/474eb2be81c27219a872fb2d6ffa308dbc7a57f6))
-
-
-
-# [3.15.0](https://github.com/baumrock/RockPageBuilder/compare/v3.14.2...v3.15.0) (2023-02-13)
-
-
-### Features
-
-* update readme and improve uninstall ([b1a9c63](https://github.com/baumrock/RockPageBuilder/commit/b1a9c631bc8af1e50e60724509134ec5e3f9ce4f))
 
 
 

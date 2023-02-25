@@ -58,7 +58,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '3.18.0',
+      'version' => '3.18.1',
       'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
       'autoload' => 90, // RockFields has 100 and loads earlier
       'singular' => true,
@@ -69,7 +69,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         'PHP>=8.0',
         'ProcessWire>=3.0.211',
         'RockMigrations>=2.6.0',
-        'RockFrontend>=2.24.1',
+        'RockFrontend>=2.25.0',
       ],
       'installs' => [
         'FieldtypeRockPageBuilder',
@@ -416,10 +416,12 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    */
   public function addFrontendAssets()
   {
+    /** @var RockFrontend $rf */
     if ($this->wire->page->template == 'admin') return;
     if (!$rf = $this->wire->modules->get('RockFrontend')) return;
+    if (!$this->wire->user->isLoggedin()) return;
+    if (!$rf->loadAlfred()) return;
     try {
-      /** @var RockFrontend $rf */
       /** @var RockMigrations $rm */
       $dir = __DIR__ . "/assets/";
       $rm = $this->wire->modules->get('RockMigrations');

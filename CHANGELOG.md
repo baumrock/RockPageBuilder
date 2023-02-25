@@ -1,3 +1,12 @@
+## [3.19.1](https://github.com/baumrock/RockPageBuilder/compare/v3.19.0...v3.19.1) (2023-02-25)
+
+
+### Bug Fixes
+
+* assets loaded on guest-frontend ([054a8e0](https://github.com/baumrock/RockPageBuilder/commit/054a8e0e0758d6910a559707433e8efbae2efdb3))
+
+
+
 # [3.19.0](https://github.com/baumrock/RockPageBuilder/compare/v3.18.0...v3.19.0) (2023-02-24)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add setting to create less file ([8445aab](https://github.com/baumrock/RockPageBuilder/commit/8445aab9feafb417034f24fcee583825ba189abc))
-
-
-
-## [3.15.1](https://github.com/baumrock/RockPageBuilder/compare/v3.15.0...v3.15.1) (2023-02-13)
-
-
-### Bug Fixes
-
-* add missing alfred to stub file ([474eb2b](https://github.com/baumrock/RockPageBuilder/commit/474eb2be81c27219a872fb2d6ffa308dbc7a57f6))
 
 
 

@@ -337,8 +337,9 @@ $(document).on("click", ".createBlockType", function (e) {
       if (!name) return;
       $(".uk-modal-body").text("loading...");
       $.get("/rpb-create-block/?field=" + field + "&name=" + name)
-        .then(function () {
-          $("#submit_save").click();
+        .then(function (data) {
+          if (data === "success") $("#submit_save").click();
+          else UIkit.modal.alert("Request failed: " + data);
         })
         .fail(function () {
           UIkit.modal.alert("Request failed");

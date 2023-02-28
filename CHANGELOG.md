@@ -1,3 +1,12 @@
+# [3.20.0](https://github.com/baumrock/RockPageBuilder/compare/v3.19.1...v3.20.0) (2023-02-28)
+
+
+### Features
+
+* prevent reserved words for block names ([67ae4e9](https://github.com/baumrock/RockPageBuilder/commit/67ae4e941eb11d095627a48126b0e420850ee216))
+
+
+
 ## [3.19.1](https://github.com/baumrock/RockPageBuilder/compare/v3.19.0...v3.19.1) (2023-02-25)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * improvements based on feedback of StefanThumann ([dccd6f3](https://github.com/baumrock/RockPageBuilder/commit/dccd6f350e2a0fb1bd7ef06202db1dcbdb24c13f))
-
-
-
-# [3.16.0](https://github.com/baumrock/RockPageBuilder/compare/v3.15.1...v3.16.0) (2023-02-13)
-
-
-### Features
-
-* add setting to create less file ([8445aab](https://github.com/baumrock/RockPageBuilder/commit/8445aab9feafb417034f24fcee583825ba189abc))
 
 
 

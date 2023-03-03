@@ -560,6 +560,14 @@ class Block extends \ProcessWire\Page
     // buildForm changes will also be applied when editing
     // the block in a new window whereas buildFormBlock
     // will only be applied when editing in a rpb field
+    if ($f = $fs->get('title')) {
+      if ($this->getInfo()->hideTitle) {
+        $f->collapsed = Inputfield::collapsedHidden;
+        if ($fs->children()->count() === 1) {
+          $fs->notes = 'This block has no fields';
+        }
+      }
+    }
     $this->buildForm($fs);
 
     // call buildFormBlock (if implemented for the block)
@@ -1647,14 +1655,6 @@ class Block extends \ProcessWire\Page
         'title' => ['required' => false],
       ],
     ]);
-
-    if ($this->getInfo()->hideTitle) {
-      $rm->setFieldData(
-        "title",
-        ['collapsed' => Inputfield::collapsedHidden],
-        $this->getTplName()
-      );
-    }
   }
 
   /**

@@ -1,3 +1,12 @@
+# [3.21.0](https://github.com/baumrock/RockPageBuilder/compare/v3.20.0...v3.21.0) (2023-03-03)
+
+
+### Features
+
+* improve loading of frontend assets ([79e1d31](https://github.com/baumrock/RockPageBuilder/commit/79e1d311d290077c8da16fd66b1443481825af87))
+
+
+
 # [3.20.0](https://github.com/baumrock/RockPageBuilder/compare/v3.19.1...v3.20.0) (2023-02-28)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * new buttons layout (thx Stefan Thumann) ([a51d063](https://github.com/baumrock/RockPageBuilder/commit/a51d0631ce963720c967c99041e3cd60e961ad38))
-
-
-
-# [3.17.0](https://github.com/baumrock/RockPageBuilder/compare/v3.16.0...v3.17.0) (2023-02-14)
-
-
-### Features
-
-* improvements based on feedback of StefanThumann ([dccd6f3](https://github.com/baumrock/RockPageBuilder/commit/dccd6f350e2a0fb1bd7ef06202db1dcbdb24c13f))
 
 
 

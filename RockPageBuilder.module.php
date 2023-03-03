@@ -54,31 +54,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   private $stylesAdded = false;
 
-  public static function getModuleInfo()
-  {
-    return [
-      'title' => 'RockPageBuilder',
-      'version' => '3.20.0',
-      'summary' => 'Master module for RockPageBuilder Fieldtype + Inputfield',
-      'autoload' => 90, // RockFields has 100 and loads earlier
-      'singular' => true,
-      'icon' => 'cubes',
-      // php8.0 for named arguments in RockMigrations
-      // pw2.0.211 for repeater.js updates
-      'requires' => [
-        'PHP>=8.0',
-        'ProcessWire>=3.0.211',
-        'RockMigrations>=2.6.0',
-        'RockFrontend>=2.25.0',
-      ],
-      'installs' => [
-        'FieldtypeRockPageBuilder',
-        'InputfieldRockPageBuilder',
-        'ProcessRockPageBuilder',
-      ],
-    ];
-  }
-
   public function init()
   {
     $this->wire('rockpagebuilder', $this);
@@ -167,6 +142,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   public function ready()
   {
     $this->include("ready.php"); // load assets/RockPageBuilder/ready.php
+    $this->parseFrontendAssets();
     $this->addFrontendAssets();
 
     // add magic field getter methods
@@ -418,21 +394,19 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     /** @var RockFrontend $rf */
     if ($this->wire->page->template == 'admin') return;
+    $dir = __DIR__ . "/assets/";
+
+    // if rockfrontend is not installed styles must be added manually!
     if (!$rf = $this->wire->modules->get('RockFrontend')) return;
+
+    // always add global frontend styles
+    $rf->styles()->add($dir . "RockPageBuilder.min.css");
+
+    // add styles for frontend editing
     if (!$this->wire->user->isLoggedin()) return;
     if (!$rf->loadAlfred()) return;
-    try {
-      /** @var RockMigrations $rm */
-      $dir = __DIR__ . "/assets/";
-      $rm = $this->wire->modules->get('RockMigrations');
-      $css = $rm->saveCSS($dir . "RockPageBuilder.less");
-      $rf->styles()->add($css);
-      $css = $rm->saveCSS($dir . "overlay.less");
-      $rf->styles()->add($css);
-      $rf->scripts()->add($dir . "overlay.js", "defer");
-    } catch (\Throwable $th) {
-      $this->log($th->getMessage());
-    }
+    $rf->styles()->add($dir . "overlay.min.css");
+    $rf->scripts()->add($dir . "overlay.min.js");
   }
 
   /**
@@ -665,10 +639,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // if rockfrontend is installed check that the version matches
     if ($this->wire->modules->isInstalled('RockFrontend')) {
       /** @var RockFrontend $rf */
-      $v = $this->wire->modules->get('RockFrontend')->getModuleInfo()['version'];
-      $version = "1.16.1";
-      if (version_compare($v, $version) < 0) {
-        $this->warning("Please update RockFrontend to version $version+");
+      $rf = $this->wire->modules->get('RockFrontend');
+      if (method_exists($rf, "getModuleInfo")) {
+        $v = $rf->getModuleInfo()['version'];
+        $version = "1.16.1";
+        if (version_compare($v, $version) < 0) {
+          $this->warning("Please update RockFrontend to version $version+");
+        }
       }
     }
   }
@@ -1280,6 +1257,30 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       }
       if (substr($file, -4) === '.php') continue;
       if (is_file($file)) return $file;
+    }
+  }
+
+  /**
+   * Parse frontend assets
+   * This is only done during development of RockPageBuilder
+   */
+  public function parseFrontendAssets()
+  {
+    if (!$this->wire->user->isSuperuser()) return;
+    if (!$this->wire->modules->isInstalled('Less')) {
+      $this->log('Install Less module to parse less files!');
+      return;
+    }
+    /** @var RockMigrations $rm */
+    $rm = $this->wire->modules->get('RockMigrations');
+    $dir = __DIR__ . "/assets/";
+    try {
+      $css = $rm->saveCSS($dir . "RockPageBuilder.less");
+      $rm->minify($css, $dir . "RockPageBuilder.min.css");
+      $css = $rm->saveCSS($dir . "overlay.less");
+      $rm->minify($css, $dir . "overlay.min.css");
+    } catch (\Throwable $th) {
+      $this->log($th->getMessage());
     }
   }
 

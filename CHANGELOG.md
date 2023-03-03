@@ -1,3 +1,12 @@
+## [3.21.1](https://github.com/baumrock/RockPageBuilder/compare/v3.21.0...v3.21.1) (2023-03-03)
+
+
+### Bug Fixes
+
+* hideTitle messing up custom image field templates ([35f18de](https://github.com/baumrock/RockPageBuilder/commit/35f18dee14e92ae5ef0660e5461d9e1bb2c5c640))
+
+
+
 # [3.21.0](https://github.com/baumrock/RockPageBuilder/compare/v3.20.0...v3.21.0) (2023-03-03)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * improve notice and revert block button hover style ([83827d5](https://github.com/baumrock/RockPageBuilder/commit/83827d591380b445c3bb13b77404e7bbbcaf95dd))
-
-
-
-# [3.18.0](https://github.com/baumrock/RockPageBuilder/compare/v3.17.0...v3.18.0) (2023-02-23)
-
-
-### Features
-
-* new buttons layout (thx Stefan Thumann) ([a51d063](https://github.com/baumrock/RockPageBuilder/commit/a51d0631ce963720c967c99041e3cd60e961ad38))
 
 
 

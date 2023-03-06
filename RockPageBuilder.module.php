@@ -82,6 +82,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addHookBefore("Inputfield::render", $this, "addMagicInputfieldProperties");
     $this->addHookAfter("Modules::refresh", $this, "removeUnusedTemplates");
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "widgetHint");
+    $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "hookHideTitleField");
     $this->addHookBefore("Modules::uninstall", $this, "beforeUninstall");
     $this->addHookAfter("Page::render", $this, "addMoveStyles");
     $this->addHookAfter("Templates::saved", $this, "hookBlockMigrateFile");
@@ -1032,6 +1033,17 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         $this->createBlockMigrateFile($tpl);
       }
     }
+  }
+
+  /**
+   * Hide title field if block has setting "hideTitle"
+   */
+  public function hookHideTitleField(HookEvent $event)
+  {
+    $block = $event->process->getPage();
+    if (!$block instanceof Block) return;
+    if (!$block->getInfo()->hideTitle) return;
+    $event->return->remove('title');
   }
 
   /**

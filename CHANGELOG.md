@@ -1,3 +1,12 @@
+## [3.21.2](https://github.com/baumrock/RockPageBuilder/compare/v3.21.1...v3.21.2) (2023-03-06)
+
+
+### Bug Fixes
+
+* hideTitle not hiding title in modal ([82b74a6](https://github.com/baumrock/RockPageBuilder/commit/82b74a6d0b4e6014324942ca15dd71b3b580b850))
+
+
+
 ## [3.21.1](https://github.com/baumrock/RockPageBuilder/compare/v3.21.0...v3.21.1) (2023-03-03)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * assets loaded on guest-frontend ([054a8e0](https://github.com/baumrock/RockPageBuilder/commit/054a8e0e0758d6910a559707433e8efbae2efdb3))
-
-
-
-# [3.19.0](https://github.com/baumrock/RockPageBuilder/compare/v3.18.0...v3.19.0) (2023-02-24)
-
-
-### Features
-
-* improve notice and revert block button hover style ([83827d5](https://github.com/baumrock/RockPageBuilder/commit/83827d591380b445c3bb13b77404e7bbbcaf95dd))
 
 
 

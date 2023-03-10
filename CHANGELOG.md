@@ -1,3 +1,12 @@
+# [3.22.0](https://github.com/baumrock/RockPageBuilder/compare/v3.21.2...v3.22.0) (2023-03-10)
+
+
+### Features
+
+* add rockSearchIndex method to block ([4184654](https://github.com/baumrock/RockPageBuilder/commit/4184654c6ad93411a7714bcef8e1ff1d9a78414d))
+
+
+
 ## [3.21.2](https://github.com/baumrock/RockPageBuilder/compare/v3.21.1...v3.21.2) (2023-03-06)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * prevent reserved words for block names ([67ae4e9](https://github.com/baumrock/RockPageBuilder/commit/67ae4e941eb11d095627a48126b0e420850ee216))
-
-
-
-## [3.19.1](https://github.com/baumrock/RockPageBuilder/compare/v3.19.0...v3.19.1) (2023-02-25)
-
-
-### Bug Fixes
-
-* assets loaded on guest-frontend ([054a8e0](https://github.com/baumrock/RockPageBuilder/commit/054a8e0e0758d6910a559707433e8efbae2efdb3))
 
 
 

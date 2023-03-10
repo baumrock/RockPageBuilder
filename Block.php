@@ -1132,6 +1132,11 @@ class Block extends \ProcessWire\Page
     return $this->wire->modules->get('RockMigrations');
   }
 
+  public function rockSearchIndex()
+  {
+    return '';
+  }
+
   /**
    * Get RockPageBuilder Process Url
    * Usage:

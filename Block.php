@@ -1134,7 +1134,8 @@ class Block extends \ProcessWire\Page
 
   public function rockSearchIndex()
   {
-    return '';
+    $title = $this->getInfo()->title;
+    return "++$title++";
   }
 
   /**

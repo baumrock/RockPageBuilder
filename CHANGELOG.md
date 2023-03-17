@@ -1,3 +1,12 @@
+# [3.23.0](https://github.com/baumrock/RockPageBuilder/compare/v3.22.0...v3.23.0) (2023-03-17)
+
+
+### Features
+
+* add settings field helper ([4c85b29](https://github.com/baumrock/RockPageBuilder/commit/4c85b2937d442d47513952bce45c1c4322ebce60))
+
+
+
 # [3.22.0](https://github.com/baumrock/RockPageBuilder/compare/v3.21.2...v3.22.0) (2023-03-10)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * improve loading of frontend assets ([79e1d31](https://github.com/baumrock/RockPageBuilder/commit/79e1d311d290077c8da16fd66b1443481825af87))
-
-
-
-# [3.20.0](https://github.com/baumrock/RockPageBuilder/compare/v3.19.1...v3.20.0) (2023-02-28)
-
-
-### Features
-
-* prevent reserved words for block names ([67ae4e9](https://github.com/baumrock/RockPageBuilder/commit/67ae4e941eb11d095627a48126b0e420850ee216))
 
 
 

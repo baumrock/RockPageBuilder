@@ -1,5 +1,7 @@
 public function settingsTable(RockFieldsField $field) {
   $settings = $this->getDefaultSettings($field);
+  // you can access this setting in your block like this:
+  // $block->settings('blockpadding')
   $settings->add([
     'name' => 'blockpadding',
     'label' => 'Block-Padding',

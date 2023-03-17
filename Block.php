@@ -14,6 +14,7 @@ use \ProcessWire\Inputfield;
 use \ProcessWire\InputfieldFile;
 use \ProcessWire\InputfieldWrapper;
 use \ProcessWire\InputfieldFieldset;
+use ProcessWire\InputfieldMarkup;
 use ProcessWire\NullPage;
 use ProcessWire\Page;
 use ProcessWire\PageArray;
@@ -193,7 +194,17 @@ class Block extends \ProcessWire\Page
   {
     /** @var RockFields $rf */
     if (!$rf = $this->wire->rockfields) return;
-    if (!$f = $rf->getInputfield($this, $this->settingsName(), true)) return;
+    if (!$f = $rf->getInputfield($this, $this->settingsName(), true)) {
+      if (!$this->wire->user->isSuperuser()) return;
+      $f = new InputfieldMarkup();
+      $f->label = 'Settings';
+      $f->icon = 'cogs';
+      $url = $this->wire->pages->get(2)->url . "rockpagebuilder/settings-field/?block=$this";
+      $f->value = "<a href='$url' class='ui-button'>Add a settings field to this block</a>";
+      $f->notes = "This field and button is only shown to superusers.";
+      $fs->add($f);
+      return;
+    }
     $f->addClass('rpb-settings');
 
     // set settings field values from getInfo() of block

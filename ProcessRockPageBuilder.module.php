@@ -182,6 +182,22 @@ class ProcessRockPageBuilder extends Process
     return $this->json("success");
   }
 
+  public function executeSettingsField()
+  {
+    $block = $this->wire->input->get('block', 'int');
+    /** @var Block $block */
+    $block = $this->wire->pages->get($block);
+    $file = $block->filePath();
+    $this->headline("Add a Settings-Field to block " . $block->className());
+    $this->browserTitle("Add a Settings-Field to block " . $block->className());
+    $stub = $this->wire->files->render(__DIR__ . "/stubs/SettingsField.txt");
+    $alert = '';
+    if (!$this->wire->modules->isInstalled("RockFields")) {
+      $alert = "<div class='uk-alert uk-alert-danger'>Module RockFields is not installed - please install it!</div>";
+    }
+    return "$alert Add the following method to the file <strong>$file</strong>:<br><pre>$stub</pre>";
+  }
+
   /**
    * Trash rpb block
    */

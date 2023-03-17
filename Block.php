@@ -196,6 +196,7 @@ class Block extends \ProcessWire\Page
     if (!$rf = $this->wire->rockfields) return;
     if (!$f = $rf->getInputfield($this, $this->settingsName(), true)) {
       if (!$this->wire->user->isSuperuser()) return;
+      if (!$this->wire->config->debug) return;
       $f = new InputfieldMarkup();
       $f->label = 'Settings';
       $f->icon = 'cogs';

@@ -1,3 +1,12 @@
+## [3.23.1](https://github.com/baumrock/RockPageBuilder/compare/v3.23.0...v3.23.1) (2023-03-17)
+
+
+### Bug Fixes
+
+* show settings hint only if debug is ON ([581897c](https://github.com/baumrock/RockPageBuilder/commit/581897c6dad63d761f3c5125b67dd23e2837cb30))
+
+
+
 # [3.23.0](https://github.com/baumrock/RockPageBuilder/compare/v3.22.0...v3.23.0) (2023-03-17)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * hideTitle messing up custom image field templates ([35f18de](https://github.com/baumrock/RockPageBuilder/commit/35f18dee14e92ae5ef0660e5461d9e1bb2c5c640))
-
-
-
-# [3.21.0](https://github.com/baumrock/RockPageBuilder/compare/v3.20.0...v3.21.0) (2023-03-03)
-
-
-### Features
-
-* improve loading of frontend assets ([79e1d31](https://github.com/baumrock/RockPageBuilder/commit/79e1d311d290077c8da16fd66b1443481825af87))
 
 
 

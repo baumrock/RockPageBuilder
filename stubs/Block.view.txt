@@ -4,5 +4,7 @@ use RockPageBuilderBlock\{name};
 /** @var {name} $block */
 {latteNote}?>
 <section class="{cls}" <?= $block->styles() ?> <?= alfred($block) ?>>
-  <?= $block->path ?>
+  <div class="rf-box">
+    <?= $block->path ?>
+  </div>
 </section>

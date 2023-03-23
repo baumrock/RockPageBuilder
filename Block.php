@@ -1332,6 +1332,10 @@ class Block extends \ProcessWire\Page
    */
   public function spaceStyles($useMagic = true)
   {
+    // early exit if block has no id
+    // this is to support runtime-block rendering
+    if (!$this->id) return;
+
     /** @var Block $block */
     $block = $this->getWidgetBlock();
     $top = $this->spaceArray($block->getSpaceTop());

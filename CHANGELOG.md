@@ -1,3 +1,12 @@
+## [3.24.1](https://github.com/baumrock/RockPageBuilder/compare/v3.24.0...v3.24.1) (2023-03-23)
+
+
+### Bug Fixes
+
+* add early exit if no block id ([c42ab03](https://github.com/baumrock/RockPageBuilder/commit/c42ab035c90b536ddf5a83981991f4c5a894bdc1))
+
+
+
 # [3.24.0](https://github.com/baumrock/RockPageBuilder/compare/v3.23.1...v3.24.0) (2023-03-22)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add rockSearchIndex method to block ([4184654](https://github.com/baumrock/RockPageBuilder/commit/4184654c6ad93411a7714bcef8e1ff1d9a78414d))
-
-
-
-## [3.21.2](https://github.com/baumrock/RockPageBuilder/compare/v3.21.1...v3.21.2) (2023-03-06)
-
-
-### Bug Fixes
-
-* hideTitle not hiding title in modal ([82b74a6](https://github.com/baumrock/RockPageBuilder/commit/82b74a6d0b4e6014324942ca15dd71b3b580b850))
 
 
 

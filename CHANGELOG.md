@@ -1,3 +1,12 @@
+## [3.24.2](https://github.com/baumrock/RockPageBuilder/compare/v3.24.1...v3.24.2) (2023-03-25)
+
+
+### Bug Fixes
+
+* also show settings button if RockFields is not installed ([021ccdc](https://github.com/baumrock/RockPageBuilder/commit/021ccdc5c503bbe4b21467f1a70acbf2cf3f760c))
+
+
+
 ## [3.24.1](https://github.com/baumrock/RockPageBuilder/compare/v3.24.0...v3.24.1) (2023-03-23)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add settings field helper ([4c85b29](https://github.com/baumrock/RockPageBuilder/commit/4c85b2937d442d47513952bce45c1c4322ebce60))
-
-
-
-# [3.22.0](https://github.com/baumrock/RockPageBuilder/compare/v3.21.2...v3.22.0) (2023-03-10)
-
-
-### Features
-
-* add rockSearchIndex method to block ([4184654](https://github.com/baumrock/RockPageBuilder/commit/4184654c6ad93411a7714bcef8e1ff1d9a78414d))
 
 
 

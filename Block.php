@@ -192,17 +192,22 @@ class Block extends \ProcessWire\Page
 
   public function addSettingsFieldToForm(InputfieldWrapper $fs)
   {
+    $f = new InputfieldMarkup();
+    $f->label = 'Settings';
+    $f->icon = 'cogs';
+    $url = $this->wire->pages->get(2)->url . "rockpagebuilder/settings-field/?block=$this";
+    $f->value = "<a href='$url' class='ui-button'>Add a settings field to this block</a>";
+    $f->notes = "This field and button is only shown to superusers.";
+
     /** @var RockFields $rf */
-    if (!$rf = $this->wire->rockfields) return;
+    if (!$rf = $this->wire->rockfields) {
+      $f->notes .= "\nYou also need to install the RockFields module to use this feature.";
+      $fs->add($f);
+      return;
+    }
     if (!$f = $rf->getInputfield($this, $this->settingsName(), true)) {
       if (!$this->wire->user->isSuperuser()) return;
       if (!$this->wire->config->debug) return;
-      $f = new InputfieldMarkup();
-      $f->label = 'Settings';
-      $f->icon = 'cogs';
-      $url = $this->wire->pages->get(2)->url . "rockpagebuilder/settings-field/?block=$this";
-      $f->value = "<a href='$url' class='ui-button'>Add a settings field to this block</a>";
-      $f->notes = "This field and button is only shown to superusers.";
       $fs->add($f);
       return;
     }

@@ -236,8 +236,10 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'trash' => true, // will set the trash icon for rockpagebuilder blocks
       'clone' => true, // can item be cloned?
       'widgetable' => $widgetable, // can be converted into widget?
-      'type' => $widget->getInfo()->title,
     ]);
+    if ($widget instanceof Block) {
+      $opt->type = $widget->getInfo()->title;
+    }
     $opt->setArray($data->options);
 
     if ($opt->noBlock) {

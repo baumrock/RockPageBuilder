@@ -208,7 +208,7 @@ class Block extends \ProcessWire\Page
     if (!$f = $rf->getInputfield($this, $this->settingsName(), true)) {
       if (!$this->wire->user->isSuperuser()) return;
       if (!$this->wire->config->debug) return;
-      $fs->add($f);
+      if ($f instanceof Inputfield) $fs->add($f);
       return;
     }
     $f->addClass('rpb-settings');

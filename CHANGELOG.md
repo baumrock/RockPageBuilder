@@ -1,3 +1,12 @@
+## [3.25.2](https://github.com/baumrock/RockPageBuilder/compare/v3.25.1...v3.25.2) (2023-03-26)
+
+
+### Bug Fixes
+
+* set block type only on instances of block ([d1dfe45](https://github.com/baumrock/RockPageBuilder/commit/d1dfe45c97ed61c06647b35a998ab14541743522))
+
+
+
 ## [3.25.1](https://github.com/baumrock/RockPageBuilder/compare/v3.25.0...v3.25.1) (2023-03-26)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * add early exit if no block id ([c42ab03](https://github.com/baumrock/RockPageBuilder/commit/c42ab035c90b536ddf5a83981991f4c5a894bdc1))
-
-
-
-# [3.24.0](https://github.com/baumrock/RockPageBuilder/compare/v3.23.1...v3.24.0) (2023-03-22)
-
-
-### Features
-
-* add rf-box wrapper to blocks ([7f625a6](https://github.com/baumrock/RockPageBuilder/commit/7f625a651946a9bdde127361f31830baa61b586a))
 
 
 

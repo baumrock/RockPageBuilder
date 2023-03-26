@@ -1,3 +1,12 @@
+# [3.25.0](https://github.com/baumrock/RockPageBuilder/compare/v3.24.2...v3.25.0) (2023-03-26)
+
+
+### Features
+
+* show block type on frontend ([121d38f](https://github.com/baumrock/RockPageBuilder/commit/121d38f9490613964a88e8992769fcb79c015be4))
+
+
+
 ## [3.24.2](https://github.com/baumrock/RockPageBuilder/compare/v3.24.1...v3.24.2) (2023-03-25)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * show settings hint only if debug is ON ([581897c](https://github.com/baumrock/RockPageBuilder/commit/581897c6dad63d761f3c5125b67dd23e2837cb30))
-
-
-
-# [3.23.0](https://github.com/baumrock/RockPageBuilder/compare/v3.22.0...v3.23.0) (2023-03-17)
-
-
-### Features
-
-* add settings field helper ([4c85b29](https://github.com/baumrock/RockPageBuilder/commit/4c85b2937d442d47513952bce45c1c4322ebce60))
 
 
 

@@ -1,3 +1,12 @@
+## [3.25.3](https://github.com/baumrock/RockPageBuilder/compare/v3.25.2...v3.25.3) (2023-03-26)
+
+
+### Bug Fixes
+
+* catch $f no inputfield ([f260529](https://github.com/baumrock/RockPageBuilder/commit/f260529aa6a336f131557cbc7e4d4cc3ce85d430))
+
+
+
 ## [3.25.2](https://github.com/baumrock/RockPageBuilder/compare/v3.25.1...v3.25.2) (2023-03-26)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * also show settings button if RockFields is not installed ([021ccdc](https://github.com/baumrock/RockPageBuilder/commit/021ccdc5c503bbe4b21467f1a70acbf2cf3f760c))
-
-
-
-## [3.24.1](https://github.com/baumrock/RockPageBuilder/compare/v3.24.0...v3.24.1) (2023-03-23)
-
-
-### Bug Fixes
-
-* add early exit if no block id ([c42ab03](https://github.com/baumrock/RockPageBuilder/commit/c42ab035c90b536ddf5a83981991f4c5a894bdc1))
 
 
 

@@ -1,3 +1,12 @@
+## [3.25.1](https://github.com/baumrock/RockPageBuilder/compare/v3.25.0...v3.25.1) (2023-03-26)
+
+
+### Bug Fixes
+
+* use block title instead of classname ([22e514f](https://github.com/baumrock/RockPageBuilder/commit/22e514fbeb993d43c442a5c658a823bedec46dcc))
+
+
+
 # [3.25.0](https://github.com/baumrock/RockPageBuilder/compare/v3.24.2...v3.25.0) (2023-03-26)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add rf-box wrapper to blocks ([7f625a6](https://github.com/baumrock/RockPageBuilder/commit/7f625a651946a9bdde127361f31830baa61b586a))
-
-
-
-## [3.23.1](https://github.com/baumrock/RockPageBuilder/compare/v3.23.0...v3.23.1) (2023-03-17)
-
-
-### Bug Fixes
-
-* show settings hint only if debug is ON ([581897c](https://github.com/baumrock/RockPageBuilder/commit/581897c6dad63d761f3c5125b67dd23e2837cb30))
 
 
 

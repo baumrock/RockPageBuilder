@@ -17,7 +17,7 @@ $info = [
     'PHP>=8.0',
     'ProcessWire>=3.0.211',
     'RockMigrations>=2.6.0',
-    'RockFrontend>=2.25.0',
+    'RockFrontend>=2.35.0',
   ],
   'installs' => [
     'FieldtypeRockPageBuilder',

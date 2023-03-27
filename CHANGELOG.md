@@ -1,3 +1,12 @@
+# [3.26.0](https://github.com/baumrock/RockPageBuilder/compare/v3.25.3...v3.26.0) (2023-03-27)
+
+
+### Features
+
+* add support for defining 'show' property as selector ([b877e58](https://github.com/baumrock/RockPageBuilder/commit/b877e580279fc096323ca7e6ad7afcd38d2b8402))
+
+
+
 ## [3.25.3](https://github.com/baumrock/RockPageBuilder/compare/v3.25.2...v3.25.3) (2023-03-26)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * show block type on frontend ([121d38f](https://github.com/baumrock/RockPageBuilder/commit/121d38f9490613964a88e8992769fcb79c015be4))
-
-
-
-## [3.24.2](https://github.com/baumrock/RockPageBuilder/compare/v3.24.1...v3.24.2) (2023-03-25)
-
-
-### Bug Fixes
-
-* also show settings button if RockFields is not installed ([021ccdc](https://github.com/baumrock/RockPageBuilder/commit/021ccdc5c503bbe4b21467f1a70acbf2cf3f760c))
 
 
 

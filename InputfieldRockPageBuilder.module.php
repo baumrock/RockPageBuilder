@@ -190,6 +190,9 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
       $callback = $block->getInfo()->show;
       if ($callback === false) {
         $blocks->remove($block);
+      }
+      if (is_string($callback)) {
+        if (!$page->matches($callback)) $blocks->remove($block);
       } elseif (is_callable($callback)) {
         $show = $callback($page, $this);
         if (!$show) $blocks->remove($block);

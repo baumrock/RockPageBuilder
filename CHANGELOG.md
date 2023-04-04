@@ -1,3 +1,12 @@
+# [3.27.0](https://github.com/baumrock/RockPageBuilder/compare/v3.26.0...v3.27.0) (2023-04-04)
+
+
+### Features
+
+* add docs and tweck block ([7c21a1b](https://github.com/baumrock/RockPageBuilder/commit/7c21a1bf72f81a5dd99efecbe2ff7c041349a3db))
+
+
+
 # [3.26.0](https://github.com/baumrock/RockPageBuilder/compare/v3.25.3...v3.26.0) (2023-03-27)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * use block title instead of classname ([22e514f](https://github.com/baumrock/RockPageBuilder/commit/22e514fbeb993d43c442a5c658a823bedec46dcc))
-
-
-
-# [3.25.0](https://github.com/baumrock/RockPageBuilder/compare/v3.24.2...v3.25.0) (2023-03-26)
-
-
-### Features
-
-* show block type on frontend ([121d38f](https://github.com/baumrock/RockPageBuilder/commit/121d38f9490613964a88e8992769fcb79c015be4))
 
 
 

@@ -35,6 +35,10 @@ class Block extends \ProcessWire\Page
   const prefix = "rockpagebuilderblock_";
   const tags = "RockPageBuilder";
 
+  const spaceS = "25px, 50px";
+  const spaceM = "50px, 100px";
+  const spaceL = "75px, 150px";
+
   /**
    * References the current file
    * @var string

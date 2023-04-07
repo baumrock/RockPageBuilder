@@ -1,3 +1,12 @@
+# [3.28.0](https://github.com/baumrock/RockPageBuilder/compare/v3.27.0...v3.28.0) (2023-04-07)
+
+
+### Features
+
+* add spaceM to block stubfile ([7c39577](https://github.com/baumrock/RockPageBuilder/commit/7c395779d95cdf7d78d346e200dc8a578a721dc8))
+
+
+
 # [3.27.0](https://github.com/baumrock/RockPageBuilder/compare/v3.26.0...v3.27.0) (2023-04-04)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * set block type only on instances of block ([d1dfe45](https://github.com/baumrock/RockPageBuilder/commit/d1dfe45c97ed61c06647b35a998ab14541743522))
-
-
-
-## [3.25.1](https://github.com/baumrock/RockPageBuilder/compare/v3.25.0...v3.25.1) (2023-03-26)
-
-
-### Bug Fixes
-
-* use block title instead of classname ([22e514f](https://github.com/baumrock/RockPageBuilder/commit/22e514fbeb993d43c442a5c658a823bedec46dcc))
 
 
 

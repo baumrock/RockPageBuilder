@@ -12,6 +12,7 @@ class {name} extends Block {
     return [
       'title' => '{name}',
       'color' => 'lime',
+      'spaceV' => self::spaceM,
       // 'icon' => 'picture-o',
       // 'description' => 'RockPageBuilder Block Setup Demo',
       // 'hideTitle' => true, // shortcut to set title field to hidden

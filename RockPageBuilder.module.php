@@ -26,6 +26,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   const field_blocks = self::prefix . "blocks";
   const field_widgets = self::prefix . "widgets";
+  const field_eyebrow = self::prefix . "eyebrow";
 
   public $blocks = [];
 
@@ -1240,6 +1241,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       ]);
       $rm->addFieldToTemplate(self::field_widgets, 'home');
     }
+
+    // create eyebrow field
+    $type = $this->wire->languages ? 'TextLanguage' : 'Text';
+    $rm->createField(self::field_eyebrow, $type, [
+      'label' => 'Eyebrow',
+      'tags' => self::tags,
+      'icon' => 'eye',
+    ]);
   }
 
   /**

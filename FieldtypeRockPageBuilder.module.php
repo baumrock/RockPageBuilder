@@ -16,7 +16,7 @@ class FieldtypeRockPageBuilder extends FieldtypeTextarea
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '0.0.2',
+      'version' => json_decode(file_get_contents(__DIR__ . "/package.json"))->version,
       'summary' => 'Your module description',
       'icon' => 'cubes',
       'requires' => ['RockPageBuilder'],

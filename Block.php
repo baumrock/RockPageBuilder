@@ -931,9 +931,13 @@ class Block extends \ProcessWire\Page
    */
   public function renderBlock()
   {
+    $rf = $this->rockfrontend();
     foreach ($this->viewFiles() as $file => $type) {
       if (is_file($file)) {
-        return $this->html($this->renderFile($file, $type));
+        if ($rf) $rf->setTextdomain($file);
+        $out = $this->html($this->renderFile($file, $type));
+        if ($rf) $rf->setTextdomain(false);
+        return $out;
       }
     }
   }

@@ -27,6 +27,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   const field_blocks = self::prefix . "blocks";
   const field_widgets = self::prefix . "widgets";
   const field_eyebrow = self::prefix . "eyebrow";
+  const field_teaser = self::prefix . "teaser";
 
   public $blocks = [];
 
@@ -1248,6 +1249,19 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'label' => 'Eyebrow',
       'tags' => self::tags,
       'icon' => 'eye',
+    ]);
+
+    // create teaser field
+    $type = $this->wire->languages ? 'TextareaLanguage' : 'Textarea';
+    $rm->createField(self::field_teaser, $type, [
+      'label' => 'Teaser',
+      'tags' => self::tags,
+      'icon' => 'bullhorn',
+      'inputfieldClass' => 'InputfieldTinyMCE',
+      'contentType' => FieldtypeTextarea::contentTypeHTML,
+      'rows' => 5,
+      'inlineMode' => true,
+      'settingsFile' => '/site/modules/RockMigrations/TinyMCE/simple.json',
     ]);
   }
 

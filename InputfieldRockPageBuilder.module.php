@@ -21,7 +21,7 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
   {
     return [
       'title' => 'RockPageBuilder',
-      'version' => '1.1.1',
+      'version' => json_decode(file_get_contents(__DIR__ . "/package.json"))->version,
       'summary' => 'Your module description',
       'icon' => 'cubes',
       'requires' => ['RockPageBuilder'],

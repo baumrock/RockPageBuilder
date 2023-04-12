@@ -26,6 +26,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   const field_blocks = self::prefix . "blocks";
   const field_widgets = self::prefix . "widgets";
+  const field_eyebrow = self::prefix . "eyebrow";
 
   public $blocks = [];
 
@@ -116,9 +117,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addHookBefore('ProcessPageListRender::getNumChildren', $this, "hookNumChildren");
 
     $this->createBlock();
-    $this->include("init.php"); // load assets/RockPageBuilder/init.php
+    $this->include("init.php"); // load templates/RockPageBuilder/init.php
     $this->addBlock(__DIR__ . "/Widget.php"); // always load the widget block
-    $this->loadBlocksFromAssetsFolder(); // load user blocks from assets
+    $this->loadUserBlocks(); // load user blocks from templates folder
 
     // add ajax endpoints
     $this->addHookAfter("/rockpagebuilder-vscale", $this, "saveVScaleValue");
@@ -142,7 +143,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   public function ready()
   {
-    $this->include("ready.php"); // load assets/RockPageBuilder/ready.php
+    $this->include("ready.php"); // load templates/RockPageBuilder/ready.php
     $this->parseFrontendAssets();
     $this->addFrontendAssets();
 
@@ -154,7 +155,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if ($this->wire->page->template == 'admin') {
       $this->wire->config->js('RockPageBuilderBlocks', $this->blockNames());
     } else {
-      $this->rockfrontend()->styles()->addAll('/site/assets/RockPageBuilder', '', 3);
+      $this->rockfrontend()->styles()->addAll('/site/templates/RockPageBuilder', '', 3);
     }
   }
 
@@ -754,7 +755,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       if (strpos($field, "rockpagebuilder_") === 0) $short = substr($field, 16);
       elseif (strpos($field, "rockpagebuilderblock_") === 0) $short = substr($field, 21);
 
-      $folder = $this->wire->config->paths->assets . "RockPageBuilder/$short";
+      $folder = $this->wire->config->paths->templates . "RockPageBuilder/$short";
       if (!is_dir($folder)) mkdir($folder);
       $name = ucfirst($name);
       $subfolder = "$folder/$name";
@@ -1078,7 +1079,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    */
   public function include($file)
   {
-    $dir = $this->wire->config->paths->assets . "RockPageBuilder";
+    $dir = $this->wire->config->paths->templates . "RockPageBuilder";
     $file = "$dir/$file";
     $vars = ['mx' => $this];
     $opt = ['allowedPaths' => [$dir]];
@@ -1101,7 +1102,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    */
   public function loadBlocks($fieldname, $path, $namespace = 'RockPageBuilderBlock', $add = [])
   {
-    // this is to support short folder names in /site/assets/RockPageBuilder
+    // this is to support short folder names in /site/templates/RockPageBuilder
     $fieldname = $this->getFieldname($fieldname);
 
     // add blocks to rockpagebuilder
@@ -1170,9 +1171,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * Load all blocks from assets folder
    * @return void
    */
-  public function loadBlocksFromAssetsFolder()
+  public function loadUserBlocks()
   {
-    $folder = $this->wire->config->paths->assets . "RockPageBuilder";
+    $folder = $this->wire->config->paths->templates . "RockPageBuilder";
     if (!is_dir($folder)) $this->wire->files->mkdir($folder);
     foreach (new DirectoryIterator($folder) as $fileInfo) {
       if ($fileInfo->isDot()) continue;
@@ -1240,6 +1241,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       ]);
       $rm->addFieldToTemplate(self::field_widgets, 'home');
     }
+
+    // create eyebrow field
+    $type = $this->wire->languages ? 'TextLanguage' : 'Text';
+    $rm->createField(self::field_eyebrow, $type, [
+      'label' => 'Eyebrow',
+      'tags' => self::tags,
+      'icon' => 'eye',
+    ]);
   }
 
   /**
@@ -1453,7 +1462,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if (!$less) return "<link rel=stylesheet href='$cssUrl?m=$mCSS'>";
 
     $lessFiles = $this->wire->files->find(
-      $this->wire->config->paths->assets . "RockPageBuilder",
+      $this->wire->config->paths->templates . "RockPageBuilder",
       ['extensions' => ['less']]
     );
     $compile = false;

@@ -1,3 +1,12 @@
+# [3.29.0](https://github.com/baumrock/RockPageBuilder/compare/v3.28.0...v3.29.0) (2023-04-12)
+
+
+### Features
+
+* add eyebrow field ([05f0e4a](https://github.com/baumrock/RockPageBuilder/commit/05f0e4ab4df2303c03bbadc0cd682b0bbe521550))
+
+
+
 # [3.28.0](https://github.com/baumrock/RockPageBuilder/compare/v3.27.0...v3.28.0) (2023-04-07)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * catch $f no inputfield ([f260529](https://github.com/baumrock/RockPageBuilder/commit/f260529aa6a336f131557cbc7e4d4cc3ce85d430))
-
-
-
-## [3.25.2](https://github.com/baumrock/RockPageBuilder/compare/v3.25.1...v3.25.2) (2023-03-26)
-
-
-### Bug Fixes
-
-* set block type only on instances of block ([d1dfe45](https://github.com/baumrock/RockPageBuilder/commit/d1dfe45c97ed61c06647b35a998ab14541743522))
 
 
 

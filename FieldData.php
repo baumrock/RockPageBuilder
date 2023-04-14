@@ -272,6 +272,7 @@ class FieldData extends PageArray
   public function addOverlay($block): string
   {
     $html = $block->renderBlock() ?: '';
+    return $html;
     if (strpos($html, '<div class="rpb-overlay"') !== false) return $html;
     return $block->overlay() . $html;
   }

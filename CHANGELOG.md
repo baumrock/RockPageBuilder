@@ -1,3 +1,12 @@
+## [3.29.1](https://github.com/baumrock/RockPageBuilder/compare/v3.29.0...v3.29.1) (2023-04-18)
+
+
+### Bug Fixes
+
+* settings property returning true if not set ([aa46e32](https://github.com/baumrock/RockPageBuilder/commit/aa46e32d283a16d8242240af593a861c68ceee41))
+
+
+
 # [3.29.0](https://github.com/baumrock/RockPageBuilder/compare/v3.28.0...v3.29.0) (2023-04-12)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add support for defining 'show' property as selector ([b877e58](https://github.com/baumrock/RockPageBuilder/commit/b877e580279fc096323ca7e6ad7afcd38d2b8402))
-
-
-
-## [3.25.3](https://github.com/baumrock/RockPageBuilder/compare/v3.25.2...v3.25.3) (2023-03-26)
-
-
-### Bug Fixes
-
-* catch $f no inputfield ([f260529](https://github.com/baumrock/RockPageBuilder/commit/f260529aa6a336f131557cbc7e4d4cc3ce85d430))
 
 
 

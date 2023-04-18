@@ -1269,6 +1269,13 @@ class Block extends \ProcessWire\Page
     try {
       $settings = $this->rockfieldValue($this->settingsName());
     } catch (\Throwable $th) {
+      // we requested a settings property that does not exist
+      // so we return false to make sure WireData is not interpreted as wrong
+      // "true" value
+      if ($prop) return false;
+
+      // no property requested, so we return a new WireData object
+      // so that we dont get errors on ->settings()->...
       return new WireData();
     }
     if ($prop) {

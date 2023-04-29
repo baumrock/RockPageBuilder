@@ -206,7 +206,7 @@ class Block extends \ProcessWire\Page
     /** @var RockFields $rf */
     if (!$rf = $this->wire->rockfields) {
       $f->notes .= "\nYou also need to install the RockFields module to use this feature.";
-      $fs->add($f);
+      if ($this->wire->user->isSuperuser()) $fs->add($f);
       return;
     }
     if (!$f = $rf->getInputfield($this, $this->settingsName(), true)) {
@@ -584,9 +584,6 @@ class Block extends \ProcessWire\Page
     if ($f = $fs->get('title')) {
       if ($this->getInfo()->hideTitle) {
         $f->collapsed = Inputfield::collapsedHidden;
-        if ($fs->children()->count() === 1) {
-          $fs->notes = 'This block has no fields';
-        }
       }
     }
     $this->buildForm($fs);

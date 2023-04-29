@@ -1120,19 +1120,21 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $blocks = array_merge($blocks, $add);
 
     // add blocks via hook
-    $this->addHookAfter('getAllowedBlocks', function ($event)
-    use ($fieldname, $blocks) {
-      $field = $event->arguments(0);
-      if ($field->name !== $fieldname) return;
-      $event->return->add($blocks);
-    });
+    $this->addHookAfter(
+      'getAllowedBlocks',
+      function ($event) use ($fieldname, $blocks) {
+        $field = $event->arguments(0);
+        if ($field->name !== $fieldname) return;
+        $event->return->add($blocks);
+      }
+    );
   }
 
   /**
    * Same as loadBlocks but you can provide multiple folders and files to load
    *
    * Usage:
-   * $rm->loadBlocksArray('your_field', [
+   * $rpb->loadBlocksArray('your_field', [
    *   ['/path/to/folder' => 'Your\Namespace'],
    *   ['/path/to/file.php' => 'Your\Namespace'],
    * ])

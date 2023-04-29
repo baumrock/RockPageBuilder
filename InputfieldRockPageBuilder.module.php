@@ -250,6 +250,9 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
   public function ___renderItem($item)
   {
     $fs = $item->getWrapper();
+    if ($this->hasField->showAll) {
+      $fs->collapsed = Inputfield::collapsedNo;
+    }
     return $fs->parent->render();
   }
 

@@ -115,7 +115,7 @@ RockPageBuilder.prototype.makeSortable = function (e) {
 
     // set the handle to the header
     // this ensures that other drag&drop features don't break (eg images)
-    handle: ".rpb-item > .InputfieldHeader > .fa-arrows",
+    handle: ".rpb-item .InputfieldHeader",
   });
 
   // add class to every sortable element

@@ -109,13 +109,15 @@ RockPageBuilder.prototype.makeSortable = function (e) {
   if (!not_draggable) return;
 
   // init uikit sortable on container
+  let handleSelector = ".rpb-item .InputfieldHeader";
+  let customSelector = $container.data("draggable");
   UIkit.sortable($container[0], {
     // longer animation duration prevents flicker
     animation: 500,
 
     // set the handle to the header
     // this ensures that other drag&drop features don't break (eg images)
-    handle: ".rpb-item .InputfieldHeader",
+    handle: customSelector || handleSelector,
   });
 
   // add class to every sortable element

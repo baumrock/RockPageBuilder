@@ -331,8 +331,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     try {
       // use require_once instead of PW classloader
       // because classLoader had issues when adding widgets (class xx not found)
-      require_once $file;
       $class = "\\$namespace\\$name";
+      require_once $file;
       $block = new $class();
       $block->setFile($file);
       $block->setMigrateFile($file);
@@ -626,7 +626,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $page->buildForm($fs);
 
     // add link to rpb page
-    if (!$this->wire->input->get('modal')) {
+    $sudo = $this->wire->user->isSuperuser();
+    if ($sudo and !$this->wire->input->get('modal')) {
       $fs->add([
         'type' => 'markup',
         'icon' => 'link',

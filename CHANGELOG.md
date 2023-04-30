@@ -1,3 +1,13 @@
+# [4.2.0](https://github.com/baumrock/RockPageBuilder/compare/v4.1.0...v4.2.0) (2023-04-30)
+
+
+### Features
+
+* add support for custom draggable selector ([6f37a45](https://github.com/baumrock/RockPageBuilder/commit/6f37a4512e0141c040fcb1b71ab6b6bb1c1b4508))
+* make whole header draggable ([b764124](https://github.com/baumrock/RockPageBuilder/commit/b7641243f103e30b8ddac3411eb72667b9f70dac))
+
+
+
 # [4.1.0](https://github.com/baumrock/RockPageBuilder/compare/v4.0.0...v4.1.0) (2023-04-29)
 
 
@@ -37,15 +47,6 @@
 ### Features
 
 * add eyebrow field ([05f0e4a](https://github.com/baumrock/RockPageBuilder/commit/05f0e4ab4df2303c03bbadc0cd682b0bbe521550))
-
-
-
-# [3.28.0](https://github.com/baumrock/RockPageBuilder/compare/v3.27.0...v3.28.0) (2023-04-07)
-
-
-### Features
-
-* add spaceM to block stubfile ([7c39577](https://github.com/baumrock/RockPageBuilder/commit/7c395779d95cdf7d78d346e200dc8a578a721dc8))
 
 
 

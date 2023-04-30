@@ -262,7 +262,8 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
    */
   public function ___renderItems()
   {
-    $out = '<div class="rpb-items">';
+    $selector = $this->hasField->draggable;
+    $out = "<div class='rpb-items' data-draggable='$selector'>";
     foreach ($this->value as $item) {
       $out .= $this->renderItem($item);
     }

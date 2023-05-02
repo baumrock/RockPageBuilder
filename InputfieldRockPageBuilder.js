@@ -125,8 +125,14 @@ RockPageBuilder.prototype.makeSortable = function (e) {
   let $items = this.$items(e);
   if ($items.length) {
     $container.removeClass("uk-hidden");
+    let id = $container
+      .closest(".InputfieldRockPageBuilder")
+      .attr("id")
+      .replace("wrap_Inputfield_", "");
     $.each($items, function (i, el) {
-      $(el).parent().addClass("rpb-draggable");
+      $(el)
+        .parent()
+        .addClass("rpb-draggable " + id);
     });
   } else {
     $container.addClass("uk-hidden");

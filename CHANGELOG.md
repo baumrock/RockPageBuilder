@@ -1,3 +1,12 @@
+# [4.3.0](https://github.com/baumrock/RockPageBuilder/compare/v4.2.0...v4.3.0) (2023-05-02)
+
+
+### Features
+
+* add tweaks for ZeitungsTool ([8db50ce](https://github.com/baumrock/RockPageBuilder/commit/8db50cea37c47acfcd44028821d1bb3cc83fb07c))
+
+
+
 # [4.2.0](https://github.com/baumrock/RockPageBuilder/compare/v4.1.0...v4.2.0) (2023-04-30)
 
 
@@ -38,15 +47,6 @@
 ### Bug Fixes
 
 * settings property returning true if not set ([aa46e32](https://github.com/baumrock/RockPageBuilder/commit/aa46e32d283a16d8242240af593a861c68ceee41))
-
-
-
-# [3.29.0](https://github.com/baumrock/RockPageBuilder/compare/v3.28.0...v3.29.0) (2023-04-12)
-
-
-### Features
-
-* add eyebrow field ([05f0e4a](https://github.com/baumrock/RockPageBuilder/commit/05f0e4ab4df2303c03bbadc0cd682b0bbe521550))
 
 
 

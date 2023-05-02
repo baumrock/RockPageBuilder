@@ -326,6 +326,10 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // this means you can reuse blocks across several fields
     if (!filesize($file)) return;
 
+    // do not add files from within dot-folders
+    $folder = basename(dirname($file));
+    if (str_starts_with($folder, ".")) return;
+
     // if block was already added we do not add it again
     $name = pathinfo($file, PATHINFO_FILENAME);
     try {

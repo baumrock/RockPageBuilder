@@ -434,7 +434,7 @@ class Block extends \ProcessWire\Page
    */
   public function getBlockField()
   {
-    $meta = explode("-", $this->meta('RockPageBuilder'));
+    $meta = explode("-", (string)$this->meta('RockPageBuilder'));
     if (!is_array($meta) or count($meta) !== 2) return false;
     return $this->wire->fields->get($meta[1]);
   }

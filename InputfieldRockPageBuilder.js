@@ -291,6 +291,10 @@ $(document).on("keydown", ".InputfieldRockPageBuilder input", function (e) {
   $(e.target).closest(".Inputfield").addClass("InputfieldStateChanged");
   RockPageBuilder.changed(e);
 });
+$(document).on("keydown", ".InputfieldRockPageBuilder textarea", function (e) {
+  $(e.target).closest(".Inputfield").addClass("InputfieldStateChanged");
+  RockPageBuilder.changed(e);
+});
 
 // fix pw-panel issue
 // https://github.com/processwire/processwire-requests/issues/176

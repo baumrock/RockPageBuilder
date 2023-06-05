@@ -1,3 +1,17 @@
+# [4.4.0](https://github.com/baumrock/RockPageBuilder/compare/v4.3.0...v4.4.0) (2023-06-05)
+
+
+### Bug Fixes
+
+* textarea not triggering change event ([0f12bde](https://github.com/baumrock/RockPageBuilder/commit/0f12bdef841b07048c0229bc7e9988ae4c7ca6b6))
+
+
+### Features
+
+* add support for custom styles in styles() method ([8e5664e](https://github.com/baumrock/RockPageBuilder/commit/8e5664eea138f6b436343413dfa8c240ee15ef42))
+
+
+
 # [4.3.0](https://github.com/baumrock/RockPageBuilder/compare/v4.2.0...v4.3.0) (2023-05-02)
 
 
@@ -38,15 +52,6 @@
 ### BREAKING CHANGES
 
 * move block files to /site/templates
-
-
-
-## [3.29.1](https://github.com/baumrock/RockPageBuilder/compare/v3.29.0...v3.29.1) (2023-04-18)
-
-
-### Bug Fixes
-
-* settings property returning true if not set ([aa46e32](https://github.com/baumrock/RockPageBuilder/commit/aa46e32d283a16d8242240af593a861c68ceee41))
 
 
 

@@ -1352,57 +1352,59 @@ class Block extends \ProcessWire\Page
 
   /**
    * Add vertical spacing style attribute to the current block
+   * See styles() for usage info
    */
-  public function spaceStyles($useMagic = true)
+  public function spaceStyles($styles = '', $useMagic = true)
   {
-    // early exit if block has no id
-    // this is to support runtime-block rendering
-    if (!$this->id) return;
+    if ($styles === false) {
+      $styles = '';
+      $useMagic = false;
+    }
 
-    /** @var Block $block */
-    $block = $this->getWidgetBlock();
-    $top = $this->spaceArray($block->getSpaceTop());
-    $bottom = $this->spaceArray($block->getSpaceBottom());
-    if (!is_array($top) or !is_array($bottom)) return;
-    if (count($top) < 2 or count($bottom) < 2) return;
+    $str = "style='$styles'";
 
-    $top = $this->rockfrontend()->rfGrow([
-      'min' => $top[0],
-      'max' => $top[1],
-      'scale' => 'var(--vscale-top)',
-    ]);
-    $bottom = $this->rockfrontend()->rfGrow([
-      'min' => $bottom[0],
-      'max' => $bottom[1],
-      'scale' => 'var(--vscale-bottom)',
-    ]);
+    // add space styles only if the block has an id
+    // this is to make runtime blocks possible
+    if ($this->id) {
+      /** @var Block $block */
+      $block = $this->getWidgetBlock();
+      $top = $this->spaceArray($block->getSpaceTop());
+      $bottom = $this->spaceArray($block->getSpaceBottom());
+      if (!is_array($top) or !is_array($bottom)) return;
+      if (count($top) < 2 or count($bottom) < 2) return;
 
-    $vtop = $block->meta('vspace-top');
-    if ($vtop === null) $vtop = RockFrontend::defaultVspaceScale;
-    $vbottom = $block->meta('vspace-bottom');
-    if ($vbottom === null) $vbottom = RockFrontend::defaultVspaceScale;
+      $top = $this->rockfrontend()->rfGrow([
+        'min' => $top[0],
+        'max' => $top[1],
+        'scale' => 'var(--vscale-top)',
+      ]);
+      $bottom = $this->rockfrontend()->rfGrow([
+        'min' => $bottom[0],
+        'max' => $bottom[1],
+        'scale' => 'var(--vscale-bottom)',
+      ]);
 
-    $str = "style='padding-top: $top; padding-bottom: $bottom; --vscale-top:$vtop; --vscale-bottom:$vbottom;'";
+      $vtop = $block->meta('vspace-top');
+      if ($vtop === null) $vtop = RockFrontend::defaultVspaceScale;
+      $vbottom = $block->meta('vspace-bottom');
+      if ($vbottom === null) $vbottom = RockFrontend::defaultVspaceScale;
+
+      $str = "style='padding-top: $top; padding-bottom: $bottom; --vscale-top:$vtop; --vscale-bottom:$vbottom; $styles'";
+    }
+
     if (!$useMagic) return $str;
 
     // using rockfrontend magic to replace a uniqe string with real markup
     // without using |noescape filter in latte
     $key = "#rpbstyle-$this";
     $this->rpb()->blockStylesCache->set($key, $str);
+
     return $key;
   }
 
   public function getWidgetBlock()
   {
     return $this->_widget ?: $this;
-  }
-
-  /**
-   * Shortcut for spaceStyles
-   */
-  public function styles($useMagic = true)
-  {
-    return $this->spaceStyles($useMagic);
   }
 
   /**
@@ -1556,6 +1558,20 @@ class Block extends \ProcessWire\Page
     if (is_array($value)) return $value;
     if (strpos($value, ",")) return explode(",", $value);
     return [$value];
+  }
+
+  /**
+   * Shortcut for spaceStyles
+   *
+   * Usage:
+   * $block->styles()
+   *
+   * Usage with custom styles:
+   * $block->styles("border: 2px solid red;");
+   */
+  public function styles($styles = '', $useMagic = true)
+  {
+    return $this->spaceStyles($styles, $useMagic);
   }
 
   /**

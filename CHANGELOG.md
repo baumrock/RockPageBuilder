@@ -1,3 +1,12 @@
+## [4.4.1](https://github.com/baumrock/RockPageBuilder/compare/v4.4.0...v4.4.1) (2023-06-16)
+
+
+### Bug Fixes
+
+* repeater sorting issue ([9d1efe2](https://github.com/baumrock/RockPageBuilder/commit/9d1efe23c2b6e1c42bae88e4b682048d0986210d))
+
+
+
 # [4.4.0](https://github.com/baumrock/RockPageBuilder/compare/v4.3.0...v4.4.0) (2023-06-05)
 
 
@@ -38,20 +47,6 @@
 
 * add showAll property ([bdca035](https://github.com/baumrock/RockPageBuilder/commit/bdca035523950a3e5a01ac50d55b0b19e2ac6c04))
 * show update notice if setTextdomain is not found ([58e94f3](https://github.com/baumrock/RockPageBuilder/commit/58e94f3be59cf5b99f40779f0271fe0a3b80aa73))
-
-
-
-# [4.0.0](https://github.com/baumrock/RockPageBuilder/compare/v3.29.1...v4.0.0) (2023-04-18)
-
-
-### Features
-
-* bump version ([a82b813](https://github.com/baumrock/RockPageBuilder/commit/a82b813408916418bf59ff40edc4bf247bf4d35c))
-
-
-### BREAKING CHANGES
-
-* move block files to /site/templates
 
 
 

@@ -137,7 +137,6 @@ class ProcessRockPageBuilder extends Process
     $sort = $this->wire->input->get('sort', 'int');
 
     if (!$block instanceof RepeaterPage) throw new WireException("Invalid block");
-    if (!$block->editable()) throw new WireException("No access");
     $forPage = $block->getForPage();
     if (!$forPage->editable()) throw new WireException("No access");
 

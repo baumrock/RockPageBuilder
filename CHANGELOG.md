@@ -1,3 +1,12 @@
+## [4.4.2](https://github.com/baumrock/RockPageBuilder/compare/v4.4.1...v4.4.2) (2023-07-07)
+
+
+### Bug Fixes
+
+* repeater items not addable on frontend ([52df8d7](https://github.com/baumrock/RockPageBuilder/commit/52df8d7182c84dec34346b3832a83c90935f6bd2))
+
+
+
 ## [4.4.1](https://github.com/baumrock/RockPageBuilder/compare/v4.4.0...v4.4.1) (2023-06-16)
 
 
@@ -37,16 +46,6 @@
 
 * add support for custom draggable selector ([6f37a45](https://github.com/baumrock/RockPageBuilder/commit/6f37a4512e0141c040fcb1b71ab6b6bb1c1b4508))
 * make whole header draggable ([b764124](https://github.com/baumrock/RockPageBuilder/commit/b7641243f103e30b8ddac3411eb72667b9f70dac))
-
-
-
-# [4.1.0](https://github.com/baumrock/RockPageBuilder/compare/v4.0.0...v4.1.0) (2023-04-29)
-
-
-### Features
-
-* add showAll property ([bdca035](https://github.com/baumrock/RockPageBuilder/commit/bdca035523950a3e5a01ac50d55b0b19e2ac6c04))
-* show update notice if setTextdomain is not found ([58e94f3](https://github.com/baumrock/RockPageBuilder/commit/58e94f3be59cf5b99f40779f0271fe0a3b80aa73))
 
 
 

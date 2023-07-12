@@ -1,9 +1,10 @@
+{var $foo = __FILE__}
 <section
   class="{cls}"
   {alfred}
   {$block->styles()}
 >
   <div class="rf-box">
-    {$block->path}
+    Markup for this block comes from this file: <strong>{$block->viewFile()}</strong>
   </div>
 </section>

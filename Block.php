@@ -1656,6 +1656,17 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Get path of the view file for this block
+   */
+  public function viewFile(): string
+  {
+    foreach ($this->viewFiles() as $file => $type) {
+      if (is_file($file)) return $file;
+    }
+    return '';
+  }
+
+  /**
    * Get all possible view files for current block
    * @return array
    */

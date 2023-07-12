@@ -841,15 +841,18 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $tplcode = $rm->getCode($tpl, 2);
     $fieldcode = [];
     foreach ($tpl->fields as $field) {
-      if ($field->name === 'title') continue;
-      if ($field->name === 'email') continue;
+      // We only save field migrations to the yaml of this block if the
+      // prefix matches. This is to make sure we don't add global site fields
+      // to the blocks yaml file.
+      if (!str_starts_with($field->name, $block::prefix)) continue;
 
-      // get a fresh copy of the current field
-      // This is somehow necessary because if we take $field directly
-      // it has some weird runtime flags applied that get then
-      // written into the yaml and applied on the next migration.
+      // get a fresh copy of the field
+      // ugly hack because otherwise the field as a weird flag status
       $field = $this->wire->fields->get($field->id);
-      $fieldcode[$field->name] = $rm->getCode($field, 2);
+      $code = $rm->getCode($field, 2);
+      // if the field still has the systemoverride status we reset it
+      if ($code['flags'] == Field::flagSystemOverride) $code['flags'] = 0;
+      $fieldcode[$field->name] = $code;
     }
     $data = [
       'fields' => $fieldcode,

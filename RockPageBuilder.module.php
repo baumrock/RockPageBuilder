@@ -572,10 +572,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   /**
    * Return array of names of all blocks
    */
-  public function blockNames(): array
+  public function blockNames($namespace = false): array
   {
     $names = [];
-    foreach ($this->blocks as $block) $names[] = $block->className();
+    foreach ($this->blocks as $block) {
+      $name = $block->className();
+      if ($namespace) $name = "$namespace\\$name";
+      $names[] = $name;
+    }
     return $names;
   }
 
@@ -1118,14 +1122,31 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addBlocks($path, $namespace);
 
     // get blocks
-    $blocks = [];
-    $options = ['extensions' => ['php']];
-    foreach ($this->wire->files->find($path, $options) as $file) {
-      $name = pathinfo($file, PATHINFO_FILENAME);
-      if (strpos($name, ".") === 0) continue; // no dot-files
-      $blocks[] = "$namespace\\$name";
+    if ($fieldname === self::field_widgets) {
+      // on the widget field all blocks are allowed
+      $blocks = $this->blockNames($namespace);
+      $blocks = array_filter($blocks, function ($item) {
+        return $item !== "RockPageBuilderBlock\Widget";
+      });
+    } else {
+      // regular rockpagebuilder field
+      // we need to find which blocks are allowed by files
+      $blocks = [];
+      $options = ['extensions' => ['php']];
+      foreach ($this->wire->files->find($path, $options) as $file) {
+        $name = pathinfo($file, PATHINFO_FILENAME);
+        if (strpos($name, ".") === 0) continue; // no dot-files
+        $blocks[] = "$namespace\\$name";
+      }
+      $blocks = array_merge($blocks, $add);
     }
-    $blocks = array_merge($blocks, $add);
+
+    // we automatically add the widget block to the default blocks field
+    // so that users can instantly convert any block into a widget
+    if ($fieldname === self::field_blocks) {
+      $blocks[] = "RockPageBuilderBlock\\Widget";
+      $blocks = array_unique($blocks);
+    }
 
     // add blocks via hook
     $this->addHookAfter(
@@ -1186,6 +1207,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     $folder = $this->wire->config->paths->templates . "RockPageBuilder";
     if (!is_dir($folder)) $this->wire->files->mkdir($folder);
+    // we make sure that the widgets folder exists
+    // otherwise no widget blocks will be allowed
+    if (!is_dir("$folder/widgets")) $this->wire->files->mkdir("$folder/widgets");
     foreach (new DirectoryIterator($folder) as $fileInfo) {
       if ($fileInfo->isDot()) continue;
       if (!$fileInfo->isDir()) continue;
@@ -1249,6 +1273,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         'label' => 'Widgets',
         'tags' => self::tags,
         'icon' => 'cubes',
+        'notes' => "Here you can create global blocks that can then be included on many pages. For example you could create a widget with contact details like a telephone number, add that widget to several pages and then change the phone number at one central place rather than updating all pages one by one.",
       ]);
       $rm->addFieldToTemplate(self::field_widgets, 'home');
     }

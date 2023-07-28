@@ -78,7 +78,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "buildForm");
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
     $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
-    $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
     $this->addHookAfter("Page::render", $this, "addMagicStyles");
     $this->addHookAfter("User::hasPagePermission", $this, "hookImageEdit");
     $this->addHookBefore("Inputfield::render", $this, "addMagicInputfieldProperties");
@@ -89,6 +88,10 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addHookAfter("Page::render", $this, "addMoveStyles");
     $this->addHookAfter("Templates::saved", $this, "hookBlockMigrateFile");
     $this->addHookAfter("Fields::saved", $this, "hookBlockMigrateFile");
+
+    // hooks for access control
+    $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
+    $this->addHookAfter("Page::trashable", $this, "hookRepeaterTrashable");
 
     // add styles for backend
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "addStyles");
@@ -1085,6 +1088,23 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if ($this->showDataPage and $this->wire->user->isSuperuser()) return;
     $page = $event->arguments(0);
     if ($page->id === 1) $page->numChildren = $page->numChildren - 1;
+  }
+
+  /**
+   * Make repeater items trashable for non superusers
+   */
+  public function hookRepeaterTrashable(HookEvent $event): void
+  {
+    $repeater = $event->object;
+    if (!$repeater instanceof RepeaterPage) return;
+    if ($this->wire->user->isSuperuser()) return;
+
+    // get the page where the repeater lives on
+    $page = $repeater->getForPage();
+    if ($page instanceof Block) {
+      // the repeater item is trashable if the forpage is editable
+      $event->return = $page->editable();
+    }
   }
 
   /**

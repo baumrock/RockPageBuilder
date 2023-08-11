@@ -1,3 +1,21 @@
+# [4.5.0](https://github.com/baumrock/RockPageBuilder/compare/v4.4.2...v4.5.0) (2023-08-11)
+
+
+### Bug Fixes
+
+* remove old ref in block stub file ([c6881c6](https://github.com/baumrock/RockPageBuilder/commit/c6881c6508aac78c2bebd8f1bdcbd9a670c370f7))
+* repeater items not trashable ([b25f72d](https://github.com/baumrock/RockPageBuilder/commit/b25f72d03e33cb68a39d1781921cc3acc8ede5d9))
+* typeerror when using settingsTable ([8e5b482](https://github.com/baumrock/RockPageBuilder/commit/8e5b4828fd132d9acd16868df7337b291767f6e2))
+
+
+### Features
+
+* improve block stub with better instructions ([53a9a8e](https://github.com/baumrock/RockPageBuilder/commit/53a9a8e19b7f495ac079a73210ac45aa2ff70f75))
+* improve widget concept ([ff30b71](https://github.com/baumrock/RockPageBuilder/commit/ff30b711f02574b053d947974300101e1d5ef16b))
+* improve yaml feature and add it to stub ([0ff09b0](https://github.com/baumrock/RockPageBuilder/commit/0ff09b04e986bec900f513865b3099340428d2f0))
+
+
+
 ## [4.4.2](https://github.com/baumrock/RockPageBuilder/compare/v4.4.1...v4.4.2) (2023-07-07)
 
 
@@ -36,16 +54,6 @@
 ### Features
 
 * add tweaks for ZeitungsTool ([8db50ce](https://github.com/baumrock/RockPageBuilder/commit/8db50cea37c47acfcd44028821d1bb3cc83fb07c))
-
-
-
-# [4.2.0](https://github.com/baumrock/RockPageBuilder/compare/v4.1.0...v4.2.0) (2023-04-30)
-
-
-### Features
-
-* add support for custom draggable selector ([6f37a45](https://github.com/baumrock/RockPageBuilder/commit/6f37a4512e0141c040fcb1b71ab6b6bb1c1b4508))
-* make whole header draggable ([b764124](https://github.com/baumrock/RockPageBuilder/commit/b7641243f103e30b8ddac3411eb72667b9f70dac))
 
 
 

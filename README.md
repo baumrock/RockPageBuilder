@@ -667,8 +667,6 @@ $rm->migrate([
 
 ## Widget Concept
 
-RockPageBuilder will create a field `rockpagebuilder_widgets` on the `home` template. There you can add all blocks that are available on your site as widgets. Simply add an empty(!) file with the corresponding name in the folder `/site/asset/RockPageBuilder/rockpagebuilder_widgets`. For example if you had a block called "MyBlock" you would add the empty file `/site/assets/RockPageBuilder/rockpagebuilder_widgets/MyBlock.php`.
-
 ### Selecting widgets from other pages
 
 ### Rendering widgets from template files
@@ -676,7 +674,12 @@ RockPageBuilder will create a field `rockpagebuilder_widgets` on the `home` temp
 Sometimes you want to create a widget that the user can edit in the backend, but you as a developer want to define where the widget gets rendered. For example you could create a global `Team` widget that you want to render on all `job` pages. In the job's page template file you can render this widget like this:
 
 ```php
-$rockpagebuilder->widgets('Team')->render()
+// either via widget name:
+echo $rockpagebuilder->widgets('Team')->render();
+
+// or you can also render any block like this
+// where 123 is the block id
+echo $pages->get(123)->renderBlock();
 ```
 
 When editing the widget, it will show a warning on which pages the widget will be displayed. RockPageBuilder can not know about the code you added to the template file, therefore you need to tell RockPageBuilder about it:

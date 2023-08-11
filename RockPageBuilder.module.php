@@ -78,7 +78,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "buildForm");
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
     $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
-    $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
     $this->addHookAfter("Page::render", $this, "addMagicStyles");
     $this->addHookAfter("User::hasPagePermission", $this, "hookImageEdit");
     $this->addHookBefore("Inputfield::render", $this, "addMagicInputfieldProperties");
@@ -89,6 +88,10 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addHookAfter("Page::render", $this, "addMoveStyles");
     $this->addHookAfter("Templates::saved", $this, "hookBlockMigrateFile");
     $this->addHookAfter("Fields::saved", $this, "hookBlockMigrateFile");
+
+    // hooks for access control
+    $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
+    $this->addHookAfter("Page::trashable", $this, "hookRepeaterTrashable");
 
     // add styles for backend
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "addStyles");
@@ -572,10 +575,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   /**
    * Return array of names of all blocks
    */
-  public function blockNames(): array
+  public function blockNames($namespace = false): array
   {
     $names = [];
-    foreach ($this->blocks as $block) $names[] = $block->className();
+    foreach ($this->blocks as $block) {
+      $name = $block->className();
+      if ($namespace) $name = "$namespace\\$name";
+      $names[] = $name;
+    }
     return $names;
   }
 
@@ -841,15 +848,18 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $tplcode = $rm->getCode($tpl, 2);
     $fieldcode = [];
     foreach ($tpl->fields as $field) {
-      if ($field->name === 'title') continue;
-      if ($field->name === 'email') continue;
+      // We only save field migrations to the yaml of this block if the
+      // prefix matches. This is to make sure we don't add global site fields
+      // to the blocks yaml file.
+      if (!str_starts_with($field->name, $block::prefix)) continue;
 
-      // get a fresh copy of the current field
-      // This is somehow necessary because if we take $field directly
-      // it has some weird runtime flags applied that get then
-      // written into the yaml and applied on the next migration.
+      // get a fresh copy of the field
+      // ugly hack because otherwise the field as a weird flag status
       $field = $this->wire->fields->get($field->id);
-      $fieldcode[$field->name] = $rm->getCode($field, 2);
+      $code = $rm->getCode($field, 2);
+      // if the field still has the systemoverride status we reset it
+      if ($code['flags'] == Field::flagSystemOverride) $code['flags'] = 0;
+      $fieldcode[$field->name] = $code;
     }
     $data = [
       'fields' => $fieldcode,
@@ -1081,6 +1091,23 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
+   * Make repeater items trashable for non superusers
+   */
+  public function hookRepeaterTrashable(HookEvent $event): void
+  {
+    $repeater = $event->object;
+    if (!$repeater instanceof RepeaterPage) return;
+    if ($this->wire->user->isSuperuser()) return;
+
+    // get the page where the repeater lives on
+    $page = $repeater->getForPage();
+    if ($page instanceof Block) {
+      // the repeater item is trashable if the forpage is editable
+      $event->return = $page->editable();
+    }
+  }
+
+  /**
    * Include file from assets folder
    */
   public function include($file)
@@ -1115,14 +1142,31 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addBlocks($path, $namespace);
 
     // get blocks
-    $blocks = [];
-    $options = ['extensions' => ['php']];
-    foreach ($this->wire->files->find($path, $options) as $file) {
-      $name = pathinfo($file, PATHINFO_FILENAME);
-      if (strpos($name, ".") === 0) continue; // no dot-files
-      $blocks[] = "$namespace\\$name";
+    if ($fieldname === self::field_widgets) {
+      // on the widget field all blocks are allowed
+      $blocks = $this->blockNames($namespace);
+      $blocks = array_filter($blocks, function ($item) {
+        return $item !== "RockPageBuilderBlock\Widget";
+      });
+    } else {
+      // regular rockpagebuilder field
+      // we need to find which blocks are allowed by files
+      $blocks = [];
+      $options = ['extensions' => ['php']];
+      foreach ($this->wire->files->find($path, $options) as $file) {
+        $name = pathinfo($file, PATHINFO_FILENAME);
+        if (strpos($name, ".") === 0) continue; // no dot-files
+        $blocks[] = "$namespace\\$name";
+      }
+      $blocks = array_merge($blocks, $add);
     }
-    $blocks = array_merge($blocks, $add);
+
+    // we automatically add the widget block to the default blocks field
+    // so that users can instantly convert any block into a widget
+    if ($fieldname === self::field_blocks) {
+      $blocks[] = "RockPageBuilderBlock\\Widget";
+      $blocks = array_unique($blocks);
+    }
 
     // add blocks via hook
     $this->addHookAfter(
@@ -1183,6 +1227,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     $folder = $this->wire->config->paths->templates . "RockPageBuilder";
     if (!is_dir($folder)) $this->wire->files->mkdir($folder);
+    // we make sure that the widgets folder exists
+    // otherwise no widget blocks will be allowed
+    if (!is_dir("$folder/widgets")) $this->wire->files->mkdir("$folder/widgets");
     foreach (new DirectoryIterator($folder) as $fileInfo) {
       if ($fileInfo->isDot()) continue;
       if (!$fileInfo->isDir()) continue;
@@ -1246,6 +1293,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         'label' => 'Widgets',
         'tags' => self::tags,
         'icon' => 'cubes',
+        'notes' => "Here you can create global blocks that can then be included on many pages. For example you could create a widget with contact details like a telephone number, add that widget to several pages and then change the phone number at one central place rather than updating all pages one by one.",
       ]);
       $rm->addFieldToTemplate(self::field_widgets, 'home');
     }
@@ -1584,8 +1632,21 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    */
   public function getModuleConfigInputfields($inputfields)
   {
-    $data = $this->data;
+    $name = strtolower($this);
+    $inputfields->add([
+      'type' => 'markup',
+      'label' => 'Documentation & Updates',
+      'icon' => 'life-ring',
+      'value' => "<p>Hey there, coding rockstars! 👋</p>
+        <ul>
+          <li><a class=uk-text-bold href=https://www.baumrock.com/modules/$name/docs>Read the docs</a> and level up your coding game! 🚀💻😎</li>
+          <li><a class=uk-text-bold href=https://www.baumrock.com/rock-monthly>Sign up now for our monthly newsletter</a> and receive the latest updates and exclusive offers right to your inbox! 🚀💻📫</li>
+          <li><a class=uk-text-bold href=https://github.com/baumrock/$name>Show some love by starring the project</a> and keep me motivated to build more awesome stuff for you! 🌟💻😊</li>
+          <li><a class=uk-text-bold href=https://paypal.me/baumrockcom>Support my work with a donation</a>, and together, we'll keep rocking the coding world! 💖💻💰</li>
+        </ul>",
+    ]);
 
+    $data = $this->data;
     $inputfields->add([
       'type' => 'markup',
       'label' => 'Note',

@@ -210,7 +210,7 @@ class FieldData extends PageArray
         /** @var RockMigrations $rm */
         $rm = $this->wire->modules->get('RockMigrations');
         $rm->mailToSuperuser($th->getMessage());
-      } catch (\Throwable $th2) {
+      } catch (\Throwable) {
         $this->log($th->getMessage());
       }
     }
@@ -248,7 +248,7 @@ class FieldData extends PageArray
         // add the image overlay for rapid development
         $out .= $this->addOverlay($block);
       } catch (\Throwable $th) {
-        $out .= $th->getMessage();
+        $out .= $th->getMessage() . " in block #$block ({$block->template})";
       }
     }
     if (!$out and $renderEmpty) return $this->renderEmpty();

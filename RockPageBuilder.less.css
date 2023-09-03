@@ -1,5 +1,6 @@
 /**
  * RockPageBuilder Backend Styles
+ * This file is loaded only in the PW Backend!
  */
 .uk-tooltip-inner {
   overflow-wrap: break-word;
@@ -174,4 +175,11 @@ li.rpb-item:not(.rpb-trash) > .InputfieldHeader .rpb-action-untrash {
 }
 .rpb-blockgroup {
   flex-basis: 100%;
+}
+/**
+ * Block Hide Action Icons
+ */
+.rpb_item_hidden .fa-toggle-on:before {
+  /* toggle-off icon */
+  content: "\f204" !important;
 }

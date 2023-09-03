@@ -1,5 +1,6 @@
 /**
  * RockPageBuilder Backend Styles
+ * This file is loaded only in the PW Backend!
  */
 
 // quick fix for showing inputfield outline
@@ -15,6 +16,7 @@
 // hide tabs for block editor modal
 body.modal form.rpb-hidetabs {
   margin: 0;
+
   .WireTabs {
     display: none !important;
   }
@@ -35,37 +37,46 @@ body.modal form.rpb-hidetabs {
   flex-direction: column;
   padding: 10px;
   background: #f2f2f2;
+
   &.loading {
     animation: pulsate 2s ease-out;
     animation-iteration-count: infinite;
     opacity: 1;
   }
+
   @keyframes pulsate {
     0% {
       opacity: 1;
     }
+
     50% {
       opacity: 0.2;
     }
+
     100% {
       opacity: 1;
     }
   }
+
   .uk-badge {
     border-radius: 5px;
     padding: 0 15px;
     // background-color: #666;
   }
+
   transition: transform 0.3s ease;
+
   &:hover {
     // tooltip background color
     outline: 3px solid #666;
     // transform: scale(1.05);
     text-decoration: none;
   }
+
   img {
     height: 75px;
   }
+
   .fa {
     pointer-events: none;
     font-size: 25px;
@@ -78,6 +89,7 @@ body.modal form.rpb-hidetabs {
     transform: translateY(-12px);
   }
 }
+
 li.InputfieldRockPageBuilder .rpb-button {
   img {
     height: 75px;
@@ -90,6 +102,7 @@ li.InputfieldRockPageBuilder .rpb-button {
 li.rpb-item {
   transition: outline 0.3s ease-in-out;
   margin-top: 10px;
+
   &.InputfieldStateCollapsed > .InputfieldHeader:after {
     content: none !important;
   }
@@ -116,14 +129,17 @@ li.rpb-item {
     .rpb-actions {
       float: right;
       margin-right: 5px;
+
       > .rpb-action > i {
         padding-right: 10px;
       }
+
       a {
         text-decoration: none;
       }
     }
   }
+
   > .InputfieldContent {
     padding: 4px;
     padding-top: 0;
@@ -149,9 +165,11 @@ li.rpb-item {
   // trashed item
   &.rpb-trash {
     outline: 1px solid darken(@color-trash, 20%);
+
     > .InputfieldContent,
     > .InputfieldHeader {
       background: @color-trash;
+
       > p.notes {
         background-color: @color-trash;
       }
@@ -162,6 +180,7 @@ li.rpb-item {
       display: none;
     }
   }
+
   &:not(.rpb-trash) {
     // dont show restore icon
     > .InputfieldHeader .rpb-action-untrash {
@@ -175,10 +194,12 @@ li.rpb-item {
   ul {
     padding-left: 0;
   }
+
   // radio buttons (eg in settings field)
   input[type="radio"] {
     margin-right: 5px;
   }
+
   table td {
     padding: 4px 10px;
   }
@@ -193,6 +214,7 @@ li.rpb-item {
 .rpb-nolabel > .InputfieldContent {
   padding-top: 20px;
 }
+
 // inputfield with smaller padding
 .rpb-pd5 > .InputfieldContent {
   padding: 5px;
@@ -206,10 +228,12 @@ li.rpb-item {
     opacity: 0;
     transition: opacity 0.3s ease;
   }
+
   &:hover .rpb-actions {
     opacity: 1;
   }
 }
+
 .rpb-buttons-container {
   .rpb-buttons {
     button.rpb-button {
@@ -221,6 +245,7 @@ li.rpb-item {
 // create new block
 .rpb-create {
   margin: 10px 0;
+
   input {
     width: 200px;
   }
@@ -236,6 +261,15 @@ li.rpb-item {
   display: flex;
   justify-content: center;
 }
+
 .rpb-blockgroup {
   flex-basis: 100%;
+}
+
+/**
+ * Block Hide Action Icons
+ */
+.rpb_item_hidden .fa-toggle-on:before {
+  /* toggle-off icon */
+  content: "\f204" !important;
 }

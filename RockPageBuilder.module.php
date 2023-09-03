@@ -415,11 +415,17 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // always add global frontend styles
     $rf->styles()->add($dir . "RockPageBuilder.min.css");
 
-    // add styles for frontend editing
-    if (!$this->wire->user->isLoggedin()) return;
-    if (!$rf->loadAlfred()) return;
-    $rf->styles()->add($dir . "overlay.min.css");
-    $rf->scripts()->add($dir . "overlay.min.js");
+    // load RockPageBuilder frontend assets
+    if ($this->wire->page->editable()) {
+
+      // add styles and script for the overlay feature
+      $rf->styles()->add($dir . "overlay.min.css");
+      $rf->scripts()->add($dir . "overlay.min.js");
+
+      // add styles that are needed when logged in (editing)
+      $rf->scripts()->add($dir . "frontend-loggedin.min.js");
+      $rf->styles()->add($dir . "frontend-loggedin.min.css");
+    }
   }
 
   /**
@@ -1372,6 +1378,12 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       $rm->minify($css, $dir . "RockPageBuilder.min.css");
       $css = $rm->saveCSS($dir . "overlay.less");
       $rm->minify($css, $dir . "overlay.min.css");
+      $css = $rm->saveCSS($dir . "frontend-loggedin.less");
+      $rm->minify($css, $dir . "frontend-loggedin.min.css");
+      $rm->minify(
+        $dir . "frontend-loggedin.js",
+        $dir . "frontend-loggedin.min.js"
+      );
     } catch (\Throwable $th) {
       $this->log($th->getMessage());
     }

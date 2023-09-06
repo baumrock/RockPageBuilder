@@ -118,8 +118,21 @@
   box-sizing: border-box;
 
   &:hover {
-    border: 2px dashed rgba(255, 255, 255, 0.35) !important;
+
+    //border: 2px dashed rgba(255, 255, 255, 0.35) !important;
     outline: 2px dashed rgba(0, 0, 0, 0.25) !important;
+
+    &:after {
+      content: "";
+      display: block;
+      position: absolute;
+      pointer-events: none;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      outline: 2px dashed rgba(255, 255, 255, 0.35) !important;
+    }
   }
 
   .alfredelements {

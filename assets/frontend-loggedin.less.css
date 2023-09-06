@@ -92,7 +92,8 @@
  * Sticky Alfred Icons
  */
 .alfred:hover {
-  outline: 3px dashed #d9d9d9 !important;
+  outline: 3px dashed rgba(0, 0, 0, 0.25) !important;
+  border: 3px dashed rgba(255, 255, 255, 0.35) !important;
 }
 .alfred .alfredelements {
   position: absolute;

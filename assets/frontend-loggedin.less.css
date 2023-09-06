@@ -91,6 +91,9 @@
 /**
  * Sticky Alfred Icons
  */
+.alfred {
+  box-sizing: border-box;
+}
 .alfred:hover {
   border: 2px dashed rgba(255, 255, 255, 0.35) !important;
   outline: 2px dashed rgba(0, 0, 0, 0.25) !important;

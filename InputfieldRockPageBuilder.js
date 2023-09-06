@@ -395,3 +395,9 @@ RockPageBuilder.addAction("trash", function (item) {
 RockPageBuilder.addAction("untrash", function (item) {
   item.untrash();
 });
+RockPageBuilder.addAction("hide", function (item) {
+  item.hide();
+});
+RockPageBuilder.addAction("unhide", function (item) {
+  item.unhide();
+});

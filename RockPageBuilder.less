@@ -7,6 +7,7 @@
 // color should not be hardcoded but will likely never change
 @border-color: #eeeeee;
 @color-trash: #ffe4e4;
+@color-warning: #fff3e0;
 
 // fix uikit tooltip issue
 .uk-tooltip-inner {
@@ -152,22 +153,38 @@ li.rpb-item {
       padding-top: 3px;
       transition: background-color 0.5s linear;
     }
+  }
 
-    > ul.Inputfields {
-      > li.Inputfield {
-        &.InputfieldRepeaterItem {
-          outline: 1px solid @border-color;
-        }
-      }
+  /**
+   * Hide/Unhide item
+   */
+  border: 1px solid @border-color;
+  &.InputfieldIsWarning {
+    border: 1px solid orange;
+  }
+  &.rpb-hidden {
+    outline: 2px solid orange;
+    > .InputfieldHeader {
+      color: orange !important;
+      background: @color-warning;
+    }
+    .rpb-action-hide {
+      display: none;
+    }
+  }
+  &:not(.rpb-hidden) {
+    .rpb-action-unhide {
+      display: none;
     }
   }
 
   // trashed item
   &.rpb-trash {
-    outline: 1px solid darken(@color-trash, 20%);
+    outline: 2px solid red;
 
     > .InputfieldContent,
     > .InputfieldHeader {
+      color: red !important;
       background: @color-trash;
 
       > p.notes {
@@ -180,7 +197,6 @@ li.rpb-item {
       display: none;
     }
   }
-
   &:not(.rpb-trash) {
     // dont show restore icon
     > .InputfieldHeader .rpb-action-untrash {
@@ -264,12 +280,4 @@ li.rpb-item {
 
 .rpb-blockgroup {
   flex-basis: 100%;
-}
-
-/**
- * Block Hide Action Icons
- */
-.rpb_item_hidden .fa-toggle-on:before {
-  /* toggle-off icon */
-  content: "\f204" !important;
 }

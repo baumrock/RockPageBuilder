@@ -473,6 +473,7 @@ class Block extends \ProcessWire\Page
     $items = $this->getBlockData();
     if (!$items) return false;
     foreach ($items as $item) {
+      if ($item->_mxhidden) continue;
       if ($item->id === $this->id) return $i;
       $i++;
     }
@@ -564,6 +565,7 @@ class Block extends \ProcessWire\Page
     $fs->icon = $this->getIcon();
     $fs->notes = $this->getNotes();
     $fs->addClass('rpb-item');
+    if ($this->_mxhidden) $fs->addClass('rpb-hidden');
     $fs->wrapAttr('data-page', $this->id);
     if ($this->wire->user->isSuperuser()) {
       $fs->wrapAttr('uk-tooltip', "{$this->className} #{$this->id}");
@@ -1055,12 +1057,20 @@ class Block extends \ProcessWire\Page
         'toggle' => 1,
       ],
     ]);
+    $out .= $this->renderAction('hide', [
+      'label' => $this->_('Hide'),
+      'icon' => 'toggle-on',
+    ]);
+    $out .= $this->renderAction('unhide', [
+      'label' => $this->_('Unhide'),
+      'icon' => 'toggle-off',
+    ]);
     $out .= $this->renderAction('trash', [
       'label' => $this->_('Mark for deletion'),
     ]);
     $out .= $this->renderAction('untrash', [
       'label' => $this->_('Undo deletion'),
-      'icon' => 'undo',
+      'icon' => 'trash-o',
     ]);
     if ($this->wire->user->isSuperuser()) {
       $path = $this->rm()->filePath($this, true);

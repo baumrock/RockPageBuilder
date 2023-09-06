@@ -149,8 +149,12 @@ class FieldData extends PageArray
    */
   public function getNew($data = null)
   {
+    /** @var FieldData $new */
     $new = $this->field->type->getBlankValue($this->page, $this->field);
-    if ($data) $new->wakeup($data);
+    if ($data) {
+      // bd($data);
+      $new->wakeup($data);
+    }
     return $new;
   }
 
@@ -225,7 +229,10 @@ class FieldData extends PageArray
     $out = '';
     $typeIndex = 0;
     foreach ($this as $i => $block) {
+      // skip this block if it is hidden
       /** @var Block $block */
+      if ($block->_mxhidden) continue;
+
       /** @var Block $next */
       /** @var Block $prev */
       $next = $this->eq($i + 1);
@@ -308,9 +315,11 @@ class FieldData extends PageArray
     foreach ($this as $item) {
       $sleep[] = (object)[
         'id' => $item->id,
+        'hidden' => $item->_mxhidden ?: 0,
       ];
     }
-    return json_encode($sleep);
+    $sleepvalue = json_encode($sleep);
+    return $sleepvalue;
   }
 
   /**
@@ -334,6 +343,7 @@ class FieldData extends PageArray
       // this value us used on processInput to trigger page save of the item
       $block->_mxchanged = $this->getProp($item, 'changed');
       $block->_mxtrash = $this->getProp($item, 'trash');
+      $block->_mxhidden = $this->getProp($item, 'hidden');
 
       $this->add($block);
     }

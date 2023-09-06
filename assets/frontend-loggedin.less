@@ -2,6 +2,25 @@
  * This file is loaded only when the currently viewed page is editable
  */
 
+// fix vertical scrollbars issue on firefox (vtop/vbottom sliders)
+@-moz-document url-prefix() {
+  .alfred .vspace {
+    width: 30px !important;
+
+    input[type="range"] {
+      width: 120px !important;
+      margin-left: -45px !important;
+      height: 120px !important;
+      margin-top: 20px !important;
+      transform: rotate(270deg) !important;
+    }
+  }
+
+  .alfred .icons > a:hover .vspace {
+    height: auto !important;
+  }
+}
+
 // type indicator that shows the block type on block hover
 .rpb-type {
   display: inline-block;

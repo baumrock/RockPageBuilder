@@ -1,6 +1,21 @@
 /**
  * This file is loaded only when the currently viewed page is editable
  */
+@-moz-document url-prefix() {
+  .alfred .vspace {
+    width: 30px !important;
+  }
+  .alfred .vspace input[type="range"] {
+    width: 120px !important;
+    margin-left: -45px !important;
+    height: 120px !important;
+    margin-top: 20px !important;
+    transform: rotate(270deg) !important;
+  }
+  .alfred .icons > a:hover .vspace {
+    height: auto !important;
+  }
+}
 .rpb-type {
   display: inline-block;
   margin-right: 5px;

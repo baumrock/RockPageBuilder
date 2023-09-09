@@ -93,6 +93,13 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
     // get raw value from textarea
     $json = $input->{$this->name};
 
+    /**
+     * We need to uncache the page, otherwise the hidden state will not be saved
+     * because the old value will already be equal to the new value.
+     */
+    /** @var Page $p */
+    $this->hasPage()->uncache();
+
     /** @var FieldData $old */
     $old = $this->value;
     $new = $old->getNew($json);
@@ -123,7 +130,6 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
 
       // we only process items that are marked as changed in raw textarea data
       if (!$item->_mxchanged) continue;
-      // bd($item, 'process it');
 
       // skip pages that are not editable
       if (!$item->editable()) {

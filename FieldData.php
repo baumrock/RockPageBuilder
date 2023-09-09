@@ -206,7 +206,9 @@ class FieldData extends PageArray
    */
   public function render($renderEmpty = false)
   {
-    if ($this->wire->user->isSuperuser()) return $this->renderCatch($renderEmpty);
+    if ($this->wire->user->isSuperuser()) {
+      return $this->renderCatch($renderEmpty);
+    }
     try {
       return $this->renderCatch($renderEmpty);
     } catch (\Throwable $th) {
@@ -262,15 +264,6 @@ class FieldData extends PageArray
 
     // if the addWrapper config settings is not set we return the clean markup
     if (!$this->master()->addWrapper) return $out;
-
-    // // create frontend editing wrapper markup
-    // // this feature is not working properly at the moment
-    // // the uikit sortable feature does not work on flex elements for example
-    // $editInfo = '';
-    // if($this->page->editable()) {
-    //   $editInfo = "data-page='{$this->page}' data-field='{$this->field}'";
-    // }
-    // return "<div class='rpb-sortable'$editInfo>$out</div>";
   }
 
   /**

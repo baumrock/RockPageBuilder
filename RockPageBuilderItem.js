@@ -40,21 +40,20 @@ RockPageBuilderItem.prototype.unhide = function () {
 // get json ready for the textarea
 RockPageBuilderItem.prototype.getJSON = function () {
   let trash = this.$.hasClass("rpb-trash") ? 1 : 0;
+  let changed =
+    this.$.find(".InputfieldStateChanged").length ||
+    this.$.hasClass("InputfieldStateChanged");
   let hidden = this.$.hasClass("rpb-hidden") ? 1 : 0;
-  let changed = this.$.hasClass("InputfieldStateChanged") * 1;
 
   // check if the item was added on this request
   // this ensures that added items are saved at least once which triggers
   // a processInput and checks for field erros (eg empty required fields)
-  if (this.$.hasClass("rpb-added")) changed = 1;
+  let added = this.$.hasClass("rpb-added") ? 1 : 0;
 
-  let json = {
+  return {
     id: this.$.data("page"),
     trash,
-    changed,
+    changed: changed + trash + added,
     hidden,
   };
-
-  // console.log(json);
-  return json;
 };

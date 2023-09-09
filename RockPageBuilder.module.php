@@ -19,6 +19,7 @@ require_once(__DIR__ . "/BlocksArray.php");
 class RockPageBuilder extends WireData implements Module, ConfigurableModule
 {
 
+  const debug = false;
   const prefix = 'rockpagebuilder_';
   const tags = 'RockPageBuilder';
 
@@ -74,6 +75,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       );
     }
 
+    $this->compileLESS();
+
     $this->installProcessModule();
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "buildForm");
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
@@ -104,10 +107,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // add JS for frontend
     $this->addHookAfter("Page::render", function ($event) {
       if ($event->object->template == 'admin') return;
-      // Bug: sortable makes editable text blocks almost uneditable
-      // you can't click on a specific place in text and must use arrow keys
-      // $this->wire->rockfrontend->scripts()->add(__DIR__."/RockPageBuilderFrontend.js");
       $rf = $event->wire->rockfrontend;
+      if (!$rf) return;
       if ($rf->loadVspace) $rf->scripts()->add(__DIR__ . "/scripts/vspace.js", "defer");
     });
 
@@ -159,7 +160,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if ($this->wire->page->template == 'admin') {
       $this->wire->config->js('RockPageBuilderBlocks', $this->blockNames());
     } else {
-      $this->rockfrontend()->styles()->addAll('/site/templates/RockPageBuilder', '', 3);
+      $rf = $this->rockfrontend();
+      if ($rf) $rf->styles()->addAll('/site/templates/RockPageBuilder', '', 3);
     }
   }
 
@@ -294,25 +296,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     if ($this->stylesAdded) return;
     $this->stylesAdded = true;
-    $path = $this->path;
-    $url = $this->wire->config->urls($this);
-    $lessFile = $this->className . ".less";
-    $cssFile = "$lessFile.css";
-    $mCSS = filemtime($path . $cssFile);
-    $mLESS = filemtime($path . $lessFile);
-
-    if ($mLESS > $mCSS and $this->wire->user->isSuperuser()) {
-      if ($less = $this->wire->modules->get('Less')) {
-        // recreate css file
-        /** @var Less $less */
-        $less->addFile($path . $lessFile);
-        $less->saveCss($path . $cssFile);
-        $mCSS = time();
-        $this->log('Created new CSS file for ' . $this->className);
-      }
-    }
-
-    $this->wire->config->styles->add($url . $cssFile . "?m=" . $mCSS);
+    $this->wire->config->styles->add(
+      $this->wire->config->urls($this) . "RockPageBuilder.min.css"
+    );
   }
 
   /**
@@ -627,6 +613,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if ($page instanceof Block) $addClass = true;
     if ($page instanceof RepeaterPage) $addClass = true;
     if ($addClass) $form->addClass('rpb-form rpb-hidetabs');
+
+    if (self::debug) $form->addClass('rpb-debug');
   }
 
   /**
@@ -747,6 +735,21 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     }
 
     // db("--- done ---");
+  }
+
+  /**
+   * Compile LESS files to CSS files and minify them
+   * This is for development of the module
+   */
+  public function compileLESS(): void
+  {
+    if ($this->wire->config->ajax) return;
+    /** @var RockMigrations $rm */
+    $rm = $this->wire->modules->get('RockMigrations');
+    $rm->saveCSS(
+      less: __DIR__ . "/RockPageBuilder.less",
+      minify: true,
+    );
   }
 
   /**
@@ -1429,7 +1432,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $field = $page->getFormatted(self::field_blocks);
     if (!$field) return;
     $html = $field->render($renderPlus);
-    if ($rf = $this->wire->rockfrontend) return $rf->html($html);
+    $rf = $this->wire->rockfrontend;
+    if ($rf) return $rf->html($html);
     return $html;
   }
 
@@ -1575,7 +1579,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       $p->rockpagebuilderTriggerSave = true;
       $p->of(false);
       $p->save();
-      // $this->log("triggerBlockPageSave #$p");
+      // bd("triggerBlockPageSave #$p");
       $this->_saved->add($p);
     }
   }
@@ -1671,6 +1675,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'type' => 'checkbox',
       'name' => 'showDataPage',
       'label' => 'Show datapage in tree for superusers',
+      'notes' => 'All blocks are PW pages stored under a special page in the pagetree. By default this page is hidden from the pagetree. If you check this box superusers will be able to see the page and all blocks.',
       'checked' => $this->showDataPage ? 'checked' : '',
     ]);
 
@@ -1678,6 +1683,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'type' => 'checkbox',
       'name' => 'createLessFile',
       'label' => 'Create LESS file for new blocks',
+      'notes' => 'All blocks need a PHP file for the business logic and a markup file that defines the output. If you check this box a LESS file will be created for every block that you can use to define the styling of the block.',
       'checked' => $this->createLessFile ? 'checked' : '',
     ]);
 

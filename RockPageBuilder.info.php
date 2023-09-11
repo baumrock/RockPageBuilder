@@ -16,7 +16,7 @@ $info = [
   'requires' => [
     'PHP>=8.0',
     'ProcessWire>=3.0.211',
-    'RockMigrations>=2.6.0',
+    'RockMigrations>=3.30.0',
   ],
   // RockFrontend is not a required module, but not all features will work
   // if RockFrontend is not installed!

@@ -1,7 +1,7 @@
 /**
  * By default rockpagebuilder will create a *.view.php file on block creation
- * if you want to create *.latte files instead set the
- * "createView" property to "latte" in your config.php:
+ * if you want to create *.latte files instead go to your module's settings page
+ * or set the "createView" property to "latte" in your config.php:
  * $config->rockpagebuilder = [
  *   "createView" => "latte",
  * ];

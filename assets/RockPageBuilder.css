@@ -1,5 +1,7 @@
 /**
  * RockPageBuilder Frontend Styles
+ * These styles are loaded on the frontend everytime (both for guests and for
+ * logged in users).
  */
 .rpb-nomargin > *:first-child,
 .rpb-nomargin .pw-edit-orig > *:first-child,
@@ -10,16 +12,4 @@
 .rpb-nomargin .pw-edit-orig > *:last-child,
 .rpb-nomargin .pw-edit-copy > *:last-child {
   margin-bottom: 0;
-}
-.rpb-type {
-  display: inline-block;
-  margin-right: 5px;
-}
-.rpb-type span {
-  display: inline-block;
-  background-color: #ececec;
-  color: black;
-  border-radius: 5px;
-  padding: 2px 10px;
-  font-size: 0.8rem;
 }

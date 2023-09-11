@@ -15,14 +15,24 @@ RockPageBuilderItem.prototype.$root = function (e) {
 
 // API
 
-// add trash flag
+// trash/untrash
 RockPageBuilderItem.prototype.trash = function () {
+  this.$.addClass("InputfieldStateChanged");
   this.$.addClass("rpb-trash").trigger("changed");
 };
-
-// remove trash flag
 RockPageBuilderItem.prototype.untrash = function () {
+  this.$.addClass("InputfieldStateChanged");
   this.$.removeClass("rpb-trash").trigger("changed");
+};
+
+// hide/unhide
+RockPageBuilderItem.prototype.hide = function () {
+  this.$.addClass("InputfieldStateChanged");
+  this.$.addClass("rpb-hidden").trigger("changed");
+};
+RockPageBuilderItem.prototype.unhide = function () {
+  this.$.addClass("InputfieldStateChanged");
+  this.$.removeClass("rpb-hidden").trigger("changed");
 };
 
 // Helpers
@@ -30,7 +40,10 @@ RockPageBuilderItem.prototype.untrash = function () {
 // get json ready for the textarea
 RockPageBuilderItem.prototype.getJSON = function () {
   let trash = this.$.hasClass("rpb-trash") ? 1 : 0;
-  let changed = this.$.find(".InputfieldStateChanged").length;
+  let changed =
+    this.$.find(".InputfieldStateChanged").length ||
+    this.$.hasClass("InputfieldStateChanged");
+  let hidden = this.$.hasClass("rpb-hidden") ? 1 : 0;
 
   // check if the item was added on this request
   // this ensures that added items are saved at least once which triggers
@@ -41,5 +54,6 @@ RockPageBuilderItem.prototype.getJSON = function () {
     id: this.$.data("page"),
     trash,
     changed: changed + trash + added,
+    hidden,
   };
 };

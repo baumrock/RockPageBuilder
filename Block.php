@@ -110,7 +110,8 @@ class Block extends \ProcessWire\Page
 
     // add vspace buttons?
     if ($block->spaceV()) {
-      $this->rockfrontend()->loadVspace = true;
+      $rf = $this->rockfrontend();
+      if ($rf) $rf->loadVspace = true;
       $icons[] = (object)[
         'icon' => 'up',
         'label' => $block->title,
@@ -473,6 +474,7 @@ class Block extends \ProcessWire\Page
     $items = $this->getBlockData();
     if (!$items) return false;
     foreach ($items as $item) {
+      if ($item->_mxhidden) continue;
       if ($item->id === $this->id) return $i;
       $i++;
     }
@@ -564,6 +566,7 @@ class Block extends \ProcessWire\Page
     $fs->icon = $this->getIcon();
     $fs->notes = $this->getNotes();
     $fs->addClass('rpb-item');
+    if ($this->_mxhidden) $fs->addClass('rpb-hidden');
     $fs->wrapAttr('data-page', $this->id);
     if ($this->wire->user->isSuperuser()) {
       $fs->wrapAttr('uk-tooltip', "{$this->className} #{$this->id}");
@@ -1055,12 +1058,20 @@ class Block extends \ProcessWire\Page
         'toggle' => 1,
       ],
     ]);
+    $out .= $this->renderAction('hide', [
+      'label' => $this->_('Hide'),
+      'icon' => 'toggle-on',
+    ]);
+    $out .= $this->renderAction('unhide', [
+      'label' => $this->_('Unhide'),
+      'icon' => 'toggle-off',
+    ]);
     $out .= $this->renderAction('trash', [
       'label' => $this->_('Mark for deletion'),
     ]);
     $out .= $this->renderAction('untrash', [
       'label' => $this->_('Undo deletion'),
-      'icon' => 'undo',
+      'icon' => 'trash-o',
     ]);
     if ($this->wire->user->isSuperuser()) {
       $path = $this->rm()->filePath($this, true);
@@ -1328,7 +1339,8 @@ class Block extends \ProcessWire\Page
       // this converts it back to a single string value
       else $str = (string)$str[0];
     }
-    if (!$rf = $this->rockfrontend()) return $str;
+    $rf = $this->rockfrontend();
+    if (!$rf) return $str;
     return $rf->postCSS($str);
   }
 
@@ -1337,7 +1349,14 @@ class Block extends \ProcessWire\Page
    */
   public function rockfrontend()
   {
-    return $this->wire->modules->get('RockFrontend');
+    $rf = $this->wire->modules->get('RockFrontend');
+    if (!$rf) return false;
+    $rfinfo = $this->wire->modules->getModuleInfo($rf);
+    $min = $this->wire->modules->getModuleInfo($this->master())['minRockFrontend'];
+    if (version_compare($rfinfo['version'], $min) < 0) {
+      throw new WireException("Please update RockFrontend to version $min+");
+    }
+    return $rf;
   }
 
   /**
@@ -1373,23 +1392,25 @@ class Block extends \ProcessWire\Page
       if (!is_array($top) or !is_array($bottom)) return;
       if (count($top) < 2 or count($bottom) < 2) return;
 
-      $top = $this->rockfrontend()->rfGrow([
-        'min' => $top[0],
-        'max' => $top[1],
-        'scale' => 'var(--vscale-top)',
-      ]);
-      $bottom = $this->rockfrontend()->rfGrow([
-        'min' => $bottom[0],
-        'max' => $bottom[1],
-        'scale' => 'var(--vscale-bottom)',
-      ]);
+      $rf = $this->rockfrontend();
+      if ($rf) {
+        $top = $rf->rfGrow([
+          'min' => $top[0],
+          'max' => $top[1],
+          'scale' => 'var(--vscale-top)',
+        ]);
+        $bottom = $rf->rfGrow([
+          'min' => $bottom[0],
+          'max' => $bottom[1],
+          'scale' => 'var(--vscale-bottom)',
+        ]);
+        $vtop = $block->meta('vspace-top');
+        if ($vtop === null) $vtop = RockFrontend::defaultVspaceScale;
+        $vbottom = $block->meta('vspace-bottom');
+        if ($vbottom === null) $vbottom = RockFrontend::defaultVspaceScale;
 
-      $vtop = $block->meta('vspace-top');
-      if ($vtop === null) $vtop = RockFrontend::defaultVspaceScale;
-      $vbottom = $block->meta('vspace-bottom');
-      if ($vbottom === null) $vbottom = RockFrontend::defaultVspaceScale;
-
-      $str = "style='padding-top: $top; padding-bottom: $bottom; --vscale-top:$vtop; --vscale-bottom:$vbottom; $styles'";
+        $str = "style='padding-top: $top; padding-bottom: $bottom; --vscale-top:$vtop; --vscale-bottom:$vbottom; $styles'";
+      }
     }
 
     if (!$useMagic) return $str;

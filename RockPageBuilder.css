@@ -1,5 +1,6 @@
 /**
  * RockPageBuilder Backend Styles
+ * This file is loaded only in the PW Backend!
  */
 .uk-tooltip-inner {
   overflow-wrap: break-word;
@@ -69,6 +70,10 @@ li.InputfieldRockPageBuilder .rpb-button img {
 li.rpb-item {
   transition: outline 0.3s ease-in-out;
   margin-top: 10px;
+  /**
+   * Hide/Unhide item
+   */
+  border: 1px solid #eeeeee;
 }
 li.rpb-item.InputfieldStateCollapsed > .InputfieldHeader:after {
   content: none !important;
@@ -109,14 +114,28 @@ li.rpb-item > .InputfieldContent > .notes {
   padding-top: 3px;
   transition: background-color 0.5s linear;
 }
-li.rpb-item > .InputfieldContent > ul.Inputfields > li.Inputfield.InputfieldRepeaterItem {
-  outline: 1px solid #eeeeee;
+li.rpb-item.InputfieldIsWarning {
+  border: 1px solid orange;
+}
+li.rpb-item.rpb-hidden {
+  outline: 2px dashed orange;
+}
+li.rpb-item.rpb-hidden > .InputfieldHeader {
+  color: orange !important;
+  background: #fff3e0;
+}
+li.rpb-item.rpb-hidden .rpb-action-hide {
+  display: none;
+}
+li.rpb-item:not(.rpb-hidden) .rpb-action-unhide {
+  display: none;
 }
 li.rpb-item.rpb-trash {
-  outline: 1px solid #ff7e7e;
+  outline: 2px solid red;
 }
 li.rpb-item.rpb-trash > .InputfieldContent,
 li.rpb-item.rpb-trash > .InputfieldHeader {
+  color: red !important;
   background: #ffe4e4;
 }
 li.rpb-item.rpb-trash > .InputfieldContent > p.notes,
@@ -174,4 +193,7 @@ li.rpb-item:not(.rpb-trash) > .InputfieldHeader .rpb-action-untrash {
 }
 .rpb-blockgroup {
   flex-basis: 100%;
+}
+.rpb-debug #Inputfield_rockpagebuilder_blocks.uk-hidden {
+  display: block !important;
 }

@@ -3,6 +3,7 @@
 namespace ProcessWire;
 
 use RockPageBuilder\Block;
+use RockPageBuilder\FieldData;
 
 /**
  * @author Bernhard Baumrock, 10.08.2020
@@ -90,8 +91,18 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
   public function ___processInput($input)
   {
     // get raw value from textarea
+    $json = $input->{$this->name};
+
+    /**
+     * We need to uncache the page, otherwise the hidden state will not be saved
+     * because the old value will already be equal to the new value.
+     */
+    /** @var Page $p */
+    $this->hasPage()->uncache();
+
+    /** @var FieldData $old */
     $old = $this->value;
-    $new = $old->getNew($input->{$this->name});
+    $new = $old->getNew($json);
 
     // process all repeater items
     $changes = $this->processItems($new, $input);
@@ -108,7 +119,7 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
    * Process all repeater items
    * @return int
    */
-  public function ___processItems($new, $input)
+  public function ___processItems(FieldData $new, $input)
   {
     $changes = 0;
 

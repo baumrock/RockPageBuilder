@@ -1,3 +1,21 @@
+# [4.6.0](https://github.com/baumrock/RockPageBuilder/compare/v4.5.0...v4.6.0) (2023-09-11)
+
+
+### Bug Fixes
+
+* hide/unhide not saving on home page ([a522a6d](https://github.com/baumrock/RockPageBuilder/commit/a522a6d32372dd0777f12e4fec21784f7b2c5bb0))
+* vertical slider issue on firefox ([0d6e706](https://github.com/baumrock/RockPageBuilder/commit/0d6e706affd40323132c16983c272548cd490c17))
+
+
+### Features
+
+* add block info on render exceptions ([3af3a62](https://github.com/baumrock/RockPageBuilder/commit/3af3a6278cd98a062e76585979fdc459d7c90fdb))
+* add hide/unhide feature ([4a2e23f](https://github.com/baumrock/RockPageBuilder/commit/4a2e23f7bb807733e657349d1e6d1b1fe6ea3730))
+* add page reload spinner ([6729671](https://github.com/baumrock/RockPageBuilder/commit/6729671989415a98d0b13abc70a8e8f61a60749f))
+* hidden items dashed outline for better distinction ([fded71c](https://github.com/baumrock/RockPageBuilder/commit/fded71ce7fdf908758eb372723c8f548a38d5411))
+
+
+
 # [4.5.0](https://github.com/baumrock/RockPageBuilder/compare/v4.4.2...v4.5.0) (2023-08-11)
 
 
@@ -45,15 +63,6 @@
 ### Features
 
 * add support for custom styles in styles() method ([8e5664e](https://github.com/baumrock/RockPageBuilder/commit/8e5664eea138f6b436343413dfa8c240ee15ef42))
-
-
-
-# [4.3.0](https://github.com/baumrock/RockPageBuilder/compare/v4.2.0...v4.3.0) (2023-05-02)
-
-
-### Features
-
-* add tweaks for ZeitungsTool ([8db50ce](https://github.com/baumrock/RockPageBuilder/commit/8db50cea37c47acfcd44028821d1bb3cc83fb07c))
 
 
 

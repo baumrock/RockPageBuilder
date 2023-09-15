@@ -200,9 +200,6 @@ class Block extends \ProcessWire\Page
     $f = new InputfieldMarkup();
     $f->label = 'Settings';
     $f->icon = 'cogs';
-    $url = $this->wire->pages->get(2)->url . "rockpagebuilder/settings-field/?block=$this";
-    $f->value = "<a href='$url' class='ui-button'>Add a settings field to this block</a>";
-    $f->notes = "This field and button is only shown to superusers.";
 
     /** @var RockFields $rf */
     if (!$rf = $this->wire->rockfields) {
@@ -210,12 +207,10 @@ class Block extends \ProcessWire\Page
       if ($this->wire->user->isSuperuser()) $fs->add($f);
       return;
     }
-    if (!$f = $rf->getInputfield($this, $this->settingsName(), true)) {
-      if (!$this->wire->user->isSuperuser()) return;
-      if (!$this->wire->config->debug) return;
-      if ($f instanceof Inputfield) $fs->add($f);
-      return;
-    }
+
+    $inputfield = $rf->getInputfield($this, $this->settingsName(), true);
+    if (!$inputfield) return;
+    else $f = $inputfield;
     $f->addClass('rpb-settings');
 
     // set settings field values from getInfo() of block
@@ -1349,14 +1344,7 @@ class Block extends \ProcessWire\Page
    */
   public function rockfrontend()
   {
-    $rf = $this->wire->modules->get('RockFrontend');
-    if (!$rf) return false;
-    $rfinfo = $this->wire->modules->getModuleInfo($rf);
-    $min = $this->wire->modules->getModuleInfo($this->master())['minRockFrontend'];
-    if (version_compare($rfinfo['version'], $min) < 0) {
-      throw new WireException("Please update RockFrontend to version $min+");
-    }
-    return $rf;
+    return $this->wire->modules->get('RockFrontend');
   }
 
   /**

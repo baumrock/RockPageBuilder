@@ -403,11 +403,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     // load RockPageBuilder frontend assets
     if ($this->wire->page->editable()) {
-
-      // add styles and script for the overlay feature
-      $rf->styles()->add($dir . "overlay.min.css");
-      $rf->scripts()->add($dir . "overlay.min.js");
-
       // add styles that are needed when logged in (editing)
       $rf->scripts()->add($dir . "frontend-loggedin.min.js");
       $rf->styles()->add($dir . "frontend-loggedin.min.css");

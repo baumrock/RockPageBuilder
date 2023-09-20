@@ -124,7 +124,15 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->createBlock();
     $this->include("init.php"); // load templates/RockPageBuilder/init.php
     $this->addBlock(__DIR__ . "/Widget.php"); // always load the widget block
-    $this->loadUserBlocks(); // load user blocks from templates folder
+
+    // add all blocks from the templates folder to $this->blocks
+    $this->addBlocks(
+      dir: $this->wire->config->paths->templates . "RockPageBuilder",
+      recursive: 3,
+    );
+
+    // now load all the added blocks according to the fields
+    $this->loadUserBlocks();
 
     // add ajax endpoints
     $this->addHookAfter("/rockpagebuilder-vscale", $this, "saveVScaleValue");
@@ -1141,9 +1149,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     // this is to support short folder names in /site/templates/RockPageBuilder
     $fieldname = $this->getFieldname($fieldname);
-
-    // add blocks to rockpagebuilder
-    $this->addBlocks($path, $namespace);
 
     // get blocks
     if ($fieldname === self::field_widgets) {

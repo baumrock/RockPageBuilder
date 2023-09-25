@@ -11,11 +11,11 @@ class {name} extends Block {
   public function info() {
     return [
       'title' => '{name}',
-      'spaceV' => self::spaceM,
-      // 'color' => 'lime',
-      // 'icon' => 'picture-o',
       // 'description' => 'RockPageBuilder Block Setup Demo',
+      // 'icon' => 'picture-o',
+      // 'color' => 'lime',
       // 'hideTitle' => true, // shortcut to set title field to hidden
+      // 'spaceV' => self::spaceM,
     ];
   }
 

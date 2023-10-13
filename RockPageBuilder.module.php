@@ -134,6 +134,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // now load all the added blocks according to the fields
     $this->loadUserBlocks();
 
+    // load blocks from RockBlocks module
+    $this->addBlocks(
+      dir: $this->wire->config->paths->siteModules . "RockBlocks/blocks",
+      recursive: 3,
+    );
+    $this->loadRockBlocks();
+
     // add ajax endpoints
     $this->addHookAfter("/rockpagebuilder-vscale", $this, "saveVScaleValue");
 
@@ -365,7 +372,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       $this->rm()->watch($file, false);
     } catch (\Throwable $th) {
       $this->warning($class . ": " . $th->getMessage());
-      if ($this->wire->user->isSuperuser()) {
+      if ($this->wire->user->isSuperuser() and function_exists("bd")) {
         bd(Debug::backtrace());
       }
     }
@@ -1229,7 +1236,22 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * Load all blocks from assets folder
+   * Load all blocks from RockBlocks module
+   * @return void
+   */
+  public function loadRockBlocks()
+  {
+    if (!$this->wire->modules->isInstalled("RockBlocks")) return;
+    $folder = $this->wire->config->paths->siteModules . "RockBlocks/blocks";
+    foreach (new DirectoryIterator($folder) as $fileInfo) {
+      if ($fileInfo->isDot()) continue;
+      if (!$fileInfo->isDir()) continue;
+      $this->loadBlocks(RockBlocks::field_blocks, $fileInfo->getPathname());
+    }
+  }
+
+  /**
+   * Load all blocks from templates folder
    * @return void
    */
   public function loadUserBlocks()
@@ -1313,6 +1335,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'label' => 'Eyebrow',
       'tags' => self::tags,
       'icon' => 'eye',
+      'collapsed' => Inputfield::collapsedBlank,
     ]);
 
     // create teaser field

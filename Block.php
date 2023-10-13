@@ -1538,7 +1538,7 @@ class Block extends \ProcessWire\Page
   public function spaceID(): string
   {
     $id = $this->getInfo()->spaceID;
-    if (!$id) $id = $this->getTplName();
+    if (!$id) $id = "default";
     return $id;
   }
 

@@ -293,7 +293,7 @@ class FieldData extends PageArray
     return $rf->iconLink("plus", $href, [
       'title' => $this->_('Add new content'),
       'wrapClass' => 'rpb-first-block',
-      'style' => 'margin: clamp(30px, 30px + 170 * ((100vw - 360px) / (1440 - 360)), 200px) 0; text-align: center;'
+      'style' => 'padding: clamp(30px, 30px + 170 * ((100vw - 360px) / (1440 - 360)), 200px) 0; text-align: center;'
     ]);
   }
 

@@ -633,8 +633,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    */
   public function buildBlockForm(HookEvent $event)
   {
-    $this->preloadAssets();
     $page = $event->process->getPage();
+    $this->preloadAssets($page);
     if (!$page instanceof Block) return;
     $fs = $event->return;
     $page->prepareForm($fs);
@@ -1421,10 +1421,23 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * it is used in a RockFields field. Otherwise the first loaded block will
    * have a messed markup: https://i.imgur.com/6rr2ZIX.png
    */
-  public function preloadAssets()
+  public function preloadAssets(Block $block)
   {
+    // do this only once
     if ($this->preload) return;
+
+    // preload radio assets (for settings field)
     (new InputfieldRadios())->renderReady();
+
+    // preload assets of fields of a repeater field
+    // this is necessary for tinymce or image fields for example
+    foreach ($block->fields as $field) {
+      if (!$field instanceof RepeaterField) continue;
+      $tpl = $this->wire->templates->get($field->template_id);
+      foreach ($tpl->fields as $f) $f->getInputfield($block)->renderReady();
+    }
+
+    // set flag that we preloaded assets
     $this->preload = true;
   }
 

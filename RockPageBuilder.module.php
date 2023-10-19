@@ -1421,7 +1421,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * it is used in a RockFields field. Otherwise the first loaded block will
    * have a messed markup: https://i.imgur.com/6rr2ZIX.png
    */
-  public function preloadAssets(Block $block)
+  public function preloadAssets(Page $block)
   {
     // do this only once
     if ($this->preload) return;

@@ -1,0 +1,45 @@
+{var $maxw = "maxw-".$block->settings('maxw')}
+{var $width = $block->thumbWidth()}
+
+<section
+  id="b{$block}"
+  class="rpb-gallery"
+  {alfred($block)}
+  {$block->styles()}
+>
+  <div
+    class="
+      uk-container uk-flex uk-flex-center
+      {$block->settings('muted')?'uk-background-muted uk-padding'}
+    "
+  >
+    <div class="{$maxw}">
+
+      <h3 class="uk-text-center uk-text-primary" n:ifcontent>
+        {$block->eyebrow()}
+      </h3>
+      <h2 class="uk-text-center uk-margin-medium-bottom" n:ifcontent>
+        {$block->title()}
+      </h2>
+
+      <div
+        n:if="$block->images(2)"
+        class="uk-flex uk-flex-wrap uk-flex-center images"
+        uk-lightbox
+      >
+        {foreach $block->images(2) as $img}
+          <a
+            href="{$img->maxSize(1920,1920)->webp->url}"
+            data-caption="{$img->description}"
+          >
+            <img
+              src="{$img->size($width,$width)->webp->url}"
+              alt="{$img->description}"
+              uk-img
+            >
+          </a>
+        {/foreach}
+      </div>
+    </div>
+  </div>
+</section>

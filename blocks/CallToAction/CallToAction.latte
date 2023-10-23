@@ -1,0 +1,31 @@
+{var $maxw = "maxw-".$block->settings('maxw')}
+
+<section
+  id="b{$block}"
+  class="rpb-calltoaction"
+  {alfred($block)}
+  {$block->styles()}
+>
+  <div class="uk-container {$maxw} {$block->bgStyle()}">
+
+    <div class="uk-child-width-1-2@m" uk-grid>
+
+      {* left column *}
+      <div class="rpb-nomargin">
+        <h3 class="uk-text-primary" n:ifcontent>
+          {$block->eyebrow()}
+        </h3>
+        <h2 n:ifcontent>
+          {$block->title()}
+        </h2>
+        <div class="uk-margin-top text" n:ifcontent>{$block->teaser()}</div>
+      </div>
+
+      {* right column *}
+      <div class="rpb-nomargin uk-flex uk-flex-middle right text">
+        {$block->right()}
+      </div>
+    </div>
+
+  </div>
+</section>

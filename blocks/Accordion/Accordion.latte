@@ -1,0 +1,33 @@
+{var $maxw = "maxw-".$block->settings('maxw')}
+
+<section
+  id="b{$block}"
+  class="rpb-accordion"
+  {alfred($block)}
+  {$block->styles()}
+>
+  <div class="uk-container {$maxw} {$block->bgStyle()}">
+
+    <h3 class="uk-text-center uk-text-primary" n:ifcontent>
+      {$block->eyebrow()}
+    </h3>
+    <h2 class="uk-text-center uk-margin-medium-bottom" n:ifcontent>
+      {$block->title()}
+    </h2>
+
+    <div class="uk-flex uk-flex-center">
+      <ul class="items" uk-accordion>
+        <li
+          n:foreach="$block->items() as $item"
+          class="{$iterator->first && $block->settings('firstopen') ? 'uk-open'}"
+          {alfred($item)}
+        >
+          <a class="uk-accordion-title" href>{$item->title ?: "New Empty Item"}</a>
+          <div class="uk-accordion-content rpb-nomargin">
+            {$item->body()}
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>

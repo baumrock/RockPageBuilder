@@ -1,0 +1,41 @@
+{var $maxw = "maxw-".$block->settings('maxw')}
+{var $itemw = "itemw-".$block->settings('itemw', 's')}
+
+<section
+  id="b{$block}"
+  class="rpb-features"
+  {alfred($block)}
+  {$block->styles()}
+>
+  <div class="uk-container {$maxw} {$block->bgStyle()}">
+
+    <h3 class="uk-text-center uk-text-primary" n:ifcontent>
+      {$block->eyebrow()}
+    </h3>
+    <h2 class="uk-margin-large-bottom uk-text-center" n:ifcontent>
+      {$block->title()}
+    </h2>
+
+    {* feature items *}
+    <div class="items uk-flex uk-flex-wrap uk-flex-center uk-margin-medium-bottom">
+      <div
+        n:foreach="$block->items() as $item"
+        class="rpb-nomargin item {$itemw}"
+        {alfredH($item)}
+      >
+        <div
+          n:if="$icon = $item->icon(1)"
+          class="icon uk-margin-small-bottom"
+        >
+          {$rockfrontend->svg($icon->url)}
+        </div>
+
+        <h3 class="uk-margin-small-bottom">{$item->title()}</h3>
+        <div class="body">
+          {$item->body()}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

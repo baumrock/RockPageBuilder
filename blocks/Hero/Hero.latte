@@ -1,0 +1,80 @@
+{var $style = $block->settings('style', 'one')}
+{var $img = $block->image()}
+
+<section
+  id="b{$block}"
+  class="rpb-hero"
+  {alfred($block)}
+  {$block->styles()}
+>
+
+  {* style one *}
+  <div
+    n:if="$style==one"
+    class="
+      uk-container uk-padding
+      uk-background-cover uk-background-center-right
+      {!$img ? 'uk-background-muted'}
+    "
+    style="background-image: url({$block->bgImage()|noescape})"
+  >
+
+    <div class="white uk-width-2-3@m uk-width-1-2@l uk-padding">
+      <div class="rpb-nomargin">
+        <div class="uk-text-primary uk-text-bold">
+          {$block->eyebrow()}
+        </div>
+        <h1 class="uk-margin-small-bottom balance">{$block->title()}</h1>
+        <div class="rpb-nomargin">{$block->teaser()}</div>
+      </div>
+    </div>
+
+  </div>
+
+  {* style two *}
+  <div
+    n:if="$style==two"
+    class="uk-container uk-background-muted uk-padding"
+  >
+
+    <div class="uk-grid uk-child-width-1-2@m uk-flex uk-flex-middle" uk-grid>
+      <div>
+        <div class="uk-text-primary uk-text-bold">{$block->eyebrow()}</div>
+        <h1 class="uk-margin-small-bottom balance">{$block->title()}</h1>
+        <div class="rpb-nomargin">{$block->teaser()}</div>
+      </div>
+
+      <div class="uk-flex uk-flex-middle uk-flex-center">
+        <img
+          n:if="$img"
+          src="{$img->maxSize(600,400)->webp->url}"
+          alt="{$img->description}"
+        >
+      </div>
+    </div>
+
+  </div>
+
+  {* style three *}
+  <div
+    n:if="$style==three"
+    class="uk-container uk-background-muted uk-padding uk-flex uk-flex-center"
+  >
+
+    <div class="maxw uk-text-center@s">
+      <div class="uk-text-primary uk-text-bold">{$block->eyebrow()}</div>
+      <h1 class="uk-margin-small-bottom balance">{$block->title()}</h1>
+
+      <img
+        n:if="$img"
+        src="{$img->maxSize(600,400)->webp->url}"
+        alt="{$img->description}"
+        class="uk-margin"
+      >
+
+      <div class="rpb-nomargin">{$block->teaser()}</div>
+    </div>
+
+  </div>
+
+</section>

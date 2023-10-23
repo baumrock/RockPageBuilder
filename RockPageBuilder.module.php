@@ -26,6 +26,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   const tpl_datapage = self::prefix . "datapage";
 
   const field_blocks = self::prefix . "blocks";
+  const field_rockblocks = self::prefix . "rockblocks";
   const field_widgets = self::prefix . "widgets";
   const field_eyebrow = self::prefix . "eyebrow";
   const field_teaser = self::prefix . "teaser";
@@ -135,10 +136,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->loadUserBlocks();
 
     // load blocks from RockBlocks module
-    $this->addBlocks(
-      dir: $this->wire->config->paths->siteModules . "RockBlocks/blocks",
-      recursive: 3,
-    );
     $this->loadRockBlocks();
 
     // add ajax endpoints
@@ -397,6 +394,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       if (strpos($name, ".") === 0) continue; // no dot-files
       if ($name === "init.php") continue;
       if (substr($file, -9) === ".view.php") continue;
+
+      // check if block has already been loaded
+      // This is to make RockBlocks work, because there we load files either from
+      // the sites directory or if no file exists we load the one from the modules
+      // folder.
+      $cls = $namespace . "\\" . substr($name, 0, -4);
+      if (in_array($cls, $this->blockClasses())) continue;
+
       $this->addBlock($file, $namespace);
     }
   }
@@ -563,6 +568,18 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $rm->deletePage("parent=2,name=rockpagebuilder");
     $rm->deleteTemplates("tags=RockPageBuilder");
     $rm->deleteFields("tags=RockPageBuilder");
+  }
+
+  /**
+   * Return array of all block classes
+   * eg
+   * RockPageBuilder\Foo
+   * RockPageBuilder\Bar
+   * RockPageBuilder\Baz
+   */
+  public function blockClasses(): array
+  {
+    return array_keys($this->blocks);
   }
 
   /**
@@ -1241,12 +1258,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    */
   public function loadRockBlocks()
   {
-    if (!$this->wire->modules->isInstalled("RockBlocks")) return;
-    $folder = $this->wire->config->paths->siteModules . "RockBlocks/blocks";
-    foreach (new DirectoryIterator($folder) as $fileInfo) {
+    if (!$this->useRockBlocks) return;
+    $dir = Paths::normalizeSeparators(__DIR__ . "/blocks");
+    $this->addBlocks(dir: $dir, recursive: 3);
+    foreach (new DirectoryIterator($dir) as $fileInfo) {
       if ($fileInfo->isDot()) continue;
       if (!$fileInfo->isDir()) continue;
-      $this->loadBlocks(RockBlocks::field_blocks, $fileInfo->getPathname());
+      $this->loadBlocks(self::field_rockblocks, $fileInfo->getPathname());
     }
   }
 
@@ -1316,6 +1334,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         'icon' => 'cubes',
       ]);
       $rm->addFieldToTemplate(self::field_blocks, 'home');
+    }
+
+    if (!$rm->getField(self::field_rockblocks, true)) {
+      $rm->createField(self::field_rockblocks, 'RockPageBuilder', [
+        'label' => 'RockBlocks',
+        'tags' => self::tags,
+        'icon' => 'cubes',
+      ]);
     }
 
     // create widgets field
@@ -1721,6 +1747,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'label' => 'Create LESS file for new blocks',
       'notes' => 'All blocks need a PHP file for the business logic and a markup file that defines the output. If you check this box a LESS file will be created for every block that you can use to define the styling of the block.',
       'checked' => $this->createLessFile ? 'checked' : '',
+    ]);
+
+    $inputfields->add([
+      'type' => 'checkbox',
+      'name' => 'useRockBlocks',
+      'label' => 'Load RockBlocks',
+      'notes' => '',
+      'checked' => $this->useRockBlocks ? 'checked' : '',
     ]);
 
     /** @var InputfieldSelect $f */

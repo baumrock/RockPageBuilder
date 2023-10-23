@@ -1,0 +1,22 @@
+{var $maxw = "maxw-".$block->settings('maxw')}
+
+<section
+  id="b{$block}"
+  class="rpb-text"
+  {alfred($block)}
+  {$block->styles()}
+>
+  <div class="uk-container {$maxw} {$block->bgStyle()}">
+
+    <h3 class="uk-text-center uk-text-primary" n:ifcontent>
+      {$block->eyebrow()}
+    </h3>
+    <h2 class="uk-margin-bottom uk-text-center" n:ifcontent>
+      {$block->title()}
+    </h2>
+
+    <div class="rpb-nomargin text">
+      {$block->text()}
+    </div>
+  </div>
+</section>

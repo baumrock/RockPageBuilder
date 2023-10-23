@@ -2,23 +2,41 @@
 
 namespace RockPageBuilderBlock;
 
+use ProcessWire\FieldtypeTextarea;
+use ProcessWire\RockPageBuilder;
 use RockPageBuilder\Block;
 
-class {name} extends Block {
+class CallToAction extends Block
+{
 
-  const prefix = "rpb_{namelower}_";
+  const prefix = "rpb_calltoaction_";
 
-  public function info() {
+  const field_right = self::prefix . "right";
+
+  public function info()
+  {
     return [
-      'title' => '{name}',
+      'title' => 'CallToAction',
       'spaceV' => self::spaceM,
-      // 'sort' => 100, // default sort is 500, less is earlier
       // 'description' => 'RockPageBuilder Block Setup Demo',
-      // 'icon' => 'picture-o',
+      'icon' => 'bullhorn',
       // 'color' => 'lime',
       // 'hideTitle' => true, // shortcut to hide the title field
     ];
   }
+
+  /** frontend */
+
+  public function bgStyle(): string
+  {
+    $bg = $this->settings('bg');
+    if ($bg == "primary") return "uk-background-primary uk-padding uk-light";
+    elseif ($bg == "secondary") return "uk-background-secondary uk-padding uk-light";
+    elseif ($bg == "muted") return "uk-background-muted uk-padding";
+    return "";
+  }
+
+  /** backend */
 
   /**
    * (Optional) Migrations for this block
@@ -46,36 +64,27 @@ class {name} extends Block {
       // here you can create fields for your block
       // note that you always need to create fields and then add them to the tpl
       'fields' => [
-        // 'demo' => [
-        //   'type' => 'text',
-        //   'label' => 'Demo Field',
-        //   'icon' => 'align-left',
-        //   'notes' => 'This field was created by migrations',
-        //   'textformatters' => [
-        //     'TextformatterEntities',
-        //   ],
-        // ],
+        self::field_right => [
+          'type' => 'textarea',
+          'inputfieldClass' => 'InputfieldTinyMCE',
+          'contentType' => FieldtypeTextarea::contentTypeHTML,
+          'label' => 'Buttons',
+          'rows' => 5,
+          'icon' => 'bullhorn',
+          'inlineMode' => true,
+          // 'rpb-nolabel' => true, // hide label in backend
+          'settingsFile' => '/site/modules/RockMigrations/TinyMCE/simple.json',
+        ],
       ],
-      // Here you set the block's template settings.
-      // The most important setting is the "fields" setting,
-      // where you can list all the fields that should be added to your block.
       'templates' => [
         $this->getTplName() => [
           'fields' => [
-            // You can override the field's settings in the context
-            // of this block! Here we use the global title field, but we set
-            // the field's label to "Headline" (only for this block).
+            RockPageBuilder::field_eyebrow,
             'title' => [
               'label' => 'Headline',
             ],
-
-            // Uncomment the last line if you want to add the demo field
-            // Note: Once you ran that migration the field will be added to
-            // the block's template. If you then comment the line again the
-            // field will NOT be removed from the template, because there's
-            // nothing that tells RockMigrations to remove the field.
-            // Use the deleteField() example above (before the migrate call).
-            // 'demo',
+            RockPageBuilder::field_teaser,
+            self::field_right,
           ],
         ],
       ],
@@ -96,20 +105,26 @@ class {name} extends Block {
     // See docs for details or leave this line unchanged.
     $settings = $this->getDefaultSettings($field);
 
-    // add settings for this block with array syntax
     $settings->add([
-      'name' => 'demo',
-      'label' => 'Demo-Setting',
-      // the first parameter must match the name of the setting!!
-      // in this case the setting's name is "demo", so we use "demo" here as well
-      'value' => $field->input('demo', 'select', [
-        '*foo' => 'foo value',
-        'bar' => 'bar value',
-        'baz' => 'baz value',
+      'name' => 'maxw',
+      'label' => 'Limit Width',
+      'value' => $field->input('maxw', 'select', [
+        's' => 'small (400px)',
+        'm' => 'medium (600px)',
+        'l' => 'large (800px)',
+      ]),
+    ]);
+
+    $settings->add([
+      'name' => 'bg',
+      'label' => 'Background',
+      'value' => $field->input('bg', 'select', [
+        'primary' => 'Primary',
+        'secondary' => 'Secondary',
+        'muted' => 'Muted',
       ]),
     ]);
 
     return $settings;
   }
-
 }

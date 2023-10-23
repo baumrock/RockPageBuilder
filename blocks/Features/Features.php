@@ -108,12 +108,7 @@ class Features extends Block
           'tags' => '',
           'repeaterAddLabel' => 'Add New Item',
           'columnWidth' => 100,
-
-          // we disable dynamic ajax loading of items
-          // this makes sure that tinymce is loaded
-          // unfortunately an additional save is required
-          // TODO: load tinymce when needed without reload
-          'repeaterLoading' => 2,
+          'repeaterLoading' => 0,
         ],
       ],
       'templates' => [

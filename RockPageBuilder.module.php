@@ -26,7 +26,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   const tpl_datapage = self::prefix . "datapage";
 
   const field_blocks = self::prefix . "blocks";
-  const field_rockblocks = self::prefix . "rockblocks";
   const field_widgets = self::prefix . "widgets";
   const field_eyebrow = self::prefix . "eyebrow";
   const field_teaser = self::prefix . "teaser";
@@ -134,9 +133,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     // now load all the added blocks according to the fields
     $this->loadUserBlocks();
-
-    // load blocks from RockBlocks module
-    $this->loadRockBlocks();
 
     // add ajax endpoints
     $this->addHookAfter("/rockpagebuilder-vscale", $this, "saveVScaleValue");
@@ -1253,22 +1249,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * Load all blocks from RockBlocks module
-   * @return void
-   */
-  public function loadRockBlocks()
-  {
-    if (!$this->useRockBlocks) return;
-    $dir = Paths::normalizeSeparators(__DIR__ . "/blocks");
-    $this->addBlocks(dir: $dir, recursive: 3);
-    foreach (new DirectoryIterator($dir) as $fileInfo) {
-      if ($fileInfo->isDot()) continue;
-      if (!$fileInfo->isDir()) continue;
-      $this->loadBlocks(self::field_rockblocks, $fileInfo->getPathname());
-    }
-  }
-
-  /**
    * Load all blocks from templates folder
    * @return void
    */
@@ -1334,14 +1314,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         'icon' => 'cubes',
       ]);
       $rm->addFieldToTemplate(self::field_blocks, 'home');
-    }
-
-    if (!$rm->getField(self::field_rockblocks, true)) {
-      $rm->createField(self::field_rockblocks, 'RockPageBuilder', [
-        'label' => 'RockBlocks',
-        'tags' => self::tags,
-        'icon' => 'cubes',
-      ]);
     }
 
     // create widgets field
@@ -1749,13 +1721,28 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'checked' => $this->createLessFile ? 'checked' : '',
     ]);
 
-    $inputfields->add([
-      'type' => 'checkbox',
-      'name' => 'useRockBlocks',
-      'label' => 'Load RockBlocks',
-      'notes' => '',
-      'checked' => $this->useRockBlocks ? 'checked' : '',
-    ]);
+    $dir = __DIR__ . "/blocks";
+    $installable = $this->wire->files->find($dir, ['extensions' => ['php']]);
+    $this->installBlocks();
+    $blockNames = $this->blockNames();
+
+    $f = $this->wire->modules->get('InputfieldCheckboxes');
+    $f->name = 'installBlocks';
+    $f->label = "Install Blocks";
+    $f->icon = "cubes";
+    $installed = [];
+    foreach ($installable as $block) {
+      $name = substr(basename($block), 0, -4);
+      if (in_array($name, $blockNames)) {
+        $installed[] = $name;
+        continue;
+      }
+      $f->addOption($name);
+    }
+    $f->description = "Here you can install example blocks from $dir to field " . self::field_blocks
+      . ". This will simply copy over files to /site/templates/RockPageBuilder/blocks/ - You can manually copy files to other fields as well.";
+    $f->notes = "Already installed: " . implode(", ", $installed);
+    $inputfields->add($f);
 
     /** @var InputfieldSelect $f */
     $f = $this->wire->modules->get('InputfieldSelect');
@@ -1781,6 +1768,22 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $inputfields->add($f);
 
     return $inputfields;
+  }
+
+  public function installBlocks(): void
+  {
+    $install = $this->input->post->installBlocks;
+    if (!is_array($install)) return;
+
+    $tpl = $this->wire->config->paths->templates;
+    $this->wire->files->mkdir($tpl . "RockPageBuilder/blocks");
+    foreach ($install as $name) {
+      $this->wire->files->copy(
+        __DIR__ . "/blocks/$name",
+        $tpl . "RockPageBuilder/blocks/$name",
+      );
+      $this->message("Installed $name to field " . self::field_blocks);
+    }
   }
 
   public function deleteBlock()

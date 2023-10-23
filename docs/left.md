@@ -2,4 +2,3 @@
 
 - Introduction
 - Setup
-- FAQ

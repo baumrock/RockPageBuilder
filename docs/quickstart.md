@@ -37,7 +37,7 @@ On the screenshot you see three features:
 
 ## Creating your first block
 
-Creating a new block is extremely simple:
+Creating a new block is very easy:
 
 1. Click on the plus icon in the backend (see screenshot above)
 1. Choose a name for your block and hit OK. We use `Demo` for this example:

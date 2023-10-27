@@ -243,7 +243,7 @@ class RockFieldsField extends WireData
   public static function table($rows)
   {
     if (!$rows) return;
-    $out = "<table class='uk-table uk-table-small uk-table-striped
+    $out = "<table class='uk-table uk-table-small uk-table-divider
       uk-table-middle uk-margin-remove'>";
     foreach ($rows as $label => $markup) {
       if ($markup instanceof Inputfield) $markup = $markup->render();

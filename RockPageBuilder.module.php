@@ -1691,7 +1691,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         <ul>
           <li><a class=uk-text-bold href=https://www.baumrock.com/modules/$name/docs>Read the docs</a> and level up your coding game! 🚀💻😎</li>
           <li><a class=uk-text-bold href=https://www.baumrock.com/rock-monthly>Sign up now for our monthly newsletter</a> and receive the latest updates and exclusive offers right to your inbox! 🚀💻📫</li>
-          <li><a class=uk-text-bold href=https://github.com/baumrock/$name>Show some love by starring the project</a> and keep me motivated to build more awesome stuff for you! 🌟💻😊</li>
           <li><a class=uk-text-bold href=https://paypal.me/baumrockcom>Support my work with a donation</a>, and together, we'll keep rocking the coding world! 💖💻💰</li>
         </ul>",
     ]);
@@ -1705,21 +1704,15 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'notes' => 'Settings in config.php will have priority over settings set on this page!',
     ]);
 
-    $inputfields->add([
-      'type' => 'checkbox',
-      'name' => 'showDataPage',
-      'label' => 'Show datapage in tree for superusers',
-      'notes' => 'All blocks are PW pages stored under a special page in the pagetree. By default this page is hidden from the pagetree. If you check this box superusers will be able to see the page and all blocks.',
-      'checked' => $this->showDataPage ? 'checked' : '',
-    ]);
-
-    $inputfields->add([
-      'type' => 'checkbox',
-      'name' => 'createLessFile',
-      'label' => 'Create LESS file for new blocks',
-      'notes' => 'All blocks need a PHP file for the business logic and a markup file that defines the output. If you check this box a LESS file will be created for every block that you can use to define the styling of the block.',
-      'checked' => $this->createLessFile ? 'checked' : '',
-    ]);
+    /** @var InputfieldSelect $f */
+    $f = $this->wire->modules->get('InputfieldSelect');
+    $f->attr('name', 'createView');
+    $f->label = 'File type of view-file';
+    $f->notes = 'Will be used when a new block type is created. Default is PHP. Recommended is LATTE ;)';
+    $f->addOption('latte', 'LATTE');
+    $f->addOption('php', 'PHP');
+    if (array_key_exists('createView', $data)) $f->attr('value', $data['createView']);
+    $inputfields->add($f);
 
     $dir = __DIR__ . "/blocks";
     $installable = $this->wire->files->find($dir, ['extensions' => ['php']]);
@@ -1739,20 +1732,26 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       }
       $f->addOption($name);
     }
-    $f->description = "Here you can install example blocks from $dir to field " . self::field_blocks
-      . ". This will simply copy over files to /site/templates/RockPageBuilder/blocks/ - You can manually copy files to other fields as well.";
+    $f->description = "Here you can install example blocks from /site/modules/RockPageBuilder/blocks to field '" . self::field_blocks
+      . "'. This will simply copy over files to /site/templates/RockPageBuilder/blocks/ - You can manually copy files to other fields as well.";
     $f->notes = "Already installed: " . implode(", ", $installed);
     $inputfields->add($f);
 
-    /** @var InputfieldSelect $f */
-    $f = $this->wire->modules->get('InputfieldSelect');
-    $f->attr('name', 'createView');
-    $f->label = 'File type of view-file';
-    $f->notes = 'Will be used when a new block type is created.';
-    $f->addOption('latte', 'LATTE');
-    $f->addOption('php', 'PHP');
-    if (array_key_exists('createView', $data)) $f->attr('value', $data['createView']);
-    $inputfields->add($f);
+    $inputfields->add([
+      'type' => 'checkbox',
+      'name' => 'showDataPage',
+      'label' => 'Show datapage in tree for superusers',
+      'notes' => 'All blocks are PW pages stored under a special page in the pagetree. By default this page is hidden from the pagetree. If you check this box superusers will be able to see the page and all blocks.',
+      'checked' => $this->showDataPage ? 'checked' : '',
+    ]);
+
+    $inputfields->add([
+      'type' => 'checkbox',
+      'name' => 'createLessFile',
+      'label' => 'Create LESS file for new blocks',
+      'notes' => 'All blocks need a PHP file for the business logic and a markup file that defines the output. If you check this box a LESS file will be created for every block that you can use to define the styling of the block.',
+      'checked' => $this->createLessFile ? 'checked' : '',
+    ]);
 
     /** @var InputfieldSelect $f */
     $this->deleteBlock();

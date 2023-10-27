@@ -517,6 +517,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $html = $event->return;
     if (!strpos($html, "#rpbstyle-")) return;
     foreach ($this->blockStylesCache as $id => $str) {
+      // markup can either be in quotes (latte) or without quotes (php)
+      $html = str_replace("$id", $str, $html);
       $html = str_replace("\"$id\"", $str, $html);
     }
     $event->return = $html;

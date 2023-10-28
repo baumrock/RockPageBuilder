@@ -108,6 +108,8 @@ class Block extends \ProcessWire\Page
     $widget = $block->_widget ?: $block;
     $data = $widget->getBlockData();
 
+    $spaceID = $this->wire->user->isSuperuser() ? $this->spaceID() : '';
+
     // add vspace buttons?
     if ($block->spaceV()) {
       $rf = $this->rockfrontend();
@@ -115,14 +117,14 @@ class Block extends \ProcessWire\Page
       $icons[] = (object)[
         'icon' => 'up',
         'label' => $block->title,
-        'tooltip' => "vSpace top",
+        'tooltip' => "vSpace top " . $spaceID,
         'type' => 'vspacetop',
         'widget' => $widget->id,
       ];
       $icons[] = (object)[
         'icon' => 'down',
         'label' => $block->title,
-        'tooltip' => "vSpace bottom",
+        'tooltip' => "vSpace bottom " . $spaceID,
         'type' => 'vspacebottom',
         'widget' => $widget->id,
       ];

@@ -18,23 +18,17 @@ Discover the possibilities that RockPageBuilder offers and create web pages that
 
 Explore the Live-Demo: https://pagebuilder.baumrock.com
 
-## Differences to RepeaterMatrix
+## Advantages over RepeaterMatrix
 
 As RepeaterMatrix has been the only option for a block based page building experience in ProcessWire for a long time I want to outline the differences to that very popular module:
 
 * RepeaterMatrix has **no GUI for Frontend Editing**
 * **Block Settings**
 
-    There is no way of quickly defining settings for your block in RepeaterMatrix. You have to create a field for everything which bloats your database and your GUI.
+    There is no way of quickly defining settings for your blocks in RepeaterMatrix. You have to create a field for everything which bloats your database and your GUI.
 
     <a href=./settings>This is how it works in RockPageBuilder</a>
 
 * **Reuse blocks and boost your productivity**
 
     While it is possible to automate stuff in RepeaterMatrix with RockMigrations the experience with RockPageBuilder will be much better. Simply copy the block's files to your next project and start using them right away! 🚀
-
-* **Vertical Block Spacings**
-
-    Having different blocks of content in different styles can make it hard to get block spacings right. RepeaterMatrix does not offer any helpers for that. You have to find a good solution on your own or live with block spacings that simply don't look good or hack around with custom css classes that you apply from time to time to fix issues in the layout. I've been there ... 😅😉
-
-    <a href=./spacings>This is how it works in RockPageBuilder</a>

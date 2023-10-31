@@ -17,11 +17,7 @@ class CallToAction extends Block
   {
     return [
       'title' => 'CallToAction',
-      'spaceV' => self::spaceM,
-      // 'description' => 'RockPageBuilder Block Setup Demo',
       'icon' => 'bullhorn',
-      // 'color' => 'lime',
-      // 'hideTitle' => true, // shortcut to hide the title field
     ];
   }
 
@@ -109,7 +105,6 @@ class CallToAction extends Block
       'name' => 'maxw',
       'label' => 'Limit Width',
       'value' => $field->input('maxw', 'select', [
-        's' => 'small (400px)',
         'm' => 'medium (600px)',
         'l' => 'large (800px)',
       ]),

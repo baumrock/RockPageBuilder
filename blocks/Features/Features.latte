@@ -5,7 +5,6 @@
   id="b{$block}"
   class="rpb-features"
   {alfred($block)}
-  {$block->styles()}
 >
   <div class="uk-container {$maxw} {$block->bgStyle()}">
 
@@ -17,7 +16,7 @@
     </h2>
 
     {* feature items *}
-    <div class="items uk-flex uk-flex-wrap uk-flex-center uk-margin-medium-bottom">
+    <div class="items uk-flex uk-flex-wrap uk-flex-center">
       <div
         n:foreach="$block->items() as $item"
         class="rpb-nomargin item {$itemw}"

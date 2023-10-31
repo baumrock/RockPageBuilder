@@ -5,14 +5,13 @@
   id="b{$block}"
   class="rpb-hero"
   {alfred($block)}
-  {$block->styles()}
 >
 
   {* style one *}
   <div
     n:if="$style==one"
     class="
-      uk-container uk-padding
+      uk-container section-padding
       uk-background-cover uk-background-center-right
       {!$img ? 'uk-background-muted'}
     "
@@ -34,7 +33,7 @@
   {* style two *}
   <div
     n:if="$style==two"
-    class="uk-container uk-background-muted uk-padding"
+    class="uk-container uk-background-muted section-padding"
   >
 
     <div class="uk-grid uk-child-width-1-2@m uk-flex uk-flex-middle" uk-grid>
@@ -58,7 +57,7 @@
   {* style three *}
   <div
     n:if="$style==three"
-    class="uk-container uk-background-muted uk-padding uk-flex uk-flex-center"
+    class="uk-container uk-background-muted section-padding uk-flex uk-flex-center"
   >
 
     <div class="maxw uk-text-center@s">

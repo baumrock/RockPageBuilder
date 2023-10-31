@@ -17,7 +17,6 @@ class Text extends Block
   {
     return [
       'title' => 'Text',
-      'spaceV' => self::spaceM,
       // 'description' => 'RockPageBuilder Block Setup Demo',
       // 'icon' => 'picture-o',
       // 'color' => 'lime',

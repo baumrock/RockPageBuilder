@@ -17,11 +17,6 @@ class Gallery extends Block
   {
     return [
       'title' => 'Gallery',
-      'spaceV' => self::spaceM,
-      // 'description' => 'RockPageBuilder Block Setup Demo',
-      // 'icon' => 'picture-o',
-      // 'color' => 'lime',
-      // 'hideTitle' => true, // shortcut to hide the title field
     ];
   }
 

@@ -1,17 +1,17 @@
 {var $maxw = "maxw-".$block->settings('maxw')}
+{var $fullw = !$block->settings('maxw')}
 
 <section
   id="b{$block}"
   class="rpb-calltoaction"
   {alfred($block)}
-  {$block->styles()}
 >
-  <div class="uk-container {$maxw} {$block->bgStyle()}">
+  <div class="uk-container {$maxw} {$block->bgStyle()} {$fullw ? 'uk-flex uk-flex-center'}">
 
-    <div class="uk-child-width-1-2@m" uk-grid>
+    <div class="cols {$fullw ? 'maxw-l p-large' : 'p-small'}">
 
       {* left column *}
-      <div class="rpb-nomargin">
+      <div class="left uk-width-1-1 rpb-nomargin">
         <h3 class="uk-text-primary" n:ifcontent>
           {$block->eyebrow()}
         </h3>
@@ -22,7 +22,9 @@
       </div>
 
       {* right column *}
-      <div class="rpb-nomargin uk-flex uk-flex-middle right text">
+      <div
+        class="right uk-width-1-1 rpb-nomargin text"
+      >
         {$block->right()}
       </div>
     </div>

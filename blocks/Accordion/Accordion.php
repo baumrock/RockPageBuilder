@@ -19,11 +19,7 @@ class Accordion extends Block
   {
     return [
       'title' => 'Accordion',
-      'spaceV' => self::spaceM,
-      // 'description' => 'RockPageBuilder Block Setup Demo',
       'icon' => 'align-justify',
-      // 'color' => 'lime',
-      // 'hideTitle' => true, // shortcut to hide the title field
     ];
   }
 
@@ -39,9 +35,9 @@ class Accordion extends Block
   public function bgStyle(): string
   {
     $bg = $this->settings('bg');
-    if ($bg == "primary") return "uk-background-primary uk-padding";
-    elseif ($bg == "secondary") return "uk-background-secondary uk-padding";
-    elseif ($bg == "muted") return "uk-background-muted uk-padding";
+    if ($bg == "primary") return "uk-background-primary section-padding";
+    elseif ($bg == "secondary") return "uk-background-secondary section-padding";
+    elseif ($bg == "muted") return "uk-background-muted section-padding";
     return "";
   }
 
@@ -136,9 +132,8 @@ class Accordion extends Block
       'name' => 'maxw',
       'label' => 'Limit Section Width',
       'value' => $field->input('maxw', 'select', [
-        's' => 'small (300px)',
-        'm' => 'medium (500px)',
-        'l' => 'large (700px)',
+        'm' => 'medium (600px)',
+        'l' => 'large (800px)',
       ]),
     ]);
 

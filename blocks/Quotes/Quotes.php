@@ -23,7 +23,6 @@ class Quotes extends Block
     return [
       'title' => 'Quotes',
       'icon' => 'quote-left',
-      'spaceV' => self::spaceM,
       'hideTitle' => false, // shortcut to set title field to hidden
     ];
   }

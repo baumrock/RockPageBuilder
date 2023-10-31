@@ -4,7 +4,6 @@
   id="b{$block}"
   class="rpb-accordion"
   {alfred($block)}
-  {$block->styles()}
 >
   <div class="uk-container {$maxw} {$block->bgStyle()}">
 
@@ -16,7 +15,7 @@
     </h2>
 
     <div class="uk-flex uk-flex-center">
-      <ul class="items" uk-accordion>
+      <ul class="items uk-margin-remove" uk-accordion>
         <li
           n:foreach="$block->items() as $item"
           class="{$iterator->first && $block->settings('firstopen') ? 'uk-open'}"

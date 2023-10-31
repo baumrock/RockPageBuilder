@@ -21,11 +21,7 @@ class Features extends Block
   {
     return [
       'title' => 'Features',
-      'spaceV' => self::spaceM,
-      // 'description' => 'RockPageBuilder Block Setup Demo',
       'icon' => 'star-o',
-      // 'color' => 'lime',
-      // 'hideTitle' => true, // shortcut to hide the title field
     ];
   }
 
@@ -34,9 +30,9 @@ class Features extends Block
   public function bgStyle(): string
   {
     $bg = $this->settings('bg');
-    if ($bg == "primary") return "uk-background-primary uk-padding uk-light";
-    elseif ($bg == "secondary") return "uk-background-secondary uk-padding uk-light";
-    elseif ($bg == "muted") return "uk-background-muted uk-padding";
+    if ($bg == "primary") return "uk-background-primary section-padding uk-light";
+    elseif ($bg == "secondary") return "uk-background-secondary section-padding uk-light";
+    elseif ($bg == "muted") return "uk-background-muted section-padding";
     return "";
   }
 
@@ -144,7 +140,6 @@ class Features extends Block
       'name' => 'maxw',
       'label' => 'Limit Section Width',
       'value' => $field->input('maxw', 'select', [
-        's' => 'small (400px)',
         'm' => 'medium (600px)',
         'l' => 'large (800px)',
       ]),

@@ -194,7 +194,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $forField = $block->getForField()->name;
     if ($forPage->get($forField)->count() > 1) {
       $icons[] = (object)[
-        'icon' => 'move',
+        'icon' => $opt->addHorizontal ? 'movev' : 'moveh',
         'label' => $block->title,
         'tooltip' => "Move Block #{$block->id}",
         'class' => 'pw-modal',

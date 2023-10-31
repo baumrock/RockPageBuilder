@@ -142,7 +142,7 @@ class Block extends \ProcessWire\Page
     // show move icon only when more than 1 block
     if ($opt->move and $data->count() > 1) {
       $icons[] = (object)[
-        'icon' => 'move',
+        'icon' => 'moveh',
         'label' => $block->title,
         'tooltip' => "Move Block #{$widget->id}",
         'class' => 'pw-modal',
@@ -156,7 +156,7 @@ class Block extends \ProcessWire\Page
       $icons[] = (object)[
         'icon' => 'widget',
         'label' => $block->title,
-        'tooltip' => "Convert Block #{$block->id} into a Widget",
+        'tooltip' => "Widgetize Block #{$block->id}",
         'href' => $block->rpbUrl("/convertToWidget/?block=$block"),
         'confirm' => $this->_('Do you really want to convert this block into a widget?'),
       ];

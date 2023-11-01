@@ -136,6 +136,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     // add ajax endpoints
     $this->addHookAfter("/rockpagebuilder-vscale", $this, "saveVScaleValue");
+    $this->addHookAfter("/rockpagebuilder-savesort", $this, "saveSortable");
 
     // create WireArray that holds the default settings
     require_once __DIR__ . "/BlockSettingsArray.php";
@@ -418,8 +419,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $rf->styles()->add($dir . "RockPageBuilder.min.css");
 
     // load RockPageBuilder frontend assets
-    if ($this->wire->page->editable()) {
-      // add styles that are needed when logged in (editing)
+    if ($this->wire->user->hasPermission('page-edit')) {
+      $rf->scripts()->add(__DIR__ . "/lib/Sortable.min.js");
       $rf->scripts()->add($dir . "frontend-loggedin.min.js");
       $rf->styles()->add($dir . "frontend-loggedin.min.css");
     }
@@ -1551,6 +1552,92 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     );
     return json_encode([
       'success' => true,
+    ]);
+  }
+
+  /**
+   * Ajax endpoint for saving sortable drag and drop events
+   */
+  public function saveSortable(HookEvent $event): string
+  {
+    // get block id
+    $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
+    if (!$block->editable()) throw new WireException("Block $block is not editable");
+
+    // get new value from input
+    $sort = $this->wire->input->get('sort', 'string');
+    $new = $this->wire->pages->find("id.sort=$sort");
+
+    if ($block instanceof Block) {
+      // a pagebuilder block has been sorted
+      $page = $block->getBlockPage();
+      $field = $block->getBlockField();
+
+      // get old value from DB
+      /** @var FieldData $old */
+      $old = $page->getUnformatted($field->name);
+
+      // bd((string)$new, 'new');
+      // bd((string)$old, 'old');
+
+      // first we remove all items from the new array that are not part of old
+      foreach ($new as $newItem) {
+        if (!$old->has($newItem)) $new->remove($newItem);
+      }
+      // bd((string)$new, 'removed');
+
+      // now add back all hidden blocks
+      $lastItem = false;
+      foreach ($old as $oldItem) {
+        if (!$new->has($oldItem)) {
+          if ($lastItem) $new->insertAfter($oldItem, $lastItem);
+          else $new->prepend($oldItem);
+        }
+        $lastItem = $oldItem;
+      }
+      // bd($new, 'added hidden');
+
+      // create new data object and save it to the field
+      $data = new FieldData($page, $field);
+      foreach ($new as $item) $data->add($item);
+      $page->setAndSave($field->name, $data);
+    } elseif ($block instanceof RepeaterPage) {
+      $page = $block->getForPage();
+      $field = $block->getForField();
+
+      // get old value from DB
+      $old = $page->getUnformatted($field->name);
+
+      // bd((string)$new, 'new');
+      // bd((string)$old, 'old');
+
+      // first we remove all items from the new array that are not part of old
+      foreach ($new as $newItem) {
+        if (!$old->has($newItem)) $new->remove($newItem);
+      }
+      // bd((string)$new, 'removed');
+
+      // now add back all hidden blocks
+      $lastItem = false;
+      foreach ($old as $oldItem) {
+        if (!$new->has($oldItem)) {
+          if ($lastItem) $new->insertAfter($oldItem, $lastItem);
+          else $new->prepend($oldItem);
+        }
+        $lastItem = $oldItem;
+      }
+      // bd((string)$new, 'added hidden');
+
+      // save data to field
+      $i = 0;
+      foreach ($new as $newItem) {
+        $newItem->setAndSave('sort', $i++);
+      }
+    } else throw new WireException("$block is not a valid item");
+
+    return json_encode([
+      'success' => true,
+      'msg' => 'Sort has been saved successfully',
     ]);
   }
 

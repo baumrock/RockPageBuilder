@@ -50,3 +50,94 @@ document.addEventListener("paste", function (e) {
   // Insert the plain text into the contenteditable element or textarea
   document.execCommand("insertText", false, plainText);
 });
+
+function _RockSortable() {}
+
+/**
+ * Get the sortable container
+ */
+_RockSortable.prototype.getContainer = function (el) {
+  return el.closest("[sortable]") || false;
+};
+
+/**
+ * Get the block id from the current dom element
+ */
+_RockSortable.prototype.getPageId = function (el) {
+  // if the element has a block id we return it
+  let id = el.getAttribute("data-rpbblock");
+  if (id) return id;
+
+  // element is a parent element, so we find the first child with a page id
+  return el.querySelector("[data-rpbblock]").getAttribute("data-rpbblock");
+};
+
+/**
+ * Get array of all page ids within the current container
+ */
+_RockSortable.prototype.getPageIds = function (el) {
+  let container = this.getContainer(el);
+  let blocks = container.querySelectorAll("[data-rpbblock]");
+  let ids = [];
+  blocks.forEach((block) => {
+    ids.push(this.getPageId(block));
+  });
+  return ids;
+};
+
+/**
+ * Send ajax request to save new sort order
+ */
+_RockSortable.prototype.saveSort = function (el) {
+  let url =
+    RockFrontend.rootUrl +
+    "rockpagebuilder-savesort?block=" +
+    this.getPageId(el) +
+    "&sort=" +
+    this.getPageIds(el).join("|");
+
+  fetch(url)
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error("Something went wrong");
+    })
+    .then((responseJson) => {
+      // console.log(responseJson);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+var RockSortable = new _RockSortable();
+
+// make blocks sortable
+function makeSortable() {
+  let containers = document.querySelectorAll("[sortable]");
+  let body = document.querySelector("body");
+
+  // init sortable on all containers
+  containers.forEach((container) => {
+    if (container.hasAttribute("data-sortable")) return;
+    container.setAttribute("data-sortable", true);
+
+    // init sortable
+    new Sortable(container, {
+      animation: 150,
+      filter: ".no-sortable",
+      onChoose: (e) => {
+        body.classList.add("no-alfred");
+      },
+      onEnd: (e) => {
+        body.classList.remove("no-alfred");
+        RockSortable.saveSort(e.item);
+      },
+      onUnchoose: (e) => {
+        body.classList.remove("no-alfred");
+      },
+    });
+  });
+}
+document.addEventListener("DOMContentLoaded", makeSortable);

@@ -26,3 +26,27 @@
     showSpinner = true;
   });
 })();
+
+// fix pasting markup to text fields
+// see https://github.com/processwire/processwire-issues/issues/1818
+document.addEventListener("paste", function (e) {
+  // only intercept pasting to frontend editable text fields
+  // we don't want to strip anything from wysiwyg fields
+  if (!document.activeElement.isContentEditable) return;
+  if (!document.activeElement.closest(".pw-edit-InputfieldText")) return;
+
+  // Prevent the default paste action
+  e.preventDefault();
+
+  // Get the clipboard data as plain text
+  const clipboardData = (e.originalEvent || e).clipboardData;
+  const pastedText = clipboardData.getData("text/plain");
+
+  // Convert any markup in the pasted text to plaintext
+  var tmp = document.createElement("div");
+  tmp.innerHTML = pastedText;
+  const plainText = tmp.textContent || tmp.innerText || "";
+
+  // Insert the plain text into the contenteditable element or textarea
+  document.execCommand("insertText", false, plainText);
+});

@@ -15,7 +15,7 @@
     </h2>
 
     <div class="uk-flex uk-flex-center">
-      <ul class="items uk-margin-remove" uk-accordion>
+      <ul class="items uk-margin-remove" uk-accordion sortable>
         <li
           n:foreach="$block->items() as $item"
           class="{$iterator->first && $block->settings('firstopen') ? 'uk-open'}"

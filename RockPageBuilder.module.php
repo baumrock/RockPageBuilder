@@ -1333,10 +1333,11 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // create eyebrow field
     $type = $this->wire->languages ? 'TextLanguage' : 'Text';
     $rm->createField(self::field_eyebrow, $type, [
-      'label' => 'Eyebrow',
+      'label' => 'Eyebrow Headline',
       'tags' => self::tags,
       'icon' => 'eye',
       'collapsed' => Inputfield::collapsedBlank,
+      'notes' => 'Smaller headline above the main headline.'
     ]);
 
     // create teaser field

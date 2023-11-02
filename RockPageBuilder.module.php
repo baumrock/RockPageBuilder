@@ -124,10 +124,19 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->createBlock();
     $this->include("init.php"); // load templates/RockPageBuilder/init.php
     $this->addBlock(__DIR__ . "/Widget.php"); // always load the widget block
-    $this->loadUserBlocks(); // load user blocks from templates folder
+
+    // add all blocks from the templates folder to $this->blocks
+    $this->addBlocks(
+      dir: $this->wire->config->paths->templates . "RockPageBuilder",
+      recursive: 3,
+    );
+
+    // now load all the added blocks according to the fields
+    $this->loadUserBlocks();
 
     // add ajax endpoints
     $this->addHookAfter("/rockpagebuilder-vscale", $this, "saveVScaleValue");
+    $this->addHookAfter("/rockpagebuilder-savesort", $this, "saveSortable");
 
     // create WireArray that holds the default settings
     require_once __DIR__ . "/BlockSettingsArray.php";
@@ -186,7 +195,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $forField = $block->getForField()->name;
     if ($forPage->get($forField)->count() > 1) {
       $icons[] = (object)[
-        'icon' => 'move',
+        'icon' => $opt->addHorizontal ? 'movev' : 'moveh',
         'label' => $block->title,
         'tooltip' => "Move Block #{$block->id}",
         'class' => 'pw-modal',
@@ -357,7 +366,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       $this->rm()->watch($file, false);
     } catch (\Throwable $th) {
       $this->warning($class . ": " . $th->getMessage());
-      if ($this->wire->user->isSuperuser()) {
+      if ($this->wire->user->isSuperuser() and function_exists("bd")) {
         bd(Debug::backtrace());
       }
     }
@@ -382,6 +391,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       if (strpos($name, ".") === 0) continue; // no dot-files
       if ($name === "init.php") continue;
       if (substr($file, -9) === ".view.php") continue;
+
+      // check if block has already been loaded
+      // This is to make RockBlocks work, because there we load files either from
+      // the sites directory or if no file exists we load the one from the modules
+      // folder.
+      $cls = $namespace . "\\" . substr($name, 0, -4);
+      if (in_array($cls, $this->blockClasses())) continue;
+
       $this->addBlock($file, $namespace);
     }
   }
@@ -402,13 +419,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $rf->styles()->add($dir . "RockPageBuilder.min.css");
 
     // load RockPageBuilder frontend assets
-    if ($this->wire->page->editable()) {
-
-      // add styles and script for the overlay feature
-      $rf->styles()->add($dir . "overlay.min.css");
-      $rf->scripts()->add($dir . "overlay.min.js");
-
-      // add styles that are needed when logged in (editing)
+    if ($this->wire->user->hasPermission('page-edit')) {
+      $rf->scripts()->add(__DIR__ . "/lib/Sortable.min.js");
       $rf->scripts()->add($dir . "frontend-loggedin.min.js");
       $rf->styles()->add($dir . "frontend-loggedin.min.css");
     }
@@ -506,7 +518,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $html = $event->return;
     if (!strpos($html, "#rpbstyle-")) return;
     foreach ($this->blockStylesCache as $id => $str) {
+      // markup can either be in quotes (latte) or without quotes (php)
       $html = str_replace("\"$id\"", $str, $html);
+      $html = str_replace("$id", $str, $html);
     }
     $event->return = $html;
   }
@@ -553,6 +567,18 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $rm->deletePage("parent=2,name=rockpagebuilder");
     $rm->deleteTemplates("tags=RockPageBuilder");
     $rm->deleteFields("tags=RockPageBuilder");
+  }
+
+  /**
+   * Return array of all block classes
+   * eg
+   * RockPageBuilder\Foo
+   * RockPageBuilder\Bar
+   * RockPageBuilder\Baz
+   */
+  public function blockClasses(): array
+  {
+    return array_keys($this->blocks);
   }
 
   /**
@@ -623,8 +649,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    */
   public function buildBlockForm(HookEvent $event)
   {
-    $this->preloadAssets();
     $page = $event->process->getPage();
+    $this->preloadAssets($page);
     if (!$page instanceof Block) return;
     $fs = $event->return;
     $page->prepareForm($fs);
@@ -1147,9 +1173,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // this is to support short folder names in /site/templates/RockPageBuilder
     $fieldname = $this->getFieldname($fieldname);
 
-    // add blocks to rockpagebuilder
-    $this->addBlocks($path, $namespace);
-
     // get blocks
     if ($fieldname === self::field_widgets) {
       // on the widget field all blocks are allowed
@@ -1229,7 +1252,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * Load all blocks from assets folder
+   * Load all blocks from templates folder
    * @return void
    */
   public function loadUserBlocks()
@@ -1310,9 +1333,11 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // create eyebrow field
     $type = $this->wire->languages ? 'TextLanguage' : 'Text';
     $rm->createField(self::field_eyebrow, $type, [
-      'label' => 'Eyebrow',
+      'label' => 'Eyebrow Headline',
       'tags' => self::tags,
       'icon' => 'eye',
+      'collapsed' => Inputfield::collapsedBlank,
+      'notes' => 'Smaller headline above the main headline.'
     ]);
 
     // create teaser field
@@ -1398,10 +1423,23 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * it is used in a RockFields field. Otherwise the first loaded block will
    * have a messed markup: https://i.imgur.com/6rr2ZIX.png
    */
-  public function preloadAssets()
+  public function preloadAssets(Page $block)
   {
+    // do this only once
     if ($this->preload) return;
+
+    // preload radio assets (for settings field)
     (new InputfieldRadios())->renderReady();
+
+    // preload assets of fields of a repeater field
+    // this is necessary for tinymce or image fields for example
+    foreach ($block->fields as $field) {
+      if (!$field instanceof RepeaterField) continue;
+      $tpl = $this->wire->templates->get($field->template_id);
+      foreach ($tpl->fields as $f) $f->getInputfield($block)->renderReady();
+    }
+
+    // set flag that we preloaded assets
     $this->preload = true;
   }
 
@@ -1515,6 +1553,92 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     );
     return json_encode([
       'success' => true,
+    ]);
+  }
+
+  /**
+   * Ajax endpoint for saving sortable drag and drop events
+   */
+  public function saveSortable(HookEvent $event): string
+  {
+    // get block id
+    $block = $this->wire->pages->get($this->wire->input->get('block', 'int'));
+    if (!$block->editable()) throw new WireException("Block $block is not editable");
+
+    // get new value from input
+    $sort = $this->wire->input->get('sort', 'string');
+    $new = $this->wire->pages->find("id.sort=$sort");
+
+    if ($block instanceof Block) {
+      // a pagebuilder block has been sorted
+      $page = $block->getBlockPage();
+      $field = $block->getBlockField();
+
+      // get old value from DB
+      /** @var FieldData $old */
+      $old = $page->getUnformatted($field->name);
+
+      // bd((string)$new, 'new');
+      // bd((string)$old, 'old');
+
+      // first we remove all items from the new array that are not part of old
+      foreach ($new as $newItem) {
+        if (!$old->has($newItem)) $new->remove($newItem);
+      }
+      // bd((string)$new, 'removed');
+
+      // now add back all hidden blocks
+      $lastItem = false;
+      foreach ($old as $oldItem) {
+        if (!$new->has($oldItem)) {
+          if ($lastItem) $new->insertAfter($oldItem, $lastItem);
+          else $new->prepend($oldItem);
+        }
+        $lastItem = $oldItem;
+      }
+      // bd($new, 'added hidden');
+
+      // create new data object and save it to the field
+      $data = new FieldData($page, $field);
+      foreach ($new as $item) $data->add($item);
+      $page->setAndSave($field->name, $data);
+    } elseif ($block instanceof RepeaterPage) {
+      $page = $block->getForPage();
+      $field = $block->getForField();
+
+      // get old value from DB
+      $old = $page->getUnformatted($field->name);
+
+      // bd((string)$new, 'new');
+      // bd((string)$old, 'old');
+
+      // first we remove all items from the new array that are not part of old
+      foreach ($new as $newItem) {
+        if (!$old->has($newItem)) $new->remove($newItem);
+      }
+      // bd((string)$new, 'removed');
+
+      // now add back all hidden blocks
+      $lastItem = false;
+      foreach ($old as $oldItem) {
+        if (!$new->has($oldItem)) {
+          if ($lastItem) $new->insertAfter($oldItem, $lastItem);
+          else $new->prepend($oldItem);
+        }
+        $lastItem = $oldItem;
+      }
+      // bd((string)$new, 'added hidden');
+
+      // save data to field
+      $i = 0;
+      foreach ($new as $newItem) {
+        $newItem->setAndSave('sort', $i++);
+      }
+    } else throw new WireException("$block is not a valid item");
+
+    return json_encode([
+      'success' => true,
+      'msg' => 'Sort has been saved successfully',
     ]);
   }
 
@@ -1657,7 +1781,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         <ul>
           <li><a class=uk-text-bold href=https://www.baumrock.com/modules/$name/docs>Read the docs</a> and level up your coding game! 🚀💻😎</li>
           <li><a class=uk-text-bold href=https://www.baumrock.com/rock-monthly>Sign up now for our monthly newsletter</a> and receive the latest updates and exclusive offers right to your inbox! 🚀💻📫</li>
-          <li><a class=uk-text-bold href=https://github.com/baumrock/$name>Show some love by starring the project</a> and keep me motivated to build more awesome stuff for you! 🌟💻😊</li>
           <li><a class=uk-text-bold href=https://paypal.me/baumrockcom>Support my work with a donation</a>, and together, we'll keep rocking the coding world! 💖💻💰</li>
         </ul>",
     ]);
@@ -1670,6 +1793,39 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'value' => 'Note that you can overwrite all settings from within your config.php file: $config->rockpagebuilder = [...];',
       'notes' => 'Settings in config.php will have priority over settings set on this page!',
     ]);
+
+    /** @var InputfieldSelect $f */
+    $f = $this->wire->modules->get('InputfieldSelect');
+    $f->attr('name', 'createView');
+    $f->label = 'File type of view-file';
+    $f->notes = 'Will be used when a new block type is created. Default is PHP. Recommended is LATTE ;)';
+    $f->addOption('latte', 'LATTE');
+    $f->addOption('php', 'PHP');
+    if (array_key_exists('createView', $data)) $f->attr('value', $data['createView']);
+    $inputfields->add($f);
+
+    $dir = __DIR__ . "/blocks";
+    $installable = $this->wire->files->find($dir, ['extensions' => ['php']]);
+    $this->installBlocks();
+    $blockNames = $this->blockNames();
+
+    $f = $this->wire->modules->get('InputfieldCheckboxes');
+    $f->name = 'installBlocks';
+    $f->label = "Install Blocks";
+    $f->icon = "cubes";
+    $installed = [];
+    foreach ($installable as $block) {
+      $name = substr(basename($block), 0, -4);
+      if (in_array($name, $blockNames)) {
+        $installed[] = $name;
+        continue;
+      }
+      $f->addOption($name);
+    }
+    $f->description = "Here you can install example blocks from /site/modules/RockPageBuilder/blocks to field '" . self::field_blocks
+      . "'. This will simply copy over files to /site/templates/RockPageBuilder/blocks/ - You can manually copy files to other fields as well.";
+    $f->notes = "Already installed: " . implode(", ", $installed);
+    $inputfields->add($f);
 
     $inputfields->add([
       'type' => 'checkbox',
@@ -1688,16 +1844,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     ]);
 
     /** @var InputfieldSelect $f */
-    $f = $this->wire->modules->get('InputfieldSelect');
-    $f->attr('name', 'createView');
-    $f->label = 'File type of view-file';
-    $f->notes = 'Will be used when a new block type is created.';
-    $f->addOption('latte', 'LATTE');
-    $f->addOption('php', 'PHP');
-    if (array_key_exists('createView', $data)) $f->attr('value', $data['createView']);
-    $inputfields->add($f);
-
-    /** @var InputfieldSelect $f */
     $this->deleteBlock();
     $f = $this->wire->modules->get('InputfieldSelect');
     $f->name = 'deleteBlock';
@@ -1711,6 +1857,22 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $inputfields->add($f);
 
     return $inputfields;
+  }
+
+  public function installBlocks(): void
+  {
+    $install = $this->input->post->installBlocks;
+    if (!is_array($install)) return;
+
+    $tpl = $this->wire->config->paths->templates;
+    $this->wire->files->mkdir($tpl . "RockPageBuilder/blocks");
+    foreach ($install as $name) {
+      $this->wire->files->copy(
+        __DIR__ . "/blocks/$name",
+        $tpl . "RockPageBuilder/blocks/$name",
+      );
+      $this->message("Installed $name to field " . self::field_blocks);
+    }
   }
 
   public function deleteBlock()

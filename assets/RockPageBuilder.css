@@ -13,3 +13,12 @@
 .rpb-nomargin .pw-edit-copy > *:last-child {
   margin-bottom: 0;
 }
+.align_center {
+  text-align: center;
+}
+.align_right {
+  text-align: right;
+}
+.balance {
+  text-wrap: balance;
+}

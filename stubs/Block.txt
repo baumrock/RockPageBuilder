@@ -12,12 +12,104 @@ class {name} extends Block {
     return [
       'title' => '{name}',
       'spaceV' => self::spaceM,
-      'yaml' => true,
-      // 'color' => 'lime',
-      // 'icon' => 'picture-o',
+      // 'sort' => 100, // default sort is 500, less is earlier
       // 'description' => 'RockPageBuilder Block Setup Demo',
-      // 'hideTitle' => true, // shortcut to set title field to hidden
+      // 'icon' => 'picture-o',
+      // 'color' => 'lime',
+      // 'hideTitle' => true, // shortcut to hide the title field
     ];
+  }
+
+  /**
+   * (Optional) Migrations for this block
+   *
+   * You can either manage fields of your block via GUI or via migrations.
+   * The huge benefit of using migrations is that you can deploy everything
+   * easily. Another huge benefit is that you can reuse blocks across projects!
+   *
+   * Imagine you build a slider block that needs an images field with custom
+   * settings. If you add that field via code you can simply copy and paste your
+   * block to any of your projects and start using it right away!
+   *
+   * If you still prefer to use the GUI for managing fields you can remove this
+   * method completely.
+   */
+  public function migrate()
+  {
+    $rm = $this->rockmigrations();
+
+    // This shows how you can remove fields from a block that you have added
+    // at some earlier point in history.
+    $rm->deleteField('demo', true);
+
+    $rm->migrate([
+      // here you can create fields for your block
+      // note that you always need to create fields and then add them to the tpl
+      'fields' => [
+        // 'demo' => [
+        //   'type' => 'text',
+        //   'label' => 'Demo Field',
+        //   'icon' => 'align-left',
+        //   'notes' => 'This field was created by migrations',
+        //   'textformatters' => [
+        //     'TextformatterEntities',
+        //   ],
+        // ],
+      ],
+      // Here you set the block's template settings.
+      // The most important setting is the "fields" setting,
+      // where you can list all the fields that should be added to your block.
+      'templates' => [
+        $this->getTplName() => [
+          'fields' => [
+            // You can override the field's settings in the context
+            // of this block! Here we use the global title field, but we set
+            // the field's label to "Headline" (only for this block).
+            'title' => [
+              'label' => 'Headline',
+            ],
+
+            // Uncomment the last line if you want to add the demo field
+            // Note: Once you ran that migration the field will be added to
+            // the block's template. If you then comment the line again the
+            // field will NOT be removed from the template, because there's
+            // nothing that tells RockMigrations to remove the field.
+            // Use the deleteField() example above (before the migrate call).
+            // 'demo',
+          ],
+        ],
+      ],
+    ]);
+  }
+
+  /**
+   * (Optional) Settings of this block
+   *
+   * You can access settings of the block via $block->settings() or access
+   * a single setting via $block->settings('foo') or $block->settings('bar')
+   *
+   * If you don't want any settings for your block you can remove this method.
+   */
+  public function settingsTable(\ProcessWire\RockFieldsField $field)
+  {
+    // You can set default settings for all blocks via hook.
+    // See docs for details or leave this line unchanged.
+    $settings = $this->getDefaultSettings($field);
+
+    // add settings for this block with array syntax
+    $settings->add([
+      'name' => 'demo',
+      'label' => 'Demo-Setting',
+      // the first parameter must match the name of the setting!!
+      // in this case the setting's name is "demo", so we use "demo" here as well
+      'value' => $field->input('demo', 'select', [
+        '*foo' => 'foo value',
+        'bar' => 'bar value',
+        'baz' => 'baz value',
+      ]),
+    ]);
+
+    return $settings;
   }
 
 }

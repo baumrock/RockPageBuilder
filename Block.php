@@ -108,6 +108,8 @@ class Block extends \ProcessWire\Page
     $widget = $block->_widget ?: $block;
     $data = $widget->getBlockData();
 
+    $spaceID = $this->wire->user->isSuperuser() ? $this->spaceID() : '';
+
     // add vspace buttons?
     if ($block->spaceV()) {
       $rf = $this->rockfrontend();
@@ -115,14 +117,14 @@ class Block extends \ProcessWire\Page
       $icons[] = (object)[
         'icon' => 'up',
         'label' => $block->title,
-        'tooltip' => "vSpace top",
+        'tooltip' => "vSpace top " . $spaceID,
         'type' => 'vspacetop',
         'widget' => $widget->id,
       ];
       $icons[] = (object)[
         'icon' => 'down',
         'label' => $block->title,
-        'tooltip' => "vSpace bottom",
+        'tooltip' => "vSpace bottom " . $spaceID,
         'type' => 'vspacebottom',
         'widget' => $widget->id,
       ];
@@ -140,7 +142,7 @@ class Block extends \ProcessWire\Page
     // show move icon only when more than 1 block
     if ($opt->move and $data->count() > 1) {
       $icons[] = (object)[
-        'icon' => 'move',
+        'icon' => 'moveh',
         'label' => $block->title,
         'tooltip' => "Move Block #{$widget->id}",
         'class' => 'pw-modal',
@@ -154,7 +156,7 @@ class Block extends \ProcessWire\Page
       $icons[] = (object)[
         'icon' => 'widget',
         'label' => $block->title,
-        'tooltip' => "Convert Block #{$block->id} into a Widget",
+        'tooltip' => "Widgetize Block #{$block->id}",
         'href' => $block->rpbUrl("/convertToWidget/?block=$block"),
         'confirm' => $this->_('Do you really want to convert this block into a widget?'),
       ];
@@ -200,9 +202,6 @@ class Block extends \ProcessWire\Page
     $f = new InputfieldMarkup();
     $f->label = 'Settings';
     $f->icon = 'cogs';
-    $url = $this->wire->pages->get(2)->url . "rockpagebuilder/settings-field/?block=$this";
-    $f->value = "<a href='$url' class='ui-button'>Add a settings field to this block</a>";
-    $f->notes = "This field and button is only shown to superusers.";
 
     /** @var RockFields $rf */
     if (!$rf = $this->wire->rockfields) {
@@ -210,12 +209,10 @@ class Block extends \ProcessWire\Page
       if ($this->wire->user->isSuperuser()) $fs->add($f);
       return;
     }
-    if (!$f = $rf->getInputfield($this, $this->settingsName(), true)) {
-      if (!$this->wire->user->isSuperuser()) return;
-      if (!$this->wire->config->debug) return;
-      if ($f instanceof Inputfield) $fs->add($f);
-      return;
-    }
+
+    $inputfield = $rf->getInputfield($this, $this->settingsName(), true);
+    if (!$inputfield) return;
+    else $f = $inputfield;
     $f->addClass('rpb-settings');
 
     // set settings field values from getInfo() of block
@@ -1349,14 +1346,7 @@ class Block extends \ProcessWire\Page
    */
   public function rockfrontend()
   {
-    $rf = $this->wire->modules->get('RockFrontend');
-    if (!$rf) return false;
-    $rfinfo = $this->wire->modules->getModuleInfo($rf);
-    $min = $this->wire->modules->getModuleInfo($this->master())['minRockFrontend'];
-    if (version_compare($rfinfo['version'], $min) < 0) {
-      throw new WireException("Please update RockFrontend to version $min+");
-    }
-    return $rf;
+    return $this->wire->modules->get('RockFrontend');
   }
 
   /**
@@ -1550,7 +1540,7 @@ class Block extends \ProcessWire\Page
   public function spaceID(): string
   {
     $id = $this->getInfo()->spaceID;
-    if (!$id) $id = $this->getTplName();
+    if (!$id) $id = "default";
     return $id;
   }
 

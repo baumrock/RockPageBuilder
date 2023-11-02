@@ -29,6 +29,7 @@
   font-size: 0.8rem;
 }
 #rpb-reloading {
+  pointer-events: none;
   transition: opacity 0.5s ease;
   position: fixed;
   inset: 0;
@@ -43,6 +44,7 @@
 }
 #rpb-reloading.show {
   opacity: 0.8;
+  pointer-events: all;
 }
 #rpb-reloading .loader {
   width: 48px;

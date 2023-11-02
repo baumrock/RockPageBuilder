@@ -1,0 +1,32 @@
+main {
+  // general section margin
+  > section {
+    margin-top: rfGrow(40px, 100px);
+    margin-bottom: rfGrow(40px, 100px);
+
+    // no margin-top on first section
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  // padding for sections with background
+  .section-padding {
+    padding-top: rfGrow(40px, 100px);
+    padding-bottom: rfGrow(40px, 100px);
+  }
+}
+
+// limit block width
+.maxw-s {
+  max-width: 400px;
+  box-sizing: border-box;
+}
+.maxw-m {
+  max-width: 600px;
+  box-sizing: border-box;
+}
+.maxw-l {
+  max-width: 800px;
+  box-sizing: border-box;
+}

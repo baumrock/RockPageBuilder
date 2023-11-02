@@ -37,6 +37,7 @@
 
 // styles for loading spinner when reloading the page after updates
 #rpb-reloading {
+  pointer-events: none;
   transition: opacity 0.5s ease;
   position: fixed;
   inset: 0;
@@ -46,6 +47,7 @@
   background-color: white;
   &.show {
     opacity: 0.8;
+    pointer-events: all;
   }
   opacity: 0;
 

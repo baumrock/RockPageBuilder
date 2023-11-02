@@ -66,6 +66,13 @@ class ProcessRockPageBuilder extends Process
     // render buttons of rockpagebuilder field
     $out .= $f->renderButtons($block->getBlockPage(), true);
 
+    // add loading spinner
+    $out .= "<div id='rpb-reloading'><span class='loader'></span></div>";
+    $this->wire->config->styles->add($this->wire->config->urls->siteModules . "RockPageBuilder/assets/frontend-loggedin.min.css");
+    $out .= "<script>$(document).on('click', '.rpb-button', function() {
+      $('#rpb-reloading').addClass('show');
+    });</script>";
+
     return $out;
   }
 

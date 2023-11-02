@@ -1,0 +1,58 @@
+<section
+  class="rpb-quotes uk-flex uk-flex-center"
+  {alfred($block)}
+>
+  <div class="maxw uk-container">
+
+    <h3 class="uk-text-center uk-text-primary" n:ifcontent>
+      {$block->eyebrow()}
+    </h3>
+    <h2 class="uk-text-center" n:ifcontent>
+      {$block->title()}
+    </h2>
+
+    {* slider *}
+    <div class="uk-slider-container uk-margin-medium-top" uk-slider>
+
+        <div class="uk-position-relative uk-visible-toggle" tabindex="-1">
+
+          {* quotes *}
+          <div class="uk-slider-container uk-background-muted">
+            <ul class="uk-slider-items uk-child-width-1-1 uk-grid uk-grid-match">
+                <li n:foreach="$block->quotes() as $quote">
+                  <div class="uk-padding uk-flex uk-flex-middle" {alfredH($quote)}>
+                    <div class="grid uk-flex uk-flex-wrap uk-flex-middle uk-width-1-1 uk-text-center">
+                      <div class="uk-width-1-1 uk-width-auto@s">
+                        <img
+                          n:if="$img = $quote->image()"
+                          src="{$img->size(100,100)->webp->url}"
+                          alt="{$img->description ?: $quote->author()}"
+                          class="uk-border-circle"
+                        >
+                      </div>
+                      <div class="uk-width-1-1 uk-width-expand@s uk-text-left@s">
+                        <div class="uk-margin-small-bottom">{$quote->text()}</div>
+                        <div class="uk-text-bold">{$quote->author()}</div>
+                        <div class="uk-text-small">{$quote->subtitle()}</div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+            </ul>
+          </div>
+
+          {* arrow nav *}
+          <div class="arrow-nav">
+            <a class="uk-position-center-left-out uk-position-small" href uk-slidenav-previous uk-slider-item="previous"></a>
+            <a class="uk-position-center-right-out uk-position-small" href uk-slidenav-next uk-slider-item="next"></a>
+          </div>
+
+        </div>
+
+        {* dotnav *}
+        <ul class="uk-slider-nav uk-dotnav uk-flex-center uk-margin-top"></ul>
+
+    </div>
+
+  </div>
+</section>

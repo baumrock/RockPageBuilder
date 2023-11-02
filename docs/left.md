@@ -2,4 +2,4 @@
 
 - Introduction
 - Setup
-- FAQ
+- Quickstart

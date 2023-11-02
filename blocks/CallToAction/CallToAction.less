@@ -1,0 +1,49 @@
+.rpb-calltoaction {
+  // grid
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .right {
+    text-align: center;
+  }
+
+  // vertical margins
+  .p-large {
+    padding: 40px 0;
+  }
+  .p-small {
+    padding: 20px 0;
+  }
+
+  // color adjustments for eyebrow on dark backgrounds
+  .uk-background-primary {
+    h3 {
+      color: @global-secondary-background !important;
+    }
+    .text {
+      color: white;
+    }
+  }
+  .uk-background-secondary {
+    h3 {
+      color: @global-primary-background !important;
+    }
+  }
+
+  // special case: maxw-l setting on desktop
+  @media (min-width: @breakpoint-medium) {
+    .uk-container.maxw-l {
+      .cols {
+        grid-template-columns: 1fr auto;
+      }
+      .right {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-right: 30px;
+      }
+    }
+  }
+}

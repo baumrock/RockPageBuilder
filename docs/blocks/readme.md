@@ -39,6 +39,18 @@ echo $rockpagebuilder->render(false);
 echo $page->foo->render(false);
 ```
 
+## Drag & Drop Sortable
+
+If you want to make your sections sortable via drag and drop all you have to do is to add the `sortable` attribute to the wrapping element:
+
+```php
+<main sortable>
+  <?= $rockpagebuilder->render() ?>
+</main>
+```
+
+For details about sortable <a href=../sortable/>see the docs</a>.
+
 ## Block title and description
 
 You can add a title and description of your block in the info() method:

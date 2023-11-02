@@ -13,13 +13,12 @@ As soon as you are logged in and hover over a block you will get the UI for all 
 1. Add a new block above
 2. Add a new block below
 3. Edit this block
-4. Adjust top/bottom spacings (can be disabled)
-5. Clone block
-6. Move block
-7. Turn block into a widget (to reuse it across several pages)
-8. Delete block
-9. Development shortcuts to open markup/logic/style-file that belongs to that block in VSCode (I love that feature 😎)
-10. Doubleclick text elements for instant frontend editing
+4. Clone block
+5. Move block
+6. Turn block into a widget (to reuse it across several pages)
+7. Delete block
+8. Development shortcuts to open markup/logic/style-file that belongs to that block in VSCode (I love that feature 😎)
+9. Doubleclick text elements for instant frontend editing
 
 Note: For editing the block you can also doubleclick anywhere inside the block.
 
@@ -72,11 +71,6 @@ You can use this example code (without the comments, of course):
 
   // add ALFRED - that's the gui for frontend editing
   <?= alfred($block) ?>
-
-  // add block spacing feature
-  // please see the docs about this feature!
-  // you can remove it if you don't need it
-  <?= $block->styles() ?>
 >
   // show the title field of the block as h1 headline
   // note that we are using title(), not title! this is
@@ -85,10 +79,11 @@ You can use this example code (without the comments, of course):
 </section>
 ```
 
+Here the same code without comments ready to copy:
+
 ```php
 <section
   class="rpb-demo"
-  <?= $block->styles() ?>
   <?= alfred($block) ?>
 >
   <h1><?= $block->title() ?></h1>

@@ -4,7 +4,7 @@ RockPageBuilder is your all-in-one solution for effortless content element **dev
 
 ## Key Features
 
-* **Frontend Editing:** Clients can edit content right where they see it. You wouldn't believe how much difference that makes!
+* **Frontend Editing:** Clients can edit content right where they see it and rearrange elements by drag and drop. You wouldn't believe how much difference that makes!
 
 * **Think in blocks:** This does not only give your client more flexibility but also reduces the need for multiple similar templates. I've built websites with only a `home` and `basic-page` template!
 
@@ -22,13 +22,26 @@ Explore the Live-Demo: https://pagebuilder.baumrock.com
 
 As RepeaterMatrix has been the only option for a block based page building experience in ProcessWire for a long time I want to outline the differences to that very popular module:
 
-* RepeaterMatrix has **no GUI for Frontend Editing**
+* **RockPageBuilder Sortable:** Visually arrange site content via drag and drop!
+
+<img src=sortable.gif class=blur>
+
+* RepeaterMatrix has **no GUI for Frontend Editing** - you can edit text fields, but what about image fields for example?
+
+<img src=frontend-editing.gif class=blur>
+
+* **Example Blocks Kickstart**
+
+    RockPageBuilder comes with several blocks that you can use for your projects right away:
+
+    <img src=example-blocks.png class=blur>
+
+* **Reuse blocks and boost your productivity**
+
+    While it is possible to automate stuff in RepeaterMatrix with RockMigrations the experience with RockPageBuilder will be much better. Simply copy the block's files to your next project and start using them right away! 🚀
+
 * **Block Settings**
 
     There is no way of quickly defining settings for your blocks in RepeaterMatrix. You have to create a field for everything which bloats your database and your GUI.
 
     <a href=./settings>This is how it works in RockPageBuilder</a>
-
-* **Reuse blocks and boost your productivity**
-
-    While it is possible to automate stuff in RepeaterMatrix with RockMigrations the experience with RockPageBuilder will be much better. Simply copy the block's files to your next project and start using them right away! 🚀

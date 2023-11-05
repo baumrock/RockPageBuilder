@@ -1,3 +1,12 @@
+## [4.7.1](https://github.com/baumrock/RockPageBuilder/compare/v4.7.0...v4.7.1) (2023-11-05)
+
+
+### Bug Fixes
+
+* issue with subfolder installations ([3937e66](https://github.com/baumrock/RockPageBuilder/commit/3937e665d6411013675d1bde34b8af12fecab3eb))
+
+
+
 # [4.7.0](https://github.com/baumrock/RockPageBuilder/compare/v4.6.0...v4.7.0) (2023-11-02)
 
 
@@ -70,15 +79,6 @@
 ### Bug Fixes
 
 * repeater items not addable on frontend ([52df8d7](https://github.com/baumrock/RockPageBuilder/commit/52df8d7182c84dec34346b3832a83c90935f6bd2))
-
-
-
-## [4.4.1](https://github.com/baumrock/RockPageBuilder/compare/v4.4.0...v4.4.1) (2023-06-16)
-
-
-### Bug Fixes
-
-* repeater sorting issue ([9d1efe2](https://github.com/baumrock/RockPageBuilder/commit/9d1efe23c2b6e1c42bae88e4b682048d0986210d))
 
 
 

@@ -348,7 +348,13 @@ $(document).on("click", ".createBlockType", function (e) {
     .then(function (name) {
       if (!name) return;
       $(".uk-modal-body").text("loading...");
-      $.get("/rpb-create-block/?field=" + field + "&name=" + name)
+      $.get(
+        RockFrontend.rootUrl +
+          "rpb-create-block/?field=" +
+          field +
+          "&name=" +
+          name
+      )
         .then(function (data) {
           if (data === "success") $("#submit_save").click();
           else UIkit.modal.alert("Request failed: " + data);

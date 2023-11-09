@@ -591,6 +591,14 @@ class Block extends \ProcessWire\Page
     // call buildFormBlock (if implemented for the block)
     $this->buildFormBlock($fs);
 
+    // prepare showif replacements
+    // we need to replace regular fieldnames with repeater fieldnames
+    // see https://processwire.com/talk/topic/29225-show-this-field-only-if-doesnt-seem-to-work
+    $showIf = [];
+    foreach ($this->rpb()->getChildrenRecursively($fs) as $f) {
+      $showIf[$f->name] = $f->name . "_repeater$this";
+    }
+
     // add repeater suffix to all children
     foreach ($this->rpb()->getChildrenRecursively($fs) as $f) {
       // add the suffix to the inputfields name
@@ -599,6 +607,16 @@ class Block extends \ProcessWire\Page
       // this can happen on RockMeta fields (don't know why, quickfix)
       $name = preg_replace('/_repeater\d+$/', '', $f->name);
       $f->name = $name . $wrap->suffix;
+
+      // replace fieldnames in showif
+      if ($f->showIf) {
+        // convert foo=1 to foo_repeater123=1
+        $f->showIf = str_replace(
+          array_keys($showIf),
+          array_values($showIf),
+          $f->showIf
+        );
+      }
 
       // open wrapper if field has an error
       if (count($f->getErrors())) $fs->collapsed = Inputfield::collapsedNo;

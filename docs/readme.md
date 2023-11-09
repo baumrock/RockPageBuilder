@@ -2,6 +2,8 @@
 
 RockPageBuilder is your all-in-one solution for effortless content element **development and management** in ProcessWire. Whether you're a web developer or a client looking to craft stunning web pages, RockPageBuilder streamlines the process and provides an intuitive interface that you and your clients will love. 😍
 
+<a href="https://www.youtube.com/watch?v=nc1MB8NFFOc" target=_blank><img src=demo.webp class=blur></a>
+
 ## Key Features
 
 * **Frontend Editing:** Clients can edit content right where they see it and rearrange elements by drag and drop. You wouldn't believe how much difference that makes!

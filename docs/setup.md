@@ -2,6 +2,8 @@
 
 You can use RockPageBuilder for new projects but also for existing ones! The module is plug and play and only needs a few steps to setup.
 
+<a href="https://www.youtube.com/watch?v=ulImisUs7zQ" target=_blank><img src=thumb.webp class=blur></a>
+
 ## Installation
 
 1. Install RockMigrations and RockFrontend

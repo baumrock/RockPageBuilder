@@ -73,13 +73,17 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
     $this->master->loaded[] = $this->hasField->name;
 
     $blocks = $this->master->getAllowedBlocks($this, $page);
-    $nullPage = new NullPage();
     foreach ($blocks as $block) {
       if (!$block instanceof Block) continue;
       if (!$tpl = $block->getTpl()) continue;
       foreach ($tpl->fields as $field) {
-        $f = $field->getInputfield($nullPage);
-        $f->renderReady();
+        // wrap renderReady in try/catch because it sometimes causes problems
+        // see https://processwire.com/talk/topic/29226-fields-to-inherit-tinymce-settings-from-lead-to-fatal-error-in-pw-backend/#comment-237098
+        try {
+          $f = $field->getInputfield($block);
+          $f->renderReady();
+        } catch (\Throwable $th) {
+        }
       }
     }
   }

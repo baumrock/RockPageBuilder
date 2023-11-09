@@ -1,3 +1,13 @@
+## [4.7.2](https://github.com/baumrock/RockPageBuilder/compare/v4.7.1...v4.7.2) (2023-11-09)
+
+
+### Bug Fixes
+
+* renderReady() throwing exception ([bb9947a](https://github.com/baumrock/RockPageBuilder/commit/bb9947ad73f140364097232cc367376308d13a1d))
+* showIf not working in the backend ([de4d463](https://github.com/baumrock/RockPageBuilder/commit/de4d463cf60d2f24ba949671bfdd412b8d5db535))
+
+
+
 ## [4.7.1](https://github.com/baumrock/RockPageBuilder/compare/v4.7.0...v4.7.1) (2023-11-05)
 
 
@@ -70,15 +80,6 @@
 * improve block stub with better instructions ([53a9a8e](https://github.com/baumrock/RockPageBuilder/commit/53a9a8e19b7f495ac079a73210ac45aa2ff70f75))
 * improve widget concept ([ff30b71](https://github.com/baumrock/RockPageBuilder/commit/ff30b711f02574b053d947974300101e1d5ef16b))
 * improve yaml feature and add it to stub ([0ff09b0](https://github.com/baumrock/RockPageBuilder/commit/0ff09b04e986bec900f513865b3099340428d2f0))
-
-
-
-## [4.4.2](https://github.com/baumrock/RockPageBuilder/compare/v4.4.1...v4.4.2) (2023-07-07)
-
-
-### Bug Fixes
-
-* repeater items not addable on frontend ([52df8d7](https://github.com/baumrock/RockPageBuilder/commit/52df8d7182c84dec34346b3832a83c90935f6bd2))
 
 
 

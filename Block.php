@@ -337,7 +337,7 @@ class Block extends \ProcessWire\Page
     $tmp = new ReflectionClass($this);
     $file = $tmp->getFileName();
     $name = pathinfo($file, PATHINFO_FILENAME);
-    $dir = dirname($file);
+    $dir = Paths::normalizeSeparators(dirname($file));
     foreach ($this->wire->files->find($dir) as $f) {
       if (strpos($f, "$dir/$name") !== 0) continue;
       $files[] = $f;

@@ -71,6 +71,10 @@ Sometimes you want to have the same setting on all or almost all blocks of your 
 
 ```php
 // in site/ready.php
+
+use RockPageBuilder\Block;
+use RockPageBuilder\BlockSettingsArray;
+
 /** @var RockPageBuilder $rpb */
 $rpb = $this->wire->modules->get('RockPageBuilder');
 $rpb->defaultSettings(
@@ -87,6 +91,8 @@ $rpb->defaultSettings(
   }
 );
 ```
+
+<div class="uk-alert uk-alert-primary">Note: If you get an error like "Argument #1 ($settings) must be of type BlockSettingsArray..." make sure to add the "use" statements on top of your file!</div>
 
 Instead of if/else in the default settings callback you can also remove default settings in a specific block:
 

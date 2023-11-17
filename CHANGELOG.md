@@ -1,3 +1,12 @@
+## [4.7.4](https://github.com/baumrock/RockPageBuilder/compare/v4.7.3...v4.7.4) (2023-11-17)
+
+
+### Bug Fixes
+
+* delete orphan blocks on page save ([832e965](https://github.com/baumrock/RockPageBuilder/commit/832e965e5146ae7ffe0a6a57ab19d2817b639d6c))
+
+
+
 ## [4.7.3](https://github.com/baumrock/RockPageBuilder/compare/v4.7.2...v4.7.3) (2023-11-14)
 
 
@@ -53,24 +62,6 @@
 * improve settings table style for default theme ([b6e9fbc](https://github.com/baumrock/RockPageBuilder/commit/b6e9fbccbf1930ad95cb1560941d04cc56ad9f0e))
 * new icons ([57a9698](https://github.com/baumrock/RockPageBuilder/commit/57a9698d3a7de227aaee10fea9eb696c8caed73d))
 * show spaceID of blocks ([d3444d3](https://github.com/baumrock/RockPageBuilder/commit/d3444d328889ce683fce99a1f5f669853ba0d058))
-
-
-
-# [4.6.0](https://github.com/baumrock/RockPageBuilder/compare/v4.5.0...v4.6.0) (2023-09-11)
-
-
-### Bug Fixes
-
-* hide/unhide not saving on home page ([a522a6d](https://github.com/baumrock/RockPageBuilder/commit/a522a6d32372dd0777f12e4fec21784f7b2c5bb0))
-* vertical slider issue on firefox ([0d6e706](https://github.com/baumrock/RockPageBuilder/commit/0d6e706affd40323132c16983c272548cd490c17))
-
-
-### Features
-
-* add block info on render exceptions ([3af3a62](https://github.com/baumrock/RockPageBuilder/commit/3af3a6278cd98a062e76585979fdc459d7c90fdb))
-* add hide/unhide feature ([4a2e23f](https://github.com/baumrock/RockPageBuilder/commit/4a2e23f7bb807733e657349d1e6d1b1fe6ea3730))
-* add page reload spinner ([6729671](https://github.com/baumrock/RockPageBuilder/commit/6729671989415a98d0b13abc70a8e8f61a60749f))
-* hidden items dashed outline for better distinction ([fded71c](https://github.com/baumrock/RockPageBuilder/commit/fded71ce7fdf908758eb372723c8f548a38d5411))
 
 
 

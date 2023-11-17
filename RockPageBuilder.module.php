@@ -91,6 +91,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addHookAfter("Page::render", $this, "addMoveStyles");
     $this->addHookAfter("Templates::saved", $this, "hookBlockMigrateFile");
     $this->addHookAfter("Fields::saved", $this, "hookBlockMigrateFile");
+    $this->addHookAfter("Pages::saved", $this, "deleteOrphanBlocks");
 
     // hooks for access control
     $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
@@ -917,6 +918,61 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
+   * Hook executed after page was saved to trash orphan RPB blocks
+   */
+  public function deleteOrphanBlocks(HookEvent $event): void
+  {
+    $page = $event->arguments(0);
+    $fields = $this->getBlockFields($page);
+    if (!$fields->count) return;
+
+    // don't execute this hook on a save that was triggerd by RPB
+    // otherwise it will instantly delete newly added blocks
+    if ($page->rockpagebuilderTriggerSave) return;
+
+    // delete all unused blocks
+    $unused = $this->getUnusedBlockIds();
+    // bd($unused);
+    foreach ($unused as $id) {
+      $p = $this->wire->pages->get($id);
+      $p->trash();
+    }
+
+    // BACKUP: Old version that was never used, kept as backup
+    // // we loop all pagebuilder fields of that page
+    // $fields = $this->getBlockFields($page);
+    // foreach ($fields as $field) {
+    //   // get ids of blocks that are saved in that field
+    //   $blocks = $page->getFormatted($field->name);
+    //   if (!$blocks instanceof FieldData) continue;
+    //   $keep = $blocks->implode(',', 'id');
+
+    //   // now get block ids from pages_meta table of blocks that have
+    //   // been stored on that page on that field but are not any more
+    //   $sql = "SELECT *
+    //     FROM `pages_meta`
+    //     WHERE `name` = 'RockPageBuilder'
+    //     AND `data` = '\"$page-$field\"'
+    //   ";
+    //   if ($keep) $sql .= "AND `source_id` NOT IN ($keep)";
+    //   $query = $this->wire->database->prepare($sql);
+    //   $query->execute();
+
+    //   // trash all found orphan blocks
+    //   while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {
+    //     $id = $row['source_id'];
+    //     $this->wire->log("Delete orphan block $id");
+    //     $block = $this->wire->pages->get($id);
+    //     $this->wire->pages->trash($block);
+
+    //     // add meta data to identify blocks later
+    //     // thats just a matter of caution and not used at the moment
+    //     $block->meta('rpb-orphan', 1);
+    //   }
+    // }
+  }
+
+  /**
    * Get allowed blocks for given field and page
    * @return array
    */
@@ -1022,6 +1078,41 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $page = $event->object;
     if (!$page instanceof Block) throw new WireException("Page is not a RM Block");
     $event->return = $this->getBlockByTpl($page->template);
+  }
+
+  /**
+   * Get array of all used blocks
+   */
+  public function getUnusedBlockIds(): array
+  {
+    $ids = $this->wire->pages->findIDs([
+      'include' => 'all',
+      'parent' => $this->getDatapage(),
+      ['id', '!=', $this->getUsedBlockIds()],
+    ]);
+    return $ids;
+  }
+
+  /**
+   * Get array of all used blocks
+   */
+  public function getUsedBlockIds(): array
+  {
+    $ids = [];
+
+    // get all pagebuilder fields
+    $fields = $this->wire->fields->findByType("FieldtypeRockPageBuilder");
+    foreach ($fields as $field) {
+      // find all pages that have blocks in that field
+      $pages = $this->wire->pages->findRaw("include=all,$field!=''", $field->name);
+      foreach ($pages as $data) {
+        if ($data === "[]") continue;
+        $arr = json_decode($data);
+        foreach ($arr as $block) $ids[] = $block->id;
+      }
+    }
+
+    return $ids;
   }
 
   /**
@@ -1484,13 +1575,15 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     if (!$page instanceof Block) return;
     $mp = $page->getBlockPage();
+    $field = $page->getBlockField();
+    if (!$field) return "Blockfield does not exist (any more)";
 
     $out = '';
     if (!$level) $out = "<table class='uk-table uk-table-striped uk-table-small'>";
     $out .= "<tr>";
     $out .= "<td class=uk-width-auto><a href={$mp->editUrl}><i class='fa fa-edit'></i></a></td>";
     $out .= "<td class=uk-width-auto>#$mp</td>";
-    $out .= "<td class=uk-width-auto>" . $page->getBlockField()->name . "</td>";
+    $out .= "<td class=uk-width-auto>{$field->name}</td>";
     $out .= "<td class=uk-width-expand>";
     $out .= $mp->viewable() ? "<a href={$mp->url}>" : '';
     $out .= $mp->title ?: $mp->url;

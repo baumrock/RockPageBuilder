@@ -555,8 +555,12 @@ class Block extends \ProcessWire\Page
     } else {
       $label = $this->wire->sanitizer->truncate(strip_tags($label), 70);
     }
-    $prefix = "<small class='rpb-blocktype'>$title:</small>";
-    if ($this->master()->noBlocktype) $prefix = false;
+    $prefix = false;
+    if (!$this->master()->noBlocktype) {
+      if ($title == $label) $label = false;
+      else $title .= ":";
+      $prefix = "<small class='rpb-blocktype'>$title</small>";
+    }
     $label = "<i class='fa fa-arrows'></i> $prefix $label";
     $fs->entityEncodeLabel = false;
 

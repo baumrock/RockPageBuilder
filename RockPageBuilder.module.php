@@ -52,6 +52,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   public $mtime = 0;
 
   public $noWidgets = false;
+  public $noBlocktype = false;
 
   private $preload = false;
 
@@ -1898,6 +1899,15 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'label' => 'Do not use the widgets feature',
       'checked' => $this->noWidgets ? true : false,
       'notes' => 'If you disable widgets you can safely remove the widgets field from your home template.',
+    ]);
+
+    $inputfields->add([
+      'type' => 'checkbox',
+      'name' => 'noBlocktype',
+      'label' => 'Do not prepend the block-type to block labels',
+      'checked' => $this->noBlocktype ? true : false,
+      'notes' => 'By default RockPageBuilder will add the block-type to the block label: [Screenshot](https://i.imgur.com/BvB5P6p.png)
+        You can use the .rpb-blocktype class to style your label to your needs.',
     ]);
 
     /** @var InputfieldSelect $f */

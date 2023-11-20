@@ -548,13 +548,16 @@ class Block extends \ProcessWire\Page
     $wrap->suffix = "_repeater$this";
 
     // prepare label
-    $label = $this->getLabel() ?: $this->getInfo()->title;
+    $title = $this->getInfo()->title;
+    $label = $this->getLabel() ?: $title;
     if ($label instanceof Html or $label instanceof RockPageBuilderHtml) {
       // do not change the label
     } else {
       $label = $this->wire->sanitizer->truncate(strip_tags($label), 70);
     }
-    $label = "<i class='fa fa-arrows'></i> $label";
+    $prefix = "<small class='rpb-blocktype'>$title:</small>";
+    if ($this->master()->noBlocktype) $prefix = false;
+    $label = "<i class='fa fa-arrows'></i> $prefix $label";
     $fs->entityEncodeLabel = false;
 
     // prepare the fieldset (item root element)

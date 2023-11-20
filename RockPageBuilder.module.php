@@ -1289,7 +1289,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // we automatically add the widget block to the default blocks field
     // so that users can instantly convert any block into a widget
     if ($fieldname === self::field_blocks) {
-      $blocks[] = "RockPageBuilderBlock\\Widget";
+      if (!$this->noWidgets) $blocks[] = "RockPageBuilderBlock\\Widget";
       $blocks = array_unique($blocks);
     }
 

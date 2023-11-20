@@ -152,7 +152,7 @@ class Block extends \ProcessWire\Page
     }
 
     // convert block into widget
-    if ($opt->widgetable and $block->canBeWidget()) {
+    if (!$this->master()->noWidgets && $opt->widgetable && $block->canBeWidget()) {
       $icons[] = (object)[
         'icon' => 'widget',
         'label' => $block->title,

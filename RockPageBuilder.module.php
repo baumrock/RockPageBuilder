@@ -51,6 +51,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   public $mtime = 0;
 
+  public $noWidgets = false;
+
   private $preload = false;
 
   private $_saved;
@@ -1856,7 +1858,10 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    */
   public function widgets()
   {
-    return $this->wire->pages->get(1)->getFormatted(self::field_widgets);
+    if ($this->noWidgets) return new PageArray();
+    // return widgets or if the field was removed an empty pagearray
+    return $this->wire->pages->get(1)->getFormatted(self::field_widgets)
+      ?: new PageArray();
   }
 
   /**
@@ -1885,6 +1890,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'icon' => 'exclamation',
       'value' => 'Note that you can overwrite all settings from within your config.php file: $config->rockpagebuilder = [...];',
       'notes' => 'Settings in config.php will have priority over settings set on this page!',
+    ]);
+
+    $inputfields->add([
+      'type' => 'checkbox',
+      'name' => 'noWidgets',
+      'label' => 'Do not use the widgets feature',
+      'checked' => $this->noWidgets ? true : false,
+      'notes' => 'If you disable widgets you can safely remove the widgets field from your home template.',
     ]);
 
     /** @var InputfieldSelect $f */

@@ -1388,7 +1388,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
           'noChildren' => 1, // create pages only via API
           'noParents' => -1, // only one allowed
           'icon' => 'cubes',
-          'sortfield' => '-created',
+          'sortfield' => '-id',
           'flags' => Template::flagSystem,
         ],
       ],

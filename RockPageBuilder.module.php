@@ -51,6 +51,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   public $mtime = 0;
 
+  public $noWidgets = false;
+  public $noBlocktype = false;
+
   private $preload = false;
 
   private $_saved;
@@ -1287,7 +1290,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // we automatically add the widget block to the default blocks field
     // so that users can instantly convert any block into a widget
     if ($fieldname === self::field_blocks) {
-      $blocks[] = "RockPageBuilderBlock\\Widget";
+      if (!$this->noWidgets) $blocks[] = "RockPageBuilderBlock\\Widget";
       $blocks = array_unique($blocks);
     }
 
@@ -1388,7 +1391,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
           'noChildren' => 1, // create pages only via API
           'noParents' => -1, // only one allowed
           'icon' => 'cubes',
-          'sortfield' => '-created',
+          'sortfield' => '-id',
           'flags' => Template::flagSystem,
         ],
       ],
@@ -1856,7 +1859,10 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    */
   public function widgets()
   {
-    return $this->wire->pages->get(1)->getFormatted(self::field_widgets);
+    if ($this->noWidgets) return new PageArray();
+    // return widgets or if the field was removed an empty pagearray
+    return $this->wire->pages->get(1)->getFormatted(self::field_widgets)
+      ?: new PageArray();
   }
 
   /**
@@ -1885,6 +1891,23 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'icon' => 'exclamation',
       'value' => 'Note that you can overwrite all settings from within your config.php file: $config->rockpagebuilder = [...];',
       'notes' => 'Settings in config.php will have priority over settings set on this page!',
+    ]);
+
+    $inputfields->add([
+      'type' => 'checkbox',
+      'name' => 'noWidgets',
+      'label' => 'Do not use the widgets feature',
+      'checked' => $this->noWidgets ? true : false,
+      'notes' => 'If you disable widgets you can safely remove the widgets field from your home template.',
+    ]);
+
+    $inputfields->add([
+      'type' => 'checkbox',
+      'name' => 'noBlocktype',
+      'label' => 'Do not prepend the block-type to block labels',
+      'checked' => $this->noBlocktype ? true : false,
+      'notes' => 'By default RockPageBuilder will add the block-type to the block label: [Screenshot](https://i.imgur.com/BvB5P6p.png)
+        You can use the .rpb-blocktype class to style your label to your needs.',
     ]);
 
     /** @var InputfieldSelect $f */

@@ -152,7 +152,7 @@ class Block extends \ProcessWire\Page
     }
 
     // convert block into widget
-    if ($opt->widgetable and $block->canBeWidget()) {
+    if (!$this->master()->noWidgets && $opt->widgetable && $block->canBeWidget()) {
       $icons[] = (object)[
         'icon' => 'widget',
         'label' => $block->title,
@@ -548,13 +548,20 @@ class Block extends \ProcessWire\Page
     $wrap->suffix = "_repeater$this";
 
     // prepare label
-    $label = $this->getLabel() ?: $this->getInfo()->title;
+    $title = $this->getInfo()->title;
+    $label = $this->getLabel() ?: $title;
     if ($label instanceof Html or $label instanceof RockPageBuilderHtml) {
       // do not change the label
     } else {
       $label = $this->wire->sanitizer->truncate(strip_tags($label), 70);
     }
-    $label = "<i class='fa fa-arrows'></i> $label";
+    $prefix = false;
+    if (!$this->master()->noBlocktype) {
+      if ($title == $label) $label = false;
+      else $title .= ":";
+      $prefix = "<small class='rpb-blocktype'>$title</small>";
+    }
+    $label = "<i class='fa fa-arrows'></i> $prefix $label";
     $fs->entityEncodeLabel = false;
 
     // prepare the fieldset (item root element)

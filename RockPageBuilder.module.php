@@ -1420,6 +1420,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         'tags' => self::tags,
         'icon' => 'cubes',
         'notes' => "Here you can create global blocks that can then be included on many pages. For example you could create a widget with contact details like a telephone number, add that widget to several pages and then change the phone number at one central place rather than updating all pages one by one.",
+        'collapsed' => Inputfield::collapsedYes,
       ]);
       $rm->addFieldToTemplate(self::field_widgets, 'home');
     }

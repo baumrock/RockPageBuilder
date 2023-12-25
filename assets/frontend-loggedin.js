@@ -102,7 +102,7 @@ function makeSortable() {
     // init sortable
     new Sortable(container, {
       animation: 150,
-      filter: ".no-sortable",
+      handle: ".sortable-handle",
       onChoose: (e) => {
         body.classList.add("no-alfred");
       },

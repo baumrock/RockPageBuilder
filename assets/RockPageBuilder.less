@@ -42,7 +42,7 @@ html {
 }
 
 // sortable handle for rockpagebuilder
-.alfred:hover .sortable-handle {
+.alfred:hover > .alfredelements .sortable-handle {
   display: block;
 }
 .sortable-handle {
@@ -54,11 +54,12 @@ html {
   width: 30px;
   height: 30px;
   background-color: white;
-  color: black;
+  color: black !important;
   border-radius: 0 0 5px 0;
   border-bottom: 4px solid #ececec;
   border-right: 4px solid #ececec;
   svg {
-    width: 100%;
+    width: 20px;
+    margin: 5px;
   }
 }

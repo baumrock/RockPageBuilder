@@ -61,6 +61,29 @@ _RockSortable.prototype.getPageIds = function (el) {
   return ids;
 };
 
+_RockSortable.prototype.parseAttributes = function (el) {
+  const result = {};
+  const attribute = "sortable";
+  el = this.getContainer(el);
+
+  // Check if the element has the specified attribute
+  if (el.hasAttribute(attribute)) {
+    // get value and trim final semicolons to prevent empty value in json
+    const attributeValue = el.getAttribute(attribute).replace(/;+\s*$/, "");
+
+    // Split the attribute value into individual key-value pairs
+    const pairs = attributeValue.split(";").map((pair) => pair.trim());
+
+    // Process each key-value pair and add it to the result object
+    pairs.forEach((pair) => {
+      const [key, value] = pair.split(":").map((item) => item.trim());
+      result[key] = value;
+    });
+  }
+
+  return result;
+};
+
 /**
  * Send ajax request to save new sort order
  */
@@ -75,6 +98,8 @@ _RockSortable.prototype.saveSort = function (el) {
   fetch(url)
     .then((response) => {
       if (response.ok) {
+        let settings = this.parseAttributes(el);
+        if (settings.reload) document.location.reload(true);
         return response.json();
       }
       throw new Error("Something went wrong");
@@ -93,21 +118,27 @@ var RockSortable = new _RockSortable();
 function makeSortable() {
   let containers = document.querySelectorAll("[sortable]");
   let body = document.querySelector("body");
+  let beforeSort = false;
 
   // init sortable on all containers
   containers.forEach((container) => {
-    if (container.hasAttribute("data-sortable")) return;
-    container.setAttribute("data-sortable", true);
+    if (container.hasAttribute("data-sortable-init")) return;
+    container.setAttribute("data-sortable-init", true);
 
     // init sortable
     new Sortable(container, {
       animation: 150,
       handle: ".sortable-handle",
       onChoose: (e) => {
+        beforeSort = RockSortable.getPageIds(e.item).join(",");
         body.classList.add("no-alfred");
       },
       onEnd: (e) => {
         body.classList.remove("no-alfred");
+        // no change, no save
+        if (RockSortable.getPageIds(e.item).join(",") == beforeSort) return;
+
+        // save sort
         RockSortable.saveSort(e.item);
       },
       onUnchoose: (e) => {

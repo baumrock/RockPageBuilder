@@ -14,6 +14,12 @@ use RockPageBuilderBlock\Widget;
  * @license COMMERCIAL DO NOT DISTRIBUTE
  * @link https://www.baumrock.com
  */
+
+function rockpagebuilder(): RockPageBuilder
+{
+  return wire()->modules->get('RockPageBuilder');
+}
+
 require_once(__DIR__ . "/Block.php");
 require_once(__DIR__ . "/BlocksArray.php");
 class RockPageBuilder extends WireData implements Module, ConfigurableModule

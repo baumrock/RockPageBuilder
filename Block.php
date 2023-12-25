@@ -833,6 +833,17 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Get modified timestamp for image url cache busting
+   *
+   * Usage:
+   * <img src={$img->webp->url.$block->m()}>
+   */
+  public function m($len = 4): string
+  {
+    return "?m=" . substr($this->modified, strlen($this->modified) - $len);
+  }
+
+  /**
    * Return master module
    * @return RockPageBuilder
    */

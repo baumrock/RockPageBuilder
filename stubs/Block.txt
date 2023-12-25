@@ -11,7 +11,6 @@ class {name} extends Block {
   public function info() {
     return [
       'title' => '{name}',
-      'spaceV' => self::spaceM,
       // 'sort' => 100, // default sort is 500, less is earlier
       // 'description' => 'RockPageBuilder Block Setup Demo',
       // 'icon' => 'picture-o',

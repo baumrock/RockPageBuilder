@@ -84,8 +84,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       );
     }
 
-    $this->compileLESS();
-
     $this->installProcessModule();
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "buildForm");
     $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
@@ -426,7 +424,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if (!$rf = $this->wire->modules->get('RockFrontend')) return;
 
     // always add global frontend styles
-    $rf->styles()->add($dir . "RockPageBuilder.min.css");
+    $rf->styles()->add(__DIR__ . "/assets/RockPageBuilder.min.css");
 
     // load RockPageBuilder frontend assets
     if ($this->wire->user->hasPermission('page-edit')) {
@@ -771,21 +769,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     }
 
     // db("--- done ---");
-  }
-
-  /**
-   * Compile LESS files to CSS files and minify them
-   * This is for development of the module
-   */
-  public function compileLESS(): void
-  {
-    if ($this->wire->config->ajax) return;
-    /** @var RockMigrations $rm */
-    $rm = $this->wire->modules->get('RockMigrations');
-    $rm->saveCSS(
-      less: __DIR__ . "/RockPageBuilder.less",
-      minify: true,
-    );
   }
 
   /**
@@ -1501,21 +1484,25 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     }
     /** @var RockMigrations $rm */
     $rm = $this->wire->modules->get('RockMigrations');
-    $dir = __DIR__ . "/assets/";
-    try {
-      $css = $rm->saveCSS($dir . "RockPageBuilder.less");
-      $rm->minify($css, $dir . "RockPageBuilder.min.css");
-      $css = $rm->saveCSS($dir . "overlay.less");
-      $rm->minify($css, $dir . "overlay.min.css");
-      $css = $rm->saveCSS($dir . "frontend-loggedin.less");
-      $rm->minify($css, $dir . "frontend-loggedin.min.css");
-      $rm->minify(
-        $dir . "frontend-loggedin.js",
-        $dir . "frontend-loggedin.min.js"
-      );
-    } catch (\Throwable $th) {
-      $this->log($th->getMessage());
-    }
+    $rm->saveCSS(
+      less: __DIR__ . "/assets/RockPageBuilder.less",
+      minify: true,
+      keepCSS: false,
+    );
+    $rm->saveCSS(
+      less: __DIR__ . "/assets/overlay.less",
+      minify: true,
+      keepCSS: false,
+    );
+    $rm->saveCSS(
+      less: __DIR__ . "/assets/frontend-loggedin.less",
+      minify: true,
+      keepCSS: false,
+    );
+    $rm->minify(
+      __DIR__ . "/assets/frontend-loggedin.js",
+      __DIR__ . "/assets/frontend-loggedin.min.js"
+    );
   }
 
   /**

@@ -223,6 +223,17 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Get the background-id for this block
+   *
+   * This background id is necessary to calculate the block classes
+   * which are necessary for creating sections with different background colors
+   */
+  public function bgID(): string
+  {
+    return "white";
+  }
+
+  /**
    * Build form to edit this block
    * @return void
    */
@@ -241,6 +252,20 @@ class Block extends \ProcessWire\Page
   public function canBeWidget()
   {
     return $this->isAllowed(RockPageBuilder::field_widgets, 1);
+  }
+
+  /**
+   * Get block classes for multicolor background sections
+   */
+  public function classes(): string
+  {
+    $prev = $this->prevBlock();
+    $next = $this->nextBlock();
+
+    $class = "block";
+    if (!$prev || $prev->bgID() !== $this->bgID()) $class .= " block-top";
+    if (!$next || $next->bgID() !== $this->bgID()) $class .= " block-bottom";
+    return $class;
   }
 
   /**
@@ -827,7 +852,7 @@ class Block extends \ProcessWire\Page
 
   /**
    * Get next rpb item
-   * @return Page|false
+   * @return Block|false
    */
   public function nextBlock()
   {
@@ -911,7 +936,7 @@ class Block extends \ProcessWire\Page
 
   /**
    * Get previous rpb item
-   * @return Page|false
+   * @return Block|false
    */
   public function prevBlock()
   {

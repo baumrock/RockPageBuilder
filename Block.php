@@ -853,6 +853,20 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Add odd class to every 2nd element
+   *
+   * Block foo
+   * Block foo.odd
+   * Block foo
+   * Block bar
+   * Block bar.odd
+   */
+  public function oddClass(): string
+  {
+    return $this->typeIndex() % 2 ? "odd" : "";
+  }
+
+  /**
    * Return instance of RockPageBuilder
    * @return RockPageBuilder
    */

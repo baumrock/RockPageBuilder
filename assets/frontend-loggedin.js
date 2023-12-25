@@ -7,14 +7,7 @@
   // add overlay on page unload event
   window.onbeforeunload = function () {
     if (!showSpinner) return;
-    document.querySelector("body").classList.add("rpb-reloading");
-    let div = document.createElement("div");
-    div.id = "rpb-reloading";
-    div.innerHTML = '<span class="loader"></span>';
-    document.body.appendChild(div);
-    setTimeout(() => {
-      div.classList.add("show");
-    }, 10);
+    RockSortable.showSpinner();
   };
 
   // only show spinner if an alfred button was clicked
@@ -99,7 +92,10 @@ _RockSortable.prototype.saveSort = function (el) {
     .then((response) => {
       if (response.ok) {
         let settings = this.parseAttributes(el);
-        if (settings.reload) document.location.reload(true);
+        if (settings.reload) {
+          this.showSpinner();
+          document.location.reload(true);
+        }
         return response.json();
       }
       throw new Error("Something went wrong");
@@ -110,6 +106,17 @@ _RockSortable.prototype.saveSort = function (el) {
     .catch((error) => {
       console.error(error);
     });
+};
+
+_RockSortable.prototype.showSpinner = function () {
+  document.querySelector("body").classList.add("rpb-reloading");
+  let div = document.createElement("div");
+  div.id = "rpb-reloading";
+  div.innerHTML = '<span class="loader"></span>';
+  document.body.appendChild(div);
+  setTimeout(() => {
+    div.classList.add("show");
+  }, 10);
 };
 
 var RockSortable = new _RockSortable();

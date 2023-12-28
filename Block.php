@@ -234,6 +234,23 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Show block background info (for debugging)
+   */
+  public function bgInfo(): Html|string
+  {
+    $prev = $this->prevBlock();
+    if ($prev) $prev = "#{$prev} {$prev->bgID()}";
+    $next = $this->nextBlock();
+    if ($next) $next = "#{$next} {$next->bgID()}";
+
+    return $this->html("<div>
+      <div>prev: $prev</div>
+      <div>next: $next</div>
+      <div>this: #{$this} {$this->classes()}</div>
+    </div>");
+  }
+
+  /**
    * Build form to edit this block
    * @return void
    */
@@ -879,13 +896,16 @@ class Block extends \ProcessWire\Page
    * Get next rpb item
    * @return Block|false
    */
-  public function nextBlock()
+  public function nextBlock($includeHidden = false)
   {
     $match = false;
     foreach ($this->getBlockData() as $item) {
-      // some blocks don't have visible markup (like anchor blocks)
-      // those blocks are ignored when calculating vertical spacings
-      if ($item->noMarkup) continue;
+      if (!$includeHidden) {
+        // some blocks don't have visible markup (like anchor blocks)
+        // those blocks are ignored when calculating vertical spacings
+        if ($item->noMarkup) continue;
+        if ($item->_mxhidden) continue;
+      }
 
       if ($match) return $item;
       if ($item->id === $this->id) $match = true;
@@ -963,13 +983,16 @@ class Block extends \ProcessWire\Page
    * Get previous rpb item
    * @return Block|false
    */
-  public function prevBlock()
+  public function prevBlock($includeHidden = false)
   {
     $prev = false;
     foreach ($this->getBlockData() as $item) {
-      // some blocks don't have visible markup (like anchor blocks)
-      // those blocks are ignored when calculating vertical spacings
-      if ($item->noMarkup) continue;
+      // for frontend styles we only need visible blocks
+      // so we exclude non-visible blocks here
+      if (!$includeHidden) {
+        if ($item->noMarkup) continue;
+        if ($item->_mxhidden) continue;
+      }
 
       if ($item->id === $this->id) return $prev;
       $prev = $item;

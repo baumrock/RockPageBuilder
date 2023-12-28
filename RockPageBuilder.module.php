@@ -198,19 +198,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         'confirm' => $this->_('Do you really want to clone this element?'),
       ];
     }
-    // show move icon only when more than 1 block
-    $forPage = $block->getForPage();
-    $forField = $block->getForField()->name;
-    if ($forPage->get($forField)->count() > 1) {
-      $icons[] = (object)[
-        'icon' => $opt->addHorizontal ? 'movev' : 'moveh',
-        'label' => $block->title,
-        'tooltip' => "Move Block #{$block->id}",
-        'class' => 'pw-modal',
-        'href' => $block->getForPage()->editUrl . "&field=" . $block->getForField() . "&rpb-moveblock=$block",
-        'suffix' => 'data-buttons="button.ui-button[type=submit]" data-autoclose data-reload',
-      ];
-    }
 
     if ($opt->trash and $block->trashable()) {
       $icons[] = (object)[

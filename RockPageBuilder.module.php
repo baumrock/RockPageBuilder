@@ -1423,6 +1423,12 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'inlineMode' => true,
       'settingsFile' => '/site/modules/RockMigrations/TinyMCE/simple.json',
     ]);
+
+    // set tags for all fields
+    foreach ($this->wire->fields as $field) {
+      if (!str_starts_with($field->name, "rpb_")) continue;
+      $rm->setFieldData($field, ['tags' => 'RockPageBuilder']);
+    }
   }
 
   /**

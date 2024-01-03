@@ -27,6 +27,7 @@ use ReflectionClass;
 use RockPageBuilder\Html as RockPageBuilderHtml;
 use RockPageBuilderBlock\Widget;
 
+use function ProcessWire\rockpagebuilder;
 use function ProcessWire\wireClassName;
 
 class Block extends \ProcessWire\Page
@@ -1004,88 +1005,6 @@ class Block extends \ProcessWire\Page
   }
 
   /**
-   * Dont implement this method! It is needed for PW for $page->render() to work
-   * public function render() {
-   * }
-   */
-
-  /**
-   * Render this block
-   * @return string
-   */
-  public function renderBlock()
-  {
-    $rf = $this->rockfrontend();
-    foreach ($this->viewFiles() as $file => $type) {
-      if (is_file($file)) {
-        if ($rf) {
-          try {
-            $rf->setTextdomain($file);
-          } catch (\Throwable $th) {
-            return "setTextdomain not available - please update RockFrontend to the latest version!";
-          }
-        }
-        $out = $this->html($this->renderFile($file, $type));
-        if ($rf) $rf->setTextdomain(false);
-        return $out;
-      }
-    }
-  }
-
-  /**
-   * Render file
-   *
-   * Usage:
-   * $block->renderFile('/path/to/file.view.php');
-   *
-   * This will look for the file myblock.latte in the same folder
-   * where the block is defined (php file)
-   * $block->renderFile('myblock.latte');
-   *
-   * @return string
-   */
-  public function renderFile($file, $type = null)
-  {
-    // make all api variables available in the template file
-    $vars = array_merge(
-      $this->wire('all')->getArray(),
-      [
-        'block' => $this,
-        'settings' => $this->settings(),
-      ]
-    );
-    if (!$type) $type = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-    if (!is_file($file)) $file = dirname($this->filePath()) . "/$file";
-    if ($type == 'php') {
-      $opt = ['allowedPaths' => [dirname($file)]];
-      return $this->wire->files->render($file, $vars, $opt);
-    } elseif ($type == 'latte') {
-      $latte = $this->latte;
-      if (!$latte) {
-        try {
-          // load latte from RockFrontend
-          $vendor = $this->wire->config->paths->siteModules . "RockFrontend/vendor/autoload.php";
-          if (is_file($vendor)) require_once $vendor;
-          else {
-            // load latte from PW root
-            $vendor = $this->wire->config->paths->root . "vendor/autoload.php";
-            if (is_file($vendor)) require_once $vendor;
-          }
-
-          $latte = new Engine();
-          $latte->setTempDirectory($this->wire->config->paths->cache . "Latte");
-          $this->latte = $latte;
-        } catch (\Throwable $th) {
-          $msg = "<br>Install Latte or delete the .latte view file and use
-            the plain php view file instead.";
-          return "<strong>" . $th->getMessage() . "</strong>$msg";
-        }
-      }
-      return $latte->renderToString($file, $vars);
-    }
-  }
-
-  /**
    * Render a single block action
    * @return string
    */
@@ -1170,6 +1089,35 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Dont implement this method! It is needed for PW for $page->render() to work
+   * public function render() {
+   * }
+   */
+
+  /**
+   * Render this block
+   * @return string
+   */
+  public function renderBlock()
+  {
+    $rf = $this->rockfrontend();
+    foreach ($this->viewFiles() as $file => $type) {
+      if (is_file($file)) {
+        if ($rf) {
+          try {
+            $rf->setTextdomain($file);
+          } catch (\Throwable $th) {
+            return "setTextdomain not available - please update RockFrontend to the latest version!";
+          }
+        }
+        $out = $this->html($this->renderFile($file, $type));
+        if ($rf) $rf->setTextdomain(false);
+        return $out;
+      }
+    }
+  }
+
+  /**
    * Render Button when in modal view
    */
   public function renderButton($page, $field)
@@ -1235,6 +1183,64 @@ class Block extends \ProcessWire\Page
     }
 
     return "<img class=rpb-addblock-svg src=$url>$icon";
+  }
+
+  /**
+   * Render file
+   *
+   * Usage:
+   * $block->renderFile('/path/to/file.view.php');
+   *
+   * This will look for the file myblock.latte in the same folder
+   * where the block is defined (php file)
+   * $block->renderFile('myblock.latte');
+   *
+   * @return string
+   */
+  public function renderFile($file, $type = null)
+  {
+    // make all api variables available in the template file
+    $vars = array_merge(
+      $this->wire('all')->getArray(),
+      [
+        'block' => $this,
+        'settings' => $this->settings(),
+      ]
+    );
+    if (!$type) $type = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    if (!is_file($file)) $file = dirname($this->filePath()) . "/$file";
+    if ($type == 'php') {
+      $opt = ['allowedPaths' => [dirname($file)]];
+      return $this->wire->files->render($file, $vars, $opt);
+    } elseif ($type == 'latte') {
+      $latte = $this->latte;
+      if (!$latte) {
+        try {
+          // load latte from RockFrontend
+          $vendor = $this->wire->config->paths->siteModules . "RockFrontend/vendor/autoload.php";
+          if (is_file($vendor)) require_once $vendor;
+          else {
+            // load latte from PW root
+            $vendor = $this->wire->config->paths->root . "vendor/autoload.php";
+            if (is_file($vendor)) require_once $vendor;
+          }
+
+          $latte = new Engine();
+          $latte->setTempDirectory($this->wire->config->paths->cache . "Latte");
+          $this->latte = $latte;
+        } catch (\Throwable $th) {
+          $msg = "<br>Install Latte or delete the .latte view file and use
+            the plain php view file instead.";
+          return "<strong>" . $th->getMessage() . "</strong>$msg";
+        }
+      }
+      return $latte->renderToString($file, $vars);
+    }
+  }
+
+  public function renderReady($page): void
+  {
+    foreach ($this->fields as $field) rockpagebuilder()->renderReady($field, $page);
   }
 
   /**

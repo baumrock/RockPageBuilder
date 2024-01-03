@@ -3,6 +3,7 @@
 namespace ProcessWire;
 
 use RockPageBuilder\Block;
+use RockPageBuilder\BlocksArray;
 use RockPageBuilder\FieldData;
 
 /**
@@ -59,6 +60,39 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
   }
 
   /**
+   * Get all blocks that can be added to the current page
+   */
+  public function getAddableBlocks($page): BlocksArray
+  {
+    $blocks = $this->master->getAllowedBlocks($this, $page);
+    foreach ($blocks as $block) {
+      $info = $block->getInfo();
+      if ($block->template) {
+        // the check for template is important to prevent errors like this:
+        // you must set a template before you can set properties...
+        $sort = str_pad($info->sort, 5, 0, STR_PAD_LEFT);
+        $groupSort = $info->groupSort ?: '_';
+        $group = $info->group ?: '_';
+        $block->_rpbsort = "$groupSort|$group|$sort";
+      }
+
+      // check if the block should be shown on current page
+      // you can set a callback or FALSE in the blocks info array
+      $callback = $block->getInfo()->show;
+      if ($callback === false) {
+        $blocks->remove($block);
+      }
+      if (is_string($callback)) {
+        if (!$page->matches($callback)) $blocks->remove($block);
+      } elseif (is_callable($callback)) {
+        $show = $callback($page, $this);
+        if (!$show) $blocks->remove($block);
+      }
+    }
+    return $blocks;
+  }
+
+  /**
    * Preload assets of all allowed blocks' inputfields
    * This makes sure that all the assets for eg file fields are
    * ready when a new block is added and initialized via JS
@@ -72,7 +106,9 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
     if (in_array($this->hasField->name, $this->master->loaded)) return;
     $this->master->loaded[] = $this->hasField->name;
 
-    $blocks = $this->master->getAllowedBlocks($this, $page);
+    // get all blocks that can be added to this page
+    $blocks = $this->getAddableBlocks($page);
+
     foreach ($blocks as $block) {
       if (!$block instanceof Block) continue;
       if (!$tpl = $block->getTpl()) continue;
@@ -80,7 +116,9 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
         // wrap renderReady in try/catch because it sometimes causes problems
         // see https://processwire.com/talk/topic/29226-fields-to-inherit-tinymce-settings-from-lead-to-fatal-error-in-pw-backend/#comment-237098
         try {
-          $f = $field->getInputfield($block);
+          // using $page instead of $block fixes this issue:
+          // https://processwire.com/talk/topic/29403-image-fields-not-initializing-properly-within-add-block-to-page/
+          $f = $field->getInputfield($page);
           $f->renderReady();
         } catch (\Throwable $th) {
         }
@@ -188,31 +226,7 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
   public function ___renderButtons($page = null, $modal = false)
   {
     if (!$page) $page = $this->process->getPage();
-    $blocks = $this->master->getAllowedBlocks($this, $page);
-    foreach ($blocks as $block) {
-      $info = $block->getInfo();
-      if ($block->template) {
-        // the check for template is important to prevent errors like this:
-        // you must set a template before you can set properties...
-        $sort = str_pad($info->sort, 5, 0, STR_PAD_LEFT);
-        $groupSort = $info->groupSort ?: '_';
-        $group = $info->group ?: '_';
-        $block->_rpbsort = "$groupSort|$group|$sort";
-      }
-
-      // check if the block should be shown on current page
-      // you can set a callback or FALSE in the blocks info array
-      $callback = $block->getInfo()->show;
-      if ($callback === false) {
-        $blocks->remove($block);
-      }
-      if (is_string($callback)) {
-        if (!$page->matches($callback)) $blocks->remove($block);
-      } elseif (is_callable($callback)) {
-        $show = $callback($page, $this);
-        if (!$show) $blocks->remove($block);
-      }
-    }
+    $blocks = $this->getAddableBlocks($page);
     $blocks->sort("_rpbsort");
     $buttons = '<div class="rpb-buttons ' . ($modal ? 'modal' : '') . '">';
     $group = '';

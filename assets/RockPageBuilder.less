@@ -1,8 +1,5 @@
-/**
- * RockPageBuilder Frontend Styles
- * These styles are loaded on the frontend everytime (both for guests and for
- * logged in users).
- */
+// RockPageBuilder Frontend Styles
+// loaded both for guests and logged in users
 
 // remove first top and last bottom margin
 // so that we dont get too much padding in sections
@@ -17,7 +14,7 @@
   }
 }
 
-// tinymce styles
+// wysiwyg classes
 .align_center {
   text-align: center;
 }
@@ -25,7 +22,49 @@
   text-align: right;
 }
 
-// balance headlines
+// balanced headlines
 .balance {
   text-wrap: balance;
+}
+
+// block classes for multicolor sections
+html {
+  --block-space: rfGrow(50px, 100px);
+}
+.block {
+  padding: ~"calc(var(--block-space)/2)" 0;
+  &.block-top {
+    padding-top: var(--block-space);
+  }
+  &.block-bottom {
+    padding-bottom: var(--block-space);
+  }
+}
+
+// sortable handle for rockpagebuilder
+.alfred:hover > .alfredelements .sortable-handle {
+  display: block;
+}
+.sortable-handle {
+  display: none;
+  cursor: move;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  color: black !important;
+  border-radius: 0 0 5px 0;
+  border-bottom: 4px solid #ececec;
+  border-right: 4px solid #ececec;
+  svg {
+    width: 20px;
+    margin: 5px;
+  }
+}
+
+// fix tinymce z-index issue on frontend editing
+.tox-tinymce-inline {
+  z-index: 90;
 }

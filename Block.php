@@ -27,6 +27,7 @@ use ReflectionClass;
 use RockPageBuilder\Html as RockPageBuilderHtml;
 use RockPageBuilderBlock\Widget;
 
+use function ProcessWire\rockpagebuilder;
 use function ProcessWire\wireClassName;
 
 class Block extends \ProcessWire\Page
@@ -139,17 +140,6 @@ class Block extends \ProcessWire\Page
         'confirm' => $this->_('Do you really want to clone this element?'),
       ];
     }
-    // show move icon only when more than 1 block
-    if ($opt->move and $data->count() > 1) {
-      $icons[] = (object)[
-        'icon' => 'moveh',
-        'label' => $block->title,
-        'tooltip' => "Move Block #{$widget->id}",
-        'class' => 'pw-modal',
-        'href' => $widget->getBlockPage()->editUrl . "&field=" . $widget->getBlockField() . "&rpb-moveblock=$widget",
-        'suffix' => 'data-buttons="button.ui-button[type=submit]" data-autoclose data-reload',
-      ];
-    }
 
     // convert block into widget
     if (!$this->master()->noWidgets && $opt->widgetable && $block->canBeWidget()) {
@@ -223,6 +213,34 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Get the background-id for this block
+   *
+   * This background id is necessary to calculate the block classes
+   * which are necessary for creating sections with different background colors
+   */
+  public function bgID(): string
+  {
+    return "white";
+  }
+
+  /**
+   * Show block background info (for debugging)
+   */
+  public function bgInfo(): Html|string
+  {
+    $prev = $this->prevBlock();
+    if ($prev) $prev = "#{$prev} {$prev->bgID()}";
+    $next = $this->nextBlock();
+    if ($next) $next = "#{$next} {$next->bgID()}";
+
+    return $this->html("<div>
+      <div>prev: $prev</div>
+      <div>next: $next</div>
+      <div>this: #{$this} {$this->classes()}</div>
+    </div>");
+  }
+
+  /**
    * Build form to edit this block
    * @return void
    */
@@ -241,6 +259,20 @@ class Block extends \ProcessWire\Page
   public function canBeWidget()
   {
     return $this->isAllowed(RockPageBuilder::field_widgets, 1);
+  }
+
+  /**
+   * Get block classes for multicolor background sections
+   */
+  public function classes(): string
+  {
+    $prev = $this->prevBlock();
+    $next = $this->nextBlock();
+
+    $class = "block";
+    if (!$prev || $prev->bgID() !== $this->bgID()) $class .= " block-top";
+    if (!$next || $next->bgID() !== $this->bgID()) $class .= " block-bottom";
+    return $class;
   }
 
   /**
@@ -808,12 +840,37 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Get modified timestamp for image url cache busting
+   *
+   * Usage:
+   * <img src={$img->webp->url.$block->m()}>
+   */
+  public function m($len = 4): string
+  {
+    return "?m=" . substr($this->modified, strlen($this->modified) - $len);
+  }
+
+  /**
    * Return master module
    * @return RockPageBuilder
    */
   public function master()
   {
     return $this->wire->modules->get('RockPageBuilder');
+  }
+
+  /**
+   * Add odd class to every 2nd element
+   *
+   * Block foo
+   * Block foo.odd
+   * Block foo
+   * Block bar
+   * Block bar.odd
+   */
+  public function oddClass(): string
+  {
+    return $this->typeIndex() % 2 ? "odd" : "";
   }
 
   /**
@@ -827,15 +884,18 @@ class Block extends \ProcessWire\Page
 
   /**
    * Get next rpb item
-   * @return Page|false
+   * @return Block|false
    */
-  public function nextBlock()
+  public function nextBlock($includeHidden = false)
   {
     $match = false;
     foreach ($this->getBlockData() as $item) {
-      // some blocks don't have visible markup (like anchor blocks)
-      // those blocks are ignored when calculating vertical spacings
-      if ($item->noMarkup) continue;
+      if (!$includeHidden) {
+        // some blocks don't have visible markup (like anchor blocks)
+        // those blocks are ignored when calculating vertical spacings
+        if ($item->noMarkup) continue;
+        if ($item->_mxhidden) continue;
+      }
 
       if ($match) return $item;
       if ($item->id === $this->id) $match = true;
@@ -911,15 +971,18 @@ class Block extends \ProcessWire\Page
 
   /**
    * Get previous rpb item
-   * @return Page|false
+   * @return Block|false
    */
-  public function prevBlock()
+  public function prevBlock($includeHidden = false)
   {
     $prev = false;
     foreach ($this->getBlockData() as $item) {
-      // some blocks don't have visible markup (like anchor blocks)
-      // those blocks are ignored when calculating vertical spacings
-      if ($item->noMarkup) continue;
+      // for frontend styles we only need visible blocks
+      // so we exclude non-visible blocks here
+      if (!$includeHidden) {
+        if ($item->noMarkup) continue;
+        if ($item->_mxhidden) continue;
+      }
 
       if ($item->id === $this->id) return $prev;
       $prev = $item;
@@ -939,88 +1002,6 @@ class Block extends \ProcessWire\Page
       $this->wire->config->urls->root,
       dirname($this->filePath())
     ) . "/";
-  }
-
-  /**
-   * Dont implement this method! It is needed for PW for $page->render() to work
-   * public function render() {
-   * }
-   */
-
-  /**
-   * Render this block
-   * @return string
-   */
-  public function renderBlock()
-  {
-    $rf = $this->rockfrontend();
-    foreach ($this->viewFiles() as $file => $type) {
-      if (is_file($file)) {
-        if ($rf) {
-          try {
-            $rf->setTextdomain($file);
-          } catch (\Throwable $th) {
-            return "setTextdomain not available - please update RockFrontend to the latest version!";
-          }
-        }
-        $out = $this->html($this->renderFile($file, $type));
-        if ($rf) $rf->setTextdomain(false);
-        return $out;
-      }
-    }
-  }
-
-  /**
-   * Render file
-   *
-   * Usage:
-   * $block->renderFile('/path/to/file.view.php');
-   *
-   * This will look for the file myblock.latte in the same folder
-   * where the block is defined (php file)
-   * $block->renderFile('myblock.latte');
-   *
-   * @return string
-   */
-  public function renderFile($file, $type = null)
-  {
-    // make all api variables available in the template file
-    $vars = array_merge(
-      $this->wire('all')->getArray(),
-      [
-        'block' => $this,
-        'settings' => $this->settings(),
-      ]
-    );
-    if (!$type) $type = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-    if (!is_file($file)) $file = dirname($this->filePath()) . "/$file";
-    if ($type == 'php') {
-      $opt = ['allowedPaths' => [dirname($file)]];
-      return $this->wire->files->render($file, $vars, $opt);
-    } elseif ($type == 'latte') {
-      $latte = $this->latte;
-      if (!$latte) {
-        try {
-          // load latte from RockFrontend
-          $vendor = $this->wire->config->paths->siteModules . "RockFrontend/vendor/autoload.php";
-          if (is_file($vendor)) require_once $vendor;
-          else {
-            // load latte from PW root
-            $vendor = $this->wire->config->paths->root . "vendor/autoload.php";
-            if (is_file($vendor)) require_once $vendor;
-          }
-
-          $latte = new Engine();
-          $latte->setTempDirectory($this->wire->config->paths->cache . "Latte");
-          $this->latte = $latte;
-        } catch (\Throwable $th) {
-          $msg = "<br>Install Latte or delete the .latte view file and use
-            the plain php view file instead.";
-          return "<strong>" . $th->getMessage() . "</strong>$msg";
-        }
-      }
-      return $latte->renderToString($file, $vars);
-    }
   }
 
   /**
@@ -1108,6 +1089,35 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Dont implement this method! It is needed for PW for $page->render() to work
+   * public function render() {
+   * }
+   */
+
+  /**
+   * Render this block
+   * @return string
+   */
+  public function renderBlock()
+  {
+    $rf = $this->rockfrontend();
+    foreach ($this->viewFiles() as $file => $type) {
+      if (is_file($file)) {
+        if ($rf) {
+          try {
+            $rf->setTextdomain($file);
+          } catch (\Throwable $th) {
+            return "setTextdomain not available - please update RockFrontend to the latest version!";
+          }
+        }
+        $out = $this->html($this->renderFile($file, $type));
+        if ($rf) $rf->setTextdomain(false);
+        return $out;
+      }
+    }
+  }
+
+  /**
    * Render Button when in modal view
    */
   public function renderButton($page, $field)
@@ -1173,6 +1183,64 @@ class Block extends \ProcessWire\Page
     }
 
     return "<img class=rpb-addblock-svg src=$url>$icon";
+  }
+
+  /**
+   * Render file
+   *
+   * Usage:
+   * $block->renderFile('/path/to/file.view.php');
+   *
+   * This will look for the file myblock.latte in the same folder
+   * where the block is defined (php file)
+   * $block->renderFile('myblock.latte');
+   *
+   * @return string
+   */
+  public function renderFile($file, $type = null)
+  {
+    // make all api variables available in the template file
+    $vars = array_merge(
+      $this->wire('all')->getArray(),
+      [
+        'block' => $this,
+        'settings' => $this->settings(),
+      ]
+    );
+    if (!$type) $type = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    if (!is_file($file)) $file = dirname($this->filePath()) . "/$file";
+    if ($type == 'php') {
+      $opt = ['allowedPaths' => [dirname($file)]];
+      return $this->wire->files->render($file, $vars, $opt);
+    } elseif ($type == 'latte') {
+      $latte = $this->latte;
+      if (!$latte) {
+        try {
+          // load latte from RockFrontend
+          $vendor = $this->wire->config->paths->siteModules . "RockFrontend/vendor/autoload.php";
+          if (is_file($vendor)) require_once $vendor;
+          else {
+            // load latte from PW root
+            $vendor = $this->wire->config->paths->root . "vendor/autoload.php";
+            if (is_file($vendor)) require_once $vendor;
+          }
+
+          $latte = new Engine();
+          $latte->setTempDirectory($this->wire->config->paths->cache . "Latte");
+          $this->latte = $latte;
+        } catch (\Throwable $th) {
+          $msg = "<br>Install Latte or delete the .latte view file and use
+            the plain php view file instead.";
+          return "<strong>" . $th->getMessage() . "</strong>$msg";
+        }
+      }
+      return $latte->renderToString($file, $vars);
+    }
+  }
+
+  public function renderReady($page): void
+  {
+    foreach ($this->fields as $field) rockpagebuilder()->renderReady($field, $page);
   }
 
   /**

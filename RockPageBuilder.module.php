@@ -14,6 +14,12 @@ use RockPageBuilderBlock\Widget;
  * @license COMMERCIAL DO NOT DISTRIBUTE
  * @link https://www.baumrock.com
  */
+
+function rockpagebuilder(): RockPageBuilder
+{
+  return wire()->modules->get('RockPageBuilder');
+}
+
 require_once(__DIR__ . "/Block.php");
 require_once(__DIR__ . "/BlocksArray.php");
 class RockPageBuilder extends WireData implements Module, ConfigurableModule
@@ -77,8 +83,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         $this->wire->config->rockpagebuilder // settings from config.php
       );
     }
-
-    $this->compileLESS();
 
     $this->installProcessModule();
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "buildForm");
@@ -192,19 +196,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         'tooltip' => "Clone Block #{$block->id}",
         'href' => $this->repeaterUrl("/clone/?block=$block"),
         'confirm' => $this->_('Do you really want to clone this element?'),
-      ];
-    }
-    // show move icon only when more than 1 block
-    $forPage = $block->getForPage();
-    $forField = $block->getForField()->name;
-    if ($forPage->get($forField)->count() > 1) {
-      $icons[] = (object)[
-        'icon' => $opt->addHorizontal ? 'movev' : 'moveh',
-        'label' => $block->title,
-        'tooltip' => "Move Block #{$block->id}",
-        'class' => 'pw-modal',
-        'href' => $block->getForPage()->editUrl . "&field=" . $block->getForField() . "&rpb-moveblock=$block",
-        'suffix' => 'data-buttons="button.ui-button[type=submit]" data-autoclose data-reload',
       ];
     }
 
@@ -420,7 +411,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if (!$rf = $this->wire->modules->get('RockFrontend')) return;
 
     // always add global frontend styles
-    $rf->styles()->add($dir . "RockPageBuilder.min.css");
+    $rf->styles()->add(__DIR__ . "/assets/RockPageBuilder.min.css");
 
     // load RockPageBuilder frontend assets
     if ($this->wire->user->hasPermission('page-edit')) {
@@ -765,21 +756,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     }
 
     // db("--- done ---");
-  }
-
-  /**
-   * Compile LESS files to CSS files and minify them
-   * This is for development of the module
-   */
-  public function compileLESS(): void
-  {
-    if ($this->wire->config->ajax) return;
-    /** @var RockMigrations $rm */
-    $rm = $this->wire->modules->get('RockMigrations');
-    $rm->saveCSS(
-      less: __DIR__ . "/RockPageBuilder.less",
-      minify: true,
-    );
   }
 
   /**
@@ -1420,6 +1396,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         'tags' => self::tags,
         'icon' => 'cubes',
         'notes' => "Here you can create global blocks that can then be included on many pages. For example you could create a widget with contact details like a telephone number, add that widget to several pages and then change the phone number at one central place rather than updating all pages one by one.",
+        'collapsed' => Inputfield::collapsedYes,
       ]);
       $rm->addFieldToTemplate(self::field_widgets, 'home');
     }
@@ -1446,6 +1423,12 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'inlineMode' => true,
       'settingsFile' => '/site/modules/RockMigrations/TinyMCE/simple.json',
     ]);
+
+    // set tags for all fields
+    foreach ($this->wire->fields as $field) {
+      if (!str_starts_with($field->name, "rpb_")) continue;
+      $rm->setFieldData($field, ['tags' => 'RockPageBuilder']);
+    }
   }
 
   /**
@@ -1494,21 +1477,25 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     }
     /** @var RockMigrations $rm */
     $rm = $this->wire->modules->get('RockMigrations');
-    $dir = __DIR__ . "/assets/";
-    try {
-      $css = $rm->saveCSS($dir . "RockPageBuilder.less");
-      $rm->minify($css, $dir . "RockPageBuilder.min.css");
-      $css = $rm->saveCSS($dir . "overlay.less");
-      $rm->minify($css, $dir . "overlay.min.css");
-      $css = $rm->saveCSS($dir . "frontend-loggedin.less");
-      $rm->minify($css, $dir . "frontend-loggedin.min.css");
-      $rm->minify(
-        $dir . "frontend-loggedin.js",
-        $dir . "frontend-loggedin.min.js"
-      );
-    } catch (\Throwable $th) {
-      $this->log($th->getMessage());
-    }
+    $rm->saveCSS(
+      less: __DIR__ . "/assets/RockPageBuilder.less",
+      minify: true,
+      keepCSS: false,
+    );
+    $rm->saveCSS(
+      less: __DIR__ . "/assets/overlay.less",
+      minify: true,
+      keepCSS: false,
+    );
+    $rm->saveCSS(
+      less: __DIR__ . "/assets/frontend-loggedin.less",
+      minify: true,
+      keepCSS: false,
+    );
+    $rm->minify(
+      __DIR__ . "/assets/frontend-loggedin.js",
+      __DIR__ . "/assets/frontend-loggedin.min.js"
+    );
   }
 
   /**

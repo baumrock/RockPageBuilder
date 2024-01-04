@@ -1,3 +1,12 @@
+## [5.0.1](https://github.com/baumrock/RockPageBuilder/compare/v5.0.0...v5.0.1) (2024-01-04)
+
+
+### Bug Fixes
+
+* prevent .block class overwritting horizontal paddings ([a46b752](https://github.com/baumrock/RockPageBuilder/commit/a46b7521c3b5eeafbab9d162254ba55ed0fe9c4e))
+
+
+
 # [5.0.0](https://github.com/baumrock/RockPageBuilder/compare/v4.8.0...v5.0.0) (2024-01-03)
 
 
@@ -63,16 +72,6 @@
 ### Bug Fixes
 
 * issue with dirname() on windows ([9784aa5](https://github.com/baumrock/RockPageBuilder/commit/9784aa566070a3c9a9d9ce41601635ec4ef339ab))
-
-
-
-## [4.7.2](https://github.com/baumrock/RockPageBuilder/compare/v4.7.1...v4.7.2) (2023-11-09)
-
-
-### Bug Fixes
-
-* renderReady() throwing exception ([bb9947a](https://github.com/baumrock/RockPageBuilder/commit/bb9947ad73f140364097232cc367376308d13a1d))
-* showIf not working in the backend ([de4d463](https://github.com/baumrock/RockPageBuilder/commit/de4d463cf60d2f24ba949671bfdd412b8d5db535))
 
 
 

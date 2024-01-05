@@ -140,6 +140,17 @@ class Block extends \ProcessWire\Page
         'confirm' => $this->_('Do you really want to clone this element?'),
       ];
     }
+    // show move icon only when more than 1 block
+    if ($opt->move and $data->count() > 1) {
+      $icons[] = (object)[
+        'icon' => 'moveh',
+        'label' => $block->title,
+        'tooltip' => "Move Block #{$widget->id}",
+        'class' => 'pw-modal',
+        'href' => $widget->getBlockPage()->editUrl . "&field=" . $widget->getBlockField() . "&rpb-moveblock=$widget",
+        'suffix' => 'data-buttons="button.ui-button[type=submit]" data-autoclose data-reload',
+      ];
+    }
 
     // convert block into widget
     if (!$this->master()->noWidgets && $opt->widgetable && $block->canBeWidget()) {

@@ -1,3 +1,12 @@
+## [5.0.2](https://github.com/baumrock/RockPageBuilder/compare/v5.0.1...v5.0.2) (2024-01-05)
+
+
+### Bug Fixes
+
+* remove unnecessary log about Less module ([19c6ab5](https://github.com/baumrock/RockPageBuilder/commit/19c6ab52dde6cd5d07c57b7ddd27d9676e231141))
+
+
+
 ## [5.0.1](https://github.com/baumrock/RockPageBuilder/compare/v5.0.0...v5.0.1) (2024-01-04)
 
 
@@ -63,15 +72,6 @@
 ### Bug Fixes
 
 * delete orphan blocks on page save ([832e965](https://github.com/baumrock/RockPageBuilder/commit/832e965e5146ae7ffe0a6a57ab19d2817b639d6c))
-
-
-
-## [4.7.3](https://github.com/baumrock/RockPageBuilder/compare/v4.7.2...v4.7.3) (2023-11-14)
-
-
-### Bug Fixes
-
-* issue with dirname() on windows ([9784aa5](https://github.com/baumrock/RockPageBuilder/commit/9784aa566070a3c9a9d9ce41601635ec4ef339ab))
 
 
 

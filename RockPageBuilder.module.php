@@ -1471,10 +1471,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   public function parseFrontendAssets()
   {
     if (!$this->wire->user->isSuperuser()) return;
-    if (!$this->wire->modules->isInstalled('Less')) {
-      $this->log('Install Less module to parse less files!');
-      return;
-    }
+    if (!$this->wire->modules->isInstalled('Less')) return;
+
     /** @var RockMigrations $rm */
     $rm = $this->wire->modules->get('RockMigrations');
     $rm->saveCSS(

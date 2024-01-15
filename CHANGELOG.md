@@ -1,3 +1,10 @@
+## [5.0.4](https://github.com/baumrock/RockPageBuilder/compare/v5.0.3...v5.0.4) (2024-01-15)
+
+
+### Bug Fixes
+
+* rename block class to avoid tailwind conflicts ([6901a6c](https://github.com/baumrock/RockPageBuilder/commit/6901a6c834925084c1a42c654f8a50d3c073c1e0))
+
 ## [5.0.3](https://github.com/baumrock/RockPageBuilder/compare/v5.0.2...v5.0.3) (2024-01-05)
 
 
@@ -49,20 +56,4 @@
 * fix image field not working before first save ([c578aaf](https://github.com/baumrock/RockPageBuilder/commit/c578aaf82b1416eff05507f7a4621e5f4cb57630))
 * fix sortable handle hover selector ([cd3f4e7](https://github.com/baumrock/RockPageBuilder/commit/cd3f4e7fb1a6ff12fd3d3ef11eb6d1ec755a5332))
 * fix tinymce z-index issue ([a02661b](https://github.com/baumrock/RockPageBuilder/commit/a02661b907afdfa499a020ab71369be5e4210faa))
-
-## [4.8.0](https://github.com/baumrock/RockPageBuilder/compare/v4.7.4...v4.8.0) (2023-12-03)
-
-
-### Features
-
-* add config setting to disable widgets (request by matthias) ([8732e12](https://github.com/baumrock/RockPageBuilder/commit/8732e12c741b41f281582168d1c5b663f3f9246f))
-* don't show label if same as blocktype ([32ac271](https://github.com/baumrock/RockPageBuilder/commit/32ac271c800d009fa8a82a501219e9f0a7a5b186))
-* prepend blocks with block type + add setting to disable it ([673586a](https://github.com/baumrock/RockPageBuilder/commit/673586a31723ea490a909bb4866b859402d0dde6))
-
-
-### Bug Fixes
-
-* button to add widget showing up if widgets disabled ([f8a7649](https://github.com/baumrock/RockPageBuilder/commit/f8a76496cc79d09dfbba1b396614ddc2c2a7f414))
-* remove custom paste hook (in core now) ([c54e47d](https://github.com/baumrock/RockPageBuilder/commit/c54e47d96230bc4253c59a562a2f4d54cadb846a))
-* sort blocks by id not by created date ([de52773](https://github.com/baumrock/RockPageBuilder/commit/de52773049360a5c4c3619a8c34342926b55ae72))
 

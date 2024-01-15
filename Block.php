@@ -1147,8 +1147,9 @@ class Block extends \ProcessWire\Page
     $tooltip = "title='$tooltip' uk-tooltip";
 
     $style = $info->color ? "style='border-left: 3px solid {$info->color}'" : '';
+    $type = $this->className();
 
-    return "<a href='$href' data-href='$ajax' class='rpb-button' $tooltip $style>
+    return "<a href='$href' data-href='$ajax' data-blocktype='$type' class='rpb-button' $tooltip $style>
       <div class='uk-position-relative'>{$this->renderButtonImage()}</div>
       <span class='uk-margin-small-top uk-badge'>{$this->getInfo()->title}</span>
       </a>";

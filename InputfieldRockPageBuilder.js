@@ -335,16 +335,28 @@ $(document).on("click", ".createBlockType", function (e) {
   let $li = RockPageBuilder.$root(e.target);
   if (!$li.length) return;
   let field = RockPageBuilder.getName(e);
+
+  // get blocks that already exist on this field
+  let $buttons = $li.find(".rpb-buttons").children();
+  let blockTypes = $buttons
+    .map(function () {
+      return $(this).data("blocktype");
+    })
+    .get();
+
   let existing = "";
   $.each(ProcessWire.config.RockPageBuilderBlocks, function (i, item) {
+    if (blockTypes.includes(item)) return;
     existing += "<a href=/ class=rpb-copyblockname>" + item + "</a> | ";
   });
+  if (existing) {
+    existing =
+      "<div class=uk-text-small>Reuse block from another field: " +
+      existing +
+      "</div>";
+  }
   UIkit.modal
-    .prompt(
-      "Technical name of block to be created (or reused):<br><small>" +
-        existing +
-        "</small>"
-    )
+    .prompt("Technical name of block to be created:" + existing)
     .then(function (name) {
       if (!name) return;
       $(".uk-modal-body").text("loading...");

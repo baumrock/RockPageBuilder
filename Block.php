@@ -280,9 +280,9 @@ class Block extends \ProcessWire\Page
     $prev = $this->prevBlock();
     $next = $this->nextBlock();
 
-    $class = "block";
-    if (!$prev || $prev->bgID() !== $this->bgID()) $class .= " block-top";
-    if (!$next || $next->bgID() !== $this->bgID()) $class .= " block-bottom";
+    $class = "rpb-block";
+    if (!$prev || $prev->bgID() !== $this->bgID()) $class .= " rpb-block-top";
+    if (!$next || $next->bgID() !== $this->bgID()) $class .= " rpb-block-bottom";
     return $class;
   }
 

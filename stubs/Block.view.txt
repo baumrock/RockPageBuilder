@@ -3,6 +3,6 @@ use RockPageBuilderBlock\{name};
 /** @var Page $page */
 /** @var {name} $block */
 {latteNote}?>
-<section class="{cls}" <?= $block->styles() ?> <?= alfred($block) ?>>
+<section class="{cls} <?= $block->classes() ?>" <?= alfred($block) ?>>
   Markup for this block comes from <strong><?= $block->viewFile() ?></strong>
 </section>

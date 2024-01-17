@@ -1147,8 +1147,9 @@ class Block extends \ProcessWire\Page
     $tooltip = "title='$tooltip' uk-tooltip";
 
     $style = $info->color ? "style='border-left: 3px solid {$info->color}'" : '';
+    $type = $this->className();
 
-    return "<a href='$href' data-href='$ajax' class='rpb-button' $tooltip $style>
+    return "<a href='$href' data-href='$ajax' data-blocktype='$type' class='rpb-button' $tooltip $style>
       <div class='uk-position-relative'>{$this->renderButtonImage()}</div>
       <span class='uk-margin-small-top uk-badge'>{$this->getInfo()->title}</span>
       </a>";
@@ -1841,6 +1842,10 @@ class Block extends \ProcessWire\Page
       'fields' => [
         'title' => ['required' => false],
       ],
+      // don't use global fields for that block
+      // this is the same for repeater templates
+      // it prevents this issue: https://processwire.com/talk/topic/29462-no-title-field-with-add-new-page-in-pw-anymore-after-hidetitle-true/#comment-238542
+      'noGlobal' => true,
     ]);
   }
 

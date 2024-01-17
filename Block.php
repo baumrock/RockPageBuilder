@@ -1842,6 +1842,10 @@ class Block extends \ProcessWire\Page
       'fields' => [
         'title' => ['required' => false],
       ],
+      // don't use global fields for that block
+      // this is the same for repeater templates
+      // it prevents this issue: https://processwire.com/talk/topic/29462-no-title-field-with-add-new-page-in-pw-anymore-after-hidetitle-true/#comment-238542
+      'noGlobal' => true,
     ]);
   }
 

@@ -42,26 +42,21 @@ html {
   }
 }
 
-// sortable handle for rockpagebuilder
-.alfred:hover > .alfredelements .sortable-handle {
-  display: block;
-}
-.sortable-handle {
-  display: none;
-  cursor: move;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 30px;
-  height: 30px;
-  background-color: white;
-  color: black !important;
-  border-radius: 0 0 5px 0;
-  border-bottom: 4px solid #ececec;
-  border-right: 4px solid #ececec;
-  svg {
-    width: 20px;
-    margin: 5px;
+// fix for firefox drag&drop sort not working
+// it does not work when using .sortable-handle
+// so we place a fake element on top of the handle that works
+// we add that globally so that blocks are always pos:relative
+// to avoid issues with designs breaking when not logged in
+[data-rpbblock] {
+  position: relative;
+  > .sortablehandle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    cursor: move;
+    z-index: 999;
   }
 }
 

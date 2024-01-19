@@ -132,10 +132,17 @@ function makeSortable() {
     if (container.hasAttribute("data-sortable-init")) return;
     container.setAttribute("data-sortable-init", true);
 
+    // add the sortablehandle attribute to the dom
+    // this is necessary to fix drag&drop sorting not working in FF
+    let childNodes = container.childNodes;
+    childNodes.forEach((block) => {
+      block.innerHTML = "<div class='sortablehandle'></div>" + block.innerHTML;
+    });
+
     // init sortable
     new Sortable(container, {
       animation: 150,
-      handle: ".sortable-handle",
+      handle: ".sortablehandle",
       onChoose: (e) => {
         beforeSort = RockSortable.getPageIds(e.item).join(",");
         body.classList.add("no-alfred");

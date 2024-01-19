@@ -1,3 +1,10 @@
+## [5.1.1](https://github.com/baumrock/RockPageBuilder/compare/v5.1.0...v5.1.1) (2024-01-19)
+
+
+### Bug Fixes
+
+* firefox drag&drop sort not working ([190828e](https://github.com/baumrock/RockPageBuilder/commit/190828e2c4b10d6d958c856d5928737d832c083c))
+
 ## [5.1.0](https://github.com/baumrock/RockPageBuilder/compare/v5.0.4...v5.1.0) (2024-01-17)
 
 
@@ -31,11 +38,4 @@
 ### Bug Fixes
 
 * remove unnecessary log about Less module ([19c6ab5](https://github.com/baumrock/RockPageBuilder/commit/19c6ab52dde6cd5d07c57b7ddd27d9676e231141))
-
-## [5.0.1](https://github.com/baumrock/RockPageBuilder/compare/v5.0.0...v5.0.1) (2024-01-04)
-
-
-### Bug Fixes
-
-* prevent .block class overwritting horizontal paddings ([a46b752](https://github.com/baumrock/RockPageBuilder/commit/a46b7521c3b5eeafbab9d162254ba55ed0fe9c4e))
 

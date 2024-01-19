@@ -375,7 +375,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     } catch (\Throwable $th) {
       $this->warning($class . ": " . $th->getMessage());
       if ($this->wire->user->isSuperuser() and function_exists("bd")) {
-        bd(Debug::backtrace());
+        bd(Debug::backtrace(), $th->getMessage());
       }
     }
   }

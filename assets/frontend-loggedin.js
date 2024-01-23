@@ -20,7 +20,9 @@
   });
 })();
 
-function _RockSortable() {}
+function _RockSortable() {
+  this.sortables = [];
+}
 
 /**
  * Get the sortable container
@@ -127,28 +129,31 @@ function makeSortable() {
   let body = document.querySelector("body");
   let beforeSort = false;
 
+  let noSortable =
+    localStorage.getItem("rpb-sortable-disabled") === "1" ? true : false;
+  if (noSortable) body.classList.add("no-sortable");
+
   // init sortable on all containers
   containers.forEach((container) => {
     if (container.hasAttribute("data-sortable-init")) return;
     container.setAttribute("data-sortable-init", true);
 
-    // add the sortablehandle attribute to the dom
-    // this is necessary to fix drag&drop sorting not working in FF
-    let childNodes = container.childNodes;
-    childNodes.forEach((block) => {
-      block.innerHTML = "<div class='sortablehandle'></div>" + block.innerHTML;
-    });
-
     // init sortable
-    new Sortable(container, {
+    let removeNoAlfred = true;
+    let s = new Sortable(container, {
       animation: 150,
-      handle: ".sortablehandle",
+      disabled: noSortable,
       onChoose: (e) => {
         beforeSort = RockSortable.getPageIds(e.item).join(",");
-        body.classList.add("no-alfred");
+        if (body.classList.contains("no-alfred")) {
+          removeNoAlfred = false;
+        } else {
+          body.classList.add("no-alfred");
+          removeNoAlfred = true;
+        }
       },
       onEnd: (e) => {
-        body.classList.remove("no-alfred");
+        if (removeNoAlfred) body.classList.remove("no-alfred");
         // no change, no save
         if (RockSortable.getPageIds(e.item).join(",") == beforeSort) return;
 
@@ -156,9 +161,10 @@ function makeSortable() {
         RockSortable.saveSort(e.item);
       },
       onUnchoose: (e) => {
-        body.classList.remove("no-alfred");
+        if (removeNoAlfred) body.classList.remove("no-alfred");
       },
     });
+    RockSortable.sortables.push(s);
   });
 }
 document.addEventListener("DOMContentLoaded", makeSortable);

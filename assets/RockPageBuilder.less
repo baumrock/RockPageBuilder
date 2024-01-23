@@ -42,24 +42,6 @@ html {
   }
 }
 
-// fix for firefox drag&drop sort not working
-// it does not work when using .sortable-handle
-// so we place a fake element on top of the handle that works
-// we add that globally so that blocks are always pos:relative
-// to avoid issues with designs breaking when not logged in
-[data-rpbblock] {
-  position: relative;
-  > .sortablehandle {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 30px;
-    height: 30px;
-    cursor: move;
-    z-index: 999;
-  }
-}
-
 // fix tinymce z-index issue on frontend editing
 .tox-tinymce-inline {
   z-index: 90;

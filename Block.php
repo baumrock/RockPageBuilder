@@ -153,7 +153,7 @@ class Block extends \ProcessWire\Page
     }
 
     // convert block into widget
-    if (!$this->master()->noWidgets && $opt->widgetable && $block->canBeWidget()) {
+    if ($this->master()->useWidgets && $opt->widgetable && $block->canBeWidget()) {
       $icons[] = (object)[
         'icon' => 'widget',
         'label' => $block->title,
@@ -599,7 +599,7 @@ class Block extends \ProcessWire\Page
       $label = $this->wire->sanitizer->truncate(strip_tags($label), 70);
     }
     $prefix = false;
-    if (!$this->master()->noBlocktype) {
+    if ($this->master()->showBlocktype) {
       if ($title == $label) $label = false;
       else $title .= ":";
       $prefix = "<small class='rpb-blocktype'>$title</small>";
@@ -1115,6 +1115,12 @@ class Block extends \ProcessWire\Page
     foreach ($this->viewFiles() as $file => $type) {
       if (is_file($file)) {
         if ($rf) {
+          // load JS file if the block comes with one
+          // if we have a minified version we prefer it
+          $js = dirname($file) . "/" . pathinfo($file, PATHINFO_FILENAME);
+          if (is_file("$js.min.js")) $rf->scripts()->add("$js.min.js", "defer");
+          elseif (is_file("$js.js")) $rf->scripts()->add("$js.js", "defer");
+
           try {
             $rf->setTextdomain($file);
           } catch (\Throwable $th) {

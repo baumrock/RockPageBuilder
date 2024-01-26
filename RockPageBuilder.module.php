@@ -44,6 +44,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   /** @var WireArray */
   public $blockSettings;
 
+  public $createLessFile = false;
+
   private $defaultSettings = false;
 
   /**
@@ -57,8 +59,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   public $mtime = 0;
 
-  public $noWidgets = false;
-  public $noBlocktype = false;
+  public $useWidgets = true;
+  public $showBlocktype = true;
+  public $showDataPage = false;
 
   private $preload = false;
 
@@ -1279,7 +1282,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // we automatically add the widget block to the default blocks field
     // so that users can instantly convert any block into a widget
     if ($fieldname === self::field_blocks) {
-      if (!$this->noWidgets) $blocks[] = "RockPageBuilderBlock\\Widget";
+      if ($this->useWidgets) $blocks[] = "RockPageBuilderBlock\\Widget";
       $blocks = array_unique($blocks);
     }
 
@@ -1857,7 +1860,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    */
   public function widgets()
   {
-    if ($this->noWidgets) return new PageArray();
+    if (!$this->useWidgets) return new PageArray();
     // return widgets or if the field was removed an empty pagearray
     return $this->wire->pages->get(1)->getFormatted(self::field_widgets)
       ?: new PageArray();
@@ -1885,38 +1888,56 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $data = $this->data;
     $inputfields->add([
       'type' => 'markup',
-      'label' => 'Note',
+      'label' => 'Settings in config.php',
       'icon' => 'exclamation',
       'value' => 'Note that you can overwrite all settings from within your config.php file: $config->rockpagebuilder = [...];',
       'notes' => 'Settings in config.php will have priority over settings set on this page!',
+      'collapsed' => Inputfield::collapsedYes,
     ]);
 
-    $inputfields->add([
-      'type' => 'checkbox',
-      'name' => 'noWidgets',
-      'label' => 'Do not use the widgets feature',
-      'checked' => $this->noWidgets ? true : false,
+    $fs = new InputfieldFieldset();
+    $fs->label = "Settings & Development";
+    $fs->icon = "cogs";
+    $inputfields->add($fs);
+
+    $fs->add([
+      'type' => 'toggle',
+      'name' => 'useWidgets',
+      'formatType' => 0, // integer 0/1
+      'labelType' => 0, // yes/no
+      'label' => 'Use the widgets feature',
+      'defaultOption' => 'yes',
+      'value' => $this->useWidgets,
       'notes' => 'If you disable widgets you can safely remove the widgets field from your home template.',
-    ]);
-
-    $inputfields->add([
-      'type' => 'checkbox',
-      'name' => 'noBlocktype',
-      'label' => 'Do not prepend the block-type to block labels',
-      'checked' => $this->noBlocktype ? true : false,
-      'notes' => 'By default RockPageBuilder will add the block-type to the block label: [Screenshot](https://i.imgur.com/BvB5P6p.png)
-        You can use the .rpb-blocktype class to style your label to your needs.',
+      'icon' => 'clone',
+      'useReverse' => true,
+      'columnWidth' => 33,
     ]);
 
     /** @var InputfieldSelect $f */
     $f = $this->wire->modules->get('InputfieldSelect');
     $f->attr('name', 'createView');
     $f->label = 'File type of view-file';
+    $f->icon = 'code';
     $f->notes = 'Will be used when a new block type is created. Default is PHP. Recommended is LATTE ;)';
     $f->addOption('latte', 'LATTE');
     $f->addOption('php', 'PHP');
     if (array_key_exists('createView', $data)) $f->attr('value', $data['createView']);
-    $inputfields->add($f);
+    $f->columnWidth(33);
+    $fs->add($f);
+
+    $fs->add([
+      'type' => 'toggle',
+      'name' => 'createLessFile',
+      'label' => 'Create LESS file for new blocks',
+      'formatType' => 0, // integer 0/1
+      'labelType' => 0, // yes/no
+      'inputfieldClass' => 0, // toggle buttons
+      'defaultOption' => 'no',
+      'notes' => 'All blocks need a PHP file for the business logic and a markup file that defines the output. If you check this box a LESS file will be created for every block that you can use to define the styling of the block.',
+      'checked' => $this->createLessFile ? 'checked' : '',
+      'columnWidth' => 33,
+    ]);
 
     $dir = __DIR__ . "/blocks";
     $installable = $this->wire->files->find($dir, ['extensions' => ['php']]);
@@ -1939,23 +1960,50 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $f->description = "Here you can install example blocks from /site/modules/RockPageBuilder/blocks to field '" . self::field_blocks
       . "'. This will simply copy over files to /site/templates/RockPageBuilder/blocks/ - You can manually copy files to other fields as well.";
     $f->notes = "Already installed: " . implode(", ", $installed);
-    $inputfields->add($f);
+    $fs->add($f);
 
-    $inputfields->add([
-      'type' => 'checkbox',
+    $fs = new InputfieldFieldset();
+    $fs->label = "Frontend";
+    $fs->icon = "eye";
+    $inputfields->add($fs);
+
+    $fs->add([
+      'type' => 'toggle',
+      'name' => 'showBlocktype',
+      'label' => 'Show block-type on every block',
+      'formatType' => 0, // integer 0/1
+      'labelType' => 0, // yes/no
+      'inputfieldClass' => 0, // toggle buttons
+      'defaultOption' => 'yes',
+      'value' => $this->showBlocktype,
+      'notes' => 'By default RockPageBuilder will add the block-type to the block label: [Screenshot](https://i.imgur.com/BvB5P6p.png)
+        You can use the .rpb-blocktype class to style your label to your needs.',
+      'useReverse' => false,
+    ]);
+
+    $fs = new InputfieldFieldset();
+    $fs->label = "Backend";
+    $fs->icon = "sitemap";
+    $inputfields->add($fs);
+
+    $fs->add([
+      'type' => 'toggle',
       'name' => 'showDataPage',
       'label' => 'Show datapage in tree for superusers',
+      'formatType' => 0, // integer 0/1
+      'labelType' => 0, // yes/no
+      'inputfieldClass' => 0, // toggle buttons
+      'defaultOption' => 'no',
       'notes' => 'All blocks are PW pages stored under a special page in the pagetree. By default this page is hidden from the pagetree. If you check this box superusers will be able to see the page and all blocks.',
       'checked' => $this->showDataPage ? 'checked' : '',
     ]);
 
-    $inputfields->add([
-      'type' => 'checkbox',
-      'name' => 'createLessFile',
-      'label' => 'Create LESS file for new blocks',
-      'notes' => 'All blocks need a PHP file for the business logic and a markup file that defines the output. If you check this box a LESS file will be created for every block that you can use to define the styling of the block.',
-      'checked' => $this->createLessFile ? 'checked' : '',
-    ]);
+    // add note that shows the fieldname for all fields
+    foreach ($inputfields->getAll() as $f) {
+      if (!$f->name) continue;
+      $nl = $f->notes ? "\n" : "";
+      $f->notes .= $nl . "Config property: " . $f->name;
+    }
 
     /** @var InputfieldSelect $f */
     $this->deleteBlock();

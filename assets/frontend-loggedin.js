@@ -21,8 +21,32 @@
 })();
 
 function _RockSortable() {
+  this.enabled =
+    localStorage.getItem("rpb-sortable-disabled") === "1" ? false : true;
   this.sortables = [];
 }
+
+_RockSortable.prototype.disable = function () {
+  this.enabled = false;
+  let body = document.querySelector("body");
+  this.sortables.forEach((sortable) => {
+    sortable.option("disabled", true);
+  });
+  localStorage.setItem("rpb-sortable-disabled", 1);
+  body.classList.add("no-sortable");
+  body.classList.remove("is-sortable");
+};
+
+_RockSortable.prototype.enable = function () {
+  this.enabled = true;
+  let body = document.querySelector("body");
+  this.sortables.forEach((sortable) => {
+    sortable.option("disabled", false);
+  });
+  localStorage.setItem("rpb-sortable-disabled", 0);
+  body.classList.remove("no-sortable");
+  body.classList.add("is-sortable");
+};
 
 /**
  * Get the sortable container
@@ -121,6 +145,11 @@ _RockSortable.prototype.showSpinner = function () {
   }, 10);
 };
 
+_RockSortable.prototype.toggle = function () {
+  if (this.enabled) this.disable();
+  else this.enable();
+};
+
 var RockSortable = new _RockSortable();
 
 // make blocks sortable
@@ -129,9 +158,8 @@ function makeSortable() {
   let body = document.querySelector("body");
   let beforeSort = false;
 
-  let noSortable =
-    localStorage.getItem("rpb-sortable-disabled") === "1" ? true : false;
-  if (noSortable) body.classList.add("no-sortable");
+  if (!RockSortable.enabled) body.classList.add("no-sortable");
+  else body.classList.add("is-sortable");
 
   // init sortable on all containers
   containers.forEach((container) => {
@@ -142,7 +170,7 @@ function makeSortable() {
     let removeNoAlfred = true;
     let s = new Sortable(container, {
       animation: 150,
-      disabled: noSortable,
+      disabled: !RockSortable.enabled,
       onChoose: (e) => {
         beforeSort = RockSortable.getPageIds(e.item).join(",");
         if (body.classList.contains("no-alfred")) {
@@ -168,3 +196,8 @@ function makeSortable() {
   });
 }
 document.addEventListener("DOMContentLoaded", makeSortable);
+
+// toggle drag&drop on shiftkey
+document.addEventListener("keyup", function (event) {
+  if (event.key === "Shift") RockSortable.toggle();
+});

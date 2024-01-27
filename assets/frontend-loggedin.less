@@ -45,18 +45,29 @@
     margin: 5px;
   }
 }
+
+// change mouse cursor on sortable elements
+body.is-sortable [sortable] > [data-rpbblock] {
+  cursor: grab;
+}
+.grabbing * {
+  cursor: grabbing !important;
+}
+
 // hide sortable handle if block is not sortable
 :not([sortable]) > .alfred > .alfredelements > .sortable-handle {
   display: none;
 }
-// hide sortable handles if sortable is disabled
+// fade sortable handles if sortable is disabled
 body.no-sortable .sortable-handle {
   opacity: 0.3 !important;
 }
-// hide alfred elements if sortable is enabled
-body.is-sortable .alfredelements > .icons {
-  opacity: 0.3 !important;
-  pointer-events: none;
+// fade sortable handles if sortable is disabled
+body.no-sortable .sortable-handle span.on {
+  display: none;
+}
+body.is-sortable .sortable-handle span.off {
+  display: none;
 }
 
 // type indicator that shows the block type on block hover

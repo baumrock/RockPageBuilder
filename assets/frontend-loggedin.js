@@ -171,7 +171,10 @@ function makeSortable() {
     let s = new Sortable(container, {
       animation: 150,
       disabled: !RockSortable.enabled,
+      filter: ".alfredelements",
+      forceFallback: true,
       onChoose: (e) => {
+        document.body.classList.add("grabbing");
         beforeSort = RockSortable.getPageIds(e.item).join(",");
         if (body.classList.contains("no-alfred")) {
           removeNoAlfred = false;
@@ -189,6 +192,7 @@ function makeSortable() {
         RockSortable.saveSort(e.item);
       },
       onUnchoose: (e) => {
+        document.body.classList.remove("grabbing");
         if (removeNoAlfred) body.classList.remove("no-alfred");
       },
     });

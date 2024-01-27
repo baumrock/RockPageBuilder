@@ -51,11 +51,12 @@
 }
 // hide sortable handles if sortable is disabled
 body.no-sortable .sortable-handle {
-  display: none !important;
+  opacity: 0.3 !important;
 }
 // hide alfred elements if sortable is enabled
 body.is-sortable .alfredelements > .icons {
-  display: none !important;
+  opacity: 0.3 !important;
+  pointer-events: none;
 }
 
 // type indicator that shows the block type on block hover

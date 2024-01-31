@@ -1981,6 +1981,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'useReverse' => false,
     ]);
 
+    $url = $this->wire->pages->get(2)->url . "module/edit?name=RockFrontend";
+    $fs->add([
+      'type' => 'markup',
+      'label' => 'Notice',
+      'icon' => 'code',
+      'value' => "Some features like adjusting the path for text editor links are pulled from <a href=$url>RockFrontend Settings</a>.",
+    ]);
+
     $fs = new InputfieldFieldset();
     $fs->label = "Backend";
     $fs->icon = "sitemap";

@@ -144,6 +144,11 @@ And it might look even better when using real world screenshots as thumbnails:
 
 <img src=real.png class=blur>
 
+Note that using icons can be preferable to images for two reasons:
+
+1. It's less effort
+2. Icons are abstract. If you build a block where the user can choose from three different styles then an image will only show one version of that block whereas an icon shows all three styles in an abstracted way.
+
 ### Special Names
 
 RockPageBuilder ships with thumbnails for the following block names: `Gallery`, `Headline`, `Hero`, `Quote`, `Text`, `TextImage`. See `site/modules/RockPageBuilder/buttons/`

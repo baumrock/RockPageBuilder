@@ -24,6 +24,8 @@
 // sortable handle for rockpagebuilder
 .alfred:hover > .alfredelements .sortable-handle {
   display: block;
+  // using the handle does not work on firefox!
+  pointer-events: none;
 }
 .sortable-handle {
   display: none;
@@ -42,6 +44,30 @@
     width: 20px;
     margin: 5px;
   }
+}
+
+// change mouse cursor on sortable elements
+body.is-sortable [sortable] > [data-rpbblock] {
+  cursor: grab;
+}
+.grabbing * {
+  cursor: grabbing !important;
+}
+
+// hide sortable handle if block is not sortable
+:not([sortable]) > .alfred > .alfredelements > .sortable-handle {
+  display: none;
+}
+// fade sortable handles if sortable is disabled
+body.no-sortable .sortable-handle {
+  opacity: 0.3 !important;
+}
+// fade sortable handles if sortable is disabled
+body.no-sortable .sortable-handle span.on {
+  display: none;
+}
+body.is-sortable .sortable-handle span.off {
+  display: none;
 }
 
 // type indicator that shows the block type on block hover

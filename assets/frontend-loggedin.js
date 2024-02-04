@@ -20,7 +20,33 @@
   });
 })();
 
-function _RockSortable() {}
+function _RockSortable() {
+  this.enabled =
+    localStorage.getItem("rpb-sortable-disabled") === "1" ? false : true;
+  this.sortables = [];
+}
+
+_RockSortable.prototype.disable = function () {
+  this.enabled = false;
+  let body = document.querySelector("body");
+  this.sortables.forEach((sortable) => {
+    sortable.option("disabled", true);
+  });
+  localStorage.setItem("rpb-sortable-disabled", 1);
+  body.classList.add("no-sortable");
+  body.classList.remove("is-sortable");
+};
+
+_RockSortable.prototype.enable = function () {
+  this.enabled = true;
+  let body = document.querySelector("body");
+  this.sortables.forEach((sortable) => {
+    sortable.option("disabled", false);
+  });
+  localStorage.setItem("rpb-sortable-disabled", 0);
+  body.classList.remove("no-sortable");
+  body.classList.add("is-sortable");
+};
 
 /**
  * Get the sortable container
@@ -119,6 +145,11 @@ _RockSortable.prototype.showSpinner = function () {
   }, 10);
 };
 
+_RockSortable.prototype.toggle = function () {
+  if (this.enabled) this.disable();
+  else this.enable();
+};
+
 var RockSortable = new _RockSortable();
 
 // make blocks sortable
@@ -127,28 +158,33 @@ function makeSortable() {
   let body = document.querySelector("body");
   let beforeSort = false;
 
+  if (!RockSortable.enabled) body.classList.add("no-sortable");
+  else body.classList.add("is-sortable");
+
   // init sortable on all containers
   containers.forEach((container) => {
     if (container.hasAttribute("data-sortable-init")) return;
     container.setAttribute("data-sortable-init", true);
 
-    // add the sortablehandle attribute to the dom
-    // this is necessary to fix drag&drop sorting not working in FF
-    let childNodes = container.childNodes;
-    childNodes.forEach((block) => {
-      block.innerHTML = "<div class='sortablehandle'></div>" + block.innerHTML;
-    });
-
     // init sortable
-    new Sortable(container, {
+    let removeNoAlfred = true;
+    let s = new Sortable(container, {
       animation: 150,
-      handle: ".sortablehandle",
+      disabled: !RockSortable.enabled,
+      filter: ".alfredelements",
+      forceFallback: true,
       onChoose: (e) => {
+        document.body.classList.add("grabbing");
         beforeSort = RockSortable.getPageIds(e.item).join(",");
-        body.classList.add("no-alfred");
+        if (body.classList.contains("no-alfred")) {
+          removeNoAlfred = false;
+        } else {
+          body.classList.add("no-alfred");
+          removeNoAlfred = true;
+        }
       },
       onEnd: (e) => {
-        body.classList.remove("no-alfred");
+        if (removeNoAlfred) body.classList.remove("no-alfred");
         // no change, no save
         if (RockSortable.getPageIds(e.item).join(",") == beforeSort) return;
 
@@ -156,9 +192,16 @@ function makeSortable() {
         RockSortable.saveSort(e.item);
       },
       onUnchoose: (e) => {
-        body.classList.remove("no-alfred");
+        document.body.classList.remove("grabbing");
+        if (removeNoAlfred) body.classList.remove("no-alfred");
       },
     });
+    RockSortable.sortables.push(s);
   });
 }
 document.addEventListener("DOMContentLoaded", makeSortable);
+
+// toggle drag&drop on shiftkey
+document.addEventListener("keyup", function (event) {
+  if (event.key === "Shift") RockSortable.toggle();
+});

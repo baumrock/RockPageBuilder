@@ -303,6 +303,13 @@ class Block extends \ProcessWire\Page
     $this->rpb()->isClone = false;
     $fielddata->insertAfter($clone, $block);
     $fielddata->save();
+    return $clone;
+  }
+
+  public function copyTo($page, $field): void
+  {
+    $clone = $this->clone();
+    $clone->move($page, $field);
   }
 
   /**

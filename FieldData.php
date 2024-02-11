@@ -32,24 +32,22 @@ class FieldData extends PageArray
    */
   public function add($item, $data = [])
   {
-    if (is_string($item)) {
-      // template provided
-      $item = $this->createBlock($item);
-    } elseif (is_array($item)) {
-      // item is a plain php array
-      // this means we create a new block and add it
-      $item = $this->createBlock($item, $data);
-    } elseif ($item instanceof PageArray) {
+    /** @var RockPageBuilder */
+    $rpb = $this->wire->modules->get('RockPageBuilder');
+
+    if ($item instanceof PageArray) {
       foreach ($item as $i) $this->add($i);
       return $this;
     }
 
-    /** @var RockPageBuilder */
-    $mx = $this->wire->modules->get('RockPageBuilder');
+    // item is not yet a block
+    if (!$item instanceof Block) {
+      $item = $this->createBlock($item, $data);
+    }
 
     // make sure item is a page
     $_item = $item;
-    $item = $mx->getBlockPage($item);
+    $item = $rpb->getBlockPage($item);
     if (!$item) throw new WireException("Invalid item $_item - did you call parent::migrate() in your block?");
 
     // check if item is allowed!
@@ -90,13 +88,16 @@ class FieldData extends PageArray
    * Create a new block
    * @return Block
    */
-  public function createBlock($tpl, $data = [])
+  public function createBlock($type, $data = [])
   {
+    bd($type);
+
     // get block and check if it is allowed
-    $block = $this->master()->getBlockByTpl($tpl);
-    if (!$block) throw new WireException("Invalid tpl $tpl");
+    $block = $this->master()->getBlockByName($type) ?:
+      $this->master()->getBlockByTpl($type);
+    if (!$block) throw new WireException("Invalid input for createBlock: $type");
     if (!$block->isAllowed($this->field, $this->page)) {
-      throw new WireException("$tpl not allowed on page $this->page and field $this->field");
+      throw new WireException("$type not allowed on page $this->page and field $this->field");
     }
 
     // create new block
@@ -322,13 +323,13 @@ class FieldData extends PageArray
   public function wakeup($data)
   {
     /** @var RockPageBuilder */
-    $mx = $this->wire->modules->get('RockPageBuilder');
+    $rpb = $this->wire->modules->get('RockPageBuilder');
     $json = json_decode($data);
     if ($json === null) throw new WireException("Invalid json");
 
     // loop items
     foreach ($json as $item) {
-      $block = $mx->getBlockPage($item->id);
+      $block = $rpb->getBlockPage($item->id);
       if (!$block) continue;
       if ($block->isTrash()) continue;
 

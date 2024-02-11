@@ -988,6 +988,18 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
+   * Get block by name, like Text, Downloads
+   * @return Block
+   */
+  public function getBlockByName($name)
+  {
+    foreach ($this->blocks as $block) {
+      if ($block->className() === (string)$name) return $block;
+    }
+    return false;
+  }
+
+  /**
    * Get block by template
    * @return Block
    */

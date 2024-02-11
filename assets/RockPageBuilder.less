@@ -17,10 +17,41 @@
 .rpb-nopadding .pw-edit-orig,
 .rpb-nopadding .pw-edit-copy {
   > *:first-child {
+    padding-top: 0;
+  }
+  > *:last-child {
+    padding-bottom: 0;
+  }
+}
+
+// .rpb-nospace combines both nomargin and nopadding
+.rpb-nospace,
+.rpb-nospace .pw-edit-orig,
+.rpb-nospace .pw-edit-copy {
+  > *:first-child {
+    margin-top: 0 !important;
     padding-top: 0 !important;
   }
   > *:last-child {
+    margin-bottom: 0 !important;
     padding-bottom: 0 !important;
+  }
+}
+.rpb-nospace-last,
+.rpb-nospace-last .pw-edit-orig,
+.rpb-nospace-last .pw-edit-copy {
+  > *:last-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
+
+.rpb-nospace-first,
+.rpb-nospace-first .pw-edit-orig,
+.rpb-nospace-first .pw-edit-copy {
+  > *:first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
   }
 }
 

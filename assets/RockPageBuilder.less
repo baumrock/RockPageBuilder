@@ -28,11 +28,11 @@
 .rpb-nospace,
 .rpb-nospace .pw-edit-orig,
 .rpb-nospace .pw-edit-copy {
-  > *:first-child {
+  > *:first-child:not(.rpb-first-block) {
     margin-top: 0 !important;
     padding-top: 0 !important;
   }
-  > *:last-child {
+  > *:last-child:not(.rpb-first-block) {
     margin-bottom: 0 !important;
     padding-bottom: 0 !important;
   }
@@ -40,7 +40,7 @@
 .rpb-nospace-last,
 .rpb-nospace-last .pw-edit-orig,
 .rpb-nospace-last .pw-edit-copy {
-  > *:last-child {
+  > *:last-child:not(.rpb-first-block) {
     margin-bottom: 0 !important;
     padding-bottom: 0 !important;
   }
@@ -49,7 +49,7 @@
 .rpb-nospace-first,
 .rpb-nospace-first .pw-edit-orig,
 .rpb-nospace-first .pw-edit-copy {
-  > *:first-child {
+  > *:first-child:not(.rpb-first-block) {
     margin-top: 0 !important;
     padding-top: 0 !important;
   }

@@ -361,7 +361,7 @@ $(document).on("click", ".createBlockType", function (e) {
       if (!name) return;
       $(".uk-modal-body").text("loading...");
       $.get(
-        RockFrontend.rootUrl +
+        ProcessWire.config.urls.root +
           "rpb-create-block/?field=" +
           field +
           "&name=" +

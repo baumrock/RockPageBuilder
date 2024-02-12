@@ -90,8 +90,6 @@ class FieldData extends PageArray
    */
   public function createBlock($type, $data = [])
   {
-    bd($type);
-
     // get block and check if it is allowed
     $block = $this->master()->getBlockByName($type) ?:
       $this->master()->getBlockByTpl($type);

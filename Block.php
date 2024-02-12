@@ -27,6 +27,7 @@ use ReflectionClass;
 use RockPageBuilder\Html as RockPageBuilderHtml;
 use RockPageBuilderBlock\Widget;
 
+use function ProcessWire\rockfrontend;
 use function ProcessWire\rockpagebuilder;
 use function ProcessWire\wireClassName;
 
@@ -1241,17 +1242,7 @@ class Block extends \ProcessWire\Page
       $latte = $this->latte;
       if (!$latte) {
         try {
-          // load latte from RockFrontend
-          $vendor = $this->wire->config->paths->siteModules . "RockFrontend/vendor/autoload.php";
-          if (is_file($vendor)) require_once $vendor;
-          else {
-            // load latte from PW root
-            $vendor = $this->wire->config->paths->root . "vendor/autoload.php";
-            if (is_file($vendor)) require_once $vendor;
-          }
-
-          $latte = new Engine();
-          $latte->setTempDirectory($this->wire->config->paths->cache . "Latte");
+          $latte = rockfrontend()->loadLatte();
           $this->latte = $latte;
         } catch (\Throwable $th) {
           $msg = "<br>Install Latte or delete the .latte view file and use

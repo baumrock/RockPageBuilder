@@ -245,12 +245,23 @@ class RockFieldsField extends WireData
     if (!$rows) return;
     $out = "<table class='uk-table uk-table-small uk-table-divider
       uk-table-middle uk-margin-remove'>";
-    foreach ($rows as $label => $markup) {
-      if ($markup instanceof Inputfield) $markup = $markup->render();
-      $out .= "<tr style='border:0'>
-          <td class='uk-text-nowrap'>$label</td>
-          <td class='uk-width-expand'>$markup</td>
+    if ($rows instanceof WireArray) {
+      // RockPageBuilder settings
+      foreach ($rows as $row) {
+        $out .= "<tr class='rpb-setting' style='border:0' data-name='{$row->name}' showIf='{$row->showIf}'>
+          <td class='uk-text-nowrap'>{$row->label}</td>
+          <td class='uk-width-expand'>{$row->value->render()}</td>
         </tr>";
+      }
+    } else {
+      // Plain Array
+      foreach ($rows as $label => $markup) {
+        if ($markup instanceof Inputfield) $markup = $markup->render();
+        $out .= "<tr style='border:0'>
+            <td class='uk-text-nowrap'>$label</td>
+            <td class='uk-width-expand'>$markup</td>
+          </tr>";
+      }
     }
     $out .= "</table>";
     return $out;

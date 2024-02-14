@@ -663,9 +663,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $page = $event->process->getPage();
     $this->preloadAssets($page);
     if (!$page instanceof Block) return;
+
     $fs = $event->return;
     $page->prepareForm($fs);
     $page->buildForm($fs);
+
+    // add backend js file
+    rockmigrations()->addScripts(__DIR__ . "/assets/backend.js");
 
     // add link to rpb page
     $sudo = $this->wire->user->isSuperuser();

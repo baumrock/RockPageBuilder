@@ -104,11 +104,17 @@ class FieldData extends PageArray
     /** @var Block $b */
     $b->template = $block->getTpl();
     $b->parent = $block->getParent($this->field, $this->page);
-    $b->title = "$class @ " . date('Y-m-d H:i:s');
-    $b->save();
+    $b->name = "$class @ " . date('Y-m-d H:i:s');
 
-    // set block data
-    foreach ($data as $k => $v) $b->setAndSave($k, $v);
+    // set defaults
+    $defaults = $block->getInfo('defaults');
+    if (is_array($defaults)) $b->setArray($defaults);
+
+    // set data provided from 2nd parameter
+    $b->setArray($data);
+
+    // save data
+    $b->save();
 
     // save a reference to the page and the field where this page lives
     // this is necessary for deleting unused pages from time to time

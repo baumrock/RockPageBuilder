@@ -80,19 +80,9 @@ class Block extends \ProcessWire\Page
    */
   public function init()
   {
+    // don't add anything here!
+    // it might break things if anyone added an own init() method
   }
-
-  /** magic methods */
-
-  public function onCreate()
-  {
-    // we dont execute resetting the title if the block is being cloned
-    if ($this->rpb()->isClone) return;
-    // set default field values when a new block is created
-    $this->setInAllLanguages('title', '');
-  }
-
-  /** end magic methods */
 
   /**
    * Add ALFRED icons (for RockFrontend)
@@ -407,11 +397,18 @@ class Block extends \ProcessWire\Page
 
   /**
    * Get info WireData
-   * @return WireData
+   *
+   * If a property is defined we only return this property
+   *
+   * @return WireData|mixed
    */
-  public function getInfo()
+  public function getInfo($prop = null)
   {
-    if ($this->info) return $this->info;
+    if ($this->info) {
+      if ($prop) return $this->info->get($prop);
+      return $this->info;
+    }
+
     $info = $this->wire(new WireData());
     /** @var WireData $info */
     $info->setArray([
@@ -425,6 +422,8 @@ class Block extends \ProcessWire\Page
     $blockInfo = $this->info();
     if ($blockInfo instanceof WireData) $blockInfo = $blockInfo->getArray();
     $info->setArray($blockInfo);
+
+    if ($prop) return $info->get($prop);
     return $info;
   }
 

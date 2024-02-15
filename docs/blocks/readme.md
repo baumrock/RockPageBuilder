@@ -71,6 +71,25 @@ This is how it will look like when adding a new block:
 
 <img src=description.png class=blur>
 
+## Block Field Defaults
+
+You can provide defaults for your block-fields, for example this would pre-fill the `title` field of every `Gallery` block with `Some great images`:
+
+```php
+class Gallery extends Block
+{
+  public function info()
+  {
+    return [
+      'title' => 'Gallery',
+      'defaults' => [
+        'title' => 'Some great images',
+      ],
+    ];
+  }
+}
+```
+
 ## Custom Block Labels
 
 If you don't like the default label of your block, simply define your own in the block's PHP file:

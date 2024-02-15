@@ -88,20 +88,22 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     }
 
     $this->installProcessModule();
-    $this->addHookAfter("ProcessPageEdit::buildForm", $this, "buildForm");
-    $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
-    $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
-    $this->addHookAfter("Page::render", $this, "addMagicStyles");
-    $this->addHookAfter("User::hasPagePermission", $this, "hookImageEdit");
-    $this->addHookBefore("Inputfield::render", $this, "addMagicInputfieldProperties");
-    $this->addHookAfter("Modules::refresh", $this, "removeUnusedTemplates");
-    $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "widgetHint");
-    $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "hookHideTitleField");
-    $this->addHookBefore("Modules::uninstall", $this, "beforeUninstall");
-    $this->addHookAfter("Page::render", $this, "addMoveStyles");
-    $this->addHookAfter("Templates::saved", $this, "hookBlockMigrateFile");
-    $this->addHookAfter("Fields::saved", $this, "hookBlockMigrateFile");
-    $this->addHookAfter("Pages::saved", $this, "deleteOrphanBlocks");
+
+    // hooks
+    wire()->addHookAfter("ProcessPageEdit::buildForm",        $this, "buildForm");
+    wire()->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
+    wire()->addHook("Page::getRmxBlock",                      $this, "getRmxBlock");
+    wire()->addHookAfter("Page::render",                      $this, "addMagicStyles");
+    wire()->addHookAfter("User::hasPagePermission",           $this, "hookImageEdit");
+    wire()->addHookBefore("Inputfield::render",               $this, "addMagicInputfieldProperties");
+    wire()->addHookAfter("Modules::refresh",                  $this, "removeUnusedTemplates");
+    wire()->addHookAfter("ProcessPageEdit::buildFormContent", $this, "widgetHint");
+    wire()->addHookAfter("ProcessPageEdit::buildFormContent", $this, "hookHideTitleField");
+    wire()->addHookBefore("Modules::uninstall",               $this, "beforeUninstall");
+    wire()->addHookAfter("Page::render",                      $this, "addMoveStyles");
+    wire()->addHookAfter("Templates::saved",                  $this, "hookBlockMigrateFile");
+    wire()->addHookAfter("Fields::saved",                     $this, "hookBlockMigrateFile");
+    wire()->addHookAfter("Pages::saved",                      $this, "deleteOrphanBlocks");
 
     // hooks for access control
     $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
@@ -132,7 +134,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
     $this->addHookBefore('ProcessPageListRender::getNumChildren', $this, "hookNumChildren");
 
-    $this->createBlock();
+    $this->createBlockHook();
     $this->include("init.php"); // load templates/RockPageBuilder/init.php
     $this->addBlock(__DIR__ . "/Widget.php"); // always load the widget block
 
@@ -782,7 +784,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * Create new block for field
    * @return void
    */
-  public function createBlock()
+  public function createBlockHook()
   {
     if (!$this->wire->user) return;
     if (!$this->wire->user->isSuperuser()) return;

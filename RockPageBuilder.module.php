@@ -1953,7 +1953,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'inputfieldClass' => 0, // toggle buttons
       'defaultOption' => 'no',
       'notes' => 'All blocks need a PHP file for the business logic and a markup file that defines the output. If you check this box a LESS file will be created for every block that you can use to define the styling of the block.',
-      'checked' => $this->createLessFile ? 'checked' : '',
+      'value' => $this->createLessFile,
       'columnWidth' => 33,
     ]);
 

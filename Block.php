@@ -1276,10 +1276,11 @@ class Block extends \ProcessWire\Page
     return $this->wire->modules->get('RockMigrations');
   }
 
+  /**
+   * Empty method for RockSearch module
+   */
   public function rockSearchIndex()
   {
-    $title = $this->getInfo()->title;
-    return "++$title++";
   }
 
   /**

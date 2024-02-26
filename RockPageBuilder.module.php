@@ -1456,6 +1456,10 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'rows' => 5,
       'inlineMode' => true,
       'settingsFile' => '/site/modules/RockMigrations/TinyMCE/simple.json',
+
+      // dont add any textformatters so that we can apply site-specific
+      // in migrations (because we don't have an api for adding textformatters yet)
+      'textformatters' => [],
     ]);
 
     // set tags for all fields

@@ -1102,6 +1102,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'include' => 'all',
       'parent' => $this->getDatapage(),
       ['id', '!=', $this->getUsedBlockIds()],
+      // never delete blocks younger than 10s
+      'created>' => time() + 10,
     ]);
     return $ids;
   }

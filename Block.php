@@ -268,13 +268,31 @@ class Block extends \ProcessWire\Page
    */
   public function classes(): string
   {
-    $prev = $this->prevBlock();
-    $next = $this->nextBlock();
+    $widget = $this->getWidgetBlock();
+    $prev = $widget->prevBlock();
+    $next = $widget->nextBlock();
 
     $class = "rpb-block";
-    if (!$prev || $prev->bgID() !== $this->bgID()) $class .= " rpb-block-top";
-    if (!$next || $next->bgID() !== $this->bgID()) $class .= " rpb-block-bottom";
+    if (!$prev || $prev->bgID() !== $widget->bgID()) $class .= " rpb-block-top";
+    if (!$next || $next->bgID() !== $widget->bgID()) $class .= " rpb-block-bottom";
+
+    // debugging
+    // $out = $widget->classesInfo($widget);
+    // $out .= "\nPrev: " . $widget->classesInfo($prev);
+    // $out .= "\nNext: " . $widget->classesInfo($next);
+    // $out .= "\n$class";
+    // bd($out);
+
     return $class;
+  }
+
+  /**
+   * CSS classes info for debugging
+   */
+  private function classesInfo($page): string
+  {
+    if (!$page) return "--";
+    return $page->className() . " ({$page->getLabel()}) - bgID: " . $page->bgID();
   }
 
   /**

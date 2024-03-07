@@ -277,11 +277,11 @@ class Block extends \ProcessWire\Page
     if (!$next || $next->bgID() !== $block->bgID()) $class .= " rpb-block-bottom";
 
     // debugging
-    $out = "#$block: " . $block->classesInfo($block);
-    $out .= "\nPrev: #$prev " . $block->classesInfo($prev);
-    $out .= "\nNext: #$next " . $block->classesInfo($next);
-    $out .= "\n$class";
-    bd($out);
+    // $out = "#$block: " . $block->classesInfo($block);
+    // $out .= "\nPrev: #$prev " . $block->classesInfo($prev);
+    // $out .= "\nNext: #$next " . $block->classesInfo($next);
+    // $out .= "\n$class";
+    // bd($out);
 
     return $class;
   }

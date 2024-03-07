@@ -826,10 +826,17 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       }
 
       // block file
-      $this->stub("Block.txt", [
-        "{name}" => $name,
-        "{namelower}" => strtolower($name),
-      ], "$subfolder/$name.php");
+      if ($this->createPhp == 'advanced') {
+        $this->stub("Block-advanced.txt", [
+          "{name}" => $name,
+          "{namelower}" => strtolower($name),
+        ], "$subfolder/$name.php");
+      } else {
+        $this->stub("Block.txt", [
+          "{name}" => $name,
+          "{namelower}" => strtolower($name),
+        ], "$subfolder/$name.php");
+      }
 
       // view files
       if ($this->createView == 'latte') {
@@ -1936,20 +1943,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'notes' => 'If you disable widgets you can safely remove the widgets field from your home template.',
       'icon' => 'clone',
       'useReverse' => true,
-      'columnWidth' => 33,
+      'columnWidth' => 50,
     ]);
-
-    /** @var InputfieldSelect $f */
-    $f = $this->wire->modules->get('InputfieldSelect');
-    $f->attr('name', 'createView');
-    $f->label = 'File type of view-file';
-    $f->icon = 'code';
-    $f->notes = 'Will be used when a new block type is created. Default is PHP. Recommended is LATTE ;)';
-    $f->addOption('latte', 'LATTE');
-    $f->addOption('php', 'PHP');
-    if (array_key_exists('createView', $data)) $f->attr('value', $data['createView']);
-    $f->columnWidth(33);
-    $fs->add($f);
 
     $fs->add([
       'type' => 'toggle',
@@ -1961,8 +1956,32 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'defaultOption' => 'no',
       'notes' => 'All blocks need a PHP file for the business logic and a markup file that defines the output. If you check this box a LESS file will be created for every block that you can use to define the styling of the block.',
       'value' => $this->createLessFile,
-      'columnWidth' => 33,
+      'columnWidth' => 50,
     ]);
+
+    /** @var InputfieldSelect $f */
+    $f = $this->wire->modules->get('InputfieldSelect');
+    $f->attr('name', 'createPhp');
+    $f->label = 'File type of PHP-file';
+    $f->icon = 'code';
+    $f->notes = 'Will be used when a new block type is created.';
+    $f->addOption('', 'With comments (default)');
+    $f->addOption('advanced', 'Advanced (without comments)');
+    if (array_key_exists('createPhp', $data)) $f->attr('value', $data['createPhp']);
+    $f->columnWidth = 50;
+    $fs->add($f);
+
+    /** @var InputfieldSelect $f */
+    $f = $this->wire->modules->get('InputfieldSelect');
+    $f->attr('name', 'createView');
+    $f->label = 'File type of view-file';
+    $f->icon = 'code';
+    $f->notes = 'Will be used when a new block type is created. Default is PHP. Recommended is LATTE ;)';
+    $f->addOption('latte', 'LATTE');
+    $f->addOption('php', 'PHP');
+    if (array_key_exists('createView', $data)) $f->attr('value', $data['createView']);
+    $f->columnWidth = 50;
+    $fs->add($f);
 
     $dir = __DIR__ . "/blocks";
     $installable = $this->wire->files->find($dir, ['extensions' => ['php']]);

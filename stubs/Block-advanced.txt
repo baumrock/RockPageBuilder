@@ -1,0 +1,33 @@
+<?php
+
+namespace RockPageBuilderBlock;
+
+use RockPageBuilder\Block;
+
+class {name} extends Block {
+
+  const prefix = "rpb_{namelower}_";
+
+  public function info() {
+    return [
+      'title' => '{name}',
+    ];
+  }
+
+  public function migrate()
+  {
+    $rm = $this->rockmigrations();
+    $rm->migrate([
+      'fields' => [],
+      'templates' => [
+        $this->getTplName() => [
+          'fields' => [
+            'title' => [
+              'label' => 'Headline',
+            ],
+          ],
+        ],
+      ],
+    ]);
+  }
+}

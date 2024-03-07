@@ -268,20 +268,20 @@ class Block extends \ProcessWire\Page
    */
   public function classes(): string
   {
-    $widget = $this->getWidgetBlock();
-    $prev = $widget->prevBlock();
-    $next = $widget->nextBlock();
+    $block = $this->getWidgetBlock();
+    $prev = $block->prevBlock();
+    $next = $block->nextBlock();
 
     $class = "rpb-block";
-    if (!$prev || $prev->bgID() !== $widget->bgID()) $class .= " rpb-block-top";
-    if (!$next || $next->bgID() !== $widget->bgID()) $class .= " rpb-block-bottom";
+    if (!$prev || $prev->bgID() !== $block->bgID()) $class .= " rpb-block-top";
+    if (!$next || $next->bgID() !== $block->bgID()) $class .= " rpb-block-bottom";
 
     // debugging
-    // $out = $widget->classesInfo($widget);
-    // $out .= "\nPrev: " . $widget->classesInfo($prev);
-    // $out .= "\nNext: " . $widget->classesInfo($next);
-    // $out .= "\n$class";
-    // bd($out);
+    $out = "#$block: " . $block->classesInfo($block);
+    $out .= "\nPrev: #$prev " . $block->classesInfo($prev);
+    $out .= "\nNext: #$next " . $block->classesInfo($next);
+    $out .= "\n$class";
+    bd($out);
 
     return $class;
   }
@@ -292,7 +292,7 @@ class Block extends \ProcessWire\Page
   private function classesInfo($page): string
   {
     if (!$page) return "--";
-    return $page->className() . " ({$page->getLabel()}) - bgID: " . $page->bgID();
+    return $page->className() . " ({$page->getLabelSanitized()}) - bgID: " . $page->bgID();
   }
 
   /**
@@ -453,6 +453,17 @@ class Block extends \ProcessWire\Page
   {
     $label = $this->title ?: $this->getInfo()->title;
     return $this->wire->sanitizer->truncate($label, 50);
+  }
+
+  public final function getLabelSanitized(): string
+  {
+    $label = $this->getLabel() ?: $this->getInfo()->title;
+    if ($label instanceof Html or $label instanceof RockPageBuilderHtml) {
+      // do not change the label
+    } else {
+      $label = $this->wire->sanitizer->truncate(strip_tags($label), 70);
+    }
+    return $label;
   }
 
   /**
@@ -617,12 +628,7 @@ class Block extends \ProcessWire\Page
 
     // prepare label
     $title = $this->getInfo()->title;
-    $label = $this->getLabel() ?: $title;
-    if ($label instanceof Html or $label instanceof RockPageBuilderHtml) {
-      // do not change the label
-    } else {
-      $label = $this->wire->sanitizer->truncate(strip_tags($label), 70);
-    }
+    $label = $this->getLabelSanitized();
     $prefix = false;
     if ($this->master()->showBlocktype) {
       if ($title == $label) $label = false;

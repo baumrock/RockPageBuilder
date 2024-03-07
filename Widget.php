@@ -19,6 +19,7 @@ class Widget extends Block
     return [
       'icon' => 'magic',
       'title' => 'Widget',
+      'sort' => 9999,
     ];
   }
 

@@ -104,6 +104,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     wire()->addHookAfter("Templates::saved",                  $this, "hookBlockMigrateFile");
     wire()->addHookAfter("Fields::saved",                     $this, "hookBlockMigrateFile");
     wire()->addHookAfter("Pages::saved",                      $this, "deleteOrphanBlocks");
+    wire()->addHookProperty("Block::buttonLabel",             $this, "hookBlockButtonLabel");
 
     // hooks for access control
     $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
@@ -1169,6 +1170,17 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
+   * Adds the property "buttonLabel" to every block so that we can sort buttons
+   * @param HookEvent $event
+   * @return void
+   */
+  protected function hookBlockButtonLabel(HookEvent $event): void
+  {
+    $block = $event->object;
+    $event->return = $block->getInfo()->title;
+  }
+
+  /**
    * Make sure that blocks are editable if the rpb page is editable
    * @return void
    */
@@ -1992,6 +2004,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $f->name = 'installBlocks';
     $f->label = "Install Blocks";
     $f->icon = "cubes";
+    $f->columnWidth = 50;
     $installed = [];
     foreach ($installable as $block) {
       $name = substr(basename($block), 0, -4);
@@ -2005,6 +2018,22 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       . "'. This will simply copy over files to /site/templates/RockPageBuilder/blocks/ - You can manually copy files to other fields as well.";
     $f->notes = "Already installed: " . implode(", ", $installed);
     $fs->add($f);
+
+    // add option to use old manual sorting
+    $fs->add([
+      'type' => 'toggle',
+      'name' => 'useManualSorting',
+      'formatType' => 0, // integer 0/1
+      'labelType' => 0, // yes/no
+      'label' => 'Sort block buttons manually',
+      'defaultOption' => 'no',
+      'description' => 'By default the buttons to create new blocks will be sorted alphabetically. You can enable manual sorting and provide an integer "sort" property for every block, eg 100, 200, 300 to define their sort order.',
+      'value' => $this->useManualSorting,
+      'icon' => 'sort-alpha-asc',
+      'columnWidth' => 50,
+      'notes' => 'Manual sorting is considered deprecated and only for backwards compatibility!
+        If you are unsure keep this setting at "NO".',
+    ]);
 
     $fs = new InputfieldFieldset();
     $fs->label = "Frontend";

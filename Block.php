@@ -1181,7 +1181,7 @@ class Block extends \ProcessWire\Page
 
     $info = $this->getInfo();
     $tooltip = $info->description ?: '';
-    $tooltip = "title='$tooltip' uk-tooltip";
+    $tooltip = "title='$tooltip' uk-tooltip data-desc='$tooltip'";
 
     $style = $info->color ? "style='border-left: 3px solid {$info->color}'" : '';
     $type = $this->className();

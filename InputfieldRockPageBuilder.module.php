@@ -227,8 +227,10 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
   {
     if (!$page) $page = $this->process->getPage();
     $blocks = $this->getAddableBlocks($page);
-    $blocks->sort("_rpbsort");
-    $buttons = '<div class="rpb-buttons ' . ($modal ? 'modal' : '') . '">';
+    if ($this->master->useManualSorting) $blocks->sort("_rpbsort");
+    else $blocks->sort("buttonLabel");
+    $buttons = $this->renderFilterButtons();
+    $buttons .= '<div class="rpb-buttons ' . ($modal ? 'modal' : '') . '">';
     $group = '';
     $i = 0;
     foreach ($blocks as $block) {
@@ -260,6 +262,32 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
     if (!$this->wire->user->isSuperuser()) return;
     return "<a uk-icon=plus class='noclick createBlockType'
       title='Create new block type' uk-tooltip></a>";
+  }
+
+  public function ___renderFilterButtons()
+  {
+    $url = $this->wire->config->urls($this) . "InputfieldRockPageBuilder.js";
+    $this->wire->config->scripts->add($this->wire->config->versionUrl($url));
+
+    // on modal view we can put focus in the filter input on page load
+    $autofocus = "";
+    if (str_ends_with($this->wire->input->url, "/rockpagebuilder/add/")) {
+      $autofocus = "<script>$('.rpb-buttons-filter input').focus()</script>";
+    }
+
+    // render the filter input
+    return "<div class='rpb-buttons-filter uk-margin-small-bottom'>
+        <div class='uk-inline uk-width-1-1'>
+          <span class='uk-form-icon' uk-icon='icon: search'></span>
+          <input
+            type='text'
+            class='uk-input InputfieldIgnoreChanges'
+            aria-label='Not clickable icon'
+            placeholder='Filter Blocks'
+          />
+          $autofocus
+        </div>
+      </div>";
   }
 
   /**

@@ -88,20 +88,23 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     }
 
     $this->installProcessModule();
-    $this->addHookAfter("ProcessPageEdit::buildForm", $this, "buildForm");
-    $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
-    $this->addHook("Page::getRmxBlock", $this, "getRmxBlock");
-    $this->addHookAfter("Page::render", $this, "addMagicStyles");
-    $this->addHookAfter("User::hasPagePermission", $this, "hookImageEdit");
-    $this->addHookBefore("Inputfield::render", $this, "addMagicInputfieldProperties");
-    $this->addHookAfter("Modules::refresh", $this, "removeUnusedTemplates");
-    $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "widgetHint");
-    $this->addHookAfter("ProcessPageEdit::buildFormContent", $this, "hookHideTitleField");
-    $this->addHookBefore("Modules::uninstall", $this, "beforeUninstall");
-    $this->addHookAfter("Page::render", $this, "addMoveStyles");
-    $this->addHookAfter("Templates::saved", $this, "hookBlockMigrateFile");
-    $this->addHookAfter("Fields::saved", $this, "hookBlockMigrateFile");
-    $this->addHookAfter("Pages::saved", $this, "deleteOrphanBlocks");
+
+    // hooks
+    wire()->addHookAfter("ProcessPageEdit::buildForm",        $this, "buildForm");
+    wire()->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
+    wire()->addHook("Page::getRmxBlock",                      $this, "getRmxBlock");
+    wire()->addHookAfter("Page::render",                      $this, "addMagicStyles");
+    wire()->addHookAfter("User::hasPagePermission",           $this, "hookImageEdit");
+    wire()->addHookBefore("Inputfield::render",               $this, "addMagicInputfieldProperties");
+    wire()->addHookAfter("Modules::refresh",                  $this, "removeUnusedTemplates");
+    wire()->addHookAfter("ProcessPageEdit::buildFormContent", $this, "widgetHint");
+    wire()->addHookAfter("ProcessPageEdit::buildFormContent", $this, "hookHideTitleField");
+    wire()->addHookBefore("Modules::uninstall",               $this, "beforeUninstall");
+    wire()->addHookAfter("Page::render",                      $this, "addMoveStyles");
+    wire()->addHookAfter("Templates::saved",                  $this, "hookBlockMigrateFile");
+    wire()->addHookAfter("Fields::saved",                     $this, "hookBlockMigrateFile");
+    wire()->addHookAfter("Pages::saved",                      $this, "deleteOrphanBlocks");
+    wire()->addHookProperty("Block::buttonLabel",             $this, "hookBlockButtonLabel");
 
     // hooks for access control
     $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
@@ -132,7 +135,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
     $this->addHookBefore('ProcessPageListRender::getNumChildren', $this, "hookNumChildren");
 
-    $this->createBlock();
+    $this->createBlockHook();
     $this->include("init.php"); // load templates/RockPageBuilder/init.php
     $this->addBlock(__DIR__ . "/Widget.php"); // always load the widget block
 
@@ -663,9 +666,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $page = $event->process->getPage();
     $this->preloadAssets($page);
     if (!$page instanceof Block) return;
+
     $fs = $event->return;
     $page->prepareForm($fs);
     $page->buildForm($fs);
+
+    // add backend js file
+    rockmigrations()->addScripts(__DIR__ . "/assets/backend.js");
 
     // add link to rpb page
     $sudo = $this->wire->user->isSuperuser();
@@ -778,7 +785,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * Create new block for field
    * @return void
    */
-  public function createBlock()
+  public function createBlockHook()
   {
     if (!$this->wire->user) return;
     if (!$this->wire->user->isSuperuser()) return;
@@ -820,10 +827,17 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       }
 
       // block file
-      $this->stub("Block.txt", [
-        "{name}" => $name,
-        "{namelower}" => strtolower($name),
-      ], "$subfolder/$name.php");
+      if ($this->createPhp == 'advanced') {
+        $this->stub("Block-advanced.txt", [
+          "{name}" => $name,
+          "{namelower}" => strtolower($name),
+        ], "$subfolder/$name.php");
+      } else {
+        $this->stub("Block.txt", [
+          "{name}" => $name,
+          "{namelower}" => strtolower($name),
+        ], "$subfolder/$name.php");
+      }
 
       // view files
       if ($this->createView == 'latte') {
@@ -988,6 +1002,18 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
+   * Get block by name, like Text, Downloads
+   * @return Block
+   */
+  public function getBlockByName($name)
+  {
+    foreach ($this->blocks as $block) {
+      if ($block->className() === (string)$name) return $block;
+    }
+    return false;
+  }
+
+  /**
    * Get block by template
    * @return Block
    */
@@ -1084,6 +1110,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'include' => 'all',
       'parent' => $this->getDatapage(),
       ['id', '!=', $this->getUsedBlockIds()],
+      // never delete blocks younger than 10s
+      'created>' => time() + 10,
     ]);
     return $ids;
   }
@@ -1139,6 +1167,17 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if ($this->showDataPage and $this->wire->user->isSuperuser()) return;
     $dataPage = $event->pages->get("template=" . self::tpl_datapage);
     $event->return = $event->return->remove($dataPage);
+  }
+
+  /**
+   * Adds the property "buttonLabel" to every block so that we can sort buttons
+   * @param HookEvent $event
+   * @return void
+   */
+  protected function hookBlockButtonLabel(HookEvent $event): void
+  {
+    $block = $event->object;
+    $event->return = $block->getInfo()->title;
   }
 
   /**
@@ -1438,6 +1477,11 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'rows' => 5,
       'inlineMode' => true,
       'settingsFile' => '/site/modules/RockMigrations/TinyMCE/simple.json',
+
+      // dont add any textformatters so that we can apply site-specific
+      // in migrations (because we don't have an api for adding textformatters yet)
+      // added for maletschek
+      // 'textformatters' => [],
     ]);
 
     // set tags for all fields
@@ -1911,20 +1955,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'notes' => 'If you disable widgets you can safely remove the widgets field from your home template.',
       'icon' => 'clone',
       'useReverse' => true,
-      'columnWidth' => 33,
+      'columnWidth' => 50,
     ]);
-
-    /** @var InputfieldSelect $f */
-    $f = $this->wire->modules->get('InputfieldSelect');
-    $f->attr('name', 'createView');
-    $f->label = 'File type of view-file';
-    $f->icon = 'code';
-    $f->notes = 'Will be used when a new block type is created. Default is PHP. Recommended is LATTE ;)';
-    $f->addOption('latte', 'LATTE');
-    $f->addOption('php', 'PHP');
-    if (array_key_exists('createView', $data)) $f->attr('value', $data['createView']);
-    $f->columnWidth(33);
-    $fs->add($f);
 
     $fs->add([
       'type' => 'toggle',
@@ -1935,9 +1967,33 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'inputfieldClass' => 0, // toggle buttons
       'defaultOption' => 'no',
       'notes' => 'All blocks need a PHP file for the business logic and a markup file that defines the output. If you check this box a LESS file will be created for every block that you can use to define the styling of the block.',
-      'checked' => $this->createLessFile ? 'checked' : '',
-      'columnWidth' => 33,
+      'value' => $this->createLessFile,
+      'columnWidth' => 50,
     ]);
+
+    /** @var InputfieldSelect $f */
+    $f = $this->wire->modules->get('InputfieldSelect');
+    $f->attr('name', 'createPhp');
+    $f->label = 'File type of PHP-file';
+    $f->icon = 'code';
+    $f->notes = 'Will be used when a new block type is created.';
+    $f->addOption('', 'With comments (default)');
+    $f->addOption('advanced', 'Advanced (without comments)');
+    if (array_key_exists('createPhp', $data)) $f->attr('value', $data['createPhp']);
+    $f->columnWidth = 50;
+    $fs->add($f);
+
+    /** @var InputfieldSelect $f */
+    $f = $this->wire->modules->get('InputfieldSelect');
+    $f->attr('name', 'createView');
+    $f->label = 'File type of view-file';
+    $f->icon = 'code';
+    $f->notes = 'Will be used when a new block type is created. Default is PHP. Recommended is LATTE ;)';
+    $f->addOption('latte', 'LATTE');
+    $f->addOption('php', 'PHP');
+    if (array_key_exists('createView', $data)) $f->attr('value', $data['createView']);
+    $f->columnWidth = 50;
+    $fs->add($f);
 
     $dir = __DIR__ . "/blocks";
     $installable = $this->wire->files->find($dir, ['extensions' => ['php']]);
@@ -1948,6 +2004,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $f->name = 'installBlocks';
     $f->label = "Install Blocks";
     $f->icon = "cubes";
+    $f->columnWidth = 50;
     $installed = [];
     foreach ($installable as $block) {
       $name = substr(basename($block), 0, -4);
@@ -1961,6 +2018,22 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       . "'. This will simply copy over files to /site/templates/RockPageBuilder/blocks/ - You can manually copy files to other fields as well.";
     $f->notes = "Already installed: " . implode(", ", $installed);
     $fs->add($f);
+
+    // add option to use old manual sorting
+    $fs->add([
+      'type' => 'toggle',
+      'name' => 'useManualSorting',
+      'formatType' => 0, // integer 0/1
+      'labelType' => 0, // yes/no
+      'label' => 'Sort block buttons manually',
+      'defaultOption' => 'no',
+      'description' => 'By default the buttons to create new blocks will be sorted alphabetically. You can enable manual sorting and provide an integer "sort" property for every block, eg 100, 200, 300 to define their sort order.',
+      'value' => $this->useManualSorting,
+      'icon' => 'sort-alpha-asc',
+      'columnWidth' => 50,
+      'notes' => 'Manual sorting is considered deprecated and only for backwards compatibility!
+        If you are unsure keep this setting at "NO".',
+    ]);
 
     $fs = new InputfieldFieldset();
     $fs->label = "Frontend";

@@ -27,6 +27,7 @@ use ReflectionClass;
 use RockPageBuilder\Html as RockPageBuilderHtml;
 use RockPageBuilderBlock\Widget;
 
+use function ProcessWire\rockfrontend;
 use function ProcessWire\rockpagebuilder;
 use function ProcessWire\wireClassName;
 
@@ -79,19 +80,9 @@ class Block extends \ProcessWire\Page
    */
   public function init()
   {
+    // don't add anything here!
+    // it might break things if anyone added an own init() method
   }
-
-  /** magic methods */
-
-  public function onCreate()
-  {
-    // we dont execute resetting the title if the block is being cloned
-    if ($this->rpb()->isClone) return;
-    // set default field values when a new block is created
-    $this->setInAllLanguages('title', '');
-  }
-
-  /** end magic methods */
 
   /**
    * Add ALFRED icons (for RockFrontend)
@@ -277,13 +268,31 @@ class Block extends \ProcessWire\Page
    */
   public function classes(): string
   {
-    $prev = $this->prevBlock();
-    $next = $this->nextBlock();
+    $block = $this->getWidgetBlock();
+    $prev = $block->prevBlock();
+    $next = $block->nextBlock();
 
     $class = "rpb-block";
-    if (!$prev || $prev->bgID() !== $this->bgID()) $class .= " rpb-block-top";
-    if (!$next || $next->bgID() !== $this->bgID()) $class .= " rpb-block-bottom";
+    if (!$prev || $prev->bgID() !== $block->bgID()) $class .= " rpb-block-top";
+    if (!$next || $next->bgID() !== $block->bgID()) $class .= " rpb-block-bottom";
+
+    // debugging
+    // $out = "#$block: " . $block->classesInfo($block);
+    // $out .= "\nPrev: #$prev " . $block->classesInfo($prev);
+    // $out .= "\nNext: #$next " . $block->classesInfo($next);
+    // $out .= "\n$class";
+    // bd($out);
+
     return $class;
+  }
+
+  /**
+   * CSS classes info for debugging
+   */
+  private function classesInfo($page): string
+  {
+    if (!$page) return "--";
+    return $page->className() . " ({$page->getLabelSanitized()}) - bgID: " . $page->bgID();
   }
 
   /**
@@ -303,6 +312,13 @@ class Block extends \ProcessWire\Page
     $this->rpb()->isClone = false;
     $fielddata->insertAfter($clone, $block);
     $fielddata->save();
+    return $clone;
+  }
+
+  public function copyTo($page, $field): void
+  {
+    $clone = $this->clone();
+    $clone->move($page, $field);
   }
 
   /**
@@ -399,11 +415,18 @@ class Block extends \ProcessWire\Page
 
   /**
    * Get info WireData
-   * @return WireData
+   *
+   * If a property is defined we only return this property
+   *
+   * @return WireData|mixed
    */
-  public function getInfo()
+  public function getInfo($prop = null)
   {
-    if ($this->info) return $this->info;
+    if ($this->info) {
+      if ($prop) return $this->info->get($prop);
+      return $this->info;
+    }
+
     $info = $this->wire(new WireData());
     /** @var WireData $info */
     $info->setArray([
@@ -417,6 +440,8 @@ class Block extends \ProcessWire\Page
     $blockInfo = $this->info();
     if ($blockInfo instanceof WireData) $blockInfo = $blockInfo->getArray();
     $info->setArray($blockInfo);
+
+    if ($prop) return $info->get($prop);
     return $info;
   }
 
@@ -428,6 +453,17 @@ class Block extends \ProcessWire\Page
   {
     $label = $this->title ?: $this->getInfo()->title;
     return $this->wire->sanitizer->truncate($label, 50);
+  }
+
+  public final function getLabelSanitized(): string
+  {
+    $label = $this->getLabel() ?: $this->getInfo()->title;
+    if ($label instanceof Html or $label instanceof RockPageBuilderHtml) {
+      // do not change the label
+    } else {
+      $label = $this->wire->sanitizer->truncate(strip_tags($label), 70);
+    }
+    return $label;
   }
 
   /**
@@ -592,12 +628,7 @@ class Block extends \ProcessWire\Page
 
     // prepare label
     $title = $this->getInfo()->title;
-    $label = $this->getLabel() ?: $title;
-    if ($label instanceof Html or $label instanceof RockPageBuilderHtml) {
-      // do not change the label
-    } else {
-      $label = $this->wire->sanitizer->truncate(strip_tags($label), 70);
-    }
+    $label = $this->getLabelSanitized();
     $prefix = false;
     if ($this->master()->showBlocktype) {
       if ($title == $label) $label = false;
@@ -1150,7 +1181,7 @@ class Block extends \ProcessWire\Page
 
     $info = $this->getInfo();
     $tooltip = $info->description ?: '';
-    $tooltip = "title='$tooltip' uk-tooltip";
+    $tooltip = "title='$tooltip' uk-tooltip data-desc='$tooltip'";
 
     $style = $info->color ? "style='border-left: 3px solid {$info->color}'" : '';
     $type = $this->className();
@@ -1234,17 +1265,7 @@ class Block extends \ProcessWire\Page
       $latte = $this->latte;
       if (!$latte) {
         try {
-          // load latte from RockFrontend
-          $vendor = $this->wire->config->paths->siteModules . "RockFrontend/vendor/autoload.php";
-          if (is_file($vendor)) require_once $vendor;
-          else {
-            // load latte from PW root
-            $vendor = $this->wire->config->paths->root . "vendor/autoload.php";
-            if (is_file($vendor)) require_once $vendor;
-          }
-
-          $latte = new Engine();
-          $latte->setTempDirectory($this->wire->config->paths->cache . "Latte");
+          $latte = rockfrontend()->loadLatte();
           $this->latte = $latte;
         } catch (\Throwable $th) {
           $msg = "<br>Install Latte or delete the .latte view file and use
@@ -1279,10 +1300,11 @@ class Block extends \ProcessWire\Page
     return $this->wire->modules->get('RockMigrations');
   }
 
+  /**
+   * Empty method for RockSearch module
+   */
   public function rockSearchIndex()
   {
-    $title = $this->getInfo()->title;
-    return "++$title++";
   }
 
   /**

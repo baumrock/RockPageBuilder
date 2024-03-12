@@ -140,3 +140,28 @@ public function info() {
 ```
 
 <img src=wrapper.png class=blur>
+
+## Conditionals (showIf)
+
+The `showIf` feature allows you to conditionally display settings based on the value of other settings within the same block. This can be particularly useful for creating dynamic and interactive settings interfaces where the visibility of certain options depends on the configuration of others.
+
+To use `showIf`, you need to specify it as an attribute in the settings array of your block's `settingsTable` method. The `showIf` attribute takes a string that represents a condition. This condition is composed of the name of the setting to watch, an equals sign `=`, and the value that triggers the visibility of the current setting.
+
+```php
+public function settingsTable(\ProcessWire\RockFieldsField $field)
+{
+  $settings = $this->getDefaultSettings($field);
+  $settings->add([
+    'name' => 'showImages',
+    'label' => 'Show Items with Images',
+    'value' => $field->input('showImages', 'checkbox'),
+  ]);
+  $settings->add([
+    'name' => 'noBackground',
+    'label' => 'Do not add blurred background behind images',
+    'value' => $field->input('noBackground', 'checkbox'),
+    'showIf' => 'showImages=1',
+  ]);
+  return $settings;
+}
+```

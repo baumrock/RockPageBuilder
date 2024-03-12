@@ -3,7 +3,6 @@
 namespace RockPageBuilder;
 
 use ProcessWire\WireArray;
-use ProcessWire\WireException;
 
 class BlocksArray extends WireArray
 {

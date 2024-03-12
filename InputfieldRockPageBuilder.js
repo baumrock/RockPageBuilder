@@ -1,5 +1,10 @@
 "use strict";
 
+/**
+ * This file is loaded whenever an InputfieldRockPageBuilder is loaded
+ * and also when the GUI for adding a new block is rendered (for block-filter)
+ */
+
 function RockPageBuilder() {
   this.editdelay = 5;
   this.submitdelay = this.editdelay + 20;
@@ -47,6 +52,15 @@ RockPageBuilder.prototype.addAction = function (name, callback) {
   this.actions[name] = callback;
 };
 
+/**
+ * Add .InputfieldStateChanged to the inputfield when changes are detected
+ */
+RockPageBuilder.prototype.addChanged = function (e) {
+  if (e.target.classList.contains("InputfieldIgnoreChanges")) return;
+  $(e.target).closest(".Inputfield").addClass("InputfieldStateChanged");
+  RockPageBuilder.changed(e);
+};
+
 RockPageBuilder.prototype.addItem = function (e, json) {
   let $root = this.$root(e);
   let $container = this.$itemsContainer(e);
@@ -59,6 +73,32 @@ RockPageBuilder.prototype.addItem = function (e, json) {
 
   // trigger change
   $root.trigger("changed");
+};
+
+/**
+ * Logic for filtering buttons to add new blocks
+ */
+RockPageBuilder.prototype.filterButtons = function (e) {
+  let $input = $(e.target);
+  let $buttons = $input
+    .closest(".rpb-buttons-container")
+    .find(".rpb-buttons > a");
+  let search = $input.val().toLowerCase();
+  $buttons.each(function () {
+    let $button = $(this);
+    if (!search) return $button.show();
+
+    let blockType = $button.data("blocktype").toLowerCase();
+    let label = $button.text().toLowerCase();
+    let desc = $button.data("desc").toLowerCase();
+    if (
+      blockType.includes(search) ||
+      label.includes(search) ||
+      desc.includes(search)
+    ) {
+      $button.show();
+    } else $button.hide();
+  });
 };
 
 RockPageBuilder.prototype.fire = function ($action) {
@@ -184,6 +224,10 @@ RockPageBuilder.prototype.unspin = function ($el) {
 // change triggerd
 RockPageBuilder.prototype.changed = function (e) {
   let rm = this;
+
+  // don't trigger changes when inputfield has class to ignore changes
+  if (e.target.classList.contains("InputfieldIgnoreChanges")) return;
+
   clearTimeout(rm.changeTimer);
   // debounce for all changes
   rm.changeTimer = setTimeout(function () {
@@ -287,14 +331,16 @@ $(document).on("AjaxUploadDone", function (e) {
 
 // make sure to add InputfieldStateChanged immediately after keydown
 // we do not intercept form.submit() because that somehow brakes the save process
-$(document).on("keydown", ".InputfieldRockPageBuilder input", function (e) {
-  $(e.target).closest(".Inputfield").addClass("InputfieldStateChanged");
-  RockPageBuilder.changed(e);
-});
-$(document).on("keydown", ".InputfieldRockPageBuilder textarea", function (e) {
-  $(e.target).closest(".Inputfield").addClass("InputfieldStateChanged");
-  RockPageBuilder.changed(e);
-});
+$(document).on(
+  "keydown",
+  ".InputfieldRockPageBuilder input",
+  RockPageBuilder.addChanged
+);
+$(document).on(
+  "keydown",
+  ".InputfieldRockPageBuilder textarea",
+  RockPageBuilder.addChanged
+);
 
 // fix pw-panel issue
 // https://github.com/processwire/processwire-requests/issues/176
@@ -361,7 +407,7 @@ $(document).on("click", ".createBlockType", function (e) {
       if (!name) return;
       $(".uk-modal-body").text("loading...");
       $.get(
-        RockFrontend.rootUrl +
+        ProcessWire.config.urls.root +
           "rpb-create-block/?field=" +
           field +
           "&name=" +
@@ -382,6 +428,13 @@ $(document).on("click", ".rpb-copyblockname", function (e) {
   let name = $(e.target).text();
   $(e.target).closest(".uk-modal-body").find("input").val(name);
 });
+
+// event handler for filtering buttons to add new blocks
+$(document).on(
+  "keyup",
+  ".rpb-buttons-filter input",
+  RockPageBuilder.filterButtons
+);
 
 /** Block Actions */
 

@@ -166,19 +166,25 @@ class RockFields extends WireData implements Module
         $method = $callback[1];
 
         if ($method == 'settingsTable') {
-          // special method of RockMatrix
+          // special method of RockPageBuilder
           $settings = $obj->$method($field);
           if ($settings instanceof BlockSettingsArray) {
+            $rows = new WireArray();
             $arr = [];
             $prop = "label";
             if ($lang = $this->wire->user->language and !$lang->isDefault()) {
               $prop = "label$lang|label";
             }
             // get multilang labels and values for all settings
-            foreach ($settings as $item) $arr[$item->get($prop)] = $item->value;
+            foreach ($settings as $item) {
+              $item->label = $item->get($prop);
+              $rows->add($item);
+            }
             $settings = $arr;
+            $inputfield = RockFieldsField::table($rows);
+          } else {
+            $inputfield = RockFieldsField::table($settings);
           }
-          $inputfield = RockFieldsField::table($settings);
         } else $inputfield = $obj->$method($field);
         $f->skipLabel = Inputfield::skipLabelBlank;
       }

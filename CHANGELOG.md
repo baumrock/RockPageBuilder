@@ -1,3 +1,10 @@
+## [5.3.1](https://github.com/baumrock/RockPageBuilder/compare/v5.3.0...v5.3.1) (2024-03-20)
+
+
+### Bug Fixes
+
+* multiple RPB fields wrongly triggering change event ([a190902](https://github.com/baumrock/RockPageBuilder/commit/a190902e5e27b2707b0177977ca0a8094d31dbc3))
+
 ## [5.3.0](https://github.com/baumrock/RockPageBuilder/compare/v5.2.0...v5.3.0) (2024-03-12)
 
 
@@ -54,11 +61,4 @@
 
 * add noGlobal flag to block templates to prevent issues with title field losing the global flag ([c9a78a6](https://github.com/baumrock/RockPageBuilder/commit/c9a78a63b0027a0dd2d11dec52e270177796227d))
 * update block stubs to reflect new $block->classes() ([64c4d11](https://github.com/baumrock/RockPageBuilder/commit/64c4d11ec9dc93b2365f39a6aa9c63c6aec30c0c))
-
-## [5.0.4](https://github.com/baumrock/RockPageBuilder/compare/v5.0.3...v5.0.4) (2024-01-15)
-
-
-### Bug Fixes
-
-* rename block class to avoid tailwind conflicts ([6901a6c](https://github.com/baumrock/RockPageBuilder/commit/6901a6c834925084c1a42c654f8a50d3c073c1e0))
 

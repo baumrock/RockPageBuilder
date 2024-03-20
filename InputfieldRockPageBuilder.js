@@ -233,11 +233,12 @@ RockPageBuilder.prototype.changed = function (e) {
   rm.changeTimer = setTimeout(function () {
     rm.makeSortable(e);
     rm.setTextarea(e, true);
-    if (rm.init) {
+    let $li = rm.$root(e);
+    if ($li.hasClass("rpb-init")) {
       console.log("RockPageBuilder changed");
-      rm.$root(e).addClass("InputfieldStateChanged");
+      $root.addClass("InputfieldStateChanged");
     } else console.log("RockPageBuilder init");
-    rm.init = true;
+    $li.addClass("rpb-init");
   }, this.editdelay);
 };
 

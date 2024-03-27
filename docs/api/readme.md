@@ -1,9 +1,37 @@
-# RockPageBuilder API Usage
+# API
 
-The RockPageBuilder module provides an API for manipulating blocks within a RockPageBuilder field. You can add, remove, move or clone blocks programmatically using this API. Below are examples of how to use the API for these operations.
+RockPageBuilder provides a powerful API for managing blocks programmatically. This allows for advanced manipulation of content, including moving, cloning, copying, and adding blocks. Below is an overview of how to interact with these capabilities through the API.
 
-## Adding a Block
+## Moving Blocks
 
+To move a block to another page, you can use the move() method on the block object. This method requires the target page and field:
+
+```php
+$block = $pages->get(123);
+$block->move($pages->get("/my/target/page"), "my_target_field");
+```
+
+## Cloning Blocks
+
+Cloning blocks is useful when you want to duplicate content within the same page or across different pages. Use the clone() method on the block object:
+
+```php
+$block = $pages->get(123);
+$clone = $block->clone();
+```
+
+## Copying Blocks to other Pages
+
+If you want to clone and move with one command, you can do this:
+
+```php
+$block = $pages->get(123);
+$block->copyTo($pages->get("/my/target/page"), "my_target_field");
+```
+
+## Adding Blocks
+
+This is helpful when migrating content to RockPageBuilder:
 To add a block to a RockPageBuilder field, you can use the `add()` method on the `FieldData` object. You need to specify the type of the block and optionally, any data you want to initialize the block with.
 
 ```php
@@ -20,14 +48,4 @@ $block = $blocks->add('Text', [
 $page->setAndSave('rockpagebuilder_blocks', $blocks);
 ```
 
-Reference: `FieldData::add()` method in `FieldData.php`.
-
-## Removing a Block
-
-## Cloning a Block
-
-TBD
-
-## Conclusion
-
-The RockPageBuilder API provides flexible methods to manipulate blocks within a field programmatically. Always ensure you have the correct field and block references to avoid unintended modifications.
+Reference: See `FieldData::add()` method in `FieldData.php`.

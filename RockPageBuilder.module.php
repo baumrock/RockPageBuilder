@@ -1102,16 +1102,18 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * Get array of all used blocks
+   * Get array of all unused blocks
+   * @param int $minAge Minimum age in seconds
+   * @return array
+   * @throws WireException
    */
-  public function getUnusedBlockIds(): array
+  public function getUnusedBlockIds($minAge = 10): array
   {
     $ids = $this->wire->pages->findIDs([
       'include' => 'all',
       'parent' => $this->getDatapage(),
       ['id', '!=', $this->getUsedBlockIds()],
-      // never delete blocks younger than 10s
-      'created>' => time() + 10,
+      'created<' => time() + $minAge,
     ]);
     return $ids;
   }

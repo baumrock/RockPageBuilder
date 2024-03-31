@@ -1,3 +1,11 @@
+## [5.3.2](https://github.com/baumrock/RockPageBuilder/compare/v5.3.1...v5.3.2) (2024-03-31)
+
+
+### Bug Fixes
+
+* form not saving values when using showIf ([31ffff9](https://github.com/baumrock/RockPageBuilder/commit/31ffff95b4d08cab75d49b1e596d2387dea17b5d))
+* orphaned blocks are not deleted ([add21c3](https://github.com/baumrock/RockPageBuilder/commit/add21c3d454bd8d88f6f668d327ee827b2c2f9eb))
+
 ## [5.3.1](https://github.com/baumrock/RockPageBuilder/compare/v5.3.0...v5.3.1) (2024-03-20)
 
 
@@ -48,17 +56,4 @@
 ### Bug Fixes
 
 * firefox drag&drop sort not working ([190828e](https://github.com/baumrock/RockPageBuilder/commit/190828e2c4b10d6d958c856d5928737d832c083c))
-
-## [5.1.0](https://github.com/baumrock/RockPageBuilder/compare/v5.0.4...v5.1.0) (2024-01-17)
-
-
-### Features
-
-* make block-reuse-info context aware and hide it if not helpful ([19f70f0](https://github.com/baumrock/RockPageBuilder/commit/19f70f0513fc9e4e789423ae17a6f80d46e9bdac))
-
-
-### Bug Fixes
-
-* add noGlobal flag to block templates to prevent issues with title field losing the global flag ([c9a78a6](https://github.com/baumrock/RockPageBuilder/commit/c9a78a63b0027a0dd2d11dec52e270177796227d))
-* update block stubs to reflect new $block->classes() ([64c4d11](https://github.com/baumrock/RockPageBuilder/commit/64c4d11ec9dc93b2365f39a6aa9c63c6aec30c0c))
 

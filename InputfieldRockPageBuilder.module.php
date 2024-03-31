@@ -186,15 +186,16 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
         continue;
       }
 
-      // get the wrapper for this item and process input
-      $wrapper = $item->getWrapper();
-      $wrapper->resetTrackChanges(true);
-      $wrapper->getErrors(true); // clear out any errors
-      $wrapper->processInput($input);
-
+      // kudos to FireWire for finding the showIf bug
+      // https://processwire.com/talk/topic/29683-dependent-fields-shown-with-showif-condition-in-block-dont-persist/
+      $form = $this->wire->modules->InputfieldForm;
+      $form->import($item->getWrapper());
+      $form->resetTrackChanges(true);
+      $form->getErrors(true); // clear out any errors
+      $form->processInput($input);
       // save all field values to the page
-      $numErrors = count($wrapper->getErrors());
-      $this->formToPage($wrapper, $item);
+      $numErrors = count($form->getErrors());
+      $this->formToPage($form, $item);
       if (!$numErrors) {
         $item->save();
         $changes++;

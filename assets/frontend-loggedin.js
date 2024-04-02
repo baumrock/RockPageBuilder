@@ -205,3 +205,8 @@ document.addEventListener("DOMContentLoaded", makeSortable);
 document.addEventListener("keyup", function (event) {
   if (event.key === "Shift") RockSortable.toggle();
 });
+
+// add class to body that indicates that rockpagebuilder is active
+document.addEventListener("DOMContentLoaded", function () {
+  document.body.classList.add("rpb-active");
+});

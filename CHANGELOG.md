@@ -1,3 +1,10 @@
+## [5.4.0](https://github.com/baumrock/RockPageBuilder/compare/v5.3.2...v5.4.0) (2024-04-02)
+
+
+### Features
+
+* add rpb-active class to body ([21ea763](https://github.com/baumrock/RockPageBuilder/commit/21ea763d04ea102687fc5b01623345a1d6d8c88d))
+
 ## [5.3.2](https://github.com/baumrock/RockPageBuilder/compare/v5.3.1...v5.3.2) (2024-03-31)
 
 
@@ -49,11 +56,4 @@
 * improve drag&drop and UI ([21a78c9](https://github.com/baumrock/RockPageBuilder/commit/21a78c913b85f2838b0182d0814a2e2235601628))
 * improve ui of sortable toggle ([b3336f7](https://github.com/baumrock/RockPageBuilder/commit/b3336f73996bc6eed5510848bae9eeda01d53333))
 * toggle sortable on shift ([9c27152](https://github.com/baumrock/RockPageBuilder/commit/9c27152eec800f8eb4efa09387c4cbd2d252cf74))
-
-## [5.1.1](https://github.com/baumrock/RockPageBuilder/compare/v5.1.0...v5.1.1) (2024-01-19)
-
-
-### Bug Fixes
-
-* firefox drag&drop sort not working ([190828e](https://github.com/baumrock/RockPageBuilder/commit/190828e2c4b10d6d958c856d5928737d832c083c))
 

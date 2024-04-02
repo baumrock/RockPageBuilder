@@ -1,3 +1,10 @@
+## [5.4.1](https://github.com/baumrock/RockPageBuilder/compare/v5.4.0...v5.4.1) (2024-04-02)
+
+
+### Bug Fixes
+
+* update minified js ([41a1caa](https://github.com/baumrock/RockPageBuilder/commit/41a1caaf1cdee8a09ae3f017229301b8a414f07c))
+
 ## [5.4.0](https://github.com/baumrock/RockPageBuilder/compare/v5.3.2...v5.4.0) (2024-04-02)
 
 
@@ -44,16 +51,4 @@
 * latte not loading filters ([7f070c1](https://github.com/baumrock/RockPageBuilder/commit/7f070c1b381c49b2d31a7aa19d23d17869ba6331))
 * less toggle not working ([2646ca1](https://github.com/baumrock/RockPageBuilder/commit/2646ca1ad8035f3a79990977051d416727765c38))
 * rooturl missing on latest rockfrontend ([432d181](https://github.com/baumrock/RockPageBuilder/commit/432d181fec1c9b9c33ef4d81bea77909790ee386))
-
-## [5.2.0](https://github.com/baumrock/RockPageBuilder/compare/v5.1.1...v5.2.0) (2024-02-04)
-
-
-### Features
-
-* add note about rockfrontend settings ([af655e1](https://github.com/baumrock/RockPageBuilder/commit/af655e1dab390c6790b9be55eddea89431165283))
-* add sortable toggle and fix firefox issue ([8bc54b9](https://github.com/baumrock/RockPageBuilder/commit/8bc54b939d0300ff68752885c24e9e5c2f39e9bc))
-* autoload JS block assets ([86b17c4](https://github.com/baumrock/RockPageBuilder/commit/86b17c4a5d2838ec3dd1bf4714ba815cbf34fff2))
-* improve drag&drop and UI ([21a78c9](https://github.com/baumrock/RockPageBuilder/commit/21a78c913b85f2838b0182d0814a2e2235601628))
-* improve ui of sortable toggle ([b3336f7](https://github.com/baumrock/RockPageBuilder/commit/b3336f73996bc6eed5510848bae9eeda01d53333))
-* toggle sortable on shift ([9c27152](https://github.com/baumrock/RockPageBuilder/commit/9c27152eec800f8eb4efa09387c4cbd2d252cf74))
 

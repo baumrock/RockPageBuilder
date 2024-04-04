@@ -30,6 +30,8 @@ The output might look something like this:
 
 It looks ugly because the demo blocks use the UIkit CSS Framework which is not loaded in the blank profile. You can now either create your own custom markup for each block or you can use the `rockpagebuilder` profile that ships with RockFrontend.
 
+<div class='uk-alert uk-alert-warning'>Note: If the block editor does not load in a modal you'll likely be missing the `page-edit-front` permission. Make sure every user using RockPageBuilder on the frontend has this permission!</div>
+
 ## Using the RockFrontend's "rockpagebuilder" profile
 
 To use the rockpagebuilder profile (which is based on the UIkit CSS Framework) simply install the profile and download the UIkit source files:

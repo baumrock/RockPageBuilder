@@ -49,3 +49,13 @@ $page->setAndSave('rockpagebuilder_blocks', $blocks);
 ```
 
 Reference: See `FieldData::add()` method in `FieldData.php`.
+
+## Saving Settings
+
+If you need to change (or import) settings of a block you can do so like this:
+
+```php
+$block->saveSetting('image-size', 'S');
+```
+
+Note that you don't need to save the block, because settings are saved as page `meta()` data and that data is instantly written to the database.

@@ -12,11 +12,11 @@ $info = [
   'singular' => true,
   'icon' => 'cubes',
   // php8.0 for named arguments in RockMigrations
-  // pw2.0.211 for repeater.js updates
+  // pw3.0.227 for $config->versionUrl()
   // RockFrontend 3.6.0 for sortable features
   'requires' => [
     'PHP>=8.0',
-    'ProcessWire>=3.0.211',
+    'ProcessWire>=3.0.227',
     'RockMigrations>=3.30.0',
     'RockFrontend>=3.6.0',
   ],

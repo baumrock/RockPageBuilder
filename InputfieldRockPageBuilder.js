@@ -236,7 +236,7 @@ RockPageBuilder.prototype.changed = function (e) {
     let $li = rm.$root(e);
     if ($li.hasClass("rpb-init")) {
       console.log("RockPageBuilder changed");
-      $root.addClass("InputfieldStateChanged");
+      $li.addClass("InputfieldStateChanged");
     } else console.log("RockPageBuilder init");
     $li.addClass("rpb-init");
   }, this.editdelay);

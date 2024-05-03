@@ -6,7 +6,7 @@ Show that you potential clients and they will be blown away how easy your sites 
 
 ## Frontend GUI
 
-<div class='uk-alert uk-alert-danger'>Note: To use Frontend Editing you need to install the core Frontend Editing module and make sure your user's have the `page-edit-front` permission!</div>
+<div class='uk-alert uk-alert-warning'>Note: To use Frontend Editing you need to install the core Frontend Editing module and make sure your user's have the `page-edit-front` permission!</div>
 
 As soon as you are logged in and hover over a block you will get the UI for all available block actions:
 

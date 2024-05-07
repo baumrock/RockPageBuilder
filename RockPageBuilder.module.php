@@ -172,7 +172,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   public function ready()
   {
     $this->include("ready.php"); // load templates/RockPageBuilder/ready.php
-    $this->parseFrontendAssets();
+    $this->parseAssets();
     $this->addFrontendAssets();
 
     // add magic field getter methods
@@ -1530,13 +1530,18 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * Parse frontend assets
    * This is only done during development of RockPageBuilder
    */
-  public function parseFrontendAssets()
+  public function parseAssets()
   {
     if (!$this->wire->user->isSuperuser()) return;
     if (!$this->wire->modules->isInstalled('Less')) return;
 
     /** @var RockMigrations $rm */
     $rm = $this->wire->modules->get('RockMigrations');
+    $rm->saveCSS(
+      less: __DIR__ . "/RockPageBuilder.less",
+      minify: true,
+      keepCSS: false,
+    );
     $rm->saveCSS(
       less: __DIR__ . "/assets/RockPageBuilder.less",
       minify: true,

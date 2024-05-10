@@ -1,3 +1,10 @@
+## [5.4.3](https://github.com/baumrock/RockPageBuilder/compare/v5.4.2...v5.4.3) (2024-05-10)
+
+
+### Bug Fixes
+
+* RPB less not compiling when changed ([ab546bc](https://github.com/baumrock/RockPageBuilder/commit/ab546bcf3f3167965268c05113af4f29b7bec869))
+
 ## [5.4.2](https://github.com/baumrock/RockPageBuilder/compare/v5.4.1...v5.4.2) (2024-04-16)
 
 
@@ -27,11 +34,4 @@
 
 * form not saving values when using showIf ([31ffff9](https://github.com/baumrock/RockPageBuilder/commit/31ffff95b4d08cab75d49b1e596d2387dea17b5d))
 * orphaned blocks are not deleted ([add21c3](https://github.com/baumrock/RockPageBuilder/commit/add21c3d454bd8d88f6f668d327ee827b2c2f9eb))
-
-## [5.3.1](https://github.com/baumrock/RockPageBuilder/compare/v5.3.0...v5.3.1) (2024-03-20)
-
-
-### Bug Fixes
-
-* multiple RPB fields wrongly triggering change event ([a190902](https://github.com/baumrock/RockPageBuilder/commit/a190902e5e27b2707b0177977ca0a8094d31dbc3))
 

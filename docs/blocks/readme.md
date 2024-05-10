@@ -71,6 +71,41 @@ This is how it will look like when adding a new block:
 
 <img src=description.png class=blur>
 
+## Conditional Blocks
+
+In your block's info method you can also define on which pages the block is available in the UI for adding new blocks:
+
+```php
+public function info()
+{
+  return [
+    'title' => 'Blog-Headline',
+    'description' => 'This headline is only available on blogitem pages!',
+    'show' => function($page) {
+      return $page->template == 'blogitem' ? true : false;
+    },
+  ];
+}
+```
+
+You could also show blocks only to superusers:
+
+```php
+public function info()
+{
+  return [
+    'title' => 'Superuser-Block',
+    'show' => function($page) {
+      return $this->wire->user->isSuperuser();
+    },
+  ];
+}
+```
+
+Note: The `show` method in the `info()` function serves only as a visual restriction in the UI, determining whether the block's addition button is displayed. It does not prevent the existence of already created blocks of the same type if the `show` method later returns `false`. Additionally, this method does not provide a security mechanism against direct POST requests that could create the block; it merely controls the visibility of the UI element.
+
+If you need a more secure way to restrict blocks have a look at the `getAllowedBlocks` method in the code.
+
 ## Block Field Defaults
 
 You can provide defaults for your block-fields, for example this would pre-fill the `title` field of every `Gallery` block with `Some great images`:

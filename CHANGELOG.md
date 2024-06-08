@@ -1,3 +1,10 @@
+## [5.4.4](https://github.com/baumrock/RockPageBuilder/compare/v5.4.3...v5.4.4) (2024-06-08)
+
+
+### Bug Fixes
+
+* prevent select of text while dragging blocks ([39c5a14](https://github.com/baumrock/RockPageBuilder/commit/39c5a14b97e8ee4f39269b006ab10a098fd6cb21))
+
 ## [5.4.3](https://github.com/baumrock/RockPageBuilder/compare/v5.4.2...v5.4.3) (2024-05-10)
 
 
@@ -26,12 +33,4 @@
 ### Features
 
 * add rpb-active class to body ([21ea763](https://github.com/baumrock/RockPageBuilder/commit/21ea763d04ea102687fc5b01623345a1d6d8c88d))
-
-## [5.3.2](https://github.com/baumrock/RockPageBuilder/compare/v5.3.1...v5.3.2) (2024-03-31)
-
-
-### Bug Fixes
-
-* form not saving values when using showIf ([31ffff9](https://github.com/baumrock/RockPageBuilder/commit/31ffff95b4d08cab75d49b1e596d2387dea17b5d))
-* orphaned blocks are not deleted ([add21c3](https://github.com/baumrock/RockPageBuilder/commit/add21c3d454bd8d88f6f668d327ee827b2c2f9eb))
 

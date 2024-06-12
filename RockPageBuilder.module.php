@@ -129,7 +129,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // rpb page save trigger
     $this->_saved = new PageArray();
     $this->addHookAfter("Pages::saved", $this, "triggerBlockPageSave");
-    $this->addHookAfter("Pages::saved", $this, "cloneBlocks");
+    // $this->addHookAfter("Pages::saved", $this, "cloneBlocks");
 
     // hide data page from tree
     $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");

@@ -77,6 +77,7 @@ class FieldtypeRockPageBuilder extends FieldtypeTextarea
 
   public function ___sleepValue(Page $page, Field $field, $value)
   {
+    if (!$value) $value = $this->getBlankValue($page, $field);
     $sleep = $value->sleepValue();
     return $sleep;
   }

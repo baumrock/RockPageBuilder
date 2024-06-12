@@ -25,7 +25,6 @@ class Accordion extends Block
 
   public function onCreate(): void
   {
-    parent::onCreate();
     $this->set(RockPageBuilder::field_eyebrow, "Lorem Ipsum");
     $this->set("title", "Nulla neque dolor sagittis");
   }

@@ -239,6 +239,7 @@ class FieldData extends PageArray
       // skip this block if it is hidden
       /** @var Block $block */
       if ($block->_mxhidden) continue;
+      if ($block->_temp) continue;
 
       /** @var Block $next */
       /** @var Block $prev */
@@ -342,6 +343,7 @@ class FieldData extends PageArray
       $block->_mxchanged = $this->getProp($item, 'changed');
       $block->_mxtrash = $this->getProp($item, 'trash');
       $block->_mxhidden = $this->getProp($item, 'hidden');
+      $block->_temp = $block->meta('rpb-temp');
 
       $this->add($block);
     }

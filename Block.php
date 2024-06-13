@@ -551,6 +551,7 @@ class Block extends \ProcessWire\Page
     if (!$items) return false;
     foreach ($items as $item) {
       if ($item->_mxhidden) continue;
+      if ($item->_temp) continue;
       if ($item->id === $this->id) return $i;
       $i++;
     }
@@ -645,9 +646,13 @@ class Block extends \ProcessWire\Page
     $fs->notes = $this->getNotes();
     $fs->addClass('rpb-item');
     if ($this->_mxhidden) $fs->addClass('rpb-hidden');
+    if ($this->_temp) $fs->addClass('rpb-temp');
     $fs->wrapAttr('data-page', $this->id);
     if ($this->wire->user->isSuperuser()) {
       $fs->wrapAttr('uk-tooltip', "{$this->className} #{$this->id}");
+    }
+    if ($this->_temp) {
+      $fs->wrapAttr('uk-tooltip', 'Temporary Item');
     }
     $fs->wrapAttr('data-tpl', $this->template->name);
     if ($col = $this->getInfo()->color) {

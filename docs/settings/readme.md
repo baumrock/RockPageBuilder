@@ -40,10 +40,34 @@ public function settingsTable(\ProcessWire\RockFieldsField $field)
   $settings->add([
     'name' => 'demo-radios',
     'label' => 'Demo Radios Field',
-    'value' => $field->input('demo-radios', 'radios', [
-      'foo' => 'foo value', // the star marks the default option
-      '*bar' => 'bar value',
-    ]),
+    'value' => $field->input(
+      'demo-radios',
+      // use either "radios" or "radios-inline"
+      'radios', [
+        'foo' => 'foo value', // the star marks the default option
+        '*bar' => 'bar value',
+      ]
+    ),
+  ]);
+
+  // The multi-checkbox field as a slightly different api on the frontend
+  // because it can hold multiple values at once. For easier access the plain
+  // array is converted to a WireData() object and you can use PHP8 syntax
+  // to check for selected state:
+  // $data = $block->settings('demo-checkboxes');
+  // if $data?->foo echo "foo checkbox is selected";
+  // if $data?->bar echo "bar checkbox is selected";
+  $settings->add([
+    'name' => 'demo-checkboxes',
+    'label' => 'Demo Checkboxes Field',
+    'value' => $field->input(
+      'demo-checkboxes',
+      // use either "checkboxes" or "checkboxes-inline"
+      'checkboxes', [
+        'foo' => 'foo value', // the star marks the default option
+        '*bar' => 'bar value',
+      ]
+    ),
   ]);
 
   return $settings;

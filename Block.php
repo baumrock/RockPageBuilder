@@ -11,6 +11,7 @@ use ProcessWire\RockPageBuilder;
 use \ProcessWire\WireData;
 use \ProcessWire\RockMigrations;
 use \ProcessWire\Inputfield;
+use ProcessWire\InputfieldCheckboxes;
 use \ProcessWire\InputfieldFile;
 use \ProcessWire\InputfieldWrapper;
 use \ProcessWire\InputfieldFieldset;
@@ -1418,6 +1419,8 @@ class Block extends \ProcessWire\Page
     try {
       $settings = $this->rockfieldValue($this->settingsName());
     } catch (\Throwable $th) {
+      // bd($th->getMessage(), 'catch!');
+
       // we requested a settings property that does not exist
       // so we return false to make sure WireData is not interpreted as wrong
       // "true" value
@@ -1457,7 +1460,11 @@ class Block extends \ProcessWire\Page
         $settings = $settings->getPlainArray();
       }
       foreach ($settings as $label => $f) {
-        $arr[] = $field->getInputArray($f->sleepName);
+        if ($f instanceof InputfieldCheckboxes) {
+          $arr[] = $field->getInputArray($f->sleepName, 'array');
+        } else {
+          $arr[] = $field->getInputArray($f->sleepName, 'text');
+        }
       }
       return $arr;
     }

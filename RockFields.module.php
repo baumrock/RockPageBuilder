@@ -333,6 +333,16 @@ class RockFields extends WireData implements Module
       }
     }
 
+    // convert plain array values (checkboxes)
+    // into checkboxes object for better frontend API
+    foreach ($data->getArray() as $key => $val) {
+      if (is_array($val)) {
+        $tmp = new WireData();
+        foreach ($val as $v) $tmp->set($v, true);
+        $data->set($k, $tmp);
+      }
+    }
+
     $event->return = $data;
   }
 

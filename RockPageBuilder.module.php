@@ -71,7 +71,10 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   public function init()
   {
+    // TODO: refactor to classloader
+    // wire()->classLoader->addNamespace('RockPageBuilder', __DIR__ . '/classes');
     $this->wire('rockpagebuilder', $this);
+
     if (!$this->modules->isInstalled('FieldtypeRepeater')) {
       $this->modules->install('FieldtypeRepeater');
     }

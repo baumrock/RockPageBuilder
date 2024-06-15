@@ -1,3 +1,10 @@
+## [5.5.1](https://github.com/baumrock/RockPageBuilder/compare/v5.5.0...v5.5.1) (2024-06-15)
+
+
+### Bug Fixes
+
+* refactor and adjust radios wording ([6afd90f](https://github.com/baumrock/RockPageBuilder/commit/6afd90f25ddb678ca1cfb525f47ba186bcb62441))
+
 ## [5.5.0](https://github.com/baumrock/RockPageBuilder/compare/v5.4.4...v5.5.0) (2024-06-15)
 
 
@@ -33,11 +40,4 @@
 
 * $root not defined ([123b041](https://github.com/baumrock/RockPageBuilder/commit/123b0417107ae0a31b9a86d8a510fe8bcc74d28e))
 * update requirements ([c133262](https://github.com/baumrock/RockPageBuilder/commit/c13326241e269bdf16de335f36a4fccb61decbfe))
-
-## [5.4.1](https://github.com/baumrock/RockPageBuilder/compare/v5.4.0...v5.4.1) (2024-04-02)
-
-
-### Bug Fixes
-
-* update minified js ([41a1caa](https://github.com/baumrock/RockPageBuilder/commit/41a1caaf1cdee8a09ae3f017229301b8a414f07c))
 

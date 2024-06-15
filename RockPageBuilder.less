@@ -215,10 +215,14 @@ li.rpb-item {
 .rpb-settings {
   ul {
     padding-left: 0;
+    &.InputfieldCheckboxesStacked {
+      list-style-type: none;
+    }
   }
 
   // radio buttons (eg in settings field)
-  input[type="radio"] {
+  input[type="radio"],
+  input[type="checkbox"] {
     margin-right: 5px;
   }
 

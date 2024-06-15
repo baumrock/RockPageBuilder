@@ -116,6 +116,13 @@ class RockFieldsField extends WireData
         $f->value = $values->$name;
         break;
 
+      case 'checkboxes-inline':
+        $f = new InputfieldCheckboxes();
+        $f->optionColumns = 1;
+        foreach ($data as $k => $v) $f->addOption($k, $v);
+        $f->value = $values->$name;
+        break;
+
         /**
          * Radio buttons
          *

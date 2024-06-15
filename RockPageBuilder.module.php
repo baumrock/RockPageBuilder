@@ -1488,6 +1488,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     // preload radio assets (for settings field)
     (new InputfieldRadios())->renderReady();
+    (new InputfieldCheckboxes())->renderReady();
 
     // preload assets of fields of a repeater field
     // this is necessary for tinymce or image fields for example

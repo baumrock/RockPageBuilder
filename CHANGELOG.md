@@ -1,3 +1,17 @@
+## [5.5.0](https://github.com/baumrock/RockPageBuilder/compare/v5.4.4...v5.5.0) (2024-06-15)
+
+
+### Features
+
+* add temp-flag for blocks created and not saved on the frontend, refactor orphaned block removal ([db39d41](https://github.com/baumrock/RockPageBuilder/commit/db39d41cdb2d72fe4bebf132c09c349dfe7f5a72))
+* improve checkboxes settings and add checkboxes-inline ([4da031d](https://github.com/baumrock/RockPageBuilder/commit/4da031d5904a02874411f0cac22d154d4fa21bd5))
+
+
+### Bug Fixes
+
+* accordion element causing endless loop + improve clone code ([64cb115](https://github.com/baumrock/RockPageBuilder/commit/64cb11544978deebbe292a73b135ae9e48a4ebb0))
+* tmp fix for pagebuilder demo breaking on clone ([cddcb6b](https://github.com/baumrock/RockPageBuilder/commit/cddcb6b6f8951085d1092a563a99e633fd0298ec))
+
 ## [5.4.4](https://github.com/baumrock/RockPageBuilder/compare/v5.4.3...v5.4.4) (2024-06-08)
 
 
@@ -26,11 +40,4 @@
 ### Bug Fixes
 
 * update minified js ([41a1caa](https://github.com/baumrock/RockPageBuilder/commit/41a1caaf1cdee8a09ae3f017229301b8a414f07c))
-
-## [5.4.0](https://github.com/baumrock/RockPageBuilder/compare/v5.3.2...v5.4.0) (2024-04-02)
-
-
-### Features
-
-* add rpb-active class to body ([21ea763](https://github.com/baumrock/RockPageBuilder/commit/21ea763d04ea102687fc5b01623345a1d6d8c88d))
 

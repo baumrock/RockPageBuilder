@@ -103,8 +103,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     wire()->addHookAfter("Page::render",                      $this, "addMoveStyles");
     wire()->addHookAfter("Templates::saved",                  $this, "hookBlockMigrateFile");
     wire()->addHookAfter("Fields::saved",                     $this, "hookBlockMigrateFile");
-    wire()->addHookAfter("Pages::saved",                      $this, "deleteOrphanBlocks");
     wire()->addHookProperty("Block::buttonLabel",             $this, "hookBlockButtonLabel");
+    wire()->addHookAfter('Pages::saved',                      $this, 'addTempFlag');
 
     // hooks for access control
     $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
@@ -129,7 +129,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // rpb page save trigger
     $this->_saved = new PageArray();
     $this->addHookAfter("Pages::saved", $this, "triggerBlockPageSave");
-    $this->addHookAfter("Pages::saved", $this, "cloneBlocks");
+    $this->addHookAfter('Pages::clone', $this, 'hookPageClone');
 
     // hide data page from tree
     $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
@@ -570,6 +570,37 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->backendStylesAdded = true;
   }
 
+  public function addTempFlag(HookEvent $event)
+  {
+    $block = $event->arguments(0);
+    if (!$block instanceof Block) return;
+    if ($block->isTrash()) return;
+
+    // delete orphaned blocks
+    $remove = [];
+    $toCheck = $this->getDatapage()->meta('rpb-tocheck') ?: [];
+    foreach ($toCheck as $id) {
+      $b = $this->wire->pages->get($id);
+      if (!$b->id) $remove[] = $id;
+      $age = time() - $b->created;
+      if ($b->isTrash()) $remove[] = $id;
+      if ($age < RockMigrations::oneMinute * 5) continue;
+      $b->trash();
+      $remove[] = $id;
+    }
+    $tocheck = array_diff($toCheck, $remove);
+
+    // if block was just created we mark it as temp
+    // otherwise we remove the temp flag
+    if ($block->_inserted) {
+      $block->meta('rpb-temp', 1);
+      $toCheck[] = $block->id;
+    } else $block->meta()->remove('rpb-temp');
+
+    // save new tocheck array to datapage
+    $this->getDatapage()->meta('rpb-tocheck', $tocheck);
+  }
+
   /**
    * Remove fields before uninstall
    */
@@ -736,52 +767,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * This hook ensures that when a page is cloned that all rpb blocks of that
-   * page are clones as well and that the new page holds individual copies
-   * and not only references to the original blocks.
-   * @return void
-   */
-  public function cloneBlocks(HookEvent $event)
-  {
-    $page = $event->arguments(0);
-    // db($page, "page $page was saved");
-
-    // find all rpb fields
-    $fields = $this->getBlockFields($page);
-    foreach ($fields as $field) {
-      // db($field, "found rpb field on saved page $page");
-
-      // check if references match
-      $blocks = $page->get($field->name);
-      if (!$blocks instanceof FieldData) continue;
-      if (!$blocks->count()) continue;
-      $rpbPage = $blocks->first()->getBlockPage();
-      if ($page->id != $rpbPage->id) {
-        // db($rpbPage, 'rpb page does not match! resetting field...');
-
-        // reset the field of the current page
-        $newData = $blocks->getNew();
-
-        // add cloned items
-        foreach ($blocks as $block) {
-          /** @var Block $clone */
-          $clone = $this->wire->pages->clone($block);
-          $clone->of(false);
-          $fieldvalues = $block->getArray();
-          $clone->setArray($fieldvalues);
-          $clone->save();
-          $clone->setBlockReference($page, $field);
-          $newData->add($clone);
-        }
-
-        $page->setAndSave($field->name, $newData);
-      }
-    }
-
-    // db("--- done ---");
-  }
-
-  /**
    * Create new block for field
    * @return void
    */
@@ -927,61 +912,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * Hook executed after page was saved to trash orphan RPB blocks
-   */
-  public function deleteOrphanBlocks(HookEvent $event): void
-  {
-    $page = $event->arguments(0);
-    $fields = $this->getBlockFields($page);
-    if (!$fields->count) return;
-
-    // don't execute this hook on a save that was triggerd by RPB
-    // otherwise it will instantly delete newly added blocks
-    if ($page->rockpagebuilderTriggerSave) return;
-
-    // delete all unused blocks
-    $unused = $this->getUnusedBlockIds();
-    // bd($unused);
-    foreach ($unused as $id) {
-      $p = $this->wire->pages->get($id);
-      $p->trash();
-    }
-
-    // BACKUP: Old version that was never used, kept as backup
-    // // we loop all pagebuilder fields of that page
-    // $fields = $this->getBlockFields($page);
-    // foreach ($fields as $field) {
-    //   // get ids of blocks that are saved in that field
-    //   $blocks = $page->getFormatted($field->name);
-    //   if (!$blocks instanceof FieldData) continue;
-    //   $keep = $blocks->implode(',', 'id');
-
-    //   // now get block ids from pages_meta table of blocks that have
-    //   // been stored on that page on that field but are not any more
-    //   $sql = "SELECT *
-    //     FROM `pages_meta`
-    //     WHERE `name` = 'RockPageBuilder'
-    //     AND `data` = '\"$page-$field\"'
-    //   ";
-    //   if ($keep) $sql .= "AND `source_id` NOT IN ($keep)";
-    //   $query = $this->wire->database->prepare($sql);
-    //   $query->execute();
-
-    //   // trash all found orphan blocks
-    //   while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {
-    //     $id = $row['source_id'];
-    //     $this->wire->log("Delete orphan block $id");
-    //     $block = $this->wire->pages->get($id);
-    //     $this->wire->pages->trash($block);
-
-    //     // add meta data to identify blocks later
-    //     // thats just a matter of caution and not used at the moment
-    //     $block->meta('rpb-orphan', 1);
-    //   }
-    // }
-  }
-
-  /**
    * Get allowed blocks for given field and page
    * @return array
    */
@@ -1102,45 +1032,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * Get array of all unused blocks
-   * @param int $minAge Minimum age in seconds
-   * @return array
-   * @throws WireException
-   */
-  public function getUnusedBlockIds($minAge = 10): array
-  {
-    $ids = $this->wire->pages->findIDs([
-      'include' => 'all',
-      'parent' => $this->getDatapage(),
-      ['id', '!=', $this->getUsedBlockIds()],
-      'created<' => time() + $minAge,
-    ]);
-    return $ids;
-  }
-
-  /**
-   * Get array of all used blocks
-   */
-  public function getUsedBlockIds(): array
-  {
-    $ids = [];
-
-    // get all pagebuilder fields
-    $fields = $this->wire->fields->findByType("FieldtypeRockPageBuilder");
-    foreach ($fields as $field) {
-      // find all pages that have blocks in that field
-      $pages = $this->wire->pages->findRaw("include=all,$field!=''", $field->name);
-      foreach ($pages as $data) {
-        if ($data === "[]") continue;
-        $arr = json_decode($data);
-        foreach ($arr as $block) $ids[] = $block->id;
-      }
-    }
-
-    return $ids;
-  }
-
-  /**
    * Get pages that reference the given block/widget
    * @return PageArray
    */
@@ -1250,6 +1141,27 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if ($this->showDataPage and $this->wire->user->isSuperuser()) return;
     $page = $event->arguments(0);
     if ($page->id === 1) $page->numChildren = $page->numChildren - 1;
+  }
+
+  protected function hookPageClone(HookEvent $event): void
+  {
+    // Get the object the event occurred on, if needed
+    $oldPage = $event->arguments(0);
+    $newPage = $event->return;
+
+    // reset all rpb fields
+    $fields = $this->getBlockFields($newPage);
+
+    foreach ($fields as $field) {
+      // reset field
+      $newPage->setAndSave($field->name, '');
+
+      // clone old blocks
+      foreach ($oldPage->getFormatted($field->name) as $block) {
+        if (!$block instanceof Block) continue;
+        $block->copyTo($newPage, $field);
+      }
+    }
   }
 
   /**
@@ -1576,6 +1488,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     // preload radio assets (for settings field)
     (new InputfieldRadios())->renderReady();
+    (new InputfieldCheckboxes())->renderReady();
 
     // preload assets of fields of a repeater field
     // this is necessary for tinymce or image fields for example

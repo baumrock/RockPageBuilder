@@ -178,6 +178,12 @@ li.rpb-item {
     }
   }
 
+  // temporary items
+  &.rpb-temp {
+    outline: 2px dashed lightgray;
+    opacity: 0.5;
+  }
+
   // trashed item
   &.rpb-trash {
     outline: 2px solid red;
@@ -209,10 +215,14 @@ li.rpb-item {
 .rpb-settings {
   ul {
     padding-left: 0;
+    &.InputfieldCheckboxesStacked {
+      list-style-type: none;
+    }
   }
 
   // radio buttons (eg in settings field)
-  input[type="radio"] {
+  input[type="radio"],
+  input[type="checkbox"] {
     margin-right: 5px;
   }
 

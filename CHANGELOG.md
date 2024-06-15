@@ -1,3 +1,10 @@
+## [5.5.2](https://github.com/baumrock/RockPageBuilder/compare/v5.5.1...v5.5.2) (2024-06-15)
+
+
+### Bug Fixes
+
+* add missing frontend api for checkboxes settings ([74f12e2](https://github.com/baumrock/RockPageBuilder/commit/74f12e2b0fd0948b8415c953c0132d16ed4a3291))
+
 ## [5.5.1](https://github.com/baumrock/RockPageBuilder/compare/v5.5.0...v5.5.1) (2024-06-15)
 
 
@@ -32,12 +39,4 @@
 ### Bug Fixes
 
 * RPB less not compiling when changed ([ab546bc](https://github.com/baumrock/RockPageBuilder/commit/ab546bcf3f3167965268c05113af4f29b7bec869))
-
-## [5.4.2](https://github.com/baumrock/RockPageBuilder/compare/v5.4.1...v5.4.2) (2024-04-16)
-
-
-### Bug Fixes
-
-* $root not defined ([123b041](https://github.com/baumrock/RockPageBuilder/commit/123b0417107ae0a31b9a86d8a510fe8bcc74d28e))
-* update requirements ([c133262](https://github.com/baumrock/RockPageBuilder/commit/c13326241e269bdf16de335f36a4fccb61decbfe))
 

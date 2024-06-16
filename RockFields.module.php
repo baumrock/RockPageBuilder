@@ -339,7 +339,7 @@ class RockFields extends WireData implements Module
       if (is_array($val)) {
         $tmp = new WireData();
         foreach ($val as $v) $tmp->set($v, true);
-        $data->set($k, $tmp);
+        $data->set($key, $tmp);
       }
     }
 

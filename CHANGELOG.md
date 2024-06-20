@@ -1,3 +1,10 @@
+## [5.5.3](https://github.com/baumrock/RockPageBuilder/compare/v5.5.2...v5.5.3) (2024-06-20)
+
+
+### Bug Fixes
+
+* wrong variable name ([694cb7c](https://github.com/baumrock/RockPageBuilder/commit/694cb7cc0fd9fbfdbb3ca6d919f1917cd6c9b7d8))
+
 ## [5.5.2](https://github.com/baumrock/RockPageBuilder/compare/v5.5.1...v5.5.2) (2024-06-15)
 
 
@@ -32,11 +39,4 @@
 ### Bug Fixes
 
 * prevent select of text while dragging blocks ([39c5a14](https://github.com/baumrock/RockPageBuilder/commit/39c5a14b97e8ee4f39269b006ab10a098fd6cb21))
-
-## [5.4.3](https://github.com/baumrock/RockPageBuilder/compare/v5.4.2...v5.4.3) (2024-05-10)
-
-
-### Bug Fixes
-
-* RPB less not compiling when changed ([ab546bc](https://github.com/baumrock/RockPageBuilder/commit/ab546bcf3f3167965268c05113af4f29b7bec869))
 

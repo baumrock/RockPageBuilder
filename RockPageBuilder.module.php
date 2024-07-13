@@ -578,6 +578,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $block = $event->arguments(0);
     if (!$block instanceof Block) return;
     if ($block->isTrash()) return;
+    if ($this->isClone) return;
 
     // delete orphaned blocks
     $remove = [];

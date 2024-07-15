@@ -1,3 +1,10 @@
+## [5.5.4](https://github.com/baumrock/RockPageBuilder/compare/v5.5.3...v5.5.4) (2024-07-15)
+
+
+### Bug Fixes
+
+* don't add temp flag when block is cloned ([1399a12](https://github.com/baumrock/RockPageBuilder/commit/1399a12b1febed766935bf5e43e44b02d978ad32))
+
 ## [5.5.3](https://github.com/baumrock/RockPageBuilder/compare/v5.5.2...v5.5.3) (2024-06-20)
 
 
@@ -32,11 +39,4 @@
 
 * accordion element causing endless loop + improve clone code ([64cb115](https://github.com/baumrock/RockPageBuilder/commit/64cb11544978deebbe292a73b135ae9e48a4ebb0))
 * tmp fix for pagebuilder demo breaking on clone ([cddcb6b](https://github.com/baumrock/RockPageBuilder/commit/cddcb6b6f8951085d1092a563a99e633fd0298ec))
-
-## [5.4.4](https://github.com/baumrock/RockPageBuilder/compare/v5.4.3...v5.4.4) (2024-06-08)
-
-
-### Bug Fixes
-
-* prevent select of text while dragging blocks ([39c5a14](https://github.com/baumrock/RockPageBuilder/commit/39c5a14b97e8ee4f39269b006ab10a098fd6cb21))
 

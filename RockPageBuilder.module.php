@@ -136,7 +136,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     // hide data page from tree
     $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
-    $this->addHookBefore('ProcessPageListRender::getNumChildren', $this, "hookNumChildren");
 
     $this->createBlockHook();
     $this->include("init.php"); // load templates/RockPageBuilder/init.php
@@ -1061,9 +1060,26 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    */
   public function hideDataPage(HookEvent $event)
   {
+    // only execute this hook for the root page
+    $p = $event->arguments(1);
+    if ($p->id !== 1) return;
+
+    // if setting enabled and user is superuser we show the page
     if ($this->showDataPage and $this->wire->user->isSuperuser()) return;
+
+    // remove datapage and add hook to modify child count
+    $children = $event->return;
     $dataPage = $event->pages->get("template=" . self::tpl_datapage);
-    $event->return = $event->return->remove($dataPage);
+    $event->return = $children->remove($dataPage);
+    wire()->addHookAfter(
+      'ProcessPageListRender::getNumChildren',
+      function (HookEvent $event) {
+        $page = $event->arguments(0);
+        if ($page->id !== 1) return;
+        if (!$event->return) return;
+        $event->return = $event->return - 1;
+      }
+    );
   }
 
   /**
@@ -1135,16 +1151,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if (!$page instanceof Block) return;
     if (!$page->editable()) return;
     $event->return = true; // grant page-edit-images permission!
-  }
-
-  /**
-   * Hook num children when datapage was removed
-   */
-  public function hookNumChildren(HookEvent $event)
-  {
-    if ($this->showDataPage and $this->wire->user->isSuperuser()) return;
-    $page = $event->arguments(0);
-    if ($page->id === 1) $page->numChildren = $page->numChildren - 1;
   }
 
   protected function hookPageClone(HookEvent $event): void

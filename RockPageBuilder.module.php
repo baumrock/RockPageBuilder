@@ -136,7 +136,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     // hide data page from tree
     $this->addHookAfter("ProcessPageList::find", $this, "hideDataPage");
-    $this->addHookBefore('ProcessPageListRender::getNumChildren', $this, "hookNumChildren");
 
     $this->createBlockHook();
     $this->include("init.php"); // load templates/RockPageBuilder/init.php
@@ -1061,9 +1060,26 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    */
   public function hideDataPage(HookEvent $event)
   {
-    if ($this->showDataPage and $this->wire->user->isSuperuser()) return;
+    // only execute this hook for the root page
+    $p = $event->arguments(1);
+    if ($p->id !== 1) return;
+
+    // if setting enabled and user is superuser we show the page
+    if ($this->showDataPage && wire()->user->isSuperuser()) return;
+
+    // remove datapage and add hook to modify child count
+    $children = $event->return;
     $dataPage = $event->pages->get("template=" . self::tpl_datapage);
-    $event->return = $event->return->remove($dataPage);
+    $event->return = $children->remove($dataPage);
+    wire()->addHookAfter(
+      'ProcessPageListRender::getNumChildren',
+      function (HookEvent $event) {
+        $page = $event->arguments(0);
+        if ($page->id !== 1) return;
+        if (!$event->return) return;
+        $event->return = $event->return - 1;
+      }
+    );
   }
 
   /**
@@ -1135,16 +1151,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if (!$page instanceof Block) return;
     if (!$page->editable()) return;
     $event->return = true; // grant page-edit-images permission!
-  }
-
-  /**
-   * Hook num children when datapage was removed
-   */
-  public function hookNumChildren(HookEvent $event)
-  {
-    if ($this->showDataPage and $this->wire->user->isSuperuser()) return;
-    $page = $event->arguments(0);
-    if ($page->id === 1) $page->numChildren = $page->numChildren - 1;
   }
 
   protected function hookPageClone(HookEvent $event): void
@@ -1869,29 +1875,21 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $inputfields->add($fs);
 
     $fs->add([
-      'type' => 'toggle',
+      'type' => 'checkbox',
       'name' => 'useWidgets',
-      'formatType' => 0, // integer 0/1
-      'labelType' => 0, // yes/no
       'label' => 'Use the widgets feature',
-      'defaultOption' => 'yes',
-      'value' => $this->useWidgets,
+      'checked' => $this->useWidgets ? 'checked' : '',
       'notes' => 'If you disable widgets you can safely remove the widgets field from your home template.',
       'icon' => 'clone',
-      'useReverse' => true,
       'columnWidth' => 50,
     ]);
 
     $fs->add([
-      'type' => 'toggle',
+      'type' => 'checkbox',
       'name' => 'createLessFile',
       'label' => 'Create LESS file for new blocks',
-      'formatType' => 0, // integer 0/1
-      'labelType' => 0, // yes/no
-      'inputfieldClass' => 0, // toggle buttons
-      'defaultOption' => 'no',
       'notes' => 'All blocks need a PHP file for the business logic and a markup file that defines the output. If you check this box a LESS file will be created for every block that you can use to define the styling of the block.',
-      'value' => $this->createLessFile,
+      'checked' => $this->createLessFile ? 'checked' : '',
       'columnWidth' => 50,
     ]);
 
@@ -1945,14 +1943,11 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     // add option to use old manual sorting
     $fs->add([
-      'type' => 'toggle',
+      'type' => 'checkbox',
       'name' => 'useManualSorting',
-      'formatType' => 0, // integer 0/1
-      'labelType' => 0, // yes/no
       'label' => 'Sort block buttons manually',
-      'defaultOption' => 'no',
       'description' => 'By default the buttons to create new blocks will be sorted alphabetically. You can enable manual sorting and provide an integer "sort" property for every block, eg 100, 200, 300 to define their sort order.',
-      'value' => $this->useManualSorting,
+      'checked' => $this->useManualSorting ? 'checked' : '',
       'icon' => 'sort-alpha-asc',
       'columnWidth' => 50,
       'notes' => 'Manual sorting is considered deprecated and only for backwards compatibility!
@@ -1965,17 +1960,12 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $inputfields->add($fs);
 
     $fs->add([
-      'type' => 'toggle',
+      'type' => 'checkbox',
       'name' => 'showBlocktype',
       'label' => 'Show block-type on every block',
-      'formatType' => 0, // integer 0/1
-      'labelType' => 0, // yes/no
-      'inputfieldClass' => 0, // toggle buttons
-      'defaultOption' => 'yes',
-      'value' => $this->showBlocktype,
+      'checked' => $this->showBlocktype ? 'checked' : '',
       'notes' => 'By default RockPageBuilder will add the block-type to the block label: [Screenshot](https://i.imgur.com/BvB5P6p.png)
         You can use the .rpb-blocktype class to style your label to your needs.',
-      'useReverse' => false,
     ]);
 
     $url = $this->wire->pages->get(2)->url . "module/edit?name=RockFrontend";
@@ -1992,7 +1982,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $inputfields->add($fs);
 
     $fs->add([
-      'type' => 'toggle',
+      'type' => 'checkbox',
       'name' => 'showDataPage',
       'label' => 'Show datapage in tree for superusers',
       'formatType' => 0, // integer 0/1

@@ -67,6 +67,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   private $stylesAdded = false;
 
+  public $tplPath;
+
   public function init()
   {
     // TODO: refactor to classloader
@@ -75,6 +77,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // wire()->classLoader->addNamespace('RockPageBuilder', __DIR__ . '/classes');
 
     $this->wire('rockpagebuilder', $this);
+    $this->tplPath = $this->wire->config->paths->templates . 'RockPageBuilder/';
 
     if (!$this->modules->isInstalled('FieldtypeRepeater')) {
       $this->modules->install('FieldtypeRepeater');
@@ -795,7 +798,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       if (strpos($field, "rockpagebuilder_") === 0) $short = substr($field, 16);
       elseif (strpos($field, "rockpagebuilderblock_") === 0) $short = substr($field, 21);
 
-      $folder = $this->wire->config->paths->templates . "RockPageBuilder/$short";
+      $folder = $this->tplPath . $short;
       if (!is_dir($folder)) mkdir($folder);
       $name = ucfirst($name);
       $subfolder = "$folder/$name";
@@ -816,11 +819,23 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       }
 
       // block file
-      if ($this->createPhp == 'advanced') {
-        $this->stub("Block-advanced.txt", [
-          "{name}" => $name,
-          "{namelower}" => strtolower($name),
-        ], "$subfolder/$name.php");
+      $replacements = [
+        "{name}" => $name,
+        "{namelower}" => strtolower($name),
+      ];
+      $stub = $this->getTemplateStub('.Block.php');
+      if ($stub) {
+        $this->stub(
+          $stub,
+          $replacements,
+          "$subfolder/$name.php"
+        );
+      } elseif ($this->createPhp == 'advanced') {
+        $this->stub(
+          "Block-advanced.txt",
+          $replacements,
+          "$subfolder/$name.php"
+        );
       } else {
         $this->stub("Block.txt", [
           "{name}" => $name,
@@ -829,7 +844,17 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       }
 
       // view files
-      if ($this->createView == 'latte') {
+      $stub = $this->getTemplateStub('.Block.latte');
+      if (!$stub) $stub = $this->getTemplateStub('.Block.view.php');
+      if ($stub) {
+        $this->stub($stub, [
+          '{name}' => $name,
+          '{cls}' => "rpb-" . strtolower($name),
+          '{alfred}' => $this->wire->modules->isInstalled('RockFrontend')
+            ? '{alfred($block)}'
+            : '',
+        ], "$subfolder/$name.latte");
+      } elseif ($this->createView == 'latte') {
         $this->stub("Block.latte", [
           '{name}' => $name,
           '{cls}' => "rpb-" . strtolower($name),
@@ -859,6 +884,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
       die('success');
     });
+  }
+
+  public function getTemplateStub($basename)
+  {
+    $file = $this->tplPath . 'stubs/' . $basename;
+    if (is_file($file)) return $file;
+    return false;
   }
 
   /**
@@ -1718,9 +1750,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * Get content of stub file
    * @return string
    */
-  public function stub($file, $replacements = [], $saveTo = false)
-  {
-    $content = $this->wire->files->fileGetContents($this->path . "stubs/$file");
+  public function stub(
+    string $file,
+    array $replacements = [],
+    string $saveTo = null,
+  ) {
+    if (!is_file($file)) $file = $this->path . "stubs/$file";
+    $content = $this->wire->files->fileGetContents($file);
     $content = str_replace(array_keys($replacements), array_values($replacements), $content);
     if ($saveTo and !is_file($saveTo)) {
       $this->wire->files->filePutContents($saveTo, $content);

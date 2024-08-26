@@ -247,17 +247,13 @@ class Block extends \ProcessWire\Page
    * Build form to edit this block
    * @return void
    */
-  public function ___buildForm($fs)
-  {
-  }
+  public function ___buildForm($fs) {}
 
   /**
    * Build the form when displayed in a rpb field
    * @return void
    */
-  public function ___buildFormBlock($fs)
-  {
-  }
+  public function ___buildFormBlock($fs) {}
 
   public function canBeWidget()
   {
@@ -320,33 +316,6 @@ class Block extends \ProcessWire\Page
   {
     $clone = $this->clone();
     $clone->move($page, $field);
-  }
-
-  /**
-   * Move this block to given page and field
-   * @return void
-   */
-  public function move($page, $field)
-  {
-    $page = $this->wire->pages->get((string)$page);
-    $field = $this->wire->fields->get((string)$field);
-    if (!$this->isAllowed($field, $page)) {
-      throw new WireException("Block #$this is not allowed on page $page and field $field");
-    }
-    $new = $page->getFormatted($field->name);
-    if (!$new instanceof FieldData) {
-      throw new WireException("Requested field $field on page $page is not valid");
-    }
-
-    // remove from old field
-    $old = $this->getBlockData();
-    $old->remove($this);
-    $old->save();
-
-    // add to new field
-    $new->add($this);
-    $new->save();
-    $this->setBlockReference($page, $field);
   }
 
   /**
@@ -908,6 +877,33 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Move this block to given page and field
+   * @return void
+   */
+  public function move($page, $field)
+  {
+    $page = $this->wire->pages->get((string)$page);
+    $field = $this->wire->fields->get((string)$field);
+    if (!$this->isAllowed($field, $page)) {
+      throw new WireException("Block #$this is not allowed on page $page and field $field");
+    }
+    $new = $page->getFormatted($field->name);
+    if (!$new instanceof FieldData) {
+      throw new WireException("Requested field $field on page $page is not valid");
+    }
+
+    // remove from old field
+    $old = $this->getBlockData();
+    $old->remove($this);
+    $old->save();
+
+    // add to new field
+    $new->add($this);
+    $new->save();
+    $this->setBlockReference($page, $field);
+  }
+
+  /**
    * Add odd class to every 2nd element
    *
    * Block foo
@@ -1309,9 +1305,7 @@ class Block extends \ProcessWire\Page
   /**
    * Empty method for RockSearch module
    */
-  public function rockSearchIndex()
-  {
-  }
+  public function rockSearchIndex() {}
 
   /**
    * Get RockPageBuilder Process Url
@@ -1441,9 +1435,7 @@ class Block extends \ProcessWire\Page
   {
     return $this->getTplName() . "-settingsfield";
   }
-  public function settingsInput(RockFieldsField $field)
-  {
-  }
+  public function settingsInput(RockFieldsField $field) {}
 
   /**
    * The sleep method defines which values will be stored in the DB
@@ -1840,23 +1832,17 @@ class Block extends \ProcessWire\Page
   /**
    * Short-alias for migrateAfterYaml
    */
-  public function migrate()
-  {
-  }
+  public function migrate() {}
 
   /**
    * Migrations applied before migrating the yaml file
    */
-  public function migrateBeforeYaml()
-  {
-  }
+  public function migrateBeforeYaml() {}
 
   /**
    * Migrations applied after migrating the yaml file
    */
-  public function migrateAfterYaml()
-  {
-  }
+  public function migrateAfterYaml() {}
 
   /**
    * Initial Block Migrations

@@ -150,6 +150,20 @@ _RockSortable.prototype.toggle = function () {
   else this.enable();
 };
 
+/**
+ * Fires the event "name" on document
+ * Usage example:
+ * document.addEventListener("rocksortable-added", (event) => {
+ *   let sortable = event.detail;
+ *   sortable.option("onMove", (e) => {
+ *     console.log('block has been moved');
+ *   }
+ * });
+ */
+_RockSortable.prototype.trigger = function (name, event) {
+  document.dispatchEvent(new CustomEvent(name, { detail: event }));
+};
+
 var RockSortable = new _RockSortable();
 
 // make blocks sortable
@@ -197,9 +211,13 @@ function makeSortable() {
       },
     });
     RockSortable.sortables.push(s);
+    RockSortable.trigger("rocksortable-added", s);
   });
 }
-document.addEventListener("DOMContentLoaded", makeSortable);
+document.addEventListener("DOMContentLoaded", () => {
+  makeSortable();
+  document.dispatchEvent(new Event("rpb-sortable-init"));
+});
 
 // toggle drag&drop on shiftkey
 document.addEventListener("keyup", function (event) {

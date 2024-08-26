@@ -34,6 +34,21 @@ Again, all you have to do is to add the `sortable` attribute to the wrapper that
 </ul>
 ```
 
-I'm quite sure this will blow your client's minds. 🤯
+## Listening to SortableJS events
 
-Happy sorting! 🤩🚀
+For every sortable RockPageBuilder field an event `rocksortable-added` will be fired. You can use this event to adjust options to your needs or add custom callbacks:
+
+```js
+document.addEventListener("rocksortable-added", (event) => {
+  let sortable = event.detail;
+  sortable.option("onMove", (e) => {
+    console.log('block has been moved');
+  }
+});
+```
+
+I'm using this technique to automatically update text colors when blocks with different background colors are moved around:
+
+<img src=https://i.imgur.com/UAcJufM.gif width=400>
+
+Note how the text color switches from black to white after the block has been moved from a light background to a dark background section!

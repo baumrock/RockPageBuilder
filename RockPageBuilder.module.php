@@ -20,8 +20,6 @@ function rockpagebuilder(): RockPageBuilder
   return wire()->modules->get('RockPageBuilder');
 }
 
-require_once(__DIR__ . "/Block.php");
-require_once(__DIR__ . "/BlocksArray.php");
 class RockPageBuilder extends WireData implements Module, ConfigurableModule
 {
 
@@ -72,7 +70,10 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   public function init()
   {
     // TODO: refactor to classloader
+    require_once(__DIR__ . "/Block.php");
+    require_once(__DIR__ . "/BlocksArray.php");
     // wire()->classLoader->addNamespace('RockPageBuilder', __DIR__ . '/classes');
+
     $this->wire('rockpagebuilder', $this);
 
     if (!$this->modules->isInstalled('FieldtypeRepeater')) {

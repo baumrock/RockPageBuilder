@@ -25,6 +25,7 @@ use ProcessWire\RockFrontend;
 use ProcessWire\Template;
 use ProcessWire\WireException;
 use ReflectionClass;
+use RockFrontend\FieldMethod;
 use RockPageBuilder\Html as RockPageBuilderHtml;
 use RockPageBuilderBlock\Widget;
 
@@ -34,6 +35,7 @@ use function ProcessWire\wireClassName;
 
 class Block extends \ProcessWire\Page
 {
+  use FieldMethod;
 
   const prefix = "rockpagebuilderblock_";
   const tags = "RockPageBuilder";
@@ -58,6 +60,8 @@ class Block extends \ProcessWire\Page
 
   /** @var Engine */
   private $latte;
+
+  public $noEdit = false;
 
   public function info()
   {

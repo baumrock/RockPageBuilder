@@ -1935,6 +1935,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $f->attr('name', 'createPhp');
     $f->label = 'File type of PHP-file';
     $f->icon = 'code';
+    $f->description = 'Note: You can also add custom stubs in /site/templates ([see docs](https://www.baumrock.com/en/processwire/modules/rockpagebuilder/docs/stubs/)).';
     $f->notes = 'Will be used when a new block type is created.';
     $f->addOption('', 'With comments (default)');
     $f->addOption('advanced', 'Advanced (without comments)');
@@ -1946,6 +1947,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $f = $this->wire->modules->get('InputfieldSelect');
     $f->attr('name', 'createView');
     $f->label = 'File type of view-file';
+    $f->description = 'Note: You can also add custom stubs in /site/templates ([see docs](https://www.baumrock.com/en/processwire/modules/rockpagebuilder/docs/stubs/)).';
     $f->icon = 'code';
     $f->notes = 'Will be used when a new block type is created. Default is PHP. Recommended is LATTE ;)';
     $f->addOption('latte', 'LATTE');

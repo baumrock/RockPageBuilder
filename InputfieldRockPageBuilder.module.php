@@ -229,7 +229,7 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
     if (!$page) $page = $this->process->getPage();
     $blocks = $this->getAddableBlocks($page);
     if ($this->master->useManualSorting) $blocks->sort("_rpbsort");
-    else $blocks->sort("buttonLabel");
+    else $blocks->sort("buttonLabel", SORT_LOCALE_STRING);
     $buttons = $this->renderFilterButtons();
     $buttons .= '<div class="rpb-buttons ' . ($modal ? 'modal' : '') . '">';
     $group = '';

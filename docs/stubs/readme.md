@@ -30,7 +30,8 @@ To address these issues, RockPageBuilder allows you to create custom stub files 
 
 Create a file `/site/templates/RockPageBuilder/stubs/.Block.php`:
 
-```php:site/templates/RockPageBuilder/stubs/.Block.php
+```php
+// site/templates/RockPageBuilder/stubs/.Block.php
 <?php
 
 namespace RockPageBuilderBlock;
@@ -66,7 +67,8 @@ class {name} extends Block {
 
 Create a file `/site/templates/RockPageBuilder/stubs/.Block.latte`:
 
-```latte:site/templates/RockPageBuilder/stubs/.Block.latte
+```latte
+{* site/templates/RockPageBuilder/stubs/.Block.latte *}
 <section
   class="{cls} tm-block {$site->bgClass}"
   {alfred($block)}

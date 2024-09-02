@@ -1,3 +1,18 @@
+## [5.6.0](https://github.com/baumrock/RockPageBuilder/compare/v5.5.4...v5.6.0) (2024-09-02)
+
+
+### Features
+
+* add logos example block ([1deca75](https://github.com/baumrock/RockPageBuilder/commit/1deca7594df53daa941cf6329c2318be3ba4dc7f))
+* add rocksortable-added event + docs ([79ea794](https://github.com/baumrock/RockPageBuilder/commit/79ea794264d37212a53fd01d3dd1f029018cd6f7))
+* add support for custom stubs ([0485274](https://github.com/baumrock/RockPageBuilder/commit/0485274c032f9e35ac0bfe27c1f8d06bcfd84a96))
+* use rockfrontend fieldmethod trait ([3649a54](https://github.com/baumrock/RockPageBuilder/commit/3649a54012c7f46f6f5d365640361f4fd50535ef))
+
+
+### Bug Fixes
+
+* add locale flag for sorting blocks ([fcdb851](https://github.com/baumrock/RockPageBuilder/commit/fcdb85183ed76bbbd7160bb951fdeffc53f0ebd0))
+
 ## [5.5.4](https://github.com/baumrock/RockPageBuilder/compare/v5.5.3...v5.5.4) (2024-07-15)
 
 
@@ -25,18 +40,4 @@
 ### Bug Fixes
 
 * refactor and adjust radios wording ([6afd90f](https://github.com/baumrock/RockPageBuilder/commit/6afd90f25ddb678ca1cfb525f47ba186bcb62441))
-
-## [5.5.0](https://github.com/baumrock/RockPageBuilder/compare/v5.4.4...v5.5.0) (2024-06-15)
-
-
-### Features
-
-* add temp-flag for blocks created and not saved on the frontend, refactor orphaned block removal ([db39d41](https://github.com/baumrock/RockPageBuilder/commit/db39d41cdb2d72fe4bebf132c09c349dfe7f5a72))
-* improve checkboxes settings and add checkboxes-inline ([4da031d](https://github.com/baumrock/RockPageBuilder/commit/4da031d5904a02874411f0cac22d154d4fa21bd5))
-
-
-### Bug Fixes
-
-* accordion element causing endless loop + improve clone code ([64cb115](https://github.com/baumrock/RockPageBuilder/commit/64cb11544978deebbe292a73b135ae9e48a4ebb0))
-* tmp fix for pagebuilder demo breaking on clone ([cddcb6b](https://github.com/baumrock/RockPageBuilder/commit/cddcb6b6f8951085d1092a563a99e633fd0298ec))
 

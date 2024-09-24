@@ -2050,6 +2050,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     foreach ($this->blocks as $k => $block) {
       $f->addOption($k, $block->className());
     }
+    $f->notes = 'This will delete all block-files and also all user-data saved within blocks of that type! It will not delete fields used by this block - please delete those manually.';
     $inputfields->add($f);
 
     return $inputfields;

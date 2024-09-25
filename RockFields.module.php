@@ -353,9 +353,7 @@ class RockFields extends WireData implements Module
   public function save($field, $json)
   {
     $page = $field->forPage;
-    if ($this->wire->config->debug and $this->wire->user->isSuperuser()) {
-      if (function_exists("bd")) bd($json, "sleeping... page=$page, field={$field->name}");
-    }
+    // bd($json, "sleeping... page=$page, field={$field->name}");
     if (!$page->editable()) throw new WireException("You are not allowed to edit page $page");
     $page->meta("rockfield-" . $field->shortName(), $json);
   }

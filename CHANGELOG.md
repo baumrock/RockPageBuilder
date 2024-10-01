@@ -1,3 +1,10 @@
+## [5.6.1](https://github.com/baumrock/RockPageBuilder/compare/v5.6.0...v5.6.1) (2024-10-01)
+
+
+### Bug Fixes
+
+* remove bd() call ([4faf3d1](https://github.com/baumrock/RockPageBuilder/commit/4faf3d18ea39a029d5f0f6ac8aa93bec7cad6bc9))
+
 ## [5.6.0](https://github.com/baumrock/RockPageBuilder/compare/v5.5.4...v5.6.0) (2024-09-02)
 
 
@@ -33,11 +40,4 @@
 ### Bug Fixes
 
 * add missing frontend api for checkboxes settings ([74f12e2](https://github.com/baumrock/RockPageBuilder/commit/74f12e2b0fd0948b8415c953c0132d16ed4a3291))
-
-## [5.5.1](https://github.com/baumrock/RockPageBuilder/compare/v5.5.0...v5.5.1) (2024-06-15)
-
-
-### Bug Fixes
-
-* refactor and adjust radios wording ([6afd90f](https://github.com/baumrock/RockPageBuilder/commit/6afd90f25ddb678ca1cfb525f47ba186bcb62441))
 

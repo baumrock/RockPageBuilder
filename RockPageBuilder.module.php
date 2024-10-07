@@ -436,7 +436,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if (!$rf = $this->wire->modules->get('RockFrontend')) return;
 
     // always add global frontend styles
-    $rf->styles()->add(__DIR__ . "/assets/RockPageBuilder.min.css");
+    if (!$this->disableFrontendCss) {
+      $rf->styles()->add(__DIR__ . "/assets/RockPageBuilder.min.css");
+    }
 
     // load RockPageBuilder frontend assets
     if ($this->wire->user->hasPermission('page-edit')) {
@@ -1997,6 +1999,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $fs->label = "Frontend";
     $fs->icon = "eye";
     $inputfields->add($fs);
+
+    $fs->add([
+      'type' => 'checkbox',
+      'name' => 'disableFrontendCss',
+      'label' => 'Disable loading of RockPageBuilder.min.css',
+      'checked' => $this->disableFrontendCss ? 'checked' : '',
+      'notes' => 'This file contains some helper classes for block spacings etc.; If you don\'t use them you can check this box to disable loading of the css file.',
+    ]);
 
     $fs->add([
       'type' => 'checkbox',

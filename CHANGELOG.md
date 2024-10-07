@@ -1,3 +1,15 @@
+## [5.7.0](https://github.com/baumrock/RockPageBuilder/compare/v5.6.1...v5.7.0) (2024-10-07)
+
+
+### Features
+
+* add module setting to disable loading of frontend styles ([a92b562](https://github.com/baumrock/RockPageBuilder/commit/a92b562fe71cd3d7db9a321db95ade4c4dedc497))
+
+
+### Bug Fixes
+
+* add htaccess to block access to less files ([b0b96a2](https://github.com/baumrock/RockPageBuilder/commit/b0b96a23df3ff70c572d88d364144e139d13da3d))
+
 ## [5.6.1](https://github.com/baumrock/RockPageBuilder/compare/v5.6.0...v5.6.1) (2024-10-01)
 
 
@@ -33,11 +45,4 @@
 ### Bug Fixes
 
 * wrong variable name ([694cb7c](https://github.com/baumrock/RockPageBuilder/commit/694cb7cc0fd9fbfdbb3ca6d919f1917cd6c9b7d8))
-
-## [5.5.2](https://github.com/baumrock/RockPageBuilder/compare/v5.5.1...v5.5.2) (2024-06-15)
-
-
-### Bug Fixes
-
-* add missing frontend api for checkboxes settings ([74f12e2](https://github.com/baumrock/RockPageBuilder/commit/74f12e2b0fd0948b8415c953c0132d16ed4a3291))
 

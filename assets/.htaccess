@@ -1,0 +1,11 @@
+# Deny access to all files by default
+<FilesMatch ".*">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Allow access to .js and .css files
+<FilesMatch "\.(js|css)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>

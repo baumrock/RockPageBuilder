@@ -2,6 +2,22 @@
 
 RockPageBuilder provides a powerful API for managing blocks programmatically. This allows for advanced manipulation of content, including moving, cloning, copying, and adding blocks. Below is an overview of how to interact with these capabilities through the API.
 
+## Finding Blocks
+
+All blocks of a page are stored in a `FieldData` object. You can get it just like grabbing any other ProcessWire field:
+
+```php
+$blocks = $page->rockpagebuilder_blocks;
+```
+
+The `FieldData` object is a WireArray, so you can use all its methods to find, filter, and manipulate the blocks, for example:
+
+```php
+$blocks->find('title=My Headline');
+$blocks->count();
+$blocks->find('type=Gallery');
+```
+
 ## Moving Blocks
 
 To move a block to another page, you can use the move() method on the block object. This method requires the target page and field:

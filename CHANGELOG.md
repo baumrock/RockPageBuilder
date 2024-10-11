@@ -1,3 +1,10 @@
+## [5.8.0](https://github.com/baumrock/RockPageBuilder/compare/v5.7.0...v5.8.0) (2024-10-11)
+
+
+### Features
+
+* add type property for every block ([3095347](https://github.com/baumrock/RockPageBuilder/commit/3095347253d1c5d74ece876d03897dba46e4a177))
+
 ## [5.7.0](https://github.com/baumrock/RockPageBuilder/compare/v5.6.1...v5.7.0) (2024-10-07)
 
 
@@ -38,11 +45,4 @@
 ### Bug Fixes
 
 * don't add temp flag when block is cloned ([1399a12](https://github.com/baumrock/RockPageBuilder/commit/1399a12b1febed766935bf5e43e44b02d978ad32))
-
-## [5.5.3](https://github.com/baumrock/RockPageBuilder/compare/v5.5.2...v5.5.3) (2024-06-20)
-
-
-### Bug Fixes
-
-* wrong variable name ([694cb7c](https://github.com/baumrock/RockPageBuilder/commit/694cb7cc0fd9fbfdbb3ca6d919f1917cd6c9b7d8))
 

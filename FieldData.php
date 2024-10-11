@@ -345,6 +345,10 @@ class FieldData extends PageArray
       $block->_mxhidden = $this->getProp($item, 'hidden');
       $block->_temp = $block->meta('rpb-temp');
 
+      // adds support for finding blocks by type/classname:
+      // $blocks->find('type=Whatever')
+      $block->type = $block->className();
+
       $this->add($block);
     }
     return $this;

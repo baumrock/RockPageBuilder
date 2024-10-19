@@ -1,3 +1,10 @@
+## [5.9.0](https://github.com/baumrock/RockPageBuilder/compare/v5.8.0...v5.9.0) (2024-10-19)
+
+
+### Features
+
+* add block presets feature ([4bfeb40](https://github.com/baumrock/RockPageBuilder/commit/4bfeb40917fcd0b834e0c3fa4dae7ad1bc695759))
+
 ## [5.8.0](https://github.com/baumrock/RockPageBuilder/compare/v5.7.0...v5.8.0) (2024-10-11)
 
 
@@ -38,11 +45,4 @@
 ### Bug Fixes
 
 * add locale flag for sorting blocks ([fcdb851](https://github.com/baumrock/RockPageBuilder/commit/fcdb85183ed76bbbd7160bb951fdeffc53f0ebd0))
-
-## [5.5.4](https://github.com/baumrock/RockPageBuilder/compare/v5.5.3...v5.5.4) (2024-07-15)
-
-
-### Bug Fixes
-
-* don't add temp flag when block is cloned ([1399a12](https://github.com/baumrock/RockPageBuilder/commit/1399a12b1febed766935bf5e43e44b02d978ad32))
 

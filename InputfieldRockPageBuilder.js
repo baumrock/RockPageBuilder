@@ -424,6 +424,49 @@ $(document).on("click", ".createBlockType", function (e) {
     });
 });
 
+// click on presets
+$(document).on("click", ".rpb-preset", function (e) {
+  e.preventDefault();
+  const blocks = $(e.target).data("click").split(",");
+  // find closest .InputfieldContent
+  const $content = $(e.target).closest(".InputfieldContent");
+
+  // get id of the current last block
+  const lastBlockID = function () {
+    const id = $content.find(".rpb-item").last().data("page");
+    return id;
+  };
+
+  let currentLastBlockID = lastBlockID();
+
+  // setinterval of 100ms
+  let index = 0;
+  let buttonClicked = false;
+  const interval = setInterval(function () {
+    const block = blocks[index];
+    const newLastBlockID = lastBlockID();
+    if (newLastBlockID === currentLastBlockID) {
+      // if button was already clicked, don't click it again
+      if (buttonClicked) return;
+
+      // otherwise click the button
+      const button = $content.find(
+        ".rpb-buttons a[data-blocktype='" + block + "']"
+      );
+      button.click();
+      buttonClicked = true;
+    } else {
+      // blocks changed, go to next one!
+      index++;
+      buttonClicked = false;
+      currentLastBlockID = newLastBlockID;
+
+      // if index is out of bounds, clear interval
+      if (index >= blocks.length) clearInterval(interval);
+    }
+  }, 50);
+});
+
 $(document).on("click", ".rpb-copyblockname", function (e) {
   e.preventDefault();
   let name = $(e.target).text();

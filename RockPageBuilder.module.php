@@ -888,6 +888,15 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     });
   }
 
+  /**
+   * Hookable method to return presets
+   * Page and field can be used inside the hook to define conditions
+   */
+  public function ___getPresets(Page $page, Field $field): array
+  {
+    return [];
+  }
+
   public function getTemplateStub($basename)
   {
     $file = $this->tplPath . 'stubs/' . $basename;

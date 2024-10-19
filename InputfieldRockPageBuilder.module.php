@@ -214,6 +214,7 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
     $this->createBlock();
     $out = '';
     $out .= $this->renderItems();
+    $out .= $this->renderPresets();
     $out .= $this->renderButtons();
     $out .= $this->renderTextarea();
     $out .= $this->renderInitTag();
@@ -326,6 +327,33 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
       $out .= $this->renderItem($item);
     }
     $out .= '</div>';
+    return $out;
+  }
+
+  public function renderPresets(): string
+  {
+    $presets = rockpagebuilder()->getPresets(
+      $this->process->getPage(),
+      $this->hasField
+    );
+    if (!count($presets)) return '';
+    $_presets = '';
+    foreach ($presets as $name => $blocks) {
+      $_blocks = implode(" - ", $blocks);
+      $click = implode(",", $blocks);
+      $_presets .= "<span class='uk-margin-small-left'>
+        <a
+          class='rpb-preset'
+          title='$_blocks'
+          data-click='$click'
+          uk-tooltip
+        >$name</a>
+      </span>";
+    }
+    $out = "<div class='uk-margin-small'>
+      <strong>Presets:</strong>
+      $_presets
+    </div>";
     return $out;
   }
 

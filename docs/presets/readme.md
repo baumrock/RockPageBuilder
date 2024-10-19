@@ -2,6 +2,8 @@
 
 It might be the case that you want to guide the user which blocks to add on certain pages. You can use so called "presets" to do this.
 
+<img src=https://i.imgur.com/0oXeNb7.gif class=blur>
+
 Just add a hook that returns an array of block-types in your /site/ready.php file:
 
 ```php
@@ -22,5 +24,3 @@ wire()->addHookAfter(
   ];
 });
 ```
-
-<img src=https://i.imgur.com/0oXeNb7.gif class=blur>

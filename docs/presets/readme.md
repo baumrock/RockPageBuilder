@@ -24,3 +24,5 @@ wire()->addHookAfter(
   ];
 });
 ```
+
+You can have as much presets as you want and you can granularly define where they should be shown via if conditions in the hook.

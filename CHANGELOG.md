@@ -1,3 +1,10 @@
+## [5.9.1](https://github.com/baumrock/RockPageBuilder/compare/v5.9.0...v5.9.1) (2024-10-22)
+
+
+### Bug Fixes
+
+* improve docs about sort and groupSort properties ([dac2362](https://github.com/baumrock/RockPageBuilder/commit/dac2362c91048245af09e7a07c2233ddde609422))
+
 ## [5.9.0](https://github.com/baumrock/RockPageBuilder/compare/v5.8.0...v5.9.0) (2024-10-19)
 
 
@@ -30,19 +37,4 @@
 ### Bug Fixes
 
 * remove bd() call ([4faf3d1](https://github.com/baumrock/RockPageBuilder/commit/4faf3d18ea39a029d5f0f6ac8aa93bec7cad6bc9))
-
-## [5.6.0](https://github.com/baumrock/RockPageBuilder/compare/v5.5.4...v5.6.0) (2024-09-02)
-
-
-### Features
-
-* add logos example block ([1deca75](https://github.com/baumrock/RockPageBuilder/commit/1deca7594df53daa941cf6329c2318be3ba4dc7f))
-* add rocksortable-added event + docs ([79ea794](https://github.com/baumrock/RockPageBuilder/commit/79ea794264d37212a53fd01d3dd1f029018cd6f7))
-* add support for custom stubs ([0485274](https://github.com/baumrock/RockPageBuilder/commit/0485274c032f9e35ac0bfe27c1f8d06bcfd84a96))
-* use rockfrontend fieldmethod trait ([3649a54](https://github.com/baumrock/RockPageBuilder/commit/3649a54012c7f46f6f5d365640361f4fd50535ef))
-
-
-### Bug Fixes
-
-* add locale flag for sorting blocks ([fcdb851](https://github.com/baumrock/RockPageBuilder/commit/fcdb85183ed76bbbd7160bb951fdeffc53f0ebd0))
 

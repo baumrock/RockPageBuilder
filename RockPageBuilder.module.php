@@ -1991,17 +1991,16 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $f->notes = "Already installed: " . implode(", ", $installed);
     $fs->add($f);
 
-    // add option to use old manual sorting
+    // add option to use manual sorting
     $fs->add([
       'type' => 'checkbox',
       'name' => 'useManualSorting',
       'label' => 'Sort block buttons manually',
-      'description' => 'By default the buttons to create new blocks will be sorted alphabetically. You can enable manual sorting and provide an integer "sort" property for every block, eg 100, 200, 300 to define their sort order.',
+      'description' => 'By default the buttons to create new blocks will be sorted alphabetically. If you want to define a custom sort order you can check this box and provide "sort" and "groupSort" properties for each block.',
       'checked' => $this->useManualSorting ? 'checked' : '',
       'icon' => 'sort-alpha-asc',
       'columnWidth' => 50,
-      'notes' => 'Manual sorting is considered deprecated and only for backwards compatibility!
-        If you are unsure keep this setting at "NO".',
+      'notes' => 'Please refer to the docs about "Blocks" to learn how to use this feature.',
     ]);
 
     $fs = new InputfieldFieldset();

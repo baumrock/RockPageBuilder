@@ -207,7 +207,9 @@ Note that using icons can be preferable to images for two reasons:
 
 RockPageBuilder ships with thumbnails for the following block names: `Gallery`, `Headline`, `Hero`, `Quote`, `Text`, `TextImage`. See `site/modules/RockPageBuilder/buttons/`
 
-## Grouping Blocks
+## Sorting and Grouping Blocks
+
+<div class='uk-alert uk-alert-warning'>To make this feature work you need to check the "Sort block buttons manually" option in the module settings.</div>
 
 You can define the `group` and a `groupSort` property for every block in its `info()` method:
 

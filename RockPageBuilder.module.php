@@ -1810,6 +1810,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * This is important to make sure that for example ProCache rules are working
    * as expected, because those rules are set on the Block-Page and not on the
    * content-block.
+   *
+   * // TODO: use Pages::savedPageOrField() instead?
+   *
    * @return void
    */
   public function triggerBlockPageSave(HookEvent $event)

@@ -194,46 +194,43 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     }
   }
 
-  /**
-   * Add alfred icons to a repeaterpage
-   */
-  public function addAlfredIcons(RepeaterPage $block, &$icons, $opt)
-  {
-    if ($opt->noBlock) return;
+  // /**
+  //  * Add alfred icons to a repeaterpage
+  //  */
+  // public function addAlfredIcons(RepeaterPage $block, &$icons, $opt)
+  // {
+  //   if ($opt->noBlock) return;
 
-    if ($opt->clone and $block->editable()) {
-      $icons[] = (object)[
-        'icon' => 'clone',
-        'label' => $block->title,
-        'tooltip' => "Clone Block #{$block->id}",
-        'href' => $this->repeaterUrl("/clone/?block=$block"),
-        'confirm' => $this->_('Do you really want to clone this element?'),
-      ];
-    }
-    // show move icon only when more than 1 block
-    $forPage = $block->getForPage();
-    $forField = $block->getForField()->name;
-    if ($forPage->get($forField)->count() > 1) {
-      $icons[] = (object)[
-        'icon' => $opt->addHorizontal ? 'movev' : 'moveh',
-        'label' => $block->title,
-        'tooltip' => "Move Block #{$block->id}",
-        'class' => 'pw-modal',
-        'href' => $block->getForPage()->editUrl . "&field=" . $block->getForField() . "&rpb-moveblock=$block",
-        'suffix' => 'data-buttons="button.ui-button[type=submit]" data-autoclose data-reload',
-      ];
-    }
+  //   if ($opt->clone and $block->editable()) {
+  //     $icons[] = (object)[
+  //       'icon' => 'clone',
+  //       'tooltip' => "Clone Block #{$block->id}",
+  //       'href' => $this->repeaterUrl("/clone/?block=$block"),
+  //       'confirm' => $this->_('Do you really want to clone this element?'),
+  //     ];
+  //   }
+  //   // show move icon only when more than 1 block
+  //   $forPage = $block->getForPage();
+  //   $forField = $block->getForField()->name;
+  //   if ($forPage->get($forField)->count() > 1) {
+  //     $icons[] = (object)[
+  //       'icon' => $opt->addHorizontal ? 'movev' : 'moveh',
+  //       'tooltip' => "Move Block #{$block->id}",
+  //       'class' => 'pw-modal',
+  //       'href' => $block->getForPage()->editUrl . "&field=" . $block->getForField() . "&rpb-moveblock=$block",
+  //       'suffix' => 'data-buttons="button.ui-button[type=submit]" data-autoclose data-reload',
+  //     ];
+  //   }
 
-    if ($opt->trash and $block->trashable()) {
-      $icons[] = (object)[
-        'icon' => 'trash-2',
-        'label' => $block->title,
-        'tooltip' => "Trash Block #{$block->id}",
-        'href' => $this->repeaterUrl("/trash/?block=$block"),
-        'confirm' => $this->_('Do you really want to delete this element?'),
-      ];
-    }
-  }
+  //   if ($opt->trash and $block->trashable()) {
+  //     $icons[] = (object)[
+  //       'icon' => 'trash-2',
+  //       'tooltip' => "Trash Block #{$block->id}",
+  //       'href' => $this->repeaterUrl("/trash/?block=$block"),
+  //       'confirm' => $this->_('Do you really want to delete this element?'),
+  //     ];
+  //   }
+  // }
 
   /**
    * This method is responsible for adding the plus-icons for ALFRED to blocks
@@ -1810,6 +1807,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * This is important to make sure that for example ProCache rules are working
    * as expected, because those rules are set on the Block-Page and not on the
    * content-block.
+   *
+   * // TODO: use Pages::savedPageOrField() instead?
+   *
    * @return void
    */
   public function triggerBlockPageSave(HookEvent $event)

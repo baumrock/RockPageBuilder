@@ -113,14 +113,12 @@ class Block extends \ProcessWire\Page
       if ($rf) $rf->loadVspace = true;
       $icons[] = (object)[
         'icon' => 'up',
-        'label' => $block->title,
         'tooltip' => "vSpace top " . $spaceID,
         'type' => 'vspacetop',
         'widget' => $widget->id,
       ];
       $icons[] = (object)[
         'icon' => 'down',
-        'label' => $block->title,
         'tooltip' => "vSpace bottom " . $spaceID,
         'type' => 'vspacebottom',
         'widget' => $widget->id,
@@ -130,7 +128,6 @@ class Block extends \ProcessWire\Page
     if ($opt->clone and $block->editable()) {
       $icons[] = (object)[
         'icon' => 'clone',
-        'label' => $block->title,
         'tooltip' => "Clone Block #{$widget->id}",
         'href' => $widget->rpbUrl("/clone/?block=$widget"),
         'confirm' => $this->_('Do you really want to clone this element?'),
@@ -140,7 +137,6 @@ class Block extends \ProcessWire\Page
     if ($opt->move and $data->count() > 1) {
       $icons[] = (object)[
         'icon' => 'moveh',
-        'label' => $block->title,
         'tooltip' => "Move Block #{$widget->id}",
         'class' => 'pw-modal',
         'href' => $widget->getBlockPage()->editUrl . "&field=" . $widget->getBlockField() . "&rpb-moveblock=$widget",
@@ -152,7 +148,6 @@ class Block extends \ProcessWire\Page
     if ($this->master()->useWidgets && $opt->widgetable && $block->canBeWidget()) {
       $icons[] = (object)[
         'icon' => 'widget',
-        'label' => $block->title,
         'tooltip' => "Widgetize Block #{$block->id}",
         'href' => $block->rpbUrl("/convertToWidget/?block=$block"),
         'confirm' => $this->_('Do you really want to convert this block into a widget?'),
@@ -162,7 +157,6 @@ class Block extends \ProcessWire\Page
     if ($opt->trash and $block->trashable()) {
       $icons[] = (object)[
         'icon' => 'trash-2',
-        'label' => $block->title,
         'tooltip' => "Trash Block #{$widget->id}",
         'href' => $widget->rpbUrl("/trash/?block=$widget"),
         'confirm' => $this->_('Do you really want to delete this element?'),

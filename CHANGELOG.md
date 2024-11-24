@@ -1,3 +1,10 @@
+## [5.9.2](https://github.com/baumrock/RockPageBuilder/compare/v5.9.1...v5.9.2) (2024-11-24)
+
+
+### Bug Fixes
+
+* quotes in title lead to invalid json ([8664c71](https://github.com/baumrock/RockPageBuilder/commit/8664c71078ede34d0647bac4421b9d755b102916))
+
 ## [5.9.1](https://github.com/baumrock/RockPageBuilder/compare/v5.9.0...v5.9.1) (2024-10-22)
 
 
@@ -30,11 +37,4 @@
 ### Bug Fixes
 
 * add htaccess to block access to less files ([b0b96a2](https://github.com/baumrock/RockPageBuilder/commit/b0b96a23df3ff70c572d88d364144e139d13da3d))
-
-## [5.6.1](https://github.com/baumrock/RockPageBuilder/compare/v5.6.0...v5.6.1) (2024-10-01)
-
-
-### Bug Fixes
-
-* remove bd() call ([4faf3d1](https://github.com/baumrock/RockPageBuilder/commit/4faf3d18ea39a029d5f0f6ac8aa93bec7cad6bc9))
 

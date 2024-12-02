@@ -1615,6 +1615,17 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     return $out;
   }
 
+  public function renderBlocks(
+    Page|string|int $page,
+    string $field,
+    bool $renderPlus = true,
+  ) {
+    $p = wire()->pages->get((string)$page);
+    $field = $p->getFormatted($field);
+    if (!$field) return;
+    return $field->render($renderPlus);
+  }
+
   public function repeaterUrl($url): string
   {
     $url = ltrim($url, "/");

@@ -109,6 +109,7 @@ li.rpb-item {
   }
 
   > .InputfieldHeader {
+    position: relative;
     padding: 2px 5px;
     cursor: pointer;
     transition: background-color 0.5s linear;
@@ -128,8 +129,11 @@ li.rpb-item {
 
     // item action buttons
     .rpb-actions {
-      float: right;
-      margin-right: 5px;
+      background: var(--rock-input-bg);
+      position: absolute;
+      right: 0px;
+      top: 0px;
+      padding: 2px 10px;
 
       > .rpb-action > i {
         padding-right: 10px;

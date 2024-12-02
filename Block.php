@@ -1253,6 +1253,11 @@ class Block extends \ProcessWire\Page
       $this->wire('all')->getArray(),
       [
         'block' => $this,
+
+        // this ensures that when being on the backend page edit we have
+        // $page set to the block's page rather than the CMS edit page (DefaultPage)
+        'page' => $this->getBlockPage(),
+
         'settings' => $this->settings(),
       ]
     );

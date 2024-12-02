@@ -1,3 +1,17 @@
+## [5.10.0](https://github.com/baumrock/RockPageBuilder/compare/v5.9.2...v5.10.0) (2024-12-02)
+
+
+### Features
+
+* add renderBlocks() method ([d8a860c](https://github.com/baumrock/RockPageBuilder/commit/d8a860c08d6635f0ea414e7ebd8282c153cc4942))
+* trigger rpb-change event ([39c9b4a](https://github.com/baumrock/RockPageBuilder/commit/39c9b4a3cacc8ca0b2646a0ebd309a02df67a5b4))
+
+
+### Bug Fixes
+
+* $page variable having wrong scope in view files ([40e8b9c](https://github.com/baumrock/RockPageBuilder/commit/40e8b9c76d6804d69eee8830712b4091de6c08e3))
+* action buttons float causing layout issues ([e25ca94](https://github.com/baumrock/RockPageBuilder/commit/e25ca9427b296c4c8299cfa88613ba2eb51aa82e))
+
 ## [5.9.2](https://github.com/baumrock/RockPageBuilder/compare/v5.9.1...v5.9.2) (2024-11-24)
 
 
@@ -25,16 +39,4 @@
 ### Features
 
 * add type property for every block ([3095347](https://github.com/baumrock/RockPageBuilder/commit/3095347253d1c5d74ece876d03897dba46e4a177))
-
-## [5.7.0](https://github.com/baumrock/RockPageBuilder/compare/v5.6.1...v5.7.0) (2024-10-07)
-
-
-### Features
-
-* add module setting to disable loading of frontend styles ([a92b562](https://github.com/baumrock/RockPageBuilder/commit/a92b562fe71cd3d7db9a321db95ade4c4dedc497))
-
-
-### Bug Fixes
-
-* add htaccess to block access to less files ([b0b96a2](https://github.com/baumrock/RockPageBuilder/commit/b0b96a23df3ff70c572d88d364144e139d13da3d))
 

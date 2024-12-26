@@ -8,6 +8,8 @@ use ProcessWire\Inputfield;
 use ProcessWire\RockPageBuilder;
 use RockPageBuilder\Block;
 
+use function ProcessWire\wire;
+
 class Features extends Block
 {
 
@@ -55,6 +57,7 @@ class Features extends Block
   public function migrate()
   {
     $rm = $this->rockmigrations();
+    $multiLang = !!wire()->languages;
 
     // This shows how you can remove fields from a block that you have added
     // at some earlier point in history.
@@ -65,7 +68,7 @@ class Features extends Block
       // note that you always need to create fields and then add them to the tpl
       'fields' => [
         self::field_body => [
-          'type' => 'textarea',
+          'type' => $multiLang ? 'textareaLanguage' : 'textarea',
           'inputfieldClass' => 'InputfieldTinyMCE',
           'contentType' => FieldtypeTextarea::contentTypeHTML,
           'label' => 'Description',

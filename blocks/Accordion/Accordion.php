@@ -7,6 +7,8 @@ use ProcessWire\Inputfield;
 use ProcessWire\RockPageBuilder;
 use RockPageBuilder\Block;
 
+use function ProcessWire\wire;
+
 class Accordion extends Block
 {
 
@@ -64,11 +66,12 @@ class Accordion extends Block
   public function migrate()
   {
     $rm = $this->rockmigrations();
+    $multiLang = !!wire()->languages;
 
     $rm->migrate([
       'fields' => [
         self::field_body => [
-          'type' => $this->wire->languages ? 'textareaLanguage' : 'textarea',
+          'type' => $multiLang ? 'textareaLanguage' : 'textarea',
           'inputfieldClass' => 'InputfieldTinyMCE',
           'contentType' => FieldtypeTextarea::contentTypeHTML,
           'label' => 'Content',

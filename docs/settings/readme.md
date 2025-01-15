@@ -66,6 +66,8 @@ Please note that by defining a different order in the `use` method we flipped th
 
 ## Adding Custom Settings to a Block
 
+You can combine global settings with custom settings by using the `add` method:
+
 ```php
 public function settingsTable(\ProcessWire\RockFieldsField $field)
 {

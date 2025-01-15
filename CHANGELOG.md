@@ -1,3 +1,10 @@
+## [5.11.0](https://github.com/baumrock/RockPageBuilder/compare/v5.10.0...v5.11.0) (2025-01-15)
+
+
+### Features
+
+* add support for new global settings syntax ([db16139](https://github.com/baumrock/RockPageBuilder/commit/db161393107dad66929f9b0f783d48080305253a))
+
 ## [5.10.0](https://github.com/baumrock/RockPageBuilder/compare/v5.9.2...v5.10.0) (2024-12-02)
 
 
@@ -32,11 +39,4 @@
 ### Features
 
 * add block presets feature ([4bfeb40](https://github.com/baumrock/RockPageBuilder/commit/4bfeb40917fcd0b834e0c3fa4dae7ad1bc695759))
-
-## [5.8.0](https://github.com/baumrock/RockPageBuilder/compare/v5.7.0...v5.8.0) (2024-10-11)
-
-
-### Features
-
-* add type property for every block ([3095347](https://github.com/baumrock/RockPageBuilder/commit/3095347253d1c5d74ece876d03897dba46e4a177))
 

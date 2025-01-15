@@ -91,21 +91,18 @@ class {name} extends Block {
    */
   public function settingsTable(\ProcessWire\RockFieldsField $field)
   {
-    // You can set default settings for all blocks via hook.
-    // See docs for details or leave this line unchanged.
-    $settings = $this->getDefaultSettings($field);
+    // get global settings from /site/templates/RockPageBuilder/settings.php
+    $settings = $this->getGlobalSettings($field)
+      ->use([
+        'style',
+        'demo-checkbox',
+      ]);
 
-    // add settings for this block with array syntax
+    // add custom settings
     $settings->add([
-      'name' => 'demo',
-      'label' => 'Demo-Setting',
-      // the first parameter must match the name of the setting!!
-      // in this case the setting's name is "demo", so we use "demo" here as well
-      'value' => $field->input('demo', 'select', [
-        '*foo' => 'foo value',
-        'bar' => 'bar value',
-        'baz' => 'baz value',
-      ]),
+      'name' => 'custom-checkbox',
+      'label' => 'Custom checkbox',
+      'value' => $field->input('custom-checkbox', 'checkbox'),
     ]);
 
     return $settings;

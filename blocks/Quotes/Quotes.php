@@ -7,6 +7,8 @@ use ProcessWire\FieldtypeFile;
 use ProcessWire\Inputfield;
 use ProcessWire\RockPageBuilder;
 
+use function ProcessWire\wire;
+
 class Quotes extends Block
 {
 
@@ -34,7 +36,8 @@ class Quotes extends Block
   public function migrate()
   {
     $rm = $this->rockmigrations();
-    $multiLang = !!$this->wire->languages;
+    $multiLang = !!wire()->languages;
+
     $rm->migrate([
       'fields' => [
         self::field_author => [

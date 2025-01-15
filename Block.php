@@ -31,6 +31,7 @@ use RockPageBuilderBlock\Widget;
 
 use function ProcessWire\rockfrontend;
 use function ProcessWire\rockpagebuilder;
+use function ProcessWire\wire;
 use function ProcessWire\wireClassName;
 
 class Block extends \ProcessWire\Page
@@ -370,6 +371,17 @@ class Block extends \ProcessWire\Page
       $files[] = $f;
     }
     return $files;
+  }
+
+  public function getGlobalSettings($field): BlockSettingsArray
+  {
+    $settingsFile = wire()->config->paths->templates . 'RockPageBuilder/settings.php';
+    $settings = new BlockSettingsArray();
+    if (!is_file($settingsFile)) return $settings;
+    $raw = wire()->files->render($settingsFile, ['field' => $field]);
+    if (!is_array($raw)) return $settings;
+    foreach ($raw as $data) $settings->add($data);
+    return $settings;
   }
 
   /**

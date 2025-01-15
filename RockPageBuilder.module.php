@@ -409,6 +409,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       if ($name === "init.php") continue;
       if (substr($file, -9) === ".view.php") continue;
 
+      // don't load settings.php
+      if ($name === "settings.php") continue;
+
       // check if block has already been loaded
       // This is to make RockBlocks work, because there we load files either from
       // the sites directory or if no file exists we load the one from the modules

@@ -43,4 +43,19 @@ class BlockSettingsArray extends WireArray
   {
     return parent::prepend($this->getItem($data));
   }
+
+  /**
+   * Use settings from an array of names
+   * @param mixed $arr
+   * @return BlockSettingsArray
+   * @throws WireException
+   */
+  public function use($arr): BlockSettingsArray
+  {
+    $result = new BlockSettingsArray();
+    foreach ($arr as $name) {
+      $result->add($this->get($name)->getArray());
+    }
+    return $result;
+  }
 }

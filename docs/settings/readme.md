@@ -6,75 +6,86 @@ It's very common that you want to provide some options for your block, for examp
 
 You can create a field for all those settings, if you want. But the better option is to use the `RockFields` module that ships with RockPageBuilder.
 
-It allows you to create several fields at runtime without really creating those fields in the database. It needs some code, but don't worry! Whenever you create a new block you'll get some boilerplate code that you can use and adjust to your needs:
+It allows you to create several fields at runtime without creating those fields in the database. Neat!
+
+A simple checkbox would look like this:
 
 ```php
-// this goes into your block's PHP file
-public function settingsTable(\ProcessWire\RockFieldsField $field)
-{
-  // You can set default settings for all blocks via hook.
-  // See docs for details or leave this line unchanged.
-  $settings = $this->getDefaultSettings($field);
+$settings->add([
+  'name' => 'demo-checkbox',
+  'label' => 'Demo Checkbox',
+  'value' => $field->input('demo-checkbox', 'checkbox'),
+]);
+```
 
-  $settings->add([
+## Adding Settings (Globally)
+
+A setting that you add to one block is often also needed by other blocks. That's why we recommend that you define your settings globally and then just add them to your blocks as needed.
+
+To add global settings, create the file `/site/templates/RockPageBuilder/settings.php` with content like this:
+
+```php
+<?php
+
+namespace ProcessWire;
+
+return [
+  [
     'name' => 'demo-checkbox',
     'label' => 'Demo Checkbox',
     'value' => $field->input('demo-checkbox', 'checkbox'),
-  ]);
-
-  $settings->add([
-    'name' => 'demo-text',
-    'label' => 'Demo Text Field',
-    'value' => $field->input('demo-text', 'text'),
-  ]);
-
-  $settings->add([
-    'name' => 'demo-select',
-    'label' => 'Demo Select Field',
-    'value' => $field->input('demo-select', 'select', [
-      'foo' => 'foo value', // the star marks the default option
-      'bar' => 'bar value',
+  ],
+  [
+    'name' => 'style',
+    'label' => 'Style Variation',
+    'value' => $field->input('style', 'select', [
+      '*one' => 'Style One (image in the background)',
+      'two' => 'Style Two (image on the right)',
+      'three' => 'Style Three (centered)',
     ]),
-  ]);
+  ]
+];
+```
+
+## Adding Global Settings to a Block
+
+Every Block can then `use` any of the globally defined settings like this:
+
+```php
+public function settingsTable(\ProcessWire\RockFieldsField $field)
+{
+  return $this->getGlobalSettings($field)
+    ->use([
+      'style',
+      'demo-checkbox',
+    ]);
+}
+```
+
+Please note that by defining a different order in the `use` method we flipped the order of the settings! Settings will always be rendered in the order that you define in the `use` method, not in the order how they are defined in the PHP file.
+
+## Adding Custom Settings to a Block
+
+```php
+public function settingsTable(\ProcessWire\RockFieldsField $field)
+{
+  $settings = $this->getGlobalSettings($field)
+    ->use([
+      'style',
+      'demo-checkbox',
+    ]);
 
   $settings->add([
-    'name' => 'demo-radios',
-    'label' => 'Demo Radios Field',
-    'value' => $field->input(
-      'demo-radios',
-      // use either "radios" or "radios-inline"
-      'radios', [
-        'foo' => 'foo value', // the star marks the default option
-        '*bar' => 'bar value',
-      ]
-    ),
-  ]);
-
-  // The multi-checkbox field as a slightly different api on the frontend
-  // because it can hold multiple values at once. For easier access the plain
-  // array is converted to a WireData() object and you can use PHP8 syntax
-  // to check for selected state:
-  // $data = $block->settings('demo-checkboxes');
-  // if $data?->foo echo "foo checkbox is selected";
-  // if $data?->bar echo "bar checkbox is selected";
-  $settings->add([
-    'name' => 'demo-checkboxes',
-    'label' => 'Demo Checkboxes Field',
-    'value' => $field->input(
-      'demo-checkboxes',
-      // use either "checkboxes" or "checkboxes-inline"
-      'checkboxes', [
-        'foo' => 'foo value', // the star marks the default option
-        '*bar' => 'bar value',
-      ]
-    ),
+    'name' => 'custom-checkbox',
+    'label' => 'Custom checkbox',
+    'value' => $field->input('custom-checkbox', 'checkbox'),
   ]);
 
   return $settings;
 }
 ```
 
-<img src=settings.png class=blur>
+## Multilingual Settings
 
 Of course you can also have multilingual settings. The only thing to make sure is that only the labels are translated and the values are unique:
 
@@ -87,63 +98,6 @@ $settings->add([
     'bar' => __('bar value label'),
   ]),
 ]);
-```
-
-## Adding default settings
-
-Sometimes you want to have the same setting on all or almost all blocks of your project. Rather than copy and pasting the same settings from block to block you can define global settings for all blocks and add additional settings to some blocks later:
-
-```php
-// in site/ready.php
-
-use RockPageBuilder\Block;
-use RockPageBuilder\BlockSettingsArray;
-
-/** @var RockPageBuilder $rpb */
-$rpb = $this->wire->modules->get('RockPageBuilder');
-$rpb->defaultSettings(
-  function (BlockSettingsArray $settings, RockFieldsField $field, Block $block) {
-    $settings->add([
-      'name' => 'bgmuted',
-      'label' => 'Add muted background',
-      'value' => $field->input('bgmuted', 'checkbox'),
-    ]);
-
-    if($block->template == 'your-block-type-template') {
-      $settings->add(...);
-    }
-  }
-);
-```
-
-<div class="uk-alert uk-alert-primary">Note: If you get an error like "Argument #1 ($settings) must be of type BlockSettingsArray..." make sure to add the "use" statements on top of your file!</div>
-
-Instead of if/else in the default settings callback you can also remove default settings in a specific block:
-
-```php
-// add this to your block's php file
-public function settingsTable(RockFieldsField $field) {
-  $settings = $this->getDefaultSettings();
-
-  // hide one of the global settings
-  $settings->remove('name=foo');
-
-  // add a custom setting to this block
-  $settings->add([
-    'name' => 'bar',
-    'label' => 'BAR-setting',
-    'value' => $field->input('bar', 'select', [...]),
-  ]);
-
-  // you can also add settings on top:
-  $settings->prepend([
-    'name' => 'baz',
-    'label' => 'BAZ-setting',
-    'value' => $field->input('baz', 'select', [...]),
-  ]);
-
-  return $settings;
-}
 ```
 
 ## Custom Settings Wrapper
@@ -186,6 +140,126 @@ public function settingsTable(\ProcessWire\RockFieldsField $field)
     'value' => $field->input('noBackground', 'checkbox'),
     'showIf' => 'showImages=1',
   ]);
+  return $settings;
+}
+```
+
+## Example Settings
+
+<img src=settings.png class=blur>
+
+`label: settings.php`
+```php
+return [
+  [
+    'name' => 'demo-checkbox',
+    'label' => 'Demo Checkbox',
+    'value' => $field->input('demo-checkbox', 'checkbox'),
+  ],
+
+  [
+    'name' => 'demo-text',
+    'label' => 'Demo Text Field',
+    'value' => $field->input('demo-text', 'text'),
+  ],
+
+  [
+    'name' => 'demo-select',
+    'label' => 'Demo Select Field',
+    'value' => $field->input('demo-select', 'select', [
+      'foo' => 'foo value', // the star marks the default option
+      'bar' => 'bar value',
+    ]),
+  ],
+
+  [
+    'name' => 'demo-radios',
+    'label' => 'Demo Radios Field',
+    'value' => $field->input(
+      'demo-radios',
+      // use either "radios" or "radios-inline"
+      'radios', [
+        'foo' => 'foo value', // the star marks the default option
+        '*bar' => 'bar value',
+      ]
+    ),
+  ],
+
+  // The multi-checkbox field as a slightly different api on the frontend
+  // because it can hold multiple values at once. For easier access the plain
+  // array is converted to a WireData() object and you can use PHP8 syntax
+  // to check for selected state:
+  // $data = $block->settings('demo-checkboxes');
+  // if $data?->foo echo "foo checkbox is selected";
+  // if $data?->bar echo "bar checkbox is selected";
+  [
+    'name' => 'demo-checkboxes',
+    'label' => 'Demo Checkboxes Field',
+    'value' => $field->input(
+      'demo-checkboxes',
+      // use either "checkboxes" or "checkboxes-inline"
+      'checkboxes', [
+        'foo' => 'foo value', // the star marks the default option
+        '*bar' => 'bar value',
+      ]
+    ),
+  ],
+];
+```
+
+## Adding default settings (DEPRECATED)
+
+Sometimes you want to have the same setting on all or almost all blocks of your project. Rather than copy and pasting the same settings from block to block you can define global settings for all blocks and add additional settings to some blocks later:
+
+```php
+// in site/ready.php
+
+use RockPageBuilder\Block;
+use RockPageBuilder\BlockSettingsArray;
+
+/** @var RockPageBuilder $rpb */
+$rpb = $this->wire->modules->get('RockPageBuilder');
+$rpb->defaultSettings(
+  function (BlockSettingsArray $settings, RockFieldsField $field, Block $block) {
+    $settings->add([
+      'name' => 'bgmuted',
+      'label' => 'Add muted background',
+      'value' => $field->input('bgmuted', 'checkbox'),
+    ]);
+
+    if($block->template == 'your-block-type-template') {
+      $settings->add(...);
+    }
+  }
+);
+```
+
+<div class="uk-alert">Note: If you get an error like "Argument #1 ($settings) must be of type BlockSettingsArray..." make sure to add the "use" statements on top of your file!</div>
+
+Instead of if/else in the default settings callback you can also remove default settings in a specific block:
+
+```php
+// add this to your block's php file
+public function settingsTable(RockFieldsField $field) {
+  $settings = $this->getDefaultSettings();
+
+  // hide one of the global settings
+  $settings->remove('name=foo');
+
+  // add a custom setting to this block
+  $settings->add([
+    'name' => 'bar',
+    'label' => 'BAR-setting',
+    'value' => $field->input('bar', 'select', [...]),
+  ]);
+
+  // you can also add settings on top:
+  $settings->prepend([
+    'name' => 'baz',
+    'label' => 'BAZ-setting',
+    'value' => $field->input('baz', 'select', [...]),
+  ]);
+
   return $settings;
 }
 ```

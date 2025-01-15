@@ -128,22 +128,17 @@ The `showIf` feature allows you to conditionally display settings based on the v
 To use `showIf`, you need to specify it as an attribute in the settings array of your block's `settingsTable` method. The `showIf` attribute takes a string that represents a condition. This condition is composed of the name of the setting to watch, an equals sign `=`, and the value that triggers the visibility of the current setting.
 
 ```php
-public function settingsTable(\ProcessWire\RockFieldsField $field)
-{
-  $settings = $this->getDefaultSettings($field);
-  $settings->add([
-    'name' => 'showImages',
-    'label' => 'Show Items with Images',
-    'value' => $field->input('showImages', 'checkbox'),
-  ]);
-  $settings->add([
-    'name' => 'noBackground',
-    'label' => 'Do not add blurred background behind images',
-    'value' => $field->input('noBackground', 'checkbox'),
-    'showIf' => 'showImages=1',
-  ]);
-  return $settings;
-}
+[
+  'name' => 'showImages',
+  'label' => 'Show Items with Images',
+  'value' => $field->input('showImages', 'checkbox'),
+],
+[
+  'name' => 'noBackground',
+  'label' => 'Do not add blurred background behind images',
+  'value' => $field->input('noBackground', 'checkbox'),
+  'showIf' => 'showImages=1',
+],
 ```
 
 ## Example Settings
@@ -264,4 +259,3 @@ public function settingsTable(RockFieldsField $field) {
 
   return $settings;
 }
-```

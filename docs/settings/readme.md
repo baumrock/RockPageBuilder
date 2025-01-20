@@ -15,7 +15,7 @@ A simple checkbox would look like this:
   'name' => 'demo-checkbox',
   'label' => 'Demo Checkbox',
   'value' => $field->input('demo-checkbox', 'checkbox'),
-];
+]
 ```
 
 ## Adding Settings (Globally)

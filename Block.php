@@ -574,6 +574,15 @@ class Block extends \ProcessWire\Page
   }
 
   /**
+   * Get a new block settings array
+   * @return BlockSettingsArray
+   */
+  public function getSettings(): BlockSettingsArray
+  {
+    return new BlockSettingsArray();
+  }
+
+  /**
    * Get the related pw template
    */
   public function getTpl()

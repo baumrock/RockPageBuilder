@@ -21,6 +21,7 @@ class BlockSettingsArray extends WireArray
 
   public function getItem($data)
   {
+    if ($data instanceof BlockSettingsItem) return $data;
     if (is_array($data)) {
       $item = new BlockSettingsItem();
       $item->setArray($data);

@@ -11,11 +11,11 @@ It allows you to create several fields at runtime without creating those fields 
 A simple checkbox would look like this:
 
 ```php
-$settings->add([
+[
   'name' => 'demo-checkbox',
   'label' => 'Demo Checkbox',
   'value' => $field->input('demo-checkbox', 'checkbox'),
-]);
+];
 ```
 
 ## Adding Settings (Globally)
@@ -77,10 +77,43 @@ public function settingsTable(\ProcessWire\RockFieldsField $field)
       'demo-checkbox',
     ]);
 
+  // add: add a new settings field at the end
   $settings->add([
     'name' => 'custom-checkbox',
     'label' => 'Custom checkbox',
     'value' => $field->input('custom-checkbox', 'checkbox'),
+  ]);
+
+  // prepend: add checkbox at first position
+  $settings->prepend([
+    'name' => 'prepended-custom-checkbox',
+    'label' => 'Prepended custom checkbox',
+    'value' => $field->input('prepended-custom-checkbox', 'checkbox'),
+  ]);
+
+  // insertAfter/insertBefore: add checkbox after/before other setting
+  $newItem = $settings->getItem([
+    'name' => 'inserted-custom-checkbox',
+    'label' => 'Inserted custom checkbox',
+    'value' => $field->input('inserted-custom-checkbox', 'checkbox'),
+  ]);
+  $settings->insertAfter($newItem, $settings->get('style'));
+
+  return $settings;
+}
+```
+
+### Using non-global settings
+
+```php
+public function settingsTable(\ProcessWire\RockFieldsField $field)
+{
+  $settings = $this->getSettings();
+
+  $settings->add([
+    'name' => 'demo-checkbox',
+    'label' => 'Demo Checkbox',
+    'value' => $field->input('demo-checkbox', 'checkbox'),
   ]);
 
   return $settings;
@@ -128,17 +161,20 @@ The `showIf` feature allows you to conditionally display settings based on the v
 To use `showIf`, you need to specify it as an attribute in the settings array of your block's `settingsTable` method. The `showIf` attribute takes a string that represents a condition. This condition is composed of the name of the setting to watch, an equals sign `=`, and the value that triggers the visibility of the current setting.
 
 ```php
-[
-  'name' => 'showImages',
-  'label' => 'Show Items with Images',
-  'value' => $field->input('showImages', 'checkbox'),
-],
-[
-  'name' => 'noBackground',
-  'label' => 'Do not add blurred background behind images',
-  'value' => $field->input('noBackground', 'checkbox'),
-  'showIf' => 'showImages=1',
-],
+public function settingsTable(\ProcessWire\RockFieldsField $field)
+{
+  return $this->getDefaultSettings($field)
+    ->add([
+      'name' => 'showImages',
+      'label' => 'Show Items with Images',
+      'value' => $field->input('showImages', 'checkbox'),
+    ])->add([
+      'name' => 'noBackground',
+      'label' => 'Do not add blurred background behind images',
+      'value' => $field->input('noBackground', 'checkbox'),
+      'showIf' => 'showImages=1',
+    ]);
+}
 ```
 
 ## Example Settings

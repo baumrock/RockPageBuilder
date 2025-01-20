@@ -1,3 +1,10 @@
+## [5.12.0](https://github.com/baumrock/RockPageBuilder/compare/v5.11.0...v5.12.0) (2025-01-20)
+
+
+### Features
+
+* add getSettings() method to get non-global settings object ([a1bc878](https://github.com/baumrock/RockPageBuilder/commit/a1bc878e12618da1bd9e1339a188ba6e8c4193d9))
+
 ## [5.11.0](https://github.com/baumrock/RockPageBuilder/compare/v5.10.0...v5.11.0) (2025-01-15)
 
 
@@ -32,11 +39,4 @@
 ### Bug Fixes
 
 * improve docs about sort and groupSort properties ([dac2362](https://github.com/baumrock/RockPageBuilder/commit/dac2362c91048245af09e7a07c2233ddde609422))
-
-## [5.9.0](https://github.com/baumrock/RockPageBuilder/compare/v5.8.0...v5.9.0) (2024-10-19)
-
-
-### Features
-
-* add block presets feature ([4bfeb40](https://github.com/baumrock/RockPageBuilder/commit/4bfeb40917fcd0b834e0c3fa4dae7ad1bc695759))
 

@@ -1,3 +1,10 @@
+## [5.12.1](https://github.com/baumrock/RockPageBuilder/compare/v5.12.0...v5.12.1) (2025-01-21)
+
+
+### Bug Fixes
+
+* remove comments from addAlfredIcons() ([b3df9a4](https://github.com/baumrock/RockPageBuilder/commit/b3df9a4277d6ec8abc2484d493efa22ac9852470))
+
 ## [5.12.0](https://github.com/baumrock/RockPageBuilder/compare/v5.11.0...v5.12.0) (2025-01-20)
 
 
@@ -32,11 +39,4 @@
 ### Bug Fixes
 
 * quotes in title lead to invalid json ([8664c71](https://github.com/baumrock/RockPageBuilder/commit/8664c71078ede34d0647bac4421b9d755b102916))
-
-## [5.9.1](https://github.com/baumrock/RockPageBuilder/compare/v5.9.0...v5.9.1) (2024-10-22)
-
-
-### Bug Fixes
-
-* improve docs about sort and groupSort properties ([dac2362](https://github.com/baumrock/RockPageBuilder/commit/dac2362c91048245af09e7a07c2233ddde609422))
 

@@ -55,7 +55,9 @@ class BlockSettingsArray extends WireArray
   {
     $result = new BlockSettingsArray();
     foreach ($arr as $name) {
-      $result->add($this->get($name)->getArray());
+      $item = $this->get("name=$name");
+      if (!$item instanceof BlockSettingsItem) continue;
+      $result->add($item->getArray());
     }
     return $result;
   }

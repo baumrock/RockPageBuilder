@@ -1,3 +1,10 @@
+## [5.12.2](https://github.com/baumrock/RockPageBuilder/compare/v5.12.1...v5.12.2) (2025-01-23)
+
+
+### Bug Fixes
+
+* prevent error when "use()"ing settings that are not defined ([ebec0a2](https://github.com/baumrock/RockPageBuilder/commit/ebec0a2fb43ed88ce7b85253b339db08fc6f2d6f))
+
 ## [5.12.1](https://github.com/baumrock/RockPageBuilder/compare/v5.12.0...v5.12.1) (2025-01-21)
 
 
@@ -32,11 +39,4 @@
 
 * $page variable having wrong scope in view files ([40e8b9c](https://github.com/baumrock/RockPageBuilder/commit/40e8b9c76d6804d69eee8830712b4091de6c08e3))
 * action buttons float causing layout issues ([e25ca94](https://github.com/baumrock/RockPageBuilder/commit/e25ca9427b296c4c8299cfa88613ba2eb51aa82e))
-
-## [5.9.2](https://github.com/baumrock/RockPageBuilder/compare/v5.9.1...v5.9.2) (2024-11-24)
-
-
-### Bug Fixes
-
-* quotes in title lead to invalid json ([8664c71](https://github.com/baumrock/RockPageBuilder/commit/8664c71078ede34d0647bac4421b9d755b102916))
 

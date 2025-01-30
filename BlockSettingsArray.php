@@ -56,7 +56,9 @@ class BlockSettingsArray extends WireArray
     $result = new BlockSettingsArray();
     foreach ($arr as $name) {
       $item = $this->get("name=$name");
-      if (!$item instanceof BlockSettingsItem) continue;
+      if (!$item instanceof BlockSettingsItem) {
+        throw new WireException("Could not find setting with the name '$name'. Does it exist?");
+      }
       $result->add($item->getArray());
     }
     return $result;

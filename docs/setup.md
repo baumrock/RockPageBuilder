@@ -1,6 +1,6 @@
 # Setup
 
-You can use RockPageBuilder for new projects but also for existing ones! The module is plug and play and only needs a few steps to setup.
+You can use RockPageBuilder for new projects but also for existing ones! The module is almost plug and play and only needs a few steps to setup.
 
 <a href="https://www.youtube.com/watch?v=ulImisUs7zQ" target=_blank><img src=thumb.webp class=blur></a>
 
@@ -10,15 +10,15 @@ You can use RockPageBuilder for new projects but also for existing ones! The mod
 
     You can use the section `Add Module From Directory` as both are public modules listed in the PW Modules Directory.
 
-1. Download RockPageBuilder and upload it to your PW Backend
+2. Download RockPageBuilder and upload it to your PW Backend
 
     Note: We recommend using the `Add Module From Upload` feature (Modules > New). If you copy files manually make sure all files are placed in `/site/modules/RockPageBuilder` without any commit hash at the end.
 
-1. Go through the module config and install blocks that you might need for your project or just use them to learn from examples.
+3. Go through the module config and install blocks that you might need for your project or just use them to learn from examples.
 
-1. Add the field `rockpagebuilder_blocks` to any template where you want to use the pagebuilder.
+4. Add the field `rockpagebuilder_blocks` to any template where you want to use the pagebuilder.
 
-1. Use `<?= $rockpagebuilder->render(true) ?>` to output content of the pagebuilder field in your template file.
+5. Use `<?= $rockpagebuilder->render(true) ?>` to output content of the pagebuilder field in your template file.
 
     For the blank site profile this code would go into the file `home.php` and the output would be seen on the frontpage of your site.
 
@@ -31,6 +31,34 @@ The output might look something like this:
 It looks ugly because the demo blocks use the UIkit CSS Framework which is not loaded in the blank profile. You can now either create your own custom markup for each block or you can use the `rockpagebuilder` profile that ships with RockFrontend.
 
 <div class='uk-alert uk-alert-warning'>Note: If the block editor does not load in a modal you'll likely be missing the `page-edit-front` permission. Make sure every user using RockPageBuilder on the frontend has this permission!</div>
+
+## LESS/CSS assets
+
+If you use LESS or CSS assets for your blocks (for example a file like /site/templates/RockPageBuilder/blocks/Accordion/Accordion.less) you need to take care of loading these files on your own. When using RockDevTools you'd typically add them to your less() files array like this:
+
+```php
+// /site/templates/_init.php
+if ($config->rockdevtools) {
+  $devtools = rockdevtools();
+
+  // parse all less files to css
+  $devtools->assets()
+    ->less()
+    ->add('/site/templates/uikit/src/less/uikit.theme.less')
+    ->add('/site/templates/src/*.less')
+    ->add('/site/templates/sections/*.less')
+
+    // add this line
+    ->add('/site/templates/RockPageBuilder/*.less')
+
+    // save the css files
+    // this is the file that you need to include in your main markup!
+    ->save('/site/templates/bundle/styles.css');
+
+  // optionally add a minify step
+  // see RockDevTools docs
+}
+```
 
 ## Using the RockFrontend's "rockpagebuilder" profile
 

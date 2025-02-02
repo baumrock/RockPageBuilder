@@ -60,6 +60,29 @@ if ($config->rockdevtools) {
 }
 ```
 
+Additionally to that we also need to add assets necessary for hover styles (ALFRED). This is how a main markup file could look like:
+
+```latte
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {rockfrontend()->styleTag('/site/templates/dst/styles.min.css')|noescape}
+  {rockfrontend()->scriptTag('/site/templates/dst/scripts.min.js', 'defer')|noescape}
+  {rockfrontend()->assets()|noescape}
+  {rockpagebuilder()->assets()|noescape}
+</head>
+<body>
+  {include "sections/header.latte"}
+  {include "sections/main.latte"}
+  {include "sections/footer.latte"}
+</body>
+</html>
+```
+
+Note that `rockpagebuilder()->assets()` will only add assets for logged in users!
+
 ## Using the RockFrontend's "rockpagebuilder" profile
 
 To use the rockpagebuilder profile (which is based on the UIkit CSS Framework) simply install the profile and download the UIkit source files:

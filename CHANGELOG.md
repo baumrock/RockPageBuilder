@@ -1,3 +1,10 @@
+## [5.13.0](https://github.com/baumrock/RockPageBuilder/compare/v5.12.2...v5.13.0) (2025-02-02)
+
+
+### Features
+
+* add assets() method to inject assets on frontend ([4f391d6](https://github.com/baumrock/RockPageBuilder/commit/4f391d6885f12294c220b78781e39d10e386f787))
+
 ## [5.12.2](https://github.com/baumrock/RockPageBuilder/compare/v5.12.1...v5.12.2) (2025-01-23)
 
 
@@ -25,18 +32,4 @@
 ### Features
 
 * add support for new global settings syntax ([db16139](https://github.com/baumrock/RockPageBuilder/commit/db161393107dad66929f9b0f783d48080305253a))
-
-## [5.10.0](https://github.com/baumrock/RockPageBuilder/compare/v5.9.2...v5.10.0) (2024-12-02)
-
-
-### Features
-
-* add renderBlocks() method ([d8a860c](https://github.com/baumrock/RockPageBuilder/commit/d8a860c08d6635f0ea414e7ebd8282c153cc4942))
-* trigger rpb-change event ([39c9b4a](https://github.com/baumrock/RockPageBuilder/commit/39c9b4a3cacc8ca0b2646a0ebd309a02df67a5b4))
-
-
-### Bug Fixes
-
-* $page variable having wrong scope in view files ([40e8b9c](https://github.com/baumrock/RockPageBuilder/commit/40e8b9c76d6804d69eee8830712b4091de6c08e3))
-* action buttons float causing layout issues ([e25ca94](https://github.com/baumrock/RockPageBuilder/commit/e25ca9427b296c4c8299cfa88613ba2eb51aa82e))
 

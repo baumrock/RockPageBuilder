@@ -616,6 +616,17 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $this->getDatapage()->meta('rpb-tocheck', $tocheck);
   }
 
+  public function assets(): string
+  {
+    if (!wire()->user->isLoggedin()) return '';
+    $markup = '';
+    $url = wire()->config->urls($this);
+    $markup .= rockfrontend()->scriptTag($url . 'lib/Sortable.min.js');
+    $markup .= rockfrontend()->scriptTag($url . 'assets/frontend-loggedin.min.js');
+    $markup .= rockfrontend()->styleTag($url . 'assets/frontend-loggedin.min.css');
+    return $markup;
+  }
+
   /**
    * Remove fields before uninstall
    */

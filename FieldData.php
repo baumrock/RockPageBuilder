@@ -209,13 +209,23 @@ class FieldData extends PageArray
    * Render all items of this rpb field
    * @return string
    */
-  public function render($renderEmpty = false)
+  public function render($renderEmptyOrBlockData, $blockData = [])
   {
+    $renderEmpty = false;
+    // Check/set if a block data array was passed as the first argument
+    if (is_array($renderEmptyOrBlockData)) {
+      $blockData = $renderEmptyOrBlockData;
+    }
+    // Check/set if a renderEmpty bool value was passed as the first argument
+    if (is_bool($renderEmptyOrBlockData)) {
+      $renderEmpty = $renderEmptyOrBlockData;
+    }
+
     if ($this->wire->user->isSuperuser()) {
-      return $this->renderCatch($renderEmpty);
+      return $this->renderCatch($renderEmpty, $blockData);
     }
     try {
-      return $this->renderCatch($renderEmpty);
+      return $this->renderCatch($renderEmpty, $blockData);
     } catch (\Throwable $th) {
       try {
         /** @var RockMigrations $rm */
@@ -231,11 +241,14 @@ class FieldData extends PageArray
    * Render all blocks and catch errors
    * @return string
    */
-  private function renderCatch($renderEmpty)
+  private function renderCatch($renderEmpty, $data = [])
   {
     $out = '';
     $typeIndex = 0;
     foreach ($this as $i => $block) {
+      // Set block data passed to field render method
+      $block->blockData($data);
+
       // skip this block if it is hidden
       /** @var Block $block */
       if ($block->_mxhidden) continue;

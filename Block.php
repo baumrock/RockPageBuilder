@@ -4,6 +4,7 @@ namespace RockPageBuilder;
 
 use Latte\Engine;
 use Latte\Runtime\Html;
+use LogicException;
 use ProcessWire\FieldtypeRockPageBuilder;
 use ProcessWire\FieldtypeRockShare;
 use ProcessWire\Paths;
@@ -240,6 +241,29 @@ class Block extends \ProcessWire\Page
       <div>next: $next</div>
       <div>this: #{$this} {$this->classes()}</div>
     </div>");
+  }
+
+  /**
+   * Pass data to block if provided to field at render time
+   * @param  array  $data Data passed to field render method
+   */
+  public function blockData(array $data = []): void
+  {
+    $dataKeys = array_keys($data);
+
+    $reservedKeys = ['block', 'page', 'settings'];
+
+    foreach ($dataKeys as $key) {
+      $blockFieldName = $this->getBlockField()->name;
+
+      if (in_array($key, $reservedKeys)) {
+        throw new LogicException(
+          "Invalid data passed to {$blockFieldName}, the key '{$key}' is reserved"
+        );
+      }
+    }
+
+    $this->blockData = $data;
   }
 
   /**
@@ -1280,6 +1304,9 @@ class Block extends \ProcessWire\Page
         'page' => $this->getBlockPage(),
 
         'settings' => $this->settings(),
+
+        // Adds custom data passed to field render method
+        ...$this->blockData,
       ]
     );
     if (!$type) $type = strtolower(pathinfo($file, PATHINFO_EXTENSION));

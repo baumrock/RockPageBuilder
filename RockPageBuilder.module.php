@@ -125,14 +125,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     // add builder() method to all pages
     $this->addHookMethod("Page::builder", $this, "builder");
 
-    // add JS for frontend
-    $this->addHookAfter("Page::render", function ($event) {
-      if ($event->object->template == 'admin') return;
-      $rf = $event->wire->rockfrontend;
-      if (!$rf) return;
-      if ($rf->loadVspace) $rf->scripts()->add(__DIR__ . "/scripts/vspace.js", "defer");
-    });
-
     // rpb page save trigger
     $this->_saved = new PageArray();
     $this->addHookAfter("Pages::saved", $this, "triggerBlockPageSave");

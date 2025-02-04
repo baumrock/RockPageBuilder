@@ -1,3 +1,14 @@
+## [6.0.0](https://github.com/baumrock/RockPageBuilder/compare/v5.13.1...v6.0.0) (2025-02-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove all calls to $rf->scripts()
+
+### Bug Fixes
+
+* remove all calls to $rf->scripts() ([89d874b](https://github.com/baumrock/RockPageBuilder/commit/89d874b7f858d2d5438782b480807613ea304d17))
+
 ## [5.13.1](https://github.com/baumrock/RockPageBuilder/compare/v5.13.0...v5.13.1) (2025-02-04)
 
 
@@ -25,11 +36,4 @@
 ### Bug Fixes
 
 * remove comments from addAlfredIcons() ([b3df9a4](https://github.com/baumrock/RockPageBuilder/commit/b3df9a4277d6ec8abc2484d493efa22ac9852470))
-
-## [5.12.0](https://github.com/baumrock/RockPageBuilder/compare/v5.11.0...v5.12.0) (2025-01-20)
-
-
-### Features
-
-* add getSettings() method to get non-global settings object ([a1bc878](https://github.com/baumrock/RockPageBuilder/commit/a1bc878e12618da1bd9e1339a188ba6e8c4193d9))
 

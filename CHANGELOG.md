@@ -1,3 +1,10 @@
+## [5.13.1](https://github.com/baumrock/RockPageBuilder/compare/v5.13.0...v5.13.1) (2025-02-04)
+
+
+### Bug Fixes
+
+* remove $rf->scripts() call for vSpace feature ([168fea8](https://github.com/baumrock/RockPageBuilder/commit/168fea81cc2c9f33a48cd2800724987c00d01905))
+
 ## [5.13.0](https://github.com/baumrock/RockPageBuilder/compare/v5.12.2...v5.13.0) (2025-02-02)
 
 
@@ -25,11 +32,4 @@
 ### Features
 
 * add getSettings() method to get non-global settings object ([a1bc878](https://github.com/baumrock/RockPageBuilder/commit/a1bc878e12618da1bd9e1339a188ba6e8c4193d9))
-
-## [5.11.0](https://github.com/baumrock/RockPageBuilder/compare/v5.10.0...v5.11.0) (2025-01-15)
-
-
-### Features
-
-* add support for new global settings syntax ([db16139](https://github.com/baumrock/RockPageBuilder/commit/db161393107dad66929f9b0f783d48080305253a))
 

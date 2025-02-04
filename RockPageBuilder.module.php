@@ -171,7 +171,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   {
     $this->include("ready.php"); // load templates/RockPageBuilder/ready.php
     $this->parseAssets();
-    $this->addFrontendAssets();
 
     // add magic field getter methods
     // this is to support $page->foo() calls instead of
@@ -418,31 +417,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       if (in_array($cls, $this->blockClasses())) continue;
 
       $this->addBlock($file, $namespace);
-    }
-  }
-
-  /**
-   * Add frontend styles via RockFrontend
-   */
-  public function addFrontendAssets()
-  {
-    /** @var RockFrontend $rf */
-    if ($this->wire->page->template == 'admin') return;
-    $dir = __DIR__ . "/assets/";
-
-    // if rockfrontend is not installed styles must be added manually!
-    if (!$rf = $this->wire->modules->get('RockFrontend')) return;
-
-    // always add global frontend styles
-    if (!$this->disableFrontendCss) {
-      $rf->styles()->add(__DIR__ . "/assets/RockPageBuilder.min.css");
-    }
-
-    // load RockPageBuilder frontend assets
-    if ($this->wire->user->hasPermission('page-edit')) {
-      $rf->scripts()->add(__DIR__ . "/lib/Sortable.min.js");
-      $rf->scripts()->add($dir . "frontend-loggedin.min.js");
-      $rf->styles()->add($dir . "frontend-loggedin.min.css");
     }
   }
 

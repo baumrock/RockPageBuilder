@@ -1774,14 +1774,16 @@ class Block extends \ProcessWire\Page
     $block = $this;
     $fielddata = $block->getBlockData();
 
-    // create new widget with reference to block
+    // create new widget block with reference to block
+    // this is the block on the page, not the widget on page #1
     $tpl = (new Widget())->getTplName();
     $widget = $fielddata->createBlock($tpl);
     $widget->setReference($block);
     $widget->save();
+    $widget->meta()->remove('rpb-temp');
     $fielddata->insertAfter($widget, $block)->save();
 
-    // move block to widgets
+    // move original block to widgets on page #1
     $block->move(1, RockPageBuilder::field_widgets);
   }
 

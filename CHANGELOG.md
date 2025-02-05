@@ -1,3 +1,10 @@
+## [6.0.2](https://github.com/baumrock/RockPageBuilder/compare/v6.0.1...v6.0.2) (2025-02-05)
+
+
+### Bug Fixes
+
+* remove $rf->styles() call ([068614f](https://github.com/baumrock/RockPageBuilder/commit/068614fee46062dc9dac4ab4723b62c641dc6619))
+
 ## [6.0.1](https://github.com/baumrock/RockPageBuilder/compare/v6.0.0...v6.0.1) (2025-02-05)
 
 
@@ -29,11 +36,4 @@
 ### Features
 
 * add assets() method to inject assets on frontend ([4f391d6](https://github.com/baumrock/RockPageBuilder/commit/4f391d6885f12294c220b78781e39d10e386f787))
-
-## [5.12.2](https://github.com/baumrock/RockPageBuilder/compare/v5.12.1...v5.12.2) (2025-01-23)
-
-
-### Bug Fixes
-
-* prevent error when "use()"ing settings that are not defined ([ebec0a2](https://github.com/baumrock/RockPageBuilder/commit/ebec0a2fb43ed88ce7b85253b339db08fc6f2d6f))
 

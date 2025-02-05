@@ -1,3 +1,10 @@
+## [6.0.1](https://github.com/baumrock/RockPageBuilder/compare/v6.0.0...v6.0.1) (2025-02-05)
+
+
+### Bug Fixes
+
+* blocks are temporary after widgetizing ([d18e1e7](https://github.com/baumrock/RockPageBuilder/commit/d18e1e7e29f70d2b0069a88129f1910c5735813a))
+
 ## [6.0.0](https://github.com/baumrock/RockPageBuilder/compare/v5.13.1...v6.0.0) (2025-02-04)
 
 
@@ -29,11 +36,4 @@
 ### Bug Fixes
 
 * prevent error when "use()"ing settings that are not defined ([ebec0a2](https://github.com/baumrock/RockPageBuilder/commit/ebec0a2fb43ed88ce7b85253b339db08fc6f2d6f))
-
-## [5.12.1](https://github.com/baumrock/RockPageBuilder/compare/v5.12.0...v5.12.1) (2025-01-21)
-
-
-### Bug Fixes
-
-* remove comments from addAlfredIcons() ([b3df9a4](https://github.com/baumrock/RockPageBuilder/commit/b3df9a4277d6ec8abc2484d493efa22ac9852470))
 

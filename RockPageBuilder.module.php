@@ -179,9 +179,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     if ($this->wire->page->template == 'admin') {
       $this->wire->config->js('RockPageBuilderBlocks', $this->blockNames());
-    } else {
-      $rf = $this->rockfrontend();
-      if ($rf) $rf->styles()->addAll('/site/templates/RockPageBuilder', '', 3);
     }
   }
 

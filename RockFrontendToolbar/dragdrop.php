@@ -1,9 +1,6 @@
-<?php
-
-namespace ProcessWire; ?>
 <a
   href="<?= $page->editUrl() ?>"
-  title="<?= __('Drag & Drop on/off') ?>"
+  title="<?= $wire->_('Drag & Drop on/off') ?>"
   uk-tooltip
   data-toggle="dragdrop"
   data-persist

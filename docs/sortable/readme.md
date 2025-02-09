@@ -43,7 +43,7 @@ document.addEventListener("rocksortable-added", (event) => {
   let sortable = event.detail;
   sortable.option("onMove", (e) => {
     console.log('block has been moved');
-  }
+  });
 });
 ```
 

@@ -9,6 +9,7 @@ use ProcessWire\WireException;
 use ProcessWire\RockPageBuilder;
 use ProcessWire\RockMigrations;
 
+use function ProcessWire\wire;
 use function ProcessWire\wireClassName;
 
 class FieldData extends PageArray
@@ -263,7 +264,8 @@ class FieldData extends PageArray
         // add the image overlay for rapid development
         $out .= $this->addOverlay($block);
       } catch (\Throwable $th) {
-        $out .= $th->getMessage() . " in block #$block ({$block->template})";
+        $msg = $th->getMessage() . " in block #$block ({$block->template})";
+        if (wire()->config->debug) throw new WireException($msg);
       }
     }
     if (!$out and $renderEmpty) return $this->renderEmpty();

@@ -1221,6 +1221,19 @@ class Block extends \ProcessWire\Page
   {
     if (!$master = $this->getMasterBlock()) return;
     $info = $this->getInfo();
+
+    // if a "thumb" property is set we grab one of the svg buttons from the
+    // modules folder
+    if ($info->thumb) {
+      $file = __DIR__ . '/buttons/' . $info->thumb . '.svg';
+      if (is_file($file)) {
+        $url = wire()->config->urls(rockpagebuilder())
+          . 'buttons/'
+          . basename($file);
+        return "<img class=rpb-addblock-svg src=$url>";
+      }
+    }
+
     $file = $master->file;
     $base = substr($file, 0, -4); // without .php ending
     $icon = '';

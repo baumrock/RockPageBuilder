@@ -2052,6 +2052,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       $f->notes .= $nl . "Config property: " . $f->name;
     }
 
+    $inputfields->add([
+      'type' => 'markup',
+      'label' => 'Block Thumbnails',
+      'icon' => 'image',
+      'value' => wire()->files->render(__DIR__ . '/buttons/preview.php'),
+    ]);
+
     /** @var InputfieldSelect $f */
     $this->deleteBlock();
     $f = $this->wire->modules->get('InputfieldSelect');

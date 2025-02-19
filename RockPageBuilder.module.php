@@ -1600,10 +1600,11 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   public function renderBlocks(
     Page|string|int $page,
-    string $field,
+    string $field = null,
     bool $renderPlus = true,
   ) {
     $p = wire()->pages->get((string)$page);
+    if (!$field) $field = self::field_blocks;
     $field = $p->getFormatted($field);
     if (!$field) return;
     return $field->render($renderPlus);
@@ -2050,6 +2051,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       $nl = $f->notes ? "\n" : "";
       $f->notes .= $nl . "Config property: " . $f->name;
     }
+
+    $inputfields->add([
+      'type' => 'markup',
+      'label' => 'Block Thumbnails',
+      'icon' => 'image',
+      'value' => wire()->files->render(__DIR__ . '/buttons/preview.php'),
+    ]);
 
     /** @var InputfieldSelect $f */
     $this->deleteBlock();

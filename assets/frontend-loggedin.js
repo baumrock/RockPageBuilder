@@ -219,11 +219,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.dispatchEvent(new Event("rpb-sortable-init"));
 });
 
-// toggle drag&drop on shiftkey
-document.addEventListener("keyup", function (event) {
-  if (event.key === "Shift") RockSortable.toggle();
-});
-
 // add class to body that indicates that rockpagebuilder is active
 document.addEventListener("DOMContentLoaded", function () {
   document.body.classList.add("rpb-active");

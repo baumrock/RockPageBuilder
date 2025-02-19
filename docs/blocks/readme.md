@@ -164,7 +164,25 @@ public function getLabel()
 
 ## Block Thumbnails
 
-RockPageBuilder makes it simple to quickly create nice looking thumbnails for your blocks. You can either choose to use icons, which is the quickest option, or you can create and upload your own thumbnail image.
+### Available Thumbnails
+
+The module ships with several thumbnails for common page building blocks. All available thumbnails are shown on the module config page, where you can click on the thumbnail and it will copy the name of the thumbnail to the clipboard.
+
+<img src=https://i.imgur.com/izSXD8u.png class=blur>
+
+Then just add the name to your block's info method:
+
+```php
+public function info()
+{
+  return [
+    'title' => 'Text with Image',
+    'thumb' => 'TextImage',
+  ];
+}
+```
+
+Alternatively you can either choose to use one of the Font Awesome icons, which is the quickest option, or you can create and upload your own thumbnail image.
 
 ### Icon
 

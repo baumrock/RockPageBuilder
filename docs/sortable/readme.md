@@ -20,6 +20,14 @@ The most comman use case is to make all your blocks (page sections) sortable on 
 </main>
 ```
 
+If you want the page to automatically reload after sorting, you can add the `reload:true` option:
+
+```php
+<section sortable="reload:true">
+  <?= $rockpagebuilder->render() ?>
+</section>
+```
+
 ## Making repeater items sortable
 
 RockPageBuilder's drag and drop sorting does also support nested sorting. Often we have blocks that have multiple child elements, like an accordion. We want to be able to sort the whole block but also to sort the individual list items.
@@ -43,7 +51,7 @@ document.addEventListener("rocksortable-added", (event) => {
   let sortable = event.detail;
   sortable.option("onMove", (e) => {
     console.log('block has been moved');
-  }
+  });
 });
 ```
 

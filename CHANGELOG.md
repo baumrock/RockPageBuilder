@@ -1,3 +1,12 @@
+## [6.1.0](https://github.com/baumrock/RockPageBuilder/compare/v6.0.2...v6.1.0) (2025-02-19)
+
+
+### Features
+
+* add "thumb" property for easy use of common thumbnails ([48ab241](https://github.com/baumrock/RockPageBuilder/commit/48ab24124cd473b6eba6e3bac4b1260463d91971))
+* add fallback to default field in renderBlocks() ([42650cf](https://github.com/baumrock/RockPageBuilder/commit/42650cfdc54087d184e2523d591c3277e02b2686))
+* add new rockfrontend toolbar icon for toggling drag&drop ([28f3974](https://github.com/baumrock/RockPageBuilder/commit/28f39748f137bf86d65551639db92868ee223a9c))
+
 ## [6.0.2](https://github.com/baumrock/RockPageBuilder/compare/v6.0.1...v6.0.2) (2025-02-05)
 
 
@@ -29,11 +38,4 @@
 ### Bug Fixes
 
 * remove $rf->scripts() call for vSpace feature ([168fea8](https://github.com/baumrock/RockPageBuilder/commit/168fea81cc2c9f33a48cd2800724987c00d01905))
-
-## [5.13.0](https://github.com/baumrock/RockPageBuilder/compare/v5.12.2...v5.13.0) (2025-02-02)
-
-
-### Features
-
-* add assets() method to inject assets on frontend ([4f391d6](https://github.com/baumrock/RockPageBuilder/commit/4f391d6885f12294c220b78781e39d10e386f787))
 

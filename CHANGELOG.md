@@ -1,3 +1,10 @@
+## [6.2.0](https://github.com/baumrock/RockPageBuilder/compare/v6.1.0...v6.2.0) (2025-02-20)
+
+
+### Features
+
+* add alfred-hover-padding class for nested block editing ([702b35d](https://github.com/baumrock/RockPageBuilder/commit/702b35d1f0cae342ebff65162c74c10089284107))
+
 ## [6.1.0](https://github.com/baumrock/RockPageBuilder/compare/v6.0.2...v6.1.0) (2025-02-19)
 
 
@@ -31,11 +38,4 @@
 ### Bug Fixes
 
 * remove all calls to $rf->scripts() ([89d874b](https://github.com/baumrock/RockPageBuilder/commit/89d874b7f858d2d5438782b480807613ea304d17))
-
-## [5.13.1](https://github.com/baumrock/RockPageBuilder/compare/v5.13.0...v5.13.1) (2025-02-04)
-
-
-### Bug Fixes
-
-* remove $rf->scripts() call for vSpace feature ([168fea8](https://github.com/baumrock/RockPageBuilder/commit/168fea81cc2c9f33a48cd2800724987c00d01905))
 

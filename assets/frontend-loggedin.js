@@ -114,9 +114,13 @@ _RockSortable.prototype.saveSort = function (el) {
     "&sort=" +
     this.getPageIds(el).join("|");
 
+  RockSortable.trigger("rocksortable-savesort", el);
   fetch(url)
     .then((response) => {
       if (response.ok) {
+        RockSortable.trigger("rocksortable-sortsaved", el);
+
+        // reload page if needed
         let settings = this.parseAttributes(el);
         if (settings.reload) {
           this.showSpinner();

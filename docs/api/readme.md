@@ -54,6 +54,9 @@ To add a block to a RockPageBuilder field, you can use the `add()` method on the
 // Assuming 'rockpagebuilder_blocks' is your RockPageBuilder field
 $blocks = $page->getUnformatted('rockpagebuilder_blocks');
 
+// Prevent setting the "temp" flag
+rockpagebuilder()->noTemp = true;
+
 // Add a block by template name
 $block = $blocks->add('Text', [
   'title' => 'My new headline',

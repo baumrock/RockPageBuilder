@@ -60,3 +60,38 @@ I'm using this technique to automatically update text colors when blocks with di
 <img src=https://i.imgur.com/UAcJufM.gif width=400>
 
 Note how the text color switches from black to white after the block has been moved from a light background to a dark background section!
+
+## Trigger reload after sorting
+
+Sometimes it is necessary to reload the page after blocks have been sorted. To do so you have two options:
+
+1) Trigger reload on every sort
+2) Add a JS callback for custom conditions
+
+### Option 1: Trigger reload on every sort
+
+```html
+<div sortable='reload:true'>
+  <?= $rockpagebuilder->render() ?>
+</div>
+```
+
+### Option 2: Add a JS callback for custom conditions
+
+This is an example where we reload the page only if an `imagetextcard` block has been moved:
+
+```js
+// show spinner when the savesort ajax request is sent
+// this is to immediately show the spinner
+document.addEventListener("rocksortable-savesort", (e) => {
+  const el = e.detail;
+  if (!el.closest(".rpb-imagetextcard")) return;
+  RockSortable.showSpinner();
+});
+// reload the page after the savesort ajax request is successful
+document.addEventListener("rocksortable-sortsaved", (e) => {
+  const el = e.detail;
+  if (!el.closest(".rpb-imagetextcard")) return;
+  location.reload();
+});
+```

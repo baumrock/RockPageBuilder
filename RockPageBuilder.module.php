@@ -57,6 +57,13 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   public $mtime = 0;
 
+  /**
+   * Flag to prevent setting the "temp" flag for newly created blocks
+   * Handy when creating blocks from the API
+   * @var bool
+   */
+  public $noTemp = false;
+
   public $useWidgets = true;
   public $showBlocktype = true;
   public $showDataPage = false;
@@ -570,7 +577,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     // if block was just created we mark it as temp
     // otherwise we remove the temp flag
-    if ($block->_inserted) {
+    if ($block->_inserted && !$this->noTemp) {
       $block->meta('rpb-temp', 1);
       $toCheck[] = $block->id;
     } else $block->meta()->remove('rpb-temp');

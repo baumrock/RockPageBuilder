@@ -1,3 +1,16 @@
+## [6.3.0](https://github.com/baumrock/RockPageBuilder/compare/v6.2.0...v6.3.0) (2025-03-12)
+
+
+### Features
+
+* add callbacks for custom sort reload ([26d796d](https://github.com/baumrock/RockPageBuilder/commit/26d796d0f3fea64f4aac13a84ad9920302fd6485))
+* add noTemp flag to prevent setting the temp flag for blocks that are created via api ([4389d47](https://github.com/baumrock/RockPageBuilder/commit/4389d476c5c2a5716012f2625b09915e24ba88a0))
+
+
+### Bug Fixes
+
+* remove old translations ([5529168](https://github.com/baumrock/RockPageBuilder/commit/5529168a1d91079afcabb12844279b284280531d))
+
 ## [6.2.0](https://github.com/baumrock/RockPageBuilder/compare/v6.1.0...v6.2.0) (2025-02-20)
 
 
@@ -27,15 +40,4 @@
 ### Bug Fixes
 
 * blocks are temporary after widgetizing ([d18e1e7](https://github.com/baumrock/RockPageBuilder/commit/d18e1e7e29f70d2b0069a88129f1910c5735813a))
-
-## [6.0.0](https://github.com/baumrock/RockPageBuilder/compare/v5.13.1...v6.0.0) (2025-02-04)
-
-
-### ⚠ BREAKING CHANGES
-
-* remove all calls to $rf->scripts()
-
-### Bug Fixes
-
-* remove all calls to $rf->scripts() ([89d874b](https://github.com/baumrock/RockPageBuilder/commit/89d874b7f858d2d5438782b480807613ea304d17))
 

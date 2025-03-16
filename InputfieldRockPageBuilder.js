@@ -324,9 +324,13 @@ $(document).on(
   }
 );
 // monitor inline ckeditor fields
-$(document).on("blur keyup paste input", "[contenteditable]", function (e) {
-  RockPageBuilder.changed(e);
-});
+$(document).on(
+  "blur keyup paste input",
+  ".rpb-item [contenteditable]",
+  function (e) {
+    RockPageBuilder.changed(e);
+  }
+);
 
 // trigger changed event after file uploads
 $(document).on("AjaxUploadDone", function (e) {

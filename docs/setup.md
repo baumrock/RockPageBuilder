@@ -44,17 +44,31 @@ We are not yet done, but Frontend Editing should already be working:
 
 <img src=https://i.imgur.com/Vu8HsZM.gif class=blur>
 
-But we are still missing the GUI for RockPageBuilder - that's because we need some additional assets (JS/CSS) to make the GUI render and work. For that we add the following to our main markup file (for example `_main.php`):
+But we are still missing the GUI for RockPageBuilder - that's because we need some additional assets (JS/CSS) to make the GUI render and work.
 
-```php
+For that we add the following to our main markup file - which is `site/templates/_main.latte` in the case of the rockfrontend site profile:
+
+```latte
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  ...
-  <?= rockfrontend()->assets() ?>
-  <?= rockpagebuilder()->assets() ?>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  {* NOTE: styles.min.css & scripts.min.js are generated in _init.php via RockDevTools *}
+  {rockfrontend()->styleTag('/site/templates/dst/styles.min.css')|noescape}
+  {rockfrontend()->scriptTag('/site/templates/dst/scripts.min.js', 'defer')|noescape}
+
+  {rockfrontend()->assets()|noescape}
+  {rockpagebuilder()->assets()|noescape}
 </head>
-...
+```
+
+If you are NOT using LATTE just use regular PHP syntax:
+
+```php
+<?php echo rockfrontend()->assets() ?>
+<?php echo rockpagebuilder()->assets() ?>
 ```
 
 RockFrontend assets are needed for the ALFRED frontend editing and RockPageBuilder assets are needed for the RockPageBuilder features like hover-info of blocks, moving and sorting blocks, deleting blocks etc.;

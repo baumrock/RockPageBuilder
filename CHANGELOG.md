@@ -1,3 +1,10 @@
+## [6.3.1](https://github.com/baumrock/RockPageBuilder/compare/v6.3.0...v6.3.1) (2025-03-16)
+
+
+### Bug Fixes
+
+* rockpagebuilder conflicting with quill editor on same page ([5da3a1c](https://github.com/baumrock/RockPageBuilder/commit/5da3a1c2b774f7be71f304059cd6c4a8efeb00c3))
+
 ## [6.3.0](https://github.com/baumrock/RockPageBuilder/compare/v6.2.0...v6.3.0) (2025-03-12)
 
 
@@ -33,11 +40,4 @@
 ### Bug Fixes
 
 * remove $rf->styles() call ([068614f](https://github.com/baumrock/RockPageBuilder/commit/068614fee46062dc9dac4ab4723b62c641dc6619))
-
-## [6.0.1](https://github.com/baumrock/RockPageBuilder/compare/v6.0.0...v6.0.1) (2025-02-05)
-
-
-### Bug Fixes
-
-* blocks are temporary after widgetizing ([d18e1e7](https://github.com/baumrock/RockPageBuilder/commit/d18e1e7e29f70d2b0069a88129f1910c5735813a))
 

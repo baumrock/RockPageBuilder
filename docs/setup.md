@@ -1,36 +1,75 @@
 # Setup
 
-You can use RockPageBuilder for new projects but also for existing ones! The module is almost plug and play and only needs a few steps to setup.
+You can use RockPageBuilder for new projects but also for existing ones! The module only needs a few steps to setup.
 
-<a href="https://www.youtube.com/watch?v=ulImisUs7zQ" target=_blank><img src=thumb.webp class=blur></a>
+If this is the first time using RockPageBuilder I recommend installing the [RockFrontend Site Profile](https://github.com/baumrock/site-rockfrontend/releases) and starting from there. Once you know how the module works and what is necessary for it to work it will be easier for you to add RockPageBuilder to any other setup as well.
 
 ## Installation
 
-1. Install RockMigrations and RockFrontend
+1. Install ProcessWire using the [RockFrontend Site Profile](https://github.com/baumrock/site-rockfrontend/releases)
+2. Install all dependencies
+3. Install RockPageBuilder - it should instantly work on the backend
+4. (optional) Add RockPageBuilder to your frontend
 
-    You can use the section `Add Module From Directory` as both are public modules listed in the PW Modules Directory.
+### Installing RockPageBuilder (Backend)
 
-2. Download RockPageBuilder and upload it to your PW Backend
+Once you have a ProcessWire installation you can install RockPageBuilder via the module interface. Once installed you can also install one of the Demo-Blocks.
 
-    Note: We recommend using the `Add Module From Upload` feature (Modules > New). If you copy files manually make sure all files are placed in `/site/modules/RockPageBuilder` without any commit hash at the end.
+I recommend starting with the "Gallery" block, which we will use in this example.
 
-3. Go through the module config and install blocks that you might need for your project or just use them to learn from examples.
+By default RockPageBuilder will add the field `rockpagebuilder_blocks` to the `home` template. You should see an interface like this:
 
-4. Add the field `rockpagebuilder_blocks` to any template where you want to use the pagebuilder.
+<img src=https://i.imgur.com/8U4aaFV.png class=blur>
 
-5. Use `<?= $rockpagebuilder->render(true) ?>` to output content of the pagebuilder field in your template file.
+In the screenshot above I already created a Gallery block and saved the page.
 
-    For the blank site profile this code would go into the file `home.php` and the output would be seen on the frontpage of your site.
+### Adding RockPageBuilder to the Frontend
 
-<div class='uk-alert uk-alert-success uk-text-center'>Congratulations! You are ready to use RockPageBuilder!</div>
+To add RockPageBuilder to your frontend you have to take two simple steps:
 
-The output might look something like this:
+1. Echo the content of the RockPageBuilder field, eg via `echo $rockpagebuilder->render(true)`
+2. Add the necessary assets to your frontend
 
-<img src=setup.png class=blur>
+Now let's head over to the frontend. View the homepage on the frontend and you might see this warning:
 
-It looks ugly because the demo blocks use the UIkit CSS Framework which is not loaded in the blank profile. You can now either create your own custom markup for each block or you can use the `rockpagebuilder` profile that ships with RockFrontend.
+<img src=https://i.imgur.com/4hzOy3H.png class=blur>
 
-<div class='uk-alert uk-alert-warning'>Note: If the block editor does not load in a modal you'll likely be missing the `page-edit-front` permission. Make sure every user using RockPageBuilder on the frontend has this permission!</div>
+This is because RockPageBuilder is built on top of ProcessWires Frontend Editing capabilities. To install this feature go to Modules > Core > PageFrontEdit and install it.
+
+Once installed you should not get any errors and the Gallery block should render something like this:
+
+<img src=https://i.imgur.com/ALDdGPL.png class=blur>
+
+We are not yet done, but Frontend Editing should already be working:
+
+<img src=https://i.imgur.com/Vu8HsZM.gif class=blur>
+
+But we are still missing the GUI for RockPageBuilder - that's because we need some additional assets (JS/CSS) to make the GUI render and work. For that we add the following to our main markup file (for example `_main.php`):
+
+```php
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  ...
+  <?= rockfrontend()->assets() ?>
+  <?= rockpagebuilder()->assets() ?>
+</head>
+...
+```
+
+RockFrontend assets are needed for the ALFRED frontend editing and RockPageBuilder assets are needed for the RockPageBuilder features like hover-info of blocks, moving and sorting blocks, deleting blocks etc.;
+
+Note that these assets will only be loaded for logged in users, so your Frontend will stay clean & fast for all public visitors!
+
+After loading the assets the interface should look like this:
+
+<img src=https://i.imgur.com/OFhYPXO.gif class=blur>
+
+## Adding RockPageBuilder to other pages
+
+All you need to do to add RockPageBuilder to other pages is to add the field `rockpagebuilder_blocks` to any template where you want to use the pagebuilder.
+
+Then use `<?= $rockpagebuilder->render(true) ?>` to output content of the pagebuilder field in your template file.
 
 ## LESS/CSS assets
 
@@ -59,44 +98,3 @@ if ($config->rockdevtools) {
   // see RockDevTools docs
 }
 ```
-
-Additionally to that we also need to add assets necessary for hover styles (ALFRED). This is how a main markup file could look like:
-
-```latte
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  {rockfrontend()->styleTag('/site/templates/dst/styles.min.css')|noescape}
-  {rockfrontend()->scriptTag('/site/templates/dst/scripts.min.js', 'defer')|noescape}
-  {rockfrontend()->assets()|noescape}
-  {rockpagebuilder()->assets()|noescape}
-</head>
-<body>
-  {include "sections/header.latte"}
-  {include "sections/main.latte"}
-  {include "sections/footer.latte"}
-</body>
-</html>
-```
-
-Note that `rockpagebuilder()->assets()` will only add assets for logged in users!
-
-## Using the RockFrontend's "rockpagebuilder" profile
-
-To use the rockpagebuilder profile (which is based on the UIkit CSS Framework) simply install the profile and download the UIkit source files:
-
-<img src=profile.png class=blur>
-
-Then install the free `Less` module. It is required to compile LESS files to CSS.
-
-Then visit your frontend and enjoy your new PageBuilder 😍
-
-<img src=uikit.png class=blur>
-
-Now you can add an accordion where you can toggle each item:
-
-<img src=accordion.png class=blur>
-
-Have fun exploring all the blocks that are available!

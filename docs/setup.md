@@ -25,7 +25,7 @@ In the screenshot above I already created a Gallery block and saved the page.
 
 ### Adding RockPageBuilder to the Frontend
 
-To add RockPageBuilder to your frontend you have to take two simple steps:
+To add RockPageBuilder to your frontend you have to take two simple steps - don't do that now, we'll guide you through later!
 
 1. Echo the content of the RockPageBuilder field, eg via `echo $rockpagebuilder->render(true)`
 2. Add the necessary assets to your frontend

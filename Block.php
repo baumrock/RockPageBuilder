@@ -106,26 +106,6 @@ class Block extends \ProcessWire\Page
     $widget = $block->_widget ?: $block;
     $data = $widget->getBlockData();
 
-    $spaceID = $this->wire->user->isSuperuser() ? $this->spaceID() : '';
-
-    // add vspace buttons?
-    if ($block->spaceV()) {
-      $rf = $this->rockfrontend();
-      if ($rf) $rf->loadVspace = true;
-      $icons[] = (object)[
-        'icon' => 'up',
-        'tooltip' => "vSpace top " . $spaceID,
-        'type' => 'vspacetop',
-        'widget' => $widget->id,
-      ];
-      $icons[] = (object)[
-        'icon' => 'down',
-        'tooltip' => "vSpace bottom " . $spaceID,
-        'type' => 'vspacebottom',
-        'widget' => $widget->id,
-      ];
-    }
-
     if ($opt->clone and $block->editable()) {
       $icons[] = (object)[
         'icon' => 'clone',

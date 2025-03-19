@@ -121,8 +121,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     wire()->addHookAfter('Pages::saved',                      $this, 'addTempFlag');
 
     // hooks for access control
-    $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
-    $this->addHookAfter("Page::trashable", $this, "hookRepeaterTrashable");
+    $this->hookBlockAccess();
 
     // add styles for backend
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "addStyles");
@@ -1128,19 +1127,49 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * Make sure that blocks are editable if the rpb page is editable
    * @return void
    */
-  public function hookBlockEditable(HookEvent $event)
+  public function hookBlockAccess()
   {
-    $page = $event->object;
-    if (!$page instanceof Block) return;
-    $editable = $event->return;
+    if (wire()->user->isSuperuser()) return;
+    $methods = [
+      'editable',
+      'addable',
+      'publishable',
+      'listable',
+      'moveable',
+      'sortable',
+      'deleteable',
+      'trashable'
+    ];
+    foreach ($methods as $method) {
+      wire()->addHookAfter("Page::$method", function (HookEvent $event) use ($method) {
+        $page = $event->object;
+        $inheritAccessPage = $this->inheritAccessPage($page);
+        if (!$inheritAccessPage) return;
 
-    // if page is already editable we exit early
-    if ($editable == true) return;
+        // we allow all methods if the access page is editable
+        // note: I wanted to inherit properly via ->$method()
+        // but somehow trashable() is always false even though the page is
+        // actually trashable
+        $event->return = $inheritAccessPage->editable();
+      });
+    }
+  }
 
-    // otherwise we make the block editable if the rpb page is editable
-    $rpbPage = $page->getBlockPage();
-    if (!$rpbPage or !$rpbPage->id) return;
-    $event->return = $rpbPage->editable();
+  private function inheritAccessPage(Page $page): Page|false
+  {
+    // if it is a pagebuilder block we inherit from the page that the block
+    // lives on (this will work recursively)
+    if ($page instanceof Block) return $page->getBlockPage();
+
+    // if the page is a repeaterpage we call inheritAccessPage on the page that
+    // the repeater lives on, which will return either false if it is not a block
+    // or inherit from the blockPage in case it is a rpb block
+    if ($page instanceof RepeaterPage) {
+      return $this->inheritAccessPage($page->getForPage());
+    }
+
+    // otherwise return false (don't change access)
+    return false;
   }
 
   /**
@@ -1202,23 +1231,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         if (!$block instanceof Block) continue;
         $block->copyTo($newPage, $field);
       }
-    }
-  }
-
-  /**
-   * Make repeater items trashable for non superusers
-   */
-  public function hookRepeaterTrashable(HookEvent $event): void
-  {
-    $repeater = $event->object;
-    if (!$repeater instanceof RepeaterPage) return;
-    if ($this->wire->user->isSuperuser()) return;
-
-    // get the page where the repeater lives on
-    $page = $repeater->getForPage();
-    if ($page instanceof Block) {
-      // the repeater item is trashable if the forpage is editable
-      $event->return = $page->editable();
     }
   }
 
@@ -1681,7 +1693,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     // get new value from input
     $sort = $this->wire->input->get('sort', 'string');
-    $new = $this->wire->pages->find("id.sort=$sort");
+    $new = $this->wire->pages->find("id.sort=$sort,include=all");
 
     if ($block instanceof Block) {
       // a pagebuilder block has been sorted

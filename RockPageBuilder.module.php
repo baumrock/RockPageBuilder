@@ -42,8 +42,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   /** @var WireArray */
   public $blockSettings;
 
-  public $createLessFile = false;
-
   private $defaultSettings = false;
 
   /**
@@ -761,6 +759,26 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     return $settings;
   }
 
+  private function createBlockFiles($name, $subfolder)
+  {
+    $files = wire()->config->rpbBlockFiles;
+    if (!is_array($files)) return;
+    $replacements = [
+      '{cls}' => "rpb-" . strtolower($name),
+    ];
+    foreach ($files as $filename => $content) {
+      $filename = str_replace("{name}", $name, $filename);
+      $saveTo = "$subfolder/$filename";
+      if (file_exists($saveTo)) continue;
+      $content = str_replace(
+        array_keys($replacements),
+        array_values($replacements),
+        $content
+      );
+      wire()->files->filePutContents($saveTo, $content);
+    }
+  }
+
   /**
    * Create new block for field
    * @return void
@@ -861,14 +879,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         ], "$subfolder/$name.view.php");
       }
 
-      // less file
-      if ($this->createLessFile) {
-        $this->stub(
-          "Block.less",
-          ['{cls}' => "rpb-" . strtolower($name)],
-          "$subfolder/$name.less"
-        );
-      }
+      // create additional block files
+      $this->createBlockFiles($name, $subfolder);
 
       die('success');
     });
@@ -1942,16 +1954,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'checked' => $this->useWidgets ? 'checked' : '',
       'notes' => 'If you disable widgets you can safely remove the widgets field from your home template.',
       'icon' => 'clone',
-      'columnWidth' => 50,
-    ]);
-
-    $fs->add([
-      'type' => 'checkbox',
-      'name' => 'createLessFile',
-      'label' => 'Create LESS file for new blocks',
-      'notes' => 'All blocks need a PHP file for the business logic and a markup file that defines the output. If you check this box a LESS file will be created for every block that you can use to define the styling of the block.',
-      'checked' => $this->createLessFile ? 'checked' : '',
-      'columnWidth' => 50,
+      'columnWidth' => 100,
     ]);
 
     /** @var InputfieldSelect $f */
@@ -2014,6 +2017,16 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'icon' => 'sort-alpha-asc',
       'columnWidth' => 50,
       'notes' => 'Please refer to the docs about "Blocks" to learn how to use this feature.',
+    ]);
+
+    $fs->add([
+      'type' => 'markup',
+      'label' => 'BlockFiles',
+      'description' => 'You can tell RockPageBuilder to create additional files for new blocks. For example, you can tell it to create a LESS or SCSS file for each new block:',
+      'value' => '<pre><code>$config->rpbBlockFiles = ['
+        . "\n" . '  "{name}.scss" => ".{cls} {\n\n}\n"'
+        . "\n];</code></pre>",
+      'notes' => 'Note: {cls} will be replaced with "rpb-[blocktype]", for example "rpb-text" or "rpb-image".',
     ]);
 
     $fs = new InputfieldFieldset();

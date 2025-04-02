@@ -42,8 +42,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   /** @var WireArray */
   public $blockSettings;
 
-  public $createLessFile = false;
-
   private $defaultSettings = false;
 
   /**
@@ -121,8 +119,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     wire()->addHookAfter('Pages::saved',                      $this, 'addTempFlag');
 
     // hooks for access control
-    $this->addHookAfter("Page::editable", $this, "hookBlockEditable");
-    $this->addHookAfter("Page::trashable", $this, "hookRepeaterTrashable");
+    $this->hookBlockAccess();
 
     // add styles for backend
     $this->addHookAfter("ProcessPageEdit::buildForm", $this, "addStyles");
@@ -762,6 +759,26 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     return $settings;
   }
 
+  private function createBlockFiles($name, $subfolder)
+  {
+    $files = wire()->config->rpbBlockFiles;
+    if (!is_array($files)) return;
+    $replacements = [
+      '{cls}' => "rpb-" . strtolower($name),
+    ];
+    foreach ($files as $filename => $content) {
+      $filename = str_replace("{name}", $name, $filename);
+      $saveTo = "$subfolder/$filename";
+      if (file_exists($saveTo)) continue;
+      $content = str_replace(
+        array_keys($replacements),
+        array_values($replacements),
+        $content
+      );
+      wire()->files->filePutContents($saveTo, $content);
+    }
+  }
+
   /**
    * Create new block for field
    * @return void
@@ -862,14 +879,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         ], "$subfolder/$name.view.php");
       }
 
-      // less file
-      if ($this->createLessFile) {
-        $this->stub(
-          "Block.less",
-          ['{cls}' => "rpb-" . strtolower($name)],
-          "$subfolder/$name.less"
-        );
-      }
+      // create additional block files
+      $this->createBlockFiles($name, $subfolder);
 
       die('success');
     });
@@ -1128,19 +1139,49 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
    * Make sure that blocks are editable if the rpb page is editable
    * @return void
    */
-  public function hookBlockEditable(HookEvent $event)
+  public function hookBlockAccess()
   {
-    $page = $event->object;
-    if (!$page instanceof Block) return;
-    $editable = $event->return;
+    if (wire()->user->isSuperuser()) return;
+    $methods = [
+      'editable',
+      'addable',
+      'publishable',
+      'listable',
+      'moveable',
+      'sortable',
+      'deleteable',
+      'trashable'
+    ];
+    foreach ($methods as $method) {
+      wire()->addHookAfter("Page::$method", function (HookEvent $event) use ($method) {
+        $page = $event->object;
+        $inheritAccessPage = $this->inheritAccessPage($page);
+        if (!$inheritAccessPage) return;
 
-    // if page is already editable we exit early
-    if ($editable == true) return;
+        // we allow all methods if the access page is editable
+        // note: I wanted to inherit properly via ->$method()
+        // but somehow trashable() is always false even though the page is
+        // actually trashable
+        $event->return = $inheritAccessPage->editable();
+      });
+    }
+  }
 
-    // otherwise we make the block editable if the rpb page is editable
-    $rpbPage = $page->getBlockPage();
-    if (!$rpbPage or !$rpbPage->id) return;
-    $event->return = $rpbPage->editable();
+  private function inheritAccessPage(Page $page): Page|false
+  {
+    // if it is a pagebuilder block we inherit from the page that the block
+    // lives on (this will work recursively)
+    if ($page instanceof Block) return $page->getBlockPage();
+
+    // if the page is a repeaterpage we call inheritAccessPage on the page that
+    // the repeater lives on, which will return either false if it is not a block
+    // or inherit from the blockPage in case it is a rpb block
+    if ($page instanceof RepeaterPage) {
+      return $this->inheritAccessPage($page->getForPage());
+    }
+
+    // otherwise return false (don't change access)
+    return false;
   }
 
   /**
@@ -1202,23 +1243,6 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         if (!$block instanceof Block) continue;
         $block->copyTo($newPage, $field);
       }
-    }
-  }
-
-  /**
-   * Make repeater items trashable for non superusers
-   */
-  public function hookRepeaterTrashable(HookEvent $event): void
-  {
-    $repeater = $event->object;
-    if (!$repeater instanceof RepeaterPage) return;
-    if ($this->wire->user->isSuperuser()) return;
-
-    // get the page where the repeater lives on
-    $page = $repeater->getForPage();
-    if ($page instanceof Block) {
-      // the repeater item is trashable if the forpage is editable
-      $event->return = $page->editable();
     }
   }
 
@@ -1681,7 +1705,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     // get new value from input
     $sort = $this->wire->input->get('sort', 'string');
-    $new = $this->wire->pages->find("id.sort=$sort");
+    $new = $this->wire->pages->find("id.sort=$sort,include=all");
 
     if ($block instanceof Block) {
       // a pagebuilder block has been sorted
@@ -1930,16 +1954,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'checked' => $this->useWidgets ? 'checked' : '',
       'notes' => 'If you disable widgets you can safely remove the widgets field from your home template.',
       'icon' => 'clone',
-      'columnWidth' => 50,
-    ]);
-
-    $fs->add([
-      'type' => 'checkbox',
-      'name' => 'createLessFile',
-      'label' => 'Create LESS file for new blocks',
-      'notes' => 'All blocks need a PHP file for the business logic and a markup file that defines the output. If you check this box a LESS file will be created for every block that you can use to define the styling of the block.',
-      'checked' => $this->createLessFile ? 'checked' : '',
-      'columnWidth' => 50,
+      'columnWidth' => 100,
     ]);
 
     /** @var InputfieldSelect $f */
@@ -2002,6 +2017,16 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'icon' => 'sort-alpha-asc',
       'columnWidth' => 50,
       'notes' => 'Please refer to the docs about "Blocks" to learn how to use this feature.',
+    ]);
+
+    $fs->add([
+      'type' => 'markup',
+      'label' => 'BlockFiles',
+      'description' => 'You can tell RockPageBuilder to create additional files for new blocks. For example, you can tell it to create a LESS or SCSS file for each new block:',
+      'value' => '<pre><code>$config->rpbBlockFiles = ['
+        . "\n" . '  "{name}.scss" => ".{cls} {\n\n}\n"'
+        . "\n];</code></pre>",
+      'notes' => 'Note: {cls} will be replaced with "rpb-[blocktype]", for example "rpb-text" or "rpb-image".',
     ]);
 
     $fs = new InputfieldFieldset();

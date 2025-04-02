@@ -2026,7 +2026,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'value' => '<pre><code>$config->rpbBlockFiles = ['
         . "\n" . '  "{name}.scss" => ".{cls} {\n\n}\n"'
         . "\n];</code></pre>",
-      'notes' => 'Note: {cls} will be replaced with "rpb-[blocktype]", for example "rpb-text" or "rpb-image".',
+      'notes' => 'Note: {cls} will be replaced with "rpb-[blocktype]", for example "rpb-text" or "rpb-image".
+      Note2: You can use wire()->files->render(/path/to/file.xyz) for more complex file creation.',
     ]);
 
     $fs = new InputfieldFieldset();

@@ -1,3 +1,15 @@
+## [6.4.0](https://github.com/baumrock/RockPageBuilder/compare/v6.3.1...v6.4.0) (2025-04-02)
+
+
+### Features
+
+* add support to create custom additional blockfiles ([5d945be](https://github.com/baumrock/RockPageBuilder/commit/5d945be1e18e9bf8061a75552adeb279043d86ff))
+
+
+### Bug Fixes
+
+* trash icon not visible for non-superusers ([0a5d8bf](https://github.com/baumrock/RockPageBuilder/commit/0a5d8bf6a148c247187b60dce2aa0b89da41ddce))
+
 ## [6.3.1](https://github.com/baumrock/RockPageBuilder/compare/v6.3.0...v6.3.1) (2025-03-16)
 
 
@@ -33,11 +45,4 @@
 * add "thumb" property for easy use of common thumbnails ([48ab241](https://github.com/baumrock/RockPageBuilder/commit/48ab24124cd473b6eba6e3bac4b1260463d91971))
 * add fallback to default field in renderBlocks() ([42650cf](https://github.com/baumrock/RockPageBuilder/commit/42650cfdc54087d184e2523d591c3277e02b2686))
 * add new rockfrontend toolbar icon for toggling drag&drop ([28f3974](https://github.com/baumrock/RockPageBuilder/commit/28f39748f137bf86d65551639db92868ee223a9c))
-
-## [6.0.2](https://github.com/baumrock/RockPageBuilder/compare/v6.0.1...v6.0.2) (2025-02-05)
-
-
-### Bug Fixes
-
-* remove $rf->styles() call ([068614f](https://github.com/baumrock/RockPageBuilder/commit/068614fee46062dc9dac4ab4723b62c641dc6619))
 

@@ -337,6 +337,27 @@ $(document).on("AjaxUploadDone", function (e) {
   RockPageBuilder.changed(e);
 });
 
+// trigger changed event when InputfieldStateChanged is added to elements
+// credits: FirwWire https://processwire.com/talk/topic/31153--
+$(document).on("ready", function () {
+  const rpbItemsObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.target.classList.contains("InputfieldStateChanged")) {
+        RockPageBuilder.changed(mutation);
+      }
+    });
+  });
+
+  $(".rpb-items").each(function (_, rpbItem) {
+    rpbItemsObserver.observe(rpbItem, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+  });
+});
+
 // make sure to add InputfieldStateChanged immediately after keydown
 // we do not intercept form.submit() because that somehow brakes the save process
 $(document).on(

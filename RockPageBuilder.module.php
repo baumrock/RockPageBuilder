@@ -2025,9 +2025,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
       'description' => 'You can tell RockPageBuilder to create additional files for new blocks. For example, you can tell it to create a LESS or SCSS file for each new block:',
       'value' => '<pre><code>$config->rpbBlockFiles = ['
         . "\n" . '  "{name}.scss" => ".{cls} {\n\n}\n"'
+        . "\n" . '  "{name}.less" => wire()->files->render("/path/to/file.xyz")'
         . "\n];</code></pre>",
-      'notes' => 'Note: {cls} will be replaced with "rpb-[blocktype]", for example "rpb-text" or "rpb-image".
-      Note2: You can use wire()->files->render(/path/to/file.xyz) for more complex file creation.',
+      'notes' => 'Note: {cls} will be replaced with "rpb-[blocktype]", for example "rpb-text" or "rpb-image".',
     ]);
 
     $fs = new InputfieldFieldset();

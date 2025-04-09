@@ -21,3 +21,13 @@ Some tips to handle this:
 - Use the frontend editor for pages with large numbers of blocks
 
 While some users report needing higher limits (3,000-10,000) for other ProcessWire features, I've never hit that limitation with the default setting of 1000 on any of my RockPageBuilder projects.
+
+## jQuery
+
+The ALFRED editor for frontend editing is actually a feature of ProcessWire itself, not RockPageBuilder. It is based on the ProcessWire backend, which heavily uses jQuery.
+
+Unfortunately, this can lead to trouble if you are using jQuery on your frontend! To solve this you have some options:
+
+- Remove jQuery from your frontend
+- Do not use frontend editing / ALFRED
+- Use the same jQuery version that ProcessWire uses

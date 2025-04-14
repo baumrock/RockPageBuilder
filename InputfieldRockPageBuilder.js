@@ -331,6 +331,23 @@ $(document).on(
     RockPageBuilder.changed(e);
   }
 );
+// monitor changes in tinymce fields
+// this implementation will also catch changing text alignment
+(() => {
+  let editors = [];
+  setInterval(() => {
+    tinymce.get().forEach((editor) => {
+      if (editors.includes(editor)) return;
+      editors.push(editor);
+      editor.on("change input", (e) => {
+        // get closest li.Inputfield from editors textarea
+        const textarea = editor.getElement();
+        const li = textarea.closest("li.Inputfield");
+        if (li.length) RockPageBuilder.changed(li);
+      });
+    });
+  }, 100);
+})();
 
 // trigger changed event after file uploads
 $(document).on("AjaxUploadDone", function (e) {

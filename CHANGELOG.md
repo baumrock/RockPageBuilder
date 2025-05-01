@@ -1,3 +1,10 @@
+## [6.5.1](https://github.com/baumrock/RockPageBuilder/compare/v6.5.0...v6.5.1) (2025-05-01)
+
+
+### Bug Fixes
+
+* improve tinymce change detection ([b8b271b](https://github.com/baumrock/RockPageBuilder/commit/b8b271b711e4f06df69c963927ff56dafe488901))
+
 ## [6.5.0](https://github.com/baumrock/RockPageBuilder/compare/v6.4.0...v6.5.0) (2025-04-05)
 
 
@@ -36,11 +43,4 @@
 ### Bug Fixes
 
 * remove old translations ([5529168](https://github.com/baumrock/RockPageBuilder/commit/5529168a1d91079afcabb12844279b284280531d))
-
-## [6.2.0](https://github.com/baumrock/RockPageBuilder/compare/v6.1.0...v6.2.0) (2025-02-20)
-
-
-### Features
-
-* add alfred-hover-padding class for nested block editing ([702b35d](https://github.com/baumrock/RockPageBuilder/commit/702b35d1f0cae342ebff65162c74c10089284107))
 

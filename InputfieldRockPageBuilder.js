@@ -4,6 +4,7 @@
  * This file is loaded whenever an InputfieldRockPageBuilder is loaded
  * and also when the GUI for adding a new block is rendered (for block-filter)
  */
+console.log("InputfieldRockPageBuilder loaded");
 
 function RockPageBuilder() {
   this.editdelay = 5;
@@ -228,9 +229,8 @@ RockPageBuilder.prototype.changed = function (e) {
   // don't trigger changes when inputfield has class to ignore changes
   if (e.target.classList.contains("InputfieldIgnoreChanges")) return;
 
-  clearTimeout(rm.changeTimer);
-  // debounce for all changes
-  rm.changeTimer = setTimeout(function () {
+  // define the callback that handles the change event
+  const callback = function () {
     rm.makeSortable(e);
     rm.setTextarea(e, true);
     let $li = rm.$root(e);
@@ -240,9 +240,20 @@ RockPageBuilder.prototype.changed = function (e) {
 
       // trigger rpb-change event that other modules can listen to
       $li.trigger("rpb-change");
-    } else console.log("RockPageBuilder init");
+    } else console.log("RockPageBuilder init", $li.attr("id"));
     $li.addClass("rpb-init");
-  }, this.editdelay);
+  };
+
+  // if the root element of the current change is not initialized
+  // we need to call the callback immediately
+  // this ensures that when multiple RPB fields are on the same page
+  // we initialize them all and not just the last one (due to debouncing)
+  const $root = rm.$root(e);
+  if (!$root.hasClass("rpb-init")) callback();
+
+  // otherwise we debounce the callback
+  clearTimeout(rm.changeTimer);
+  rm.changeTimer = setTimeout(callback, this.editdelay);
 };
 
 // click on add new item button

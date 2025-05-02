@@ -221,7 +221,7 @@ RockPageBuilder.prototype.unspin = function ($el) {
 
 // event handlers
 
-// change triggerd
+// change triggered
 RockPageBuilder.prototype.changed = function (e) {
   let rm = this;
 

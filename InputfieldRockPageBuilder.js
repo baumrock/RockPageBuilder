@@ -4,10 +4,12 @@
  * This file is loaded whenever an InputfieldRockPageBuilder is loaded
  * and also when the GUI for adding a new block is rendered (for block-filter)
  */
+console.log("InputfieldRockPageBuilder loaded");
 
 function RockPageBuilder() {
   this.editdelay = 5;
   this.submitdelay = this.editdelay + 20;
+  this.timers = {};
 
   this.init = false;
   this.changeTimer;
@@ -221,28 +223,43 @@ RockPageBuilder.prototype.unspin = function ($el) {
 
 // event handlers
 
-// change triggerd
-RockPageBuilder.prototype.changed = function (e) {
+// change triggered
+RockPageBuilder.prototype.changed = function (e, what) {
   let rm = this;
 
   // don't trigger changes when inputfield has class to ignore changes
   if (e.target.classList.contains("InputfieldIgnoreChanges")) return;
 
-  clearTimeout(rm.changeTimer);
-  // debounce for all changes
-  rm.changeTimer = setTimeout(function () {
+  let $li = rm.$root(e);
+  const liID = $li.attr("id");
+
+  // define the callback that handles the change event
+  const callback = function () {
     rm.makeSortable(e);
     rm.setTextarea(e, true);
-    let $li = rm.$root(e);
+
+    // change event
     if ($li.hasClass("rpb-init")) {
-      console.log("RockPageBuilder changed");
+      console.log("RockPageBuilder changed", liID, what);
       $li.addClass("InputfieldStateChanged");
 
       // trigger rpb-change event that other modules can listen to
       $li.trigger("rpb-change");
-    } else console.log("RockPageBuilder init");
-    $li.addClass("rpb-init");
-  }, this.editdelay);
+    }
+    // initialisation
+    else {
+      console.log("RockPageBuilder init", liID);
+      $li.addClass("rpb-init");
+
+      // trigger rpb-init event that other modules can listen to
+      $li.trigger("rpb-init");
+    }
+  };
+
+  // otherwise we debounce the callback
+  const timer = rm.timers[liID];
+  if (timer) clearTimeout(timer);
+  rm.timers[liID] = setTimeout(callback, this.editdelay);
 };
 
 // click on add new item button
@@ -299,12 +316,12 @@ $(document).on(
 
 // change event triggered on root element
 $(document).on("changed", ".InputfieldRockPageBuilder", function (e) {
-  RockPageBuilder.changed(e);
+  RockPageBuilder.changed(e, "change event");
 });
 
 // items sort oder changed
 $(document).on("stop sorted", ".rpb-items", function (e) {
-  RockPageBuilder.changed(e);
+  RockPageBuilder.changed(e, "stop sorted event");
 });
 
 // whenever a rpb item is moved we reset CKEditor fields
@@ -319,7 +336,7 @@ $(document).on(
   ".rpb-items input, .rpb-items textarea, .rpb-items select",
   function (e) {
     setTimeout(function () {
-      RockPageBuilder.changed(e);
+      RockPageBuilder.changed(e, "input changed");
     });
   }
 );
@@ -328,7 +345,7 @@ $(document).on(
   "blur keyup paste input",
   ".rpb-item [contenteditable]",
   function (e) {
-    RockPageBuilder.changed(e);
+    RockPageBuilder.changed(e, "contenteditable changed");
   }
 );
 // monitor changes in tinymce fields
@@ -343,7 +360,7 @@ $(document).on(
         // get closest li.Inputfield from editors textarea
         const textarea = editor.getElement();
         const li = textarea.closest("li.Inputfield");
-        if (li.length) RockPageBuilder.changed(li);
+        if (li.length) RockPageBuilder.changed(li, "tinymce changed");
       });
     });
   }, 100);
@@ -351,7 +368,7 @@ $(document).on(
 
 // trigger changed event after file uploads
 $(document).on("AjaxUploadDone", function (e) {
-  RockPageBuilder.changed(e);
+  RockPageBuilder.changed(e, "AjaxUploadDone event");
 });
 
 // trigger changed event when InputfieldStateChanged is added to elements
@@ -360,7 +377,7 @@ $(document).on("ready", function () {
   const rpbItemsObserver = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       if (mutation.target.classList.contains("InputfieldStateChanged")) {
-        RockPageBuilder.changed(mutation);
+        RockPageBuilder.changed(mutation, "state changed");
       }
     });
   });

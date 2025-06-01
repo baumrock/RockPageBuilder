@@ -1,3 +1,11 @@
+## [6.5.2](https://github.com/baumrock/RockPageBuilder/compare/v6.5.1...v6.5.2) (2025-06-01)
+
+
+### Bug Fixes
+
+* improve change detection when multiple fields are on one page ([cb64c1b](https://github.com/baumrock/RockPageBuilder/commit/cb64c1b4deeaf6495baaab758c11e309673fc663))
+* properly initialize all RPB fields on the same page ([363feff](https://github.com/baumrock/RockPageBuilder/commit/363feff5938a57401f587965b0af436d1e7806c4))
+
 ## [6.5.1](https://github.com/baumrock/RockPageBuilder/compare/v6.5.0...v6.5.1) (2025-05-01)
 
 
@@ -30,17 +38,4 @@
 ### Bug Fixes
 
 * rockpagebuilder conflicting with quill editor on same page ([5da3a1c](https://github.com/baumrock/RockPageBuilder/commit/5da3a1c2b774f7be71f304059cd6c4a8efeb00c3))
-
-## [6.3.0](https://github.com/baumrock/RockPageBuilder/compare/v6.2.0...v6.3.0) (2025-03-12)
-
-
-### Features
-
-* add callbacks for custom sort reload ([26d796d](https://github.com/baumrock/RockPageBuilder/commit/26d796d0f3fea64f4aac13a84ad9920302fd6485))
-* add noTemp flag to prevent setting the temp flag for blocks that are created via api ([4389d47](https://github.com/baumrock/RockPageBuilder/commit/4389d476c5c2a5716012f2625b09915e24ba88a0))
-
-
-### Bug Fixes
-
-* remove old translations ([5529168](https://github.com/baumrock/RockPageBuilder/commit/5529168a1d91079afcabb12844279b284280531d))
 

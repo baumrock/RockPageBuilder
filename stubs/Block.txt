@@ -94,8 +94,8 @@ class {name} extends Block {
     // get global settings from /site/templates/RockPageBuilder/settings.php
     $settings = $this->getGlobalSettings($field)
       ->use([
-        'style',
-        'demo-checkbox',
+        // 'style',
+        // 'demo-checkbox',
       ]);
 
     // add custom settings

@@ -352,6 +352,7 @@ $(document).on(
 // this implementation will also catch changing text alignment
 (() => {
   let editors = [];
+  if (typeof tinymce == "undefined") return;
   setInterval(() => {
     tinymce.get().forEach((editor) => {
       if (editors.includes(editor)) return;

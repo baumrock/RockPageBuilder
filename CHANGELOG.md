@@ -1,3 +1,11 @@
+## [6.5.3](https://github.com/baumrock/RockPageBuilder/compare/v6.5.2...v6.5.3) (2025-07-02)
+
+
+### Bug Fixes
+
+* listen for tinymce changes only if tinymce is present ([316938b](https://github.com/baumrock/RockPageBuilder/commit/316938bc4dfeeb4a0db78c472fb45acdff97b5e5))
+* uncomment settings to prevent causing errors on new blocks ([21a1bb2](https://github.com/baumrock/RockPageBuilder/commit/21a1bb2f9fd8bd6c3c71f8d963944197069b5244))
+
 ## [6.5.2](https://github.com/baumrock/RockPageBuilder/compare/v6.5.1...v6.5.2) (2025-06-01)
 
 
@@ -31,11 +39,4 @@
 ### Bug Fixes
 
 * trash icon not visible for non-superusers ([0a5d8bf](https://github.com/baumrock/RockPageBuilder/commit/0a5d8bf6a148c247187b60dce2aa0b89da41ddce))
-
-## [6.3.1](https://github.com/baumrock/RockPageBuilder/compare/v6.3.0...v6.3.1) (2025-03-16)
-
-
-### Bug Fixes
-
-* rockpagebuilder conflicting with quill editor on same page ([5da3a1c](https://github.com/baumrock/RockPageBuilder/commit/5da3a1c2b774f7be71f304059cd6c4a8efeb00c3))
 

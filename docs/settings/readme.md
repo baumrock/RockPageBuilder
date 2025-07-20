@@ -156,7 +156,7 @@ public function info() {
 
 ## Conditionals (showIf)
 
-The `showIf` feature allows you to conditionally display settings based on the value of other settings within the same block. This can be particularly useful for creating dynamic and interactive settings interfaces where the visibility of certain options depends on the configuration of others.
+The `showIf` feature allows you to conditionally display settings based on the value of fields or other settings of the same block. This can be particularly useful for creating dynamic and interactive settings interfaces where the visibility of certain options depends on the configuration of others.
 
 To use `showIf`, you need to specify it as an attribute in the settings array of your block's `settingsTable` method. The `showIf` attribute takes a string that represents a condition. This condition is composed of the name of the setting to watch, an equals sign `=`, and the value that triggers the visibility of the current setting.
 
@@ -175,6 +175,17 @@ public function settingsTable(\ProcessWire\RockFieldsField $field)
       'showIf' => 'showImages=1',
     ]);
 }
+```
+
+### Complex Conditions
+
+You can also use more complex conditions in the `showIf` attribute by combining multiple conditions with logical operators such as `&&` (AND) and `||` (OR), and by grouping them with parentheses. This allows you to create advanced logic for when a setting should be shown.
+
+Examples:
+
+```js
+'showIf' => 'advancedOptions=1 && (layout=grid || layout=list)',
+'showIf' => 'whatever=1 || text="foo bar"',
 ```
 
 ## Example Settings

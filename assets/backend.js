@@ -15,17 +15,21 @@
       if (showIf) {
         // Split the showIf value into field name and value to match
         const [fieldToMatch, valueToMatch] = showIf.split("=");
-        // Find the input element within the table that matches the field name
+        // find the field to match (other settings field)
         let $fieldToMatch = $form.find(`[data-name="${fieldToMatch}"] :input`);
+
+        // if no other settings field with this name exists, try to find a
+        // regular form field with this name
         if (!$fieldToMatch.length) {
           $fieldToMatch = $form.find(`[name="${fieldToMatch}"]`);
         }
-        console.log("fieldToMatch", $fieldToMatch);
+
         // Determine the value of the field to match, accounting for checkboxes
         let targetValue = $fieldToMatch.val();
         if ($fieldToMatch.is(":checkbox")) {
           targetValue = $fieldToMatch.is(":checked") ? "1" : "0";
         }
+
         // Show or hide the row based on whether the target value matches
         if (targetValue == valueToMatch) $row.show();
         else $row.hide();

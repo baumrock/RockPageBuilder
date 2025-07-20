@@ -1,3 +1,12 @@
+## [6.6.0](https://github.com/baumrock/RockPageBuilder/compare/v6.5.3...v6.6.0) (2025-07-20)
+
+
+### Features
+
+* add support for AND + OR in showIf ([77942e6](https://github.com/baumrock/RockPageBuilder/commit/77942e6a53ffe7732dcab70bc533b802818e681b))
+* add support for complex ( && || ) showIfs ([3c76674](https://github.com/baumrock/RockPageBuilder/commit/3c766740d03d1e745cf5434058ab734ac97e9a40))
+* add support for showIf based on form fields (not only other settings) ([946f3d1](https://github.com/baumrock/RockPageBuilder/commit/946f3d11c75bf2b09bc6557fab2f019de722cc32))
+
 ## [6.5.3](https://github.com/baumrock/RockPageBuilder/compare/v6.5.2...v6.5.3) (2025-07-02)
 
 
@@ -27,16 +36,4 @@
 ### Features
 
 * add better change detection for blocks ([8879209](https://github.com/baumrock/RockPageBuilder/commit/88792099f5289f80005b192aee7ca42792103bca))
-
-## [6.4.0](https://github.com/baumrock/RockPageBuilder/compare/v6.3.1...v6.4.0) (2025-04-02)
-
-
-### Features
-
-* add support to create custom additional blockfiles ([5d945be](https://github.com/baumrock/RockPageBuilder/commit/5d945be1e18e9bf8061a75552adeb279043d86ff))
-
-
-### Bug Fixes
-
-* trash icon not visible for non-superusers ([0a5d8bf](https://github.com/baumrock/RockPageBuilder/commit/0a5d8bf6a148c247187b60dce2aa0b89da41ddce))
 

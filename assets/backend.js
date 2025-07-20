@@ -9,14 +9,18 @@
     // Find the closest table element to the event target
     // Iterate over each .rpb-setting element
     $(".rpb-setting").each(function (i, el) {
-      let $table = $(el).closest("table");
+      let $form = $(el).closest(".InputfieldForm");
       const $row = $(this); // Current row
       const showIf = $row.attr("showIf"); // Get the showIf attribute value
       if (showIf) {
         // Split the showIf value into field name and value to match
         const [fieldToMatch, valueToMatch] = showIf.split("=");
         // Find the input element within the table that matches the field name
-        let $fieldToMatch = $table.find(`[data-name="${fieldToMatch}"] :input`);
+        let $fieldToMatch = $form.find(`[data-name="${fieldToMatch}"] :input`);
+        if (!$fieldToMatch.length) {
+          $fieldToMatch = $form.find(`[name="${fieldToMatch}"]`);
+        }
+        console.log("fieldToMatch", $fieldToMatch);
         // Determine the value of the field to match, accounting for checkboxes
         let targetValue = $fieldToMatch.val();
         if ($fieldToMatch.is(":checkbox")) {
@@ -32,6 +36,6 @@
     });
   }
   // monitor changes to all settings fields
-  $(document).on("change", ".rpb-setting :input", updateShowIf);
+  document.addEventListener("change", updateShowIf);
   $(document).ready(updateShowIf);
 })();

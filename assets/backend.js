@@ -42,37 +42,30 @@
       const showIf = $row.attr("showIf");
       if (!showIf) return $row.show();
 
-      // if no AND or OR is found, show the row
-      if (!showIf.includes(" AND ") && !showIf.includes(" OR ")) {
-        const isVisible = show($row, showIf);
-        $row.toggle(isVisible);
-        return;
-      }
+      // use regex to find all occurrences of foo=bar, foo="bar baz", foo='bar baz'
+      // replace all matches with their evaluated value as string
+      // eg (rockforms_form=Reservation && member=1) || rockforms_form=Contact
+      // could return: (true && false) || true
+      const evaluatedShowIf = showIf.replace(
+        /([a-zA-Z0-9_]+)=("([^"]*)"|'([^']*)'|([a-zA-Z0-9_]+))/g,
+        (match, p1, p2, p3, p4, p5) => {
+          // p1 = field name
+          // p2 = full quoted string (if quoted)
+          // p3 = content of double quotes (if double quoted)
+          // p4 = content of single quotes (if single quoted)
+          // p5 = simple value (if not quoted)
+          const value = p3 || p4 || p5; // get the actual value
+          return show($row, `${p1}=${value}`);
+        }
+      );
+      // console.log("evaluatedShowIf", evaluatedShowIf);
 
-      if (showIf.includes(" AND ") && showIf.includes(" OR ")) {
-        console.error("showIf with both AND and OR is not supported");
-        return;
-      }
-
-      if (showIf.includes(" AND ")) {
-        const partsAND = showIf.split(" AND ");
-        const isVisible = partsAND.every((part) => show($row, part));
-        $row.toggle(isVisible);
-        return;
-      }
-
-      if (showIf.includes(" OR ")) {
-        const partsOR = showIf.split(" OR ");
-        const isVisible = partsOR.some((part) => show($row, part));
-        $row.toggle(isVisible);
-        return;
-      }
-
-      // fallback: hide the row
-      $row.hide();
+      // toggle row based on evaluated showif string
+      $row.toggle(eval(evaluatedShowIf));
     });
   }
   // monitor changes to all settings fields
   document.addEventListener("change", updateShowIf);
+  document.addEventListener("input", updateShowIf);
   $(document).ready(updateShowIf);
 })();

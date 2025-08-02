@@ -1,3 +1,10 @@
+## [6.6.1](https://github.com/baumrock/RockPageBuilder/compare/v6.6.0...v6.6.1) (2025-08-02)
+
+
+### Bug Fixes
+
+* prevent error if RockSortable is not loaded ([0427c97](https://github.com/baumrock/RockPageBuilder/commit/0427c975755966f50eb8b78a79b74efb19ae1215))
+
 ## [6.6.0](https://github.com/baumrock/RockPageBuilder/compare/v6.5.3...v6.6.0) (2025-07-20)
 
 
@@ -29,11 +36,4 @@
 ### Bug Fixes
 
 * improve tinymce change detection ([b8b271b](https://github.com/baumrock/RockPageBuilder/commit/b8b271b711e4f06df69c963927ff56dafe488901))
-
-## [6.5.0](https://github.com/baumrock/RockPageBuilder/compare/v6.4.0...v6.5.0) (2025-04-05)
-
-
-### Features
-
-* add better change detection for blocks ([8879209](https://github.com/baumrock/RockPageBuilder/commit/88792099f5289f80005b192aee7ca42792103bca))
 

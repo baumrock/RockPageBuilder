@@ -15,6 +15,7 @@
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     RockFrontendToolbar.onToggle('dragdrop', (type) => {
+      if (typeof RockSortable === 'undefined') return;
       if (type === 'on') {
         RockSortable.enable();
       } else {

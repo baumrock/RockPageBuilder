@@ -1,3 +1,10 @@
+## [6.7.0](https://github.com/baumrock/RockPageBuilder/compare/v6.6.1...v6.7.0) (2025-08-07)
+
+
+### Features
+
+* add new "integer" and "number" rockfields type by @FireWire ([436c07a](https://github.com/baumrock/RockPageBuilder/commit/436c07a6ac59ab43e0b6e3b1c5901dc60b769a8d))
+
 ## [6.6.1](https://github.com/baumrock/RockPageBuilder/compare/v6.6.0...v6.6.1) (2025-08-02)
 
 
@@ -29,11 +36,4 @@
 
 * improve change detection when multiple fields are on one page ([cb64c1b](https://github.com/baumrock/RockPageBuilder/commit/cb64c1b4deeaf6495baaab758c11e309673fc663))
 * properly initialize all RPB fields on the same page ([363feff](https://github.com/baumrock/RockPageBuilder/commit/363feff5938a57401f587965b0af436d1e7806c4))
-
-## [6.5.1](https://github.com/baumrock/RockPageBuilder/compare/v6.5.0...v6.5.1) (2025-05-01)
-
-
-### Bug Fixes
-
-* improve tinymce change detection ([b8b271b](https://github.com/baumrock/RockPageBuilder/commit/b8b271b711e4f06df69c963927ff56dafe488901))
 

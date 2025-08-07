@@ -84,7 +84,7 @@ class RockFieldsField extends WireData
     $type = strtolower($type);
     switch ($type) {
 
-        /**
+      /**
        * Checkbox
        */
       case 'checkbox':
@@ -97,7 +97,7 @@ class RockFieldsField extends WireData
         break;
 
 
-        /**
+      /**
          * Checkboxes
          *
          * Set options as third parameter. In your sleep method make sure to
@@ -118,7 +118,30 @@ class RockFieldsField extends WireData
         $f->value = $values->$name;
         break;
 
-        /**
+      /**
+         * Integer
+         *
+         * Set basic options as third parameter. Supported options are shown in the example
+         *
+         * Example:
+         * $field->input('autoplay_interval', 'integer', [
+         *     'min' => 1,
+         *     'max' => 10,
+         *     'defaultValue' => 5,
+         *  ])
+         *
+         */
+      case 'number':
+      case 'integer':
+        $f = new InputfieldInteger();
+        $f->inputType = 'number';
+        $f->min = $data['min'] ?? null;
+        $f->max = $data['max'] ?? null;
+        $f->defaultValue = $data['defaultValue'] ?? null;
+        $f->value = $values->$name;
+        break;
+
+      /**
          * Radio buttons
          *
          * Set options as third parameter
@@ -148,7 +171,7 @@ class RockFieldsField extends WireData
         $f->value = $values->$name;
         break;
 
-        /**
+      /**
          * Select field
          *
          * Set options as third parameter
@@ -176,7 +199,7 @@ class RockFieldsField extends WireData
         $f->value = $values->$name;
         break;
 
-        /**
+      /**
          * Textarea
          */
       case 'textarea':
@@ -184,7 +207,7 @@ class RockFieldsField extends WireData
         $f->value = $values->$name;
         break;
 
-        /**
+      /**
          * Textarea Multilang
          */
       case 'textarealanguage':
@@ -196,7 +219,7 @@ class RockFieldsField extends WireData
         }
         break;
 
-        /**
+      /**
          * Text Multilang
          */
       case 'textlanguage':
@@ -208,7 +231,7 @@ class RockFieldsField extends WireData
         }
         break;
 
-        /**
+      /**
          * Simple textfield input
          */
       default:

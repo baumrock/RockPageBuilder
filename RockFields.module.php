@@ -6,7 +6,7 @@ use RockPageBuilder\BlockSettingsArray;
 
 /**
  * @author Bernhard Baumrock, 18.11.2021
- * @license COMMERCIAL DO NOT DISTRIBUTE
+ * @license MIT as of 2026-01-21
  * @link https://www.baumrock.com
  */
 class RockFields extends WireData implements Module

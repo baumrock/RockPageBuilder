@@ -11,7 +11,7 @@ use RockPageBuilderBlock\Widget;
 
 /**
  * @author Bernhard Baumrock, 18.07.2020
- * @license COMMERCIAL DO NOT DISTRIBUTE
+ * @license MIT as of 2026-01-21
  * @link https://www.baumrock.com
  */
 

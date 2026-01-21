@@ -1,3 +1,14 @@
+## [7.0.0](https://github.com/baumrock/RockPageBuilder/compare/v6.7.0...v7.0.0) (2026-01-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* change license to MIT
+
+### Bug Fixes
+
+* change license to MIT ([3e7bf3c](https://github.com/baumrock/RockPageBuilder/commit/3e7bf3c9b1ca8ea01f04500b6f7a63cfa3388a2f))
+
 ## [6.7.0](https://github.com/baumrock/RockPageBuilder/compare/v6.6.1...v6.7.0) (2025-08-07)
 
 
@@ -28,12 +39,4 @@
 
 * listen for tinymce changes only if tinymce is present ([316938b](https://github.com/baumrock/RockPageBuilder/commit/316938bc4dfeeb4a0db78c472fb45acdff97b5e5))
 * uncomment settings to prevent causing errors on new blocks ([21a1bb2](https://github.com/baumrock/RockPageBuilder/commit/21a1bb2f9fd8bd6c3c71f8d963944197069b5244))
-
-## [6.5.2](https://github.com/baumrock/RockPageBuilder/compare/v6.5.1...v6.5.2) (2025-06-01)
-
-
-### Bug Fixes
-
-* improve change detection when multiple fields are on one page ([cb64c1b](https://github.com/baumrock/RockPageBuilder/commit/cb64c1b4deeaf6495baaab758c11e309673fc663))
-* properly initialize all RPB fields on the same page ([363feff](https://github.com/baumrock/RockPageBuilder/commit/363feff5938a57401f587965b0af436d1e7806c4))
 

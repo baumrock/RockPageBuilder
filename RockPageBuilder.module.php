@@ -859,7 +859,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
           '{alfred}' => $this->wire->modules->isInstalled('RockFrontend')
             ? '{alfred($block)}'
             : '',
-        ], "$subfolder/$name.latte");
+        ], str_ends_with($stub, '.latte')
+          ? "$subfolder/$name.latte"
+          : "$subfolder/$name.view.php");
       } elseif ($this->createView == 'latte') {
         $this->stub("Block.latte", [
           '{name}' => $name,

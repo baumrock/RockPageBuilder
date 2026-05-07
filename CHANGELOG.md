@@ -1,3 +1,10 @@
+## [7.0.2](https://github.com/baumrock/RockPageBuilder/compare/v7.0.1...v7.0.2) (2026-05-07)
+
+
+### Bug Fixes
+
+* preload nested inputfield assets ([ed70d39](https://github.com/baumrock/RockPageBuilder/commit/ed70d39cf9a61e6d09513d1255aee82f82e72262))
+
 ## [7.0.1](https://github.com/baumrock/RockPageBuilder/compare/v7.0.0...v7.0.1) (2026-04-06)
 
 
@@ -29,13 +36,4 @@
 ### Bug Fixes
 
 * prevent error if RockSortable is not loaded ([0427c97](https://github.com/baumrock/RockPageBuilder/commit/0427c975755966f50eb8b78a79b74efb19ae1215))
-
-## [6.6.0](https://github.com/baumrock/RockPageBuilder/compare/v6.5.3...v6.6.0) (2025-07-20)
-
-
-### Features
-
-* add support for AND + OR in showIf ([77942e6](https://github.com/baumrock/RockPageBuilder/commit/77942e6a53ffe7732dcab70bc533b802818e681b))
-* add support for complex ( && || ) showIfs ([3c76674](https://github.com/baumrock/RockPageBuilder/commit/3c766740d03d1e745cf5434058ab734ac97e9a40))
-* add support for showIf based on form fields (not only other settings) ([946f3d1](https://github.com/baumrock/RockPageBuilder/commit/946f3d11c75bf2b09bc6557fab2f019de722cc32))
 

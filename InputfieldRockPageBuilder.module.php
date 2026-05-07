@@ -93,6 +93,39 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
   }
 
   /**
+   * Preload assets for a field and nested repeater/fieldset fields
+   * @return void
+   */
+  private function preloadFieldAssets(Field $field, Page $page, array &$seen): void
+  {
+    $templateID = 0;
+    if ($field instanceof RepeaterField) {
+      $templateID = (int) $field->template_id;
+      $key = $field->id . ':' . $templateID;
+      if (isset($seen[$key])) return;
+      $seen[$key] = true;
+    }
+
+    // wrap renderReady in try/catch because it sometimes causes problems
+    // see https://processwire.com/talk/topic/29226-fields-to-inherit-tinymce-settings-from-lead-to-fatal-error-in-pw-backend/#comment-237098
+    try {
+      // using $page instead of $block fixes this issue:
+      // https://processwire.com/talk/topic/29403-image-fields-not-initializing-properly-within-add-block-to-page/
+      $f = $field->getInputfield($page);
+      if ($f) $f->renderReady();
+    } catch (\Throwable $th) {
+    }
+
+    if (!$templateID) return;
+    $tpl = $this->wire->templates->get($templateID);
+    if (!$tpl) return;
+
+    foreach ($tpl->fields as $childField) {
+      $this->preloadFieldAssets($childField, $page, $seen);
+    }
+  }
+
+  /**
    * Preload assets of all allowed blocks' inputfields
    * This makes sure that all the assets for eg file fields are
    * ready when a new block is added and initialized via JS
@@ -113,15 +146,8 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
       if (!$block instanceof Block) continue;
       if (!$tpl = $block->getTpl()) continue;
       foreach ($tpl->fields as $field) {
-        // wrap renderReady in try/catch because it sometimes causes problems
-        // see https://processwire.com/talk/topic/29226-fields-to-inherit-tinymce-settings-from-lead-to-fatal-error-in-pw-backend/#comment-237098
-        try {
-          // using $page instead of $block fixes this issue:
-          // https://processwire.com/talk/topic/29403-image-fields-not-initializing-properly-within-add-block-to-page/
-          $f = $field->getInputfield($page);
-          $f->renderReady();
-        } catch (\Throwable $th) {
-        }
+        $seen = [];
+        $this->preloadFieldAssets($field, $page, $seen);
       }
     }
   }

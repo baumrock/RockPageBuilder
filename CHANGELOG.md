@@ -1,3 +1,11 @@
+## [7.0.3](https://github.com/baumrock/RockPageBuilder/compare/v7.0.2...v7.0.3) (2026-07-31)
+
+
+### Bug Fixes
+
+* cleanup orphaned temp blocks when a page is opened for editing or a block is saved ([#4](https://github.com/baumrock/RockPageBuilder/issues/4))
+* fix rpb-tocheck never recording newly created temp block ids
+
 ## [7.0.2](https://github.com/baumrock/RockPageBuilder/compare/v7.0.1...v7.0.2) (2026-05-07)
 
 
@@ -36,4 +44,3 @@
 ### Bug Fixes
 
 * prevent error if RockSortable is not loaded ([0427c97](https://github.com/baumrock/RockPageBuilder/commit/0427c975755966f50eb8b78a79b74efb19ae1215))
-

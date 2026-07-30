@@ -72,6 +72,9 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   private $stylesAdded = false;
 
+  /** @var bool */
+  private $orphanCleanupDone = false;
+
   public $tplPath;
 
   public function init()
@@ -103,6 +106,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
     // hooks
     wire()->addHookAfter("ProcessPageEdit::buildForm",        $this, "buildForm");
+    wire()->addHookAfter("ProcessPageEdit::buildForm",        $this, "cleanupOnPageEdit");
     wire()->addHookAfter("ProcessPageEdit::buildFormContent", $this, "buildBlockForm");
     wire()->addHook("Page::getRmxBlock",                      $this, "getRmxBlock");
     wire()->addHookAfter("Page::render",                      $this, "addMagicStyles");
@@ -558,28 +562,147 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     if ($block->isTrash()) return;
     if ($this->isClone) return;
 
-    // delete orphaned blocks
-    $remove = [];
-    $toCheck = $this->getDatapage()->meta('rpb-tocheck') ?: [];
-    foreach ($toCheck as $id) {
-      $b = $this->wire->pages->get($id);
-      if (!$b->id) $remove[] = $id;
-      $age = time() - $b->created;
-      if ($b->isTrash()) $remove[] = $id;
-      if ($age < RockMigrations::oneMinute * 5) continue;
-      $b->trash();
-      $remove[] = $id;
-    }
-    $tocheck = array_diff($toCheck, $remove);
+    $this->cleanupOrphanedTempBlocks($block->getBlockPage());
 
     // if block was just created we mark it as temp
     // otherwise we remove the temp flag
     if ($block->_inserted && !$this->noTemp) {
-      $block->meta('rpb-temp', 1);
-      $toCheck[] = $block->id;
-    } else $block->meta()->remove('rpb-temp');
+      $block->meta('rpb-temp', time());
+      $this->addToTocheck($block->id);
+    } else {
+      $block->meta()->remove('rpb-temp');
+      $this->removeFromTocheck($block->id);
+    }
+  }
 
-    // save new tocheck array to datapage
+  /**
+   * Cleanup orphaned temp blocks when a page is opened for editing.
+   * @see https://github.com/baumrock/RockPageBuilder/issues/4
+   */
+  public function cleanupOnPageEdit(HookEvent $event)
+  {
+    if ($this->orphanCleanupDone) return;
+    $page = $event->process->getPage();
+    if (!$page->id || $page instanceof Block) return;
+    $this->orphanCleanupDone = true;
+    $this->cleanupOrphanedTempBlocks($page);
+  }
+
+  /**
+   * Trash temp blocks that were never saved on their parent page.
+   * @param Page|null $contextPage Limit cleanup to blocks referencing this page
+   * @return int Number of blocks trashed
+   */
+  public function cleanupOrphanedTempBlocks(?Page $contextPage = null): int
+  {
+    $minAge = RockMigrations::oneMinute * 5;
+    $removed = 0;
+
+    foreach ($this->findTempBlockIds($contextPage) as $id) {
+      /** @var Block $block */
+      $block = $this->wire->pages->get($id);
+      if (!$block->id || !$block instanceof Block || $block->isTrash()) continue;
+
+      if ($this->isBlockInSavedFieldData($block)) {
+        $block->meta()->remove('rpb-temp');
+        $this->removeFromTocheck($block->id);
+        continue;
+      }
+
+      $tempTs = $this->getTempBlockTimestamp($block);
+      $refPage = $block->getBlockPage();
+
+      if (!$refPage->id) {
+        if (time() - $tempTs < $minAge) continue;
+        $this->trashTempBlock($block);
+        $removed++;
+        continue;
+      }
+
+      // parent saved after block was created → block was abandoned
+      if ($tempTs < $refPage->modified) {
+        $this->trashTempBlock($block);
+        $removed++;
+        continue;
+      }
+
+      // block newer than last save; wait for min age (concurrent editors)
+      if (time() - $tempTs >= $minAge) {
+        $this->trashTempBlock($block);
+        $removed++;
+      }
+    }
+
+    return $removed;
+  }
+
+  /**
+   * @return int[]
+   */
+  private function findTempBlockIds(?Page $contextPage = null): array
+  {
+    $db = $this->wire->database;
+    if ($contextPage && $contextPage->id) {
+      $sql = "
+        SELECT t.pages_id
+        FROM pages_meta t
+        INNER JOIN pages_meta r ON r.pages_id = t.pages_id AND r.name = 'RockPageBuilder'
+        WHERE t.name = 'rpb-temp' AND r.data LIKE :prefix
+      ";
+      $query = $db->prepare($sql);
+      $query->bindValue(':prefix', $contextPage->id . '-%');
+    } else {
+      $sql = "SELECT pages_id FROM pages_meta WHERE name = 'rpb-temp'";
+      $query = $db->prepare($sql);
+    }
+    $query->execute();
+    return array_map('intval', $query->fetchAll(\PDO::FETCH_COLUMN));
+  }
+
+  private function isBlockInSavedFieldData(Block $block): bool
+  {
+    $page = $block->getBlockPage();
+    $field = $block->getBlockField();
+    if (!$page->id || !$field) return false;
+
+    $value = $page->get($field->name);
+    if ($value instanceof FieldData) $raw = $value->sleepValue();
+    else $raw = (string) $value;
+
+    if (!$raw) return false;
+    $json = json_decode($raw);
+    if (!is_array($json)) return false;
+    foreach ($json as $item) {
+      if ((int) ($item->id ?? 0) === $block->id) return true;
+    }
+    return false;
+  }
+
+  private function getTempBlockTimestamp(Block $block): int
+  {
+    $temp = $block->meta('rpb-temp');
+    if (is_numeric($temp) && (int) $temp > 1) return (int) $temp;
+    return (int) $block->created;
+  }
+
+  private function trashTempBlock(Page $block): void
+  {
+    $block->meta()->remove('rpb-temp');
+    $this->removeFromTocheck($block->id);
+    $block->trash();
+  }
+
+  private function addToTocheck(int $id): void
+  {
+    $tocheck = $this->getDatapage()->meta('rpb-tocheck') ?: [];
+    $tocheck[] = $id;
+    $this->getDatapage()->meta('rpb-tocheck', array_values(array_unique($tocheck)));
+  }
+
+  private function removeFromTocheck(int $id): void
+  {
+    $tocheck = $this->getDatapage()->meta('rpb-tocheck') ?: [];
+    $tocheck = array_values(array_diff($tocheck, [$id]));
     $this->getDatapage()->meta('rpb-tocheck', $tocheck);
   }
 

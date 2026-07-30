@@ -1,10 +1,9 @@
-## [7.0.3](https://github.com/baumrock/RockPageBuilder/compare/v7.0.2...v7.0.3) (2026-07-31)
+## [7.0.4](https://github.com/baumrock/RockPageBuilder/compare/v7.0.2...v7.0.4) (2026-07-30)
 
 
 ### Bug Fixes
 
-* cleanup orphaned temp blocks when a page is opened for editing or a block is saved ([#4](https://github.com/baumrock/RockPageBuilder/issues/4))
-* fix rpb-tocheck never recording newly created temp block ids
+* cleanup orphaned temp blocks on page edit ([1a4862b](https://github.com/baumrock/RockPageBuilder/commit/1a4862b38e8190c3416fb0bd1aff6b7b8f31355a)), closes [baumrock/RockPageBuilder#4](https://github.com/baumrock/RockPageBuilder/issues/4)
 
 ## [7.0.2](https://github.com/baumrock/RockPageBuilder/compare/v7.0.1...v7.0.2) (2026-05-07)
 
@@ -38,9 +37,3 @@
 
 * add new "integer" and "number" rockfields type by @FireWire ([436c07a](https://github.com/baumrock/RockPageBuilder/commit/436c07a6ac59ab43e0b6e3b1c5901dc60b769a8d))
 
-## [6.6.1](https://github.com/baumrock/RockPageBuilder/compare/v6.6.0...v6.6.1) (2025-08-02)
-
-
-### Bug Fixes
-
-* prevent error if RockSortable is not loaded ([0427c97](https://github.com/baumrock/RockPageBuilder/commit/0427c975755966f50eb8b78a79b74efb19ae1215))

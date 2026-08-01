@@ -644,15 +644,15 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $db = $this->wire->database;
     if ($contextPage && $contextPage->id) {
       $sql = "
-        SELECT t.pages_id
+        SELECT t.source_id
         FROM pages_meta t
-        INNER JOIN pages_meta r ON r.pages_id = t.pages_id AND r.name = 'RockPageBuilder'
+        INNER JOIN pages_meta r ON r.source_id = t.source_id AND r.name = 'RockPageBuilder'
         WHERE t.name = 'rpb-temp' AND r.data LIKE :prefix
       ";
       $query = $db->prepare($sql);
-      $query->bindValue(':prefix', $contextPage->id . '-%');
+      $query->bindValue(':prefix', '"' . $contextPage->id . '-%');
     } else {
-      $sql = "SELECT pages_id FROM pages_meta WHERE name = 'rpb-temp'";
+      $sql = "SELECT source_id FROM pages_meta WHERE name = 'rpb-temp'";
       $query = $db->prepare($sql);
     }
     $query->execute();

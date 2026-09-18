@@ -1,3 +1,11 @@
+## [7.0.5](https://github.com/baumrock/RockPageBuilder/compare/v7.0.4...v7.0.5) (2026-09-18)
+
+
+### Bug Fixes
+
+* detect pages_meta id column for orphan cleanup ([ee57ad4](https://github.com/baumrock/RockPageBuilder/commit/ee57ad4c89b9aa5876d79f7c88979b61429d0678))
+* keep ajax-uploaded block files after parent save ([632f4f3](https://github.com/baumrock/RockPageBuilder/commit/632f4f3d5137af8edca1166f4dc6096d80f56379))
+
 ## [7.0.4](https://github.com/baumrock/RockPageBuilder/compare/v7.0.2...v7.0.4) (2026-07-30)
 
 
@@ -29,11 +37,4 @@
 ### Bug Fixes
 
 * change license to MIT ([3e7bf3c](https://github.com/baumrock/RockPageBuilder/commit/3e7bf3c9b1ca8ea01f04500b6f7a63cfa3388a2f))
-
-## [6.7.0](https://github.com/baumrock/RockPageBuilder/compare/v6.6.1...v6.7.0) (2025-08-07)
-
-
-### Features
-
-* add new "integer" and "number" rockfields type by @FireWire ([436c07a](https://github.com/baumrock/RockPageBuilder/commit/436c07a6ac59ab43e0b6e3b1c5901dc60b769a8d))
 

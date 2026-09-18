@@ -642,21 +642,37 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   private function findTempBlockIds(?Page $contextPage = null): array
   {
     $db = $this->wire->database;
+    $idCol = $this->pagesMetaIdColumn();
     if ($contextPage && $contextPage->id) {
       $sql = "
-        SELECT t.source_id
+        SELECT t.$idCol
         FROM pages_meta t
-        INNER JOIN pages_meta r ON r.source_id = t.source_id AND r.name = 'RockPageBuilder'
+        INNER JOIN pages_meta r ON r.$idCol = t.$idCol AND r.name = 'RockPageBuilder'
         WHERE t.name = 'rpb-temp' AND r.data LIKE :prefix
       ";
       $query = $db->prepare($sql);
       $query->bindValue(':prefix', '"' . $contextPage->id . '-%');
     } else {
-      $sql = "SELECT source_id FROM pages_meta WHERE name = 'rpb-temp'";
+      $sql = "SELECT $idCol FROM pages_meta WHERE name = 'rpb-temp'";
       $query = $db->prepare($sql);
     }
     $query->execute();
     return array_map('intval', $query->fetchAll(\PDO::FETCH_COLUMN));
+  }
+
+  /**
+   * pages_meta used source_id until newer PW versions renamed it to pages_id.
+   */
+  private function pagesMetaIdColumn(): string
+  {
+    static $column = null;
+    if ($column !== null) return $column;
+    $fields = [];
+    foreach ($this->wire->database->query('DESCRIBE pages_meta')->fetchAll(\PDO::FETCH_ASSOC) as $col) {
+      $fields[] = $col['Field'];
+    }
+    $column = in_array('pages_id', $fields, true) ? 'pages_id' : 'source_id';
+    return $column;
   }
 
   private function isBlockInSavedFieldData(Block $block): bool

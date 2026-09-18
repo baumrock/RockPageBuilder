@@ -196,8 +196,10 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
     foreach ($new as $item) {
       /** @var Page $item */
 
-      // we only process items that are marked as changed in raw textarea data
-      if (!$item->_mxchanged) continue;
+      $hasTempFiles = $this->blockHasTempFiles($item);
+
+      // process items marked as changed, or items that still have ajax temp files
+      if (!$item->_mxchanged && !$hasTempFiles) continue;
 
       // skip pages that are not editable
       if (!$item->editable()) {
@@ -212,16 +214,26 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
         continue;
       }
 
-      // kudos to FireWire for finding the showIf bug
-      // https://processwire.com/talk/topic/29683-dependent-fields-shown-with-showif-condition-in-block-dont-persist/
-      $form = $this->wire->modules->InputfieldForm;
-      $form->import($item->getWrapper());
-      $form->resetTrackChanges(true);
-      $form->getErrors(true); // clear out any errors
-      $form->processInput($input);
-      // save all field values to the page
-      $numErrors = count($form->getErrors());
-      $this->formToPage($form, $item);
+      $numErrors = 0;
+      if ($item->_mxchanged) {
+        // kudos to FireWire for finding the showIf bug
+        // https://processwire.com/talk/topic/29683-dependent-fields-shown-with-showif-condition-in-block-dont-persist/
+        $form = $this->wire->modules->InputfieldForm;
+        $form->import($item->getWrapper());
+        $form->resetTrackChanges(true);
+        $form->getErrors(true); // clear out any errors
+        $form->processInput($input);
+        // save all field values to the page
+        $numErrors = count($form->getErrors());
+        $this->formToPage($form, $item);
+      }
+
+      // Ajax uploads save files as temp until processInput sees their sort_ keys.
+      // Those keys are often missing (repeater suffix mismatch, upload still in
+      // flight, modal edit). The next GET then runs deleteAllTemp() and new
+      // photos vanish while deletes of existing files still persist.
+      $this->untempBlockFiles($item);
+
       if (!$numErrors) {
         $item->save();
         $changes++;
@@ -229,6 +241,41 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
     }
 
     return $changes;
+  }
+
+  /**
+   * Does this block still have ajax-uploaded temp files?
+   */
+  protected function blockHasTempFiles(Page $item): bool
+  {
+    foreach ($item->fields as $field) {
+      if (!$field->type instanceof FieldtypeFile) continue;
+      $files = $item->getUnformatted($field->name);
+      if (!$files instanceof Pagefiles) continue;
+      foreach ($files as $file) {
+        if ($file->isTemp()) return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Keep remaining ajax-uploaded files after the parent page is saved.
+   */
+  protected function untempBlockFiles(Page $item): void
+  {
+    foreach ($item->fields as $field) {
+      if (!$field->type instanceof FieldtypeFile) continue;
+      $files = $item->getUnformatted($field->name);
+      if (!$files instanceof Pagefiles) continue;
+      $changed = false;
+      foreach ($files as $file) {
+        if (!$file->isTemp()) continue;
+        $file->isTemp(false);
+        $changed = true;
+      }
+      if ($changed) $item->trackChange($field->name);
+    }
   }
 
   /**

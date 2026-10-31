@@ -1772,7 +1772,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   public function renderBlocks(
     Page|string|int $page,
-    string $field = null,
+    ?string $field = null,
     bool $renderPlus = true,
   ) {
     $p = wire()->pages->get((string)$page);
@@ -1928,7 +1928,7 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   public function stub(
     string $file,
     array $replacements = [],
-    string $saveTo = null,
+    ?string $saveTo = null,
   ) {
     if (!is_file($file)) $file = $this->path . "stubs/$file";
     $content = $this->wire->files->fileGetContents($file);

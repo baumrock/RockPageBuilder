@@ -1,3 +1,10 @@
+## [7.0.6](https://github.com/baumrock/RockPageBuilder/compare/v7.0.5...v7.0.6) (2026-11-02)
+
+
+### Bug Fixes
+
+* item actions no longer cover the collapse/expand toggle ([f2ff220](https://github.com/baumrock/RockPageBuilder/commit/f2ff2201c329440a78cc57cd8cc12fdcb0707aa8))
+
 ## [7.0.5](https://github.com/baumrock/RockPageBuilder/compare/v7.0.4...v7.0.5) (2026-09-18)
 
 
@@ -26,15 +33,4 @@
 ### Bug Fixes
 
 * respect createView setting for custom view stub output filename ([98ad736](https://github.com/baumrock/RockPageBuilder/commit/98ad736c9014c5f95e395c785948912a7b146b0f))
-
-## [7.0.0](https://github.com/baumrock/RockPageBuilder/compare/v6.7.0...v7.0.0) (2026-01-21)
-
-
-### ⚠ BREAKING CHANGES
-
-* change license to MIT
-
-### Bug Fixes
-
-* change license to MIT ([3e7bf3c](https://github.com/baumrock/RockPageBuilder/commit/3e7bf3c9b1ca8ea01f04500b6f7a63cfa3388a2f))
 

@@ -128,12 +128,16 @@ li.rpb-item {
     }
 
     // item action buttons
+    // placed left of the collapse/expand toggle (i.toggle-icon, floated right)
+    // instead of on top of it; --rock-input-bg only exists with AdminStyleRock,
+    // in other admin themes the toggle showed through the icons
     .rpb-actions {
       background: var(--rock-input-bg);
       position: absolute;
-      right: 0px;
-      top: 0px;
-      padding: 2px 10px;
+      right: 2.2em;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 0;
 
       > .rpb-action > i {
         padding-right: 10px;
@@ -142,6 +146,21 @@ li.rpb-item {
       a {
         text-decoration: none;
       }
+    }
+
+    // with $config->debug, hovering the toggle shows the field name
+    // (small.InputfieldNameTip) right where the actions are: hide the actions
+    // meanwhile and center the name vertically like them
+    > i.toggle-icon:hover ~ .rpb-actions {
+      visibility: hidden;
+    }
+
+    > .InputfieldNameTip {
+      position: absolute;
+      right: 2.2em;
+      top: 50%;
+      transform: translateY(-50%);
+      line-height: 1;
     }
   }
 

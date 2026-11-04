@@ -182,6 +182,8 @@ li.rpb-item {
    * Hide/Unhide item
    */
   border: 1px solid @border-color;
+  // admin theme in dark mode: its border color instead of the light gray
+  border-color: light-dark(@border-color, var(--pw-border-color, #444));
   &.InputfieldIsWarning {
     border: 1px solid orange;
   }

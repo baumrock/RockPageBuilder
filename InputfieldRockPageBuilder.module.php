@@ -172,6 +172,9 @@ class InputfieldRockPageBuilder extends InputfieldRepeater
     $old = $this->value;
     $new = $old->getNew($json);
 
+    // protect submitted blocks from the orphan cleanup during this save
+    foreach ($new as $item) $this->master->submittedBlockIds[] = (int) $item->id;
+
     // process all repeater items
     $changes = $this->processItems($new, $input);
 

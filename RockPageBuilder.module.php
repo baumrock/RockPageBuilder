@@ -53,6 +53,14 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
 
   public $loaded = [];
 
+  /**
+   * IDs of blocks that are part of the field data submitted in this request
+   * These are never orphans, even if their parent page was saved after they
+   * were created (saving a block saves its parents, see triggerBlockPageSave).
+   * @var int[]
+   */
+  public $submittedBlockIds = [];
+
   public $mtime = 0;
 
   /**
@@ -599,6 +607,8 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
     $removed = 0;
 
     foreach ($this->findTempBlockIds($contextPage) as $id) {
+      // blocks of the submitted field data are in use, not orphans
+      if (in_array($id, $this->submittedBlockIds, true)) continue;
       /** @var Block $block */
       $block = $this->wire->pages->get($id);
       if (!$block->id || !$block instanceof Block || $block->isTrash()) continue;

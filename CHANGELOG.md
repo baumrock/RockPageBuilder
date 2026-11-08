@@ -1,3 +1,10 @@
+## [7.0.8](https://github.com/baumrock/RockPageBuilder/compare/v7.0.7...v7.0.8) (2026-11-08)
+
+
+### Bug Fixes
+
+* block border follows the admin theme in dark mode ([d83bbdf](https://github.com/baumrock/RockPageBuilder/commit/d83bbdfcf3303548d21b91d2662476e60a78ddcb))
+
 ## [7.0.7](https://github.com/baumrock/RockPageBuilder/compare/v7.0.6...v7.0.7) (2026-11-08)
 
 
@@ -26,11 +33,4 @@
 ### Bug Fixes
 
 * cleanup orphaned temp blocks on page edit ([1a4862b](https://github.com/baumrock/RockPageBuilder/commit/1a4862b38e8190c3416fb0bd1aff6b7b8f31355a)), closes [baumrock/RockPageBuilder#4](https://github.com/baumrock/RockPageBuilder/issues/4)
-
-## [7.0.2](https://github.com/baumrock/RockPageBuilder/compare/v7.0.1...v7.0.2) (2026-05-07)
-
-
-### Bug Fixes
-
-* preload nested inputfield assets ([ed70d39](https://github.com/baumrock/RockPageBuilder/commit/ed70d39cf9a61e6d09513d1255aee82f82e72262))
 

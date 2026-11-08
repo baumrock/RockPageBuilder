@@ -1,3 +1,10 @@
+## [7.0.7](https://github.com/baumrock/RockPageBuilder/compare/v7.0.6...v7.0.7) (2026-11-08)
+
+
+### Bug Fixes
+
+* second new block is no longer trashed on save ([f82c32c](https://github.com/baumrock/RockPageBuilder/commit/f82c32cbe0c7a44b4a7cf6338a51b77f28842e72))
+
 ## [7.0.6](https://github.com/baumrock/RockPageBuilder/compare/v7.0.5...v7.0.6) (2026-11-02)
 
 
@@ -26,11 +33,4 @@
 ### Bug Fixes
 
 * preload nested inputfield assets ([ed70d39](https://github.com/baumrock/RockPageBuilder/commit/ed70d39cf9a61e6d09513d1255aee82f82e72262))
-
-## [7.0.1](https://github.com/baumrock/RockPageBuilder/compare/v7.0.0...v7.0.1) (2026-04-06)
-
-
-### Bug Fixes
-
-* respect createView setting for custom view stub output filename ([98ad736](https://github.com/baumrock/RockPageBuilder/commit/98ad736c9014c5f95e395c785948912a7b146b0f))
 

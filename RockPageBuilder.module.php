@@ -330,11 +330,31 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
   }
 
   /**
-   * Add a single block file
-   * @return void
+   * Register a block PHP file, or add a content block to a page.
+   *
+   * File registration (existing):
+   *   $rpb->addBlock('/path/to/Text.php');
+   *
+   * Content API (page first argument):
+   *   $rpb->addBlock($page, 'Text', [
+   *     'title' => 'Headline',
+   *     'rpb_text_body' => '<p>…</p>',
+   *     'settings' => ['muted' => 0],
+   *   ]);
+   *
+   * @param string|Page $fileOrPage Block file path, or host page for content API
+   * @param string $namespaceOrType Namespace for file registration, or block type for content API
+   * @param array $data Field values (+ optional settings key) for content API
+   * @return void|Block
    */
-  public function addBlock($file, $namespace = "RockPageBuilderBlock")
+  public function addBlock($fileOrPage, $namespaceOrType = "RockPageBuilderBlock", $data = [])
   {
+    if ($fileOrPage instanceof Page) {
+      return $this->addPageBlock($fileOrPage, (string) $namespaceOrType, is_array($data) ? $data : []);
+    }
+
+    $file = $fileOrPage;
+    $namespace = $namespaceOrType;
     $blocks = $this->blocks;
     if (!is_file($file)) throw new WireException("File $file not found");
 
@@ -389,6 +409,117 @@ class RockPageBuilder extends WireData implements Module, ConfigurableModule
         bd(Debug::backtrace(), $th->getMessage());
       }
     }
+  }
+
+  /**
+   * Add a content block to a page's RockPageBuilder field (API / bot friendly).
+   *
+   * Sets noTemp so the block is immediately visible on the frontend, applies
+   * optional settings via saveSetting(), and persists the field JSON.
+   *
+   * @param Page $page Host page
+   * @param string $type Block class or template name (e.g. Text / text)
+   * @param array $data Field values; optional key "settings" => [key => value]
+   * @param string|null $field Field name (default rockpagebuilder_blocks)
+   * @return Block
+   */
+  public function addPageBlock(Page $page, string $type, array $data = [], ?string $field = null): Block
+  {
+    $field = $field ?: self::field_blocks;
+    $settings = [];
+    if (isset($data['settings']) && is_array($data['settings'])) {
+      $settings = $data['settings'];
+      unset($data['settings']);
+    }
+
+    $prevNoTemp = $this->noTemp;
+    $this->noTemp = true;
+    try {
+      /** @var FieldData|null $blocks */
+      $blocks = $page->getUnformatted($field);
+      if (!$blocks instanceof FieldData) {
+        throw new WireException("Field '$field' is not a RockPageBuilder field on page #$page->id");
+      }
+
+      $block = $blocks->add($type, $data);
+      if (!$block instanceof Block) {
+        throw new WireException("Could not add block '$type' to page #$page->id");
+      }
+
+      foreach ($settings as $key => $value) {
+        $block->saveSetting($key, $value);
+      }
+
+      $blocks->save();
+      return $block;
+    } finally {
+      $this->noTemp = $prevNoTemp;
+    }
+  }
+
+  /**
+   * Update an existing content block (fields + optional settings).
+   *
+   * @param Block|int|string $block Block page or id
+   * @param array $data Field values; optional key "settings" => [key => value]
+   * @return Block
+   */
+  public function updatePageBlock($block, array $data = []): Block
+  {
+    if (!$block instanceof Block) {
+      $block = $this->wire->pages->get((int) $block);
+    }
+    if (!$block instanceof Block) {
+      throw new WireException("Invalid block for updatePageBlock");
+    }
+
+    $settings = [];
+    if (isset($data['settings']) && is_array($data['settings'])) {
+      $settings = $data['settings'];
+      unset($data['settings']);
+    }
+
+    $block->of(false);
+    foreach ($data as $key => $value) {
+      $block->set($key, $value);
+    }
+    $block->save();
+
+    foreach ($settings as $key => $value) {
+      $block->saveSetting($key, $value);
+    }
+
+    return $block;
+  }
+
+  /**
+   * Remove a content block from a page field and trash the block page.
+   *
+   * @param Page $page Host page
+   * @param int $blockId Block page id
+   * @param string|null $field Field name (default rockpagebuilder_blocks)
+   * @return bool True if removed
+   */
+  public function removePageBlock(Page $page, int $blockId, ?string $field = null): bool
+  {
+    $field = $field ?: self::field_blocks;
+    /** @var FieldData|null $blocks */
+    $blocks = $page->getUnformatted($field);
+    if (!$blocks instanceof FieldData) return false;
+
+    $block = null;
+    foreach ($blocks as $b) {
+      if ((int) $b->id === $blockId) {
+        $block = $b;
+        break;
+      }
+    }
+    if (!$block instanceof Block) return false;
+
+    $blocks->remove($block);
+    $blocks->save();
+    $block->trash();
+    return true;
   }
 
   /**

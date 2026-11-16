@@ -47,8 +47,23 @@ $block->copyTo($pages->get("/my/target/page"), "my_target_field");
 
 ## Adding Blocks
 
-This is helpful when migrating content to RockPageBuilder:
-To add a block to a RockPageBuilder field, you can use the `add()` method on the `FieldData` object. You need to specify the type of the block and optionally, any data you want to initialize the block with.
+### High-level helper (recommended for bots / migrations)
+
+```php
+$block = rockpagebuilder()->addBlock($page, 'Text', [
+  'title' => 'My new headline',
+  'rpb_text_body' => '<p>foo</p><p>bar</p>',
+  'settings' => [
+    'muted' => 0,
+  ],
+]);
+```
+
+This sets `noTemp`, applies settings, and saves the field so the block is visible on the frontend immediately.
+
+You can also call `addPageBlock()`, `updatePageBlock($blockOrId, $data)`, and `removePageBlock($page, $blockId)` directly.
+
+### Low-level FieldData API
 
 ```php
 // Assuming 'rockpagebuilder_blocks' is your RockPageBuilder field
@@ -78,3 +93,5 @@ $block->saveSetting('image-size', 'S');
 ```
 
 Note that you don't need to save the block, because settings are saved as page `meta()` data and that data is instantly written to the database.
+
+When using `addBlock($page, …)` / `addPageBlock()` / `updatePageBlock()`, pass settings in the data array under the `settings` key.
